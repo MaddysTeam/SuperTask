@@ -1,0 +1,59 @@
+﻿@model RegisterViewModel
+@{
+	ViewBag.Title = "用户注册";
+	Layout = "~/Views/Shared/_anonymous.cshtml";
+}
+<div class="wrapper full-page-wrapper page-auth page-login text-center">
+	<div class="inner-page">
+		<div class="logo">
+				<h3>部门项目管理系统</h3>
+		</div>
+		<style>
+				.login-box{-webkit-box-shadow: 1px 1px 1px;-moz-box-shadow:1px 1px 1px;box-shadow:1px 1px 1px; border-radius:3%;background-color:#FBFBFF;}
+		</style>
+		<div class="login-box center-block">
+			<form class="form-horizontal" role="form"></form>
+			@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form", @class = "form-horizontal" }))
+			{
+				@Html.AntiForgeryToken()
+
+				<p class="title">@ViewBag.Title</p>
+				<div class="form-group">
+					@Html.LabelFor(m => m.Username, new { @class = "control-label sr-only" })
+					<div class="col-md-12">
+						<div class="input-group">
+							@Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "登录名称" })
+							<span class="input-group-addon"><i class="fa fa-user"></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					@Html.LabelFor(m => m.Password, new { @class = "control-label sr-only" })
+					<div class="col-md-12">
+						<div class="input-group">
+							@Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "登录口令" })
+							<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					@Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label sr-only" })
+					<div class="col-md-12">
+						<div class="input-group">
+							@Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "确认口令" })
+							<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+						</div>
+					</div>
+				</div>
+				<button class="btn btn-custom-primary btn-lg btn-block btn-login" type="submit">注册<i class="fa fa-sign-in fa-lg"></i></button>
+				@Html.ValidationSummary()
+			}
+			<div class="links">
+				<p>
+					<a href="@Url.Action("Login","Account")">返回登录页面</a>
+				</p>
+			</div>
+		</div>
+	</div>
+	<div class="push-sticky-footer"></div>
+</div>

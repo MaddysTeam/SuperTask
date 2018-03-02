@@ -1,0 +1,113 @@
+﻿@model EvalTableGroup
+@{ 
+	var title = ViewBag.Title = "编辑考评表组";
+
+	var allTableSelectItems = SelectListHelper.GetSelectItems(ViewBag.AllTables as List<EvalPeriodTable>, "TableName", "TableId", null, null);
+	var periodSelectItems = SelectListHelper.GetSelectItems(ViewBag.Periods as List<EvalPeriod>, "Name", "PeriodId", null, null);
+	var targetRoleItems = (ViewBag.TargetRoles as List<Role>).Select(x=>new SelectListItem { Text=x.RoleName, Value=x.RoleId.ToString(), Selected=x.RoleId==Model.TargetRoleId });
+	var selectTableIds = ViewBag.TableIds as string;
+}
+<div class="modal-dialog modal-lg">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> @title</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("Edit", "EvalTableGroup")" role="form" data-after-success="afterDialogSuccess()">
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(g => g.TableGroupId)
+						<div class="form-group">
+							@Html.LabelFor(g => g.TableGroupName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextBoxFor(g => g.TableGroupName, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.Label("选择周期", new { @class = "col-md-3 control-label" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(g => g.PeriodId, periodSelectItems, new { @class = "form-control dropdown-EvalPeriods",  })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(g=>g.TargetRoleId, new { @class = "col-md-3 control-label" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(g => g.TargetRoleId, targetRoleItems,null, new { @class = "form-control", })
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.Label("选择考核表", new { @class = "col-md-3 control-label" })
+							<div class="col-md-9">
+								@Html.DropDownList("tables", allTableSelectItems, new { @class = "form-control dropdown-EvalTables", @multiple = "multiple" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-9 col-lg-offset-3">
+								<button type="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+				@Html.HiddenFor(g=>g.TableIds)
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+<script>
+
+	$(function () {
+
+		var $form = $('.modal-dialog form');
+		$.validator.unobtrusive.parse($form);
+
+		$form.submit(function () {
+			$('#TableIds').val($('.dropdown-EvalTables').val());
+
+			var $form = $(this);
+
+			$form.valid() && $.post($form.attr('action'), $form.serialize(), function (data, status) {
+				popupMessage(data, {
+					success: function () { afterDialogSuccess(); }
+				});
+			});
+
+			return false;
+		});
+
+		var selected = '@selectTableIds';
+		if (selected == '')
+			$('.dropdown-EvalTables').multiselect('select');
+		else
+			$('.dropdown-EvalTables').multiselect('select', selected.split(','));
+
+		$('.dropdown-EvalPeriods').change(function () {
+			$.post('@Url.Action("GetEvalTablesByPeriodId", "EvalTableGroup")', { periodId: $(this).val() }, function (data) {
+				var $dp = $('.dropdown-EvalTables');
+				$dp.html('');
+				$(data.rows).each(function () {
+					$dp.append('<option value="' + this.TableId + '">' + this.TableName + '</option>');
+				});
+
+				$dp.multiselect('rebuild');
+			});
+		});
+
+	})
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+</script>

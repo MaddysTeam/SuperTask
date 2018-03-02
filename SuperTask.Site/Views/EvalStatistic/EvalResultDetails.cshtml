@@ -1,0 +1,66 @@
+﻿@model EvalResultDetailsViewModel
+@{
+	var pageTitle = ViewBag.Title = "考核明细";
+}
+
+<div class="content-wrapper">
+	<div class="main-content">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="widget">
+					<div class="widget-header">
+
+					</div>
+					<div class="widget-content">
+						<table class="table table-condensed">
+							<tr>
+								<th>考核对象</th>
+								<td>@Model.TargetName</td>
+								<td></td>
+							</tr>
+							<tr>
+								<th>考核周期</th>
+								<td>@Model.PeriodName</td>
+								<td></td>
+							</tr>
+							@foreach (var item in Model.PeriodTables)
+							{
+								<tr>
+									<th>@(item.TableName)得分：</th>
+									<td>@item.Score</td>
+									<td>
+										@if (item.TableType!=EvalKeys.AutoType && Model.IsShowOthersEvalResult)
+										{
+											@*<button>查看他人评分</button>*@
+										}
+									</td>
+								</tr>
+							}
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8">
+				@foreach (var item in Model.PeriodTables)
+				{
+					var period = EvalPeriod.PrimaryGet(item.PeriodId);
+					var engine = item.TableType==EvalTableKeys.AutoType?
+						  EvalManager.Engines[period.AnalysisType].AutoEvals[item.TableId]
+						: EvalManager.Engines[period.AnalysisType].SubjectEvals[item.TableId];
+
+					<div class="evaltable">
+						@if (Model.TableResultItems.ContainsKey(item.TableId))
+						{
+							@Html.Partial(engine.ViewPath + engine.ResultView, Model.TableResultItems[item.TableId])
+						}
+					</div>
+				}
+
+			</div>
+		</div>
+
+
+	</div>
+
+</div>
+

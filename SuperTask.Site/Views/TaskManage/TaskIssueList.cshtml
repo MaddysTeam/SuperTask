@@ -1,0 +1,114 @@
+﻿@{
+	Layout = "~/Views/Shared/_StudioLayout.cshtml";
+	var pageTitle = ViewBag.Title = "管理任务问题";
+}
+@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+}
+
+<div class="content-wrapper col-md-10">
+
+	<div class="main-content">
+		<!-- widget -->
+		<div class="widget">
+			<div class="widget-header">
+				<h3>@pageTitle</h3>
+				<div class="btn-group widget-header-toolbar">
+					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+				</div>
+			</div>
+
+			<div class="widget-content">
+				<div class="btn-group">
+					<button class="btn btn-md btn-danger btn-addIssue">新增任务问题</button>
+				</div>
+				<div class="row">
+
+					@*<div class="col-sm-6 form-horizontal">
+						<div class="form-group">
+							<label class="col-md-4 control-label">选择角色</label>
+							<div class="col-md-4">
+								@Html.DropDownList("dropdown_roles",roleSelectList, new { @class = "dropdown_roles form-control" })
+							</div>
+						</div>
+					</div>*@
+
+
+				</div>
+				<!-- Grid -->
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								<th data-column-id="project">所属项目</th>
+								<th data-column-id="task">任务名称</th>
+								<th data-column-id="manager">任务负责人</th>
+								<th data-column-id="issue">问题类型</th>
+								<th data-column-id="desc">描述</th>
+								<th data-column-id="modifyUser">修改者</th>
+								<th data-column-id="modifyDate" data-formatter="DateTime">修改时间</th>
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+			<!-- /widget content -->
+		</div>
+		<!-- /widget -->	
+
+	</div>
+</div>
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+
+@section Scripts {
+	<script>
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: window.location.href,
+
+				formatters: {
+					'commands': function (column, row) {
+						var id = row.id;
+						return '<div class="btn-group btn-group-xs pull-right" data-row-id="' + row.id + '" data-task-id="' + row.taskId + '" data-issue-id="' + row.issueId + '" >' +
+							'<button class="btn btn-lg btn-danger btn-del">删除</button></div>';
+					},
+				},
+			});
+		}
+
+		$(function () {
+
+			var editUrl = '@Url.Action("TaskIssueEdit", "TaskManage")';
+			var delUrl = '@Url.Action("TaskIssueDelete", "TaskManage")';
+			var grid = $('#bootgrid');
+			grid.bootgrid(getGridOptions())
+			.on('loaded.rs.jquery.bootgrid', function () {
+				grid.find('.btn-del').on('click', function (e) {
+					var rowId = $(this).parent().data('rowId');
+					$.post(delUrl, { id: rowId }, function () {
+						$('#bootgrid').bootgrid('reload');
+					});
+				});
+			});
+
+
+			$('.btn-addIssue').click(function () {
+				$('#modelProxy')
+					.data('url', editUrl)
+					.trigger('click');
+			});
+
+		});
+	</script>
+}

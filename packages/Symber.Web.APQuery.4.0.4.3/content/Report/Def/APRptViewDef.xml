@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<viewDef name="Default_Department_View">
+	<refers>
+		<add columnId="Department.DepartmentId" />
+		<add columnId="Department.DepartmentName" />
+		<add columnId="Department.DepartmentNo" />
+		<add columnId="Department.Phone" />
+		<add columnId="Department.Fax" />
+	</refers>
+	<orders>
+		<add columnId="Department.DepartmentName" according="Desc" />
+	</orders>
+	<condition logic="A AND B" rpn="A B &amp;">
+		<add serial="A" columnId="Department.DepartmentId" comparator="GreaterThan" values="1" />
+		<add serial="B" columnId="Department.DepartmentName" comparator="GreaterThan" values="HR,Sales" />
+	</condition>
+</viewDef>

@@ -1,0 +1,101 @@
+﻿@model Resource
+@{
+	var projectid = Request["projectId"];
+
+	var users = ViewBag.Resource as List<Account>;
+	var usersList = SelectListHelper.GetSelectItems(users, "UserName", "UserId");
+	var resourceRoles = ViewBag.ResourceRoles as IEnumerable<SelectListItem>;
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑资源</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("Edit", "Resource")" role="form" data-after-success="afterDialogSuccess()">
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(r => r.Projectid)
+						@Html.HiddenFor(r => r.ResourceName)
+						@Html.HiddenFor(r=>r.Status)
+						@Html.HiddenFor(r => r.UserId)
+						<div class="form-group">
+							@Html.HiddenFor(r => r.ResourceId)
+							@Html.LabelFor(r => r.ResourceName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@if (Model.UserId.IsEmpty())
+								{
+									@Html.DropDownListFor(r => r.UserId,
+															  usersList,
+															  new { @class = "form-control dropdown-resource" })
+								}
+								else
+								{
+								  <span class="form-control">@Model.ResourceName</span>
+								}
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(r => r.TypeNames, new { @class = "control-label col-md-3" })
+							<div class="col-md-9 ">
+								@foreach (var item in resourceRoles)
+								{
+									<div class="row">
+										<span class="col-md-3 control-label">@item.Text</span>
+										<span class="col-md-7">@Html.CheckBox("cb_role", item.Selected, new { @value = item.Value, @class = "form-control cb_role" })</span> 
+									</div>
+								}
+								@Html.HiddenFor(r=>r.ResourceTypes)
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-9 col-lg-offset-3">
+								<button type="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('.modal-dialog form'));
+
+		$('#Projectid').val('@projectid');
+
+		$('.dropdown-resource').searchableSelect({
+			afterSelectItem: function (v) {
+				$('#UserId').val(v);
+				var name = $('.searchable-select-holder').html()
+				$('#ResourceName').val(name);
+			}
+		});
+
+		getValuesByCheckboxList($('.cb_role'),
+			function (str) {
+				$('#ResourceTypes').val(str);
+			});
+
+	});
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		loadList();
+		//ajaxLoad(bindDeleteEvent);
+	}
+
+</script>

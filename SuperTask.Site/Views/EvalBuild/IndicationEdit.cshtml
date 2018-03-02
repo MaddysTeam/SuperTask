@@ -1,0 +1,84 @@
+﻿@model Indication
+
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑角色</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+			@using (Html.BeginForm("IndicationEdit", "EvalBuild", FormMethod.Post, new { id = "form", role = "form", @class = "form-horizontal" }))
+			{
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(i => i.IndicationId)
+						@Html.HiddenFor(i => i.CreaterId)
+						@Html.HiddenFor(i => i.CreateDate)
+						@Html.HiddenFor(i => i.IndicationStatus)
+						@Html.HiddenFor(i => i.UseCount)
+
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(i => i.IndicationName)</label>
+							<div class="col-md-9">
+								@Html.TextBoxFor(r => r.IndicationName, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(i => i.Type)</label>
+							<div class="col-md-9">
+								@Html.DropDownListFor(i=>i.IndicationType,
+								DictionaryCache.Cached(IndicationKeys.IndicaitonTypeKeyGuid).GetSelectList(0), 
+								 new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(i => i.Description)</label>
+							<div class="col-md-9">
+								@Html.TextAreaFor(i => i.Description, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9 ">
+								<button type="submit" id="submit" class="btn btn-primary btn-block"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			}
+		</div>
+
+	</div>
+	<!-- end widget -->
+
+</div>
+<script>
+	// ajax update form
+	var $form = $('.modal-dialog form');
+	$.validator.unobtrusive.parse($form);
+
+	$form.submit(function () {
+
+		var $form = $(this);
+
+		$form.valid() && $.post($form.attr('action'), $form.serialize(), function (data, status) {
+			popupMessage(data, {
+				success: function () { commitedNotice(); }
+			});
+		});
+
+		return false;
+	});
+
+	function commitedNotice() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+</script>

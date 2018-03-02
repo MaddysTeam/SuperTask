@@ -1,0 +1,89 @@
+﻿@model Role
+@{ 
+	var roleTypes = RoleKeys.Types.Select(type => new SelectListItem { Text = type.Value, Value = type.Key.ToString() });
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑角色</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+			@using (Html.BeginForm("Edit", "Role", FormMethod.Post, new { id = "form", role = "form", @class = "form-horizontal" }))
+			{
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(r => r.RoleId)
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(r => r.RoleName)</label>
+							<div class="col-md-9">
+
+								@Html.TextBoxFor(r => r.RoleName, new { @class = "form-control" })
+								@Html.ValidationMessageFor(r => r.RoleName)
+
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(r => r.Note)</label>
+							<div class="col-md-9">
+								@Html.TextAreaFor(r => r.Note, new { @class = "form-control" })
+								@Html.ValidationMessageFor(r => r.Note)
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(r => r.Type)</label>
+							<div class="col-md-9">
+								@Html.DropDownListFor(r=>r.RoleType, roleTypes, new { @class= "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9 ">
+								<button type="submit" id="submit" class="btn btn-primary btn-block"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			}
+		</div>
+
+	</div>
+	<!-- end widget -->
+
+</div>
+
+<script>
+
+	$(function () {
+
+		// ajax update form
+		var $form = $('.modal-dialog form');
+		$.validator.unobtrusive.parse($form);
+
+		$form.submit(function () {
+
+			var $form = $(this);
+
+			$form.valid() && $.post($form.attr('action'), $form.serialize(), function (data, status) {
+				popupMessage(data, {
+					success: function () { commitedNotice(); }
+				});
+			});
+
+			return false;
+		});
+
+		function commitedNotice() {
+			$('#firstModal').modal('hide');
+			$('#bootgrid').bootgrid('reload');
+		}
+
+	})
+
+</script>

@@ -1,0 +1,25 @@
+﻿@model List<MenuItem>
+
+<style>
+	.btn-normal{ background-color:lightgrey; color:#808080}
+	.menu{margin-top:10px; margin-bottom:20px;}
+</style>
+<div class="gallery-buttons menu">
+@if (Model != null)
+{
+	foreach (var item in Model)
+	{
+		if (item.IsVisible)
+		{
+			if (item.IsChecked)
+			{
+			<a href="@item.Url" class="btn btn-md btn-success" title="@item.FullTitle"><span>@item.Title</span></a>
+			}
+			else
+			{
+			<a href="@item.Url" class="btn btn-md btn-normal" title="@item.FullTitle"><span>@item.Title</span></a>
+			}
+		}
+	}
+}
+</div> 

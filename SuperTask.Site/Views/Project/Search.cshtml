@@ -1,0 +1,179 @@
+﻿@using Business.Config
+@{
+	var pageTitle = ViewBag.Title = "我的项目";
+	var isLeader = Html.HasInRole(RoleKeys.ADMIN) || Html.HasInRole(RoleKeys.LEADER) || Html.HasInRole(RoleKeys.PROGRAME_MANAGER);
+	var owners = ViewBag.Owners as List<SelectListItem>;
+	var executors = ViewBag.Executors as List<SelectListItem>;
+	owners.Insert(0, new SelectListItem { Text = "全部", Value = ThisApp.SelectAll });
+	executors.Insert(0, new SelectListItem { Text = "全部", Value = ThisApp.SelectAll });
+
+
+}
+@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+}
+
+<div class="content-wrapper">
+
+	<div class="main-content">
+		<!-- widget -->
+		<div class="widget">
+			<div class="widget-header">
+				<h3>项目列表</h3>
+				<div class="btn-group widget-header-toolbar">
+					@if (isLeader)
+					{
+						<button class="btn btn-sm btn-custom-primary" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Project",new { id=Guid.Empty})" data-target="#firstModal"><i class="fa fa-plus-square"></i> <span>新增</span></button>
+
+						<button class="btn btn-sm btn-info btn-template" ><i class="fa fa-file-text"></i> <span>开发类模板（试用）</span></button>
+					}
+					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+				</div>
+			</div>
+
+			<div class="widget-content">
+				<div class="row">
+
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label class="col-md-4 control-label">项目甲方</label>
+							<div class="col-md-4">
+								@Html.DropDownList("dropdown_owner", owners, new { @class = "dropdown_owner" })
+							</div>
+						</div>
+					</div>
+
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label class="col-md-4 control-label">项目乙方</label>
+							<div class="col-md-4">
+								@Html.DropDownList("dropdown_executor", executors, new { @class = "dropdown_executor" })
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<!-- Grid -->
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								<th data-column-id="code">项目编号</th>
+								<th data-column-id="projectName">项目名称</th>
+								<th data-column-id="type">项目类型</th>
+								<th data-column-id="progress">项目进度</th>
+								<th data-column-id="projectOwner">项目甲方</th>
+								<th data-column-id="projectExecutor">项目乙方</th>
+								<th data-column-id="pmName">项目经理</th>
+								<th data-column-id="projectStatus">项目状态</th>
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+			<!-- /widget content -->
+		</div>
+		<!-- /widget -->
+		<input type="hidden" id="Owner" value="@ThisApp.SelectAll" />
+		<input type="hidden" id="Executor" value="@ThisApp.SelectAll" />
+	</div>
+</div>
+
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Scripts {
+	<script>
+		function getGlobalRequest() {
+			return {
+				//searchType: $('#SearchType').val(),
+				owner: $('#Owner').val(),
+				executor: $('#Executor').val(),
+			};
+		}
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: window.location.href,
+
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+				formatters: {
+					'commands': function (column, row) {
+						var id = row.id;
+						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
+							'<button class="btn btn-lg btn-success btn-details">明细</button> ' +
+							'<button class="btn btn-lg btn-info btn-tasks">任务分配</button> ' +
+							//'<button class="btn btn-lg btn-danger btn-resources">资源</button> ' +
+                                     '</div>';
+					},
+				},
+			});
+		}
+
+		$(function () {
+
+			var door;
+
+			var userId = '@Html.GetUserProfile().UserId';
+			var grid = $('#bootgrid');
+			grid.bootgrid(getGridOptions())
+			.on('loaded.rs.jquery.bootgrid', function () {
+
+				var manUrl = '@Url.Action("Index", "ProjectManage")';
+				grid.find('.btn-details').on('click', function (e) {
+					var id = $(this).parent().data('rowId');
+					var name = $(this).parent().data('name');
+					location.href = manUrl + '?projectId=' + id + '&userId=' + userId + '&projectName=' + name;
+				});
+
+				var tasksUrl='@Url.Action("TaskArrangement", "ProjectManage")'
+				grid.find('.btn-tasks').on('click', function (e) {
+					var id = $(this).parent().data('rowId');
+					location.href = tasksUrl + '?projectId=' + id;
+				});
+
+				door = true;
+			});
+
+			$('.dropdown_executor').searchableSelect({
+				afterSelectItem: function (v) {
+					$('#Executor').val(v);
+					if (door)
+						$('#bootgrid').bootgrid('reload');
+				}
+			});
+
+			$('.dropdown_owner').searchableSelect({
+				afterSelectItem: function (v) {
+					$('#Owner').val(v)
+					if (door)
+						$('#bootgrid').bootgrid('reload');
+
+				}
+			});
+
+			$('.btn-template').click(function () {
+				if (confirm("确定通过模板创建项目？")) {
+					$.post('@Url.Action("CreateByTemplate", "Project")', { projectType: 1 }, function (data) {
+						popupMessage(data, {
+							success: function () {
+								$('#bootgrid').bootgrid('reload');
+							}
+						});
+					});
+				}
+			});
+
+		});
+	</script>
+}

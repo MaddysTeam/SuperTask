@@ -1,0 +1,96 @@
+﻿@model Organize
+@{ 
+	var List = new List<SelectListItem>();
+	List.Add(new SelectListItem() { Value = "1", Text = "1" });
+	List.Add(new SelectListItem() { Value = "2", Text = "2" });
+	List.Add(new SelectListItem() { Value = "3", Text = "3" });
+	List.Add(new SelectListItem() { Value = "4", Text = "4" });
+	List.Add(new SelectListItem() { Value = "5", Text = "5" });
+	List.Add(new SelectListItem() { Value = "6", Text = "6" });
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑部门</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("Edit", "Organize", Model == null ? null : new { Model.ID })" role="form" data-after-success="afterDialogSuccess()">
+				<div class="row">
+					<fieldset class="col-sm-12">
+						
+						<div class="form-group">
+							@Html.LabelFor(m => m.ParentID, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								<div class="input-group">
+									@Html.Hidden("ParentID")
+									<div class="bootstrap-tagsinput form-control" id="ParentName">
+										
+									</div>
+									<div class="input-group-btn">
+										<button id="dn-toggle" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">部门 <span class="caret"></span></button>
+										<div class="dropdown-menu dropdown-menu-right dropdown-tree">
+											<div id="jstreeModal"></div>
+										</div>
+									</div><!-- /btn-group -->
+								</div><!-- /input-group -->
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(m => m.Name, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextBoxFor(m => m.Name, new { @class = "form-control required" })
+								@Html.ValidationMessageFor(m => m.Name)
+							</div>
+						</div>			
+						<div class="form-group">
+							@Html.LabelFor(m => m.ChargeLeader, new { @class = "control-label col-md-3" })
+							<div class="col-md-9" id="chargeLeaderCombo">
+								@Html.Hidden("ChargeLeader")
+								<div class="bootstrap-tagsinput" id="chargeLeaderName">
+									<input type="text" class="typeahead" placeholder="" />
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(m => m.Leader, new { @class = "control-label col-md-3" })
+							<div class="col-md-9" id="leaderCombo">
+								@Html.Hidden("Leader")
+								<div class="bootstrap-tagsinput" id="leaderName">
+									<input type="text" class="typeahead" placeholder="" />
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(m => m.Sort, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(m => m.Sort, List, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(m => m.Note, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextAreaFor(m => m.Note, 5, 5 , new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-9 col-lg-offset-3">
+								<button type="submit" class="btn btn-primary"><i class="fa fa-check-circle"></i>保存</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+
+<script src="~/assets/js/Organize/edit.js" type="text/javascript"></script>

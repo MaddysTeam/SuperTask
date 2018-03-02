@@ -1,0 +1,136 @@
+﻿
+@{
+	var pageTitle = "考核对象";
+	Layout = "~/Views/Shared/_StudioLayout.cshtml";
+
+	var assessorRoleSelectList = SelectListHelper.GetSelectItems(ViewBag.AccessorRoles as List<Role>, "RoleName", "RoleId", null, null);
+}
+
+<div class="content-wrapper col-md-10">
+
+	<div class="main-header">
+	</div>
+	<div class="main-content">
+
+		<!-- widget -->
+		<div class="widget">
+			<div class="widget-header">
+				<h3><i class="fa fa-paperclip"></i> @pageTitle</h3>
+				<div class="btn-group widget-header-toolbar">
+					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+				</div>
+			</div>
+			<div class="widget-content">
+
+				<div class="row" style="margin-bottom:20px; margin-top:10px;">
+
+					<!-- 考核表执行角色筛选下拉框 -->
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<div class="FormGroup">
+								<label class="col-md-4 control-label">选择您的考评者角色</label>
+								<div class="col-md-8">
+									@Html.DropDownList("dpAccessorRoles", assessorRoleSelectList, new { @class = "form-control dp-accessorRoles" })
+								</div>
+								<input type="hidden" class="accessorRoleId" />
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<!-- Grid -->
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								<th data-column-id="MemberName">考核对象</th>
+								<th data-column-id="TargetRoleName">考核对象角色</th>
+								<th data-column-id="PeriodNames">当前考核周期</th>
+								<th data-column-id="AccessorName">考评者</th>
+								<th data-column-id="EvalStatus">考评状态</th>
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" data-header-Css-Class="width160">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+			<!-- /widget content -->
+		</div>
+		<!-- /widget -->
+
+	</div>
+</div>
+
+@section Scripts{
+	<script>
+		function getGlobalRequest() {
+			return {
+				roleId: $('.dp-accessorRoles').val()
+			};
+		}
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: window.location.href,
+
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+				formatters: {
+					'commands': function (column, row) {
+						var id = row.id;
+						var tableIds = row.TableIds;
+						var targetId = row.MemberId;
+						var isEvaled = row.IsEvaled;
+						var hasTable = row.HasTable;
+						var targetRoleId = row.TargetRoleId;
+						var evalbutton = '<div class="btn-group btn-group-xs pull-right"  data-role-id="' + targetRoleId + '" data-target-id="' + targetId + '" data-table-ids="' + tableIds + '" data-row-active="' + row.actived + '">' +
+							'<button class="btn btn-lg btn-success btn-eval">考核</button> ';
+						if (isEvaled)
+							return evalbutton +
+							'<button class="btn btn-lg btn-info btn-result">查看结果</button></div>';
+						else
+							return evalbutton + '</div>';
+					},
+				},
+			});
+		}
+
+		$(function () {
+
+			$('#bootgrid').bootgrid(getGridOptions()).on('loaded.rs.jquery.bootgrid', function () {
+				var evalUrl = '@Url.Action("SubjectEvalView", "EvalManage")';
+				$(this).find('.btn-eval').on('click', function (e) {
+					var tableIds = $(this).parent().data('tableIds');
+					var targetId = $(this).parent().data('targetId');
+					var accessorRoleId = $('.dp-accessorRoles').val();
+					var targetRoleId = $(this).parent().data('roleId');
+					location.href = evalUrl + '?targetId=' + targetId + '&accessorRoleId=' + accessorRoleId + '&tableIds=' + tableIds + '&targetRoleId=' + targetRoleId;
+				});
+
+				var evalResultUrl = '@Url.Action("SubjectEvalResult", "EvalManage")';
+				$(this).find('.btn-result').on('click', function (e) {
+					var tableIds = $(this).parent().data('tableIds');
+					var targetId = $(this).parent().data('targetId');
+					var accessorRoleId = $('.dp-accessorRoles').val();
+					var targetRoleId = $(this).parent().data('roleId');
+					location.href = evalResultUrl + '?targetId=' + targetId + '&accessorRoleId=' + accessorRoleId + '&tableIds=' + tableIds + '&targetRoleId=' + targetRoleId;
+				});
+
+			});
+
+			var door = false;
+			$('.dp-accessorRoles').change(function () {
+				if (door)
+					$('#bootgrid').bootgrid('reload');
+				else
+					door = true;
+			});
+
+			$('.dp-accessorRoles').change();
+
+		});
+	</script>
+
+}

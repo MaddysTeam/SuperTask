@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<reportDef name="Default_Employee_Report" showSummary="true" frameColumnId="Employee.Birthday" frameBegin="2000-01-01">
+	<refers>
+		<add columnId="Employee.EmployeeId" />
+		<add columnId="Employee.Department" />
+		<add columnId="Employee.Name" />
+		<add columnId="Employee.Gender" />
+		<add columnId="Employee.Birthday" />
+		<add columnId="Employee.Phoneoffice" />
+		<add columnId="Employee.Phonemobile" />
+		<add columnId="Employee.Email" />
+		<add columnId="Employee.Homeaddress" />
+	</refers>
+	<orders>
+		<add columnId="Employee.Name" according="Asc" />
+	</orders>
+	<groups>
+		<add columnId="Employee.Gender" according="Desc" dateGroupMode="Year" />
+	</groups>
+	<condition logic="" rpn="">
+		<add serial="A" columnId="Employee.Gender" comparator="Equals" values="Female" />
+	</condition>
+</reportDef>

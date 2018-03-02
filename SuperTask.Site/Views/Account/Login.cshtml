@@ -1,0 +1,56 @@
+﻿@model TheSite.Models.LoginViewModel
+@{
+	ViewBag.Title = "用户登录";
+	Layout = "~/Views/Shared/_anonymous.cshtml";
+}
+<div class="wrapper full-page-wrapper page-auth page-login text-center">
+	<div class="inner-page">
+		<div class="logo">
+				<h3>部门项目管理系统</h3>
+		</div>
+		<style>
+			.login-box{-webkit-box-shadow: 1px 1px 1px;-moz-box-shadow:1px 1px 1px;box-shadow:1px 1px 1px; border-radius:3%;background-color:#FBFBFF;}
+		</style>
+		<div class="login-box center-block">
+			<form class="form-horizontal" role="form"></form>
+			@using (Html.BeginForm(null, null, FormMethod.Post, new { role = "form", @class = "form-horizontal" }))
+			{
+				@Html.AntiForgeryToken()
+
+				<p class="title"><i class="fa fa-pencil"></i>   @ViewBag.Title</p>
+				<div class="form-group">
+					@Html.LabelFor(m => m.Username, new { @class = "control-label sr-only" })
+					<div class="col-md-12">
+						<div class="input-group">
+							@Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "登录名称" })
+							<span class="input-group-addon"><i class="fa fa-user"></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					@Html.LabelFor(m => m.Password, new { @class = "control-label sr-only" })
+					<div class="col-md-12">
+						<div class="input-group">
+							@Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "登录口令" })
+							<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+						</div>
+					</div>
+				</div>
+				@*<label class="fancy-checkbox">
+					<input id="RememberMe" name="RememberMe" type="checkbox" value="true" />
+					<span>记住我</span><input name="RememberMe" type="hidden" value="false" />
+				</label>*@
+				<button class="btn btn-custom-secondary btn-lg btn-block btn-login" type="submit">登录<i class="fa fa-sign-in fa-lg"></i></button>
+				@Html.ValidationSummary()
+			}
+
+			@*TODO:暂不提供注册功能
+			<div class="links">
+				<p>
+					还没有账号?<a href="@Url.Action("Register","Account")"><font color="red">注册</font></a>
+				</p>
+			</div>*@
+		</div>
+	</div>
+	<div class="push-sticky-footer"></div>
+</div>

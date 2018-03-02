@@ -1,0 +1,99 @@
+﻿@model Project
+
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑项目</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("Edit", "Project")" role="form" data-after-success="afterDialogSuccess()">
+				@Html.AntiForgeryToken()
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(p => p.ProjectId)
+					   @Html.HiddenFor(p => p.PMId)
+						@Html.HiddenFor(p => p.ManagerId)
+						@Html.HiddenFor(p => p.ReviewerId)
+						<div class="form-group">
+							@Html.LabelFor(p => p.ProjectName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextBoxFor(p => p.ProjectName, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(p => p.ProjectOwner, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextBoxFor(p => p.ProjectOwner, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(p => p.ProjectExecutor, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextBoxFor(p => p.ProjectExecutor, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(p => p.OrgId, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(p=> p.OrgId,
+									DictionaryCache.Cached(OrgKeys.OrgKey)
+														.GetSelectListById(Guid.Empty),
+									new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(p => p.ProjectType, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@*@Html.HiddenFor(p => p.ProjectType)*@
+								@Html.DropDownListFor(p => p.ProjectType,
+									DictionaryCache.Cached(ProjectKeys.ProjectTypeKeyGuid)
+														.GetSelectListById(Guid.Empty),
+									new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(p => p.Description, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">	
+								@Html.TextAreaFor(p => p.Description, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-9 col-lg-offset-3">
+								<button type="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('.modal-dialog form'));
+
+		$('.dropdown-header').searchableSelect({
+			afterSelectItem: function (v) {
+				$('#PMId').val(v);
+			}
+		});
+
+	})
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+</script>

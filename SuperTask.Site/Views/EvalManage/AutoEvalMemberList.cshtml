@@ -1,0 +1,114 @@
+﻿
+@{
+	var pageTitle = "量考对象";
+	Layout = "~/Views/Shared/_StudioLayout.cshtml";
+
+	//var periodId = Request["periodId"];
+	//var assessorRoleSelectList = SelectListHelper.GetSelectItems(ViewBag.AccessorRoles as List<Role>, "RoleName", "RoleId", null, null);
+}
+
+<div class="content-wrapper col-md-10">
+
+	<div class="main-header">
+	</div>
+	<div class="main-content">
+
+		<!-- widget -->
+		<div class="widget">
+			<div class="widget-header">
+				<h3><i class="fa fa-paperclip"></i> @pageTitle</h3>
+				<div class="btn-group widget-header-toolbar">
+					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+				</div>
+			</div>
+			<div class="widget-content">
+
+				<div class="row" style="margin-bottom:20px; margin-top:10px;">
+
+				</div>
+
+				<!-- Grid -->
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								<th data-column-id="MemberName">考核对象</th>
+								<th data-column-id="TargetRoleName">考核对象角色</th>
+								<th data-column-id="PeriodNames">当前考核周期</th>
+								<th data-column-id="AccessorName">考评者</th>
+								<th data-column-id="EvalStatus">考评状态</th>
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" data-header-Css-Class="width160">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+			<!-- /widget content -->
+		</div>
+		<!-- /widget -->
+
+	</div>
+	@*<input type="hidden" id="periodId" value="@periodId"/>*@
+</div>
+
+@section Scripts{
+<script>
+	function getGlobalRequest() {
+		return {
+			periodId: $('#periodId').val(),
+		};
+	}
+
+	function getGridOptions() {
+		return $.extend(true, {}, gridOptions, {
+
+			url: window.location.href,
+
+			requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+			formatters: {
+				'commands': function (column, row) {
+					var id = row.id;
+					var tableIds = row.TableIds;
+					var targetId = row.MemberId;
+					var isEvaled = row.IsEvaled;
+					var targetRoleId = row.TargetRoleId;
+					if (isEvaled)
+						return '<div class="btn-group btn-group-xs pull-right" data-role-id="' + targetRoleId + '" data-target-id="' + targetId + '" data-table-ids="' + tableIds + '" data-row-active="' + row.actived + '">' +
+						'<button class="btn btn-lg btn-success btn-eval">考核</button> ' +
+						'<button class="btn btn-lg btn-info btn-result">查看结果</button></div>';
+					else
+						return '<div class="btn-group btn-group-xs pull-right" data-role-id="' + targetRoleId + '" data-target-id="' + targetId + '" data-table-ids="' + tableIds + '" data-row-active="' + row.actived + '">' +
+					   '<button class="btn btn-lg btn-success btn-eval">考核</button> ';
+				},
+			},
+		});
+	}
+
+	$(function () {
+
+		$('#bootgrid').bootgrid(getGridOptions()).on('loaded.rs.jquery.bootgrid', function () {
+			$(this).find('.btn-eval').on('click', function (e) {
+				var tableIds = $(this).parent().data('tableIds');
+				var targetId = $(this).parent().data('targetId');
+				var targetRoleId = $(this).parent().data('roleId');
+				$.post('@Url.Action("AutoEval", "EvalManage")', { targetId: targetId, tableIds: tableIds, targetRoleId:targetRoleId }, function (data) {
+					popupMessage(data, {
+						success: function () { $('#bootgrid').bootgrid('reload'); }
+					});
+				});
+			});
+
+			$(this).find('.btn-result').on('click', function (e) {
+				var tableIds = $(this).parent().data('tableIds');
+				var targetId = $(this).parent().data('targetId');
+				var manUrl = '@Url.Action("AutoEvalResult", "EvalManage")';
+				var targetRoleId = $(this).parent().data('roleId');
+				location.href = manUrl + '?targetId=' + targetId + '&tableIds=' + tableIds + '&targetRoleId=' + targetRoleId;
+			});
+		});
+
+	});
+</script>
+	
+}

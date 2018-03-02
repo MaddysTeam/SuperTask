@@ -1,0 +1,30 @@
+﻿<!-- logged user and the menu -->
+<div class="logged-user">
+	<div class="btn-group">
+		<a href="#" class="btn btn-link dropdown-toggle" data-toggle="dropdown" style="font-weight:lighter">
+			<i class="fa fa-user"></i>@Html.GetUserProfile().UserName
+			<span class="name">
+			</span>
+			<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu dropdown-menu-right" role="menu">
+			<li>
+				<a href="@Url.Action("ChgPwd", "Account")">
+					<i class="fa fa-lock"></i>
+					<span class="text">修改密码</span>
+				</a>
+			</li>
+			<li>
+			@using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+			{
+				@Html.AntiForgeryToken()
+				<a href="javascript:document.getElementById('logoutForm').submit()" class="link-dark">
+					<i class="fa fa-sign-out"></i>
+					<span class="text">注销</span>
+				</a>
+			}
+			</li>
+		</ul>
+	</div>
+</div>
+<!-- /logged user and the menu -->

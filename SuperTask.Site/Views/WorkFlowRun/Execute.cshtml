@@ -1,0 +1,29 @@
+﻿@*@model Business.Roadflow.FlowRunningResult
+@{ 
+	var result = Model.TaskResult;
+	var userId =this.get
+
+
+   @if (result.IsSuccess)
+	{
+		//判断是打开任务还是关闭窗口
+		var nextTasks = result.NextTasks.Where(p => p.Status.In(0, 1) && p.ReceiveID == userId);
+		var nextTask = nextTasks.Count() > 0 ? nextTasks.First() : null;
+		if (nextTask != null)
+		{
+			string url = string.Format(Url.Content("~/WorkFlowRun/Index?flowid={0}&stepid={1}&taskid={2}&groupid={3}&instanceid={4}&appid={5}&tabid={6}"),
+				 nextTask.FlowID, nextTask.StepID, nextTask.ID, nextTask.GroupID, nextTask.InstanceID,
+				 Request.QueryString["appid"], Request.QueryString["tabid"]
+				 );
+            <script type="text/javascript">
+                window.parent.location = '@Html.Raw(url)';
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript">
+                top.mainTab.closeTab();
+            </script>
+        }
+    }
+}*@

@@ -1,0 +1,79 @@
+﻿@model List<UserRoleViewModel>
+@{ 
+	var userId = Request["userId"];
+	var roleIds = ViewBag.roleIds as string;
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑用户角色</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+			@foreach (var item in Model)
+			{
+				<div class="row">
+					<fieldset class="col-sm-12">
+
+						<div class="form-group">
+							<div class="col-md-2">
+								<input name="role" class="form-control cb_role" value="@item.RoleId" type="checkbox" id="a" @(Html.Raw(item.IsChecked? "checked=\"checked\"" : ""))>
+							</div>
+							<div class="col-md-10">
+								<span class="form-control">
+									@item.RoleName
+								</span>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			}
+			<div class="form-group">
+				<div class="col-sm-9 col-lg-offset-3">
+					<button type="button" class="btn btn-primary btn-block-half btn-save"><i class="fa fa-check-circle"></i> 保存</button>
+					<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- end widget -->
+	<input type="hidden" id="roleValues" value="@roleIds" />
+</div>
+
+<script>
+
+	$(function () {
+
+		var userId = '@userId';
+		var $roleValues = $('#roleValues');
+		var $checkbox = $('.cb_role');
+
+		// 选择角色的字符串用逗号分开
+		var tempStr = '';
+
+		getValuesByCheckboxList($checkbox, function (str) {
+			$roleValues.val(str);
+		})
+
+		$('.btn-save').on('click', function () {
+			$.post('@Url.Action("UserRoleEdit", "Role")', { userId: userId, roleIds: $roleValues.val() }, function (data) {
+				popupMessage(data, {
+					success: function () { commitedNotice(); }
+				});
+			});
+
+		});
+
+		function commitedNotice() {
+			$('#firstModal').modal('hide');
+			$('#bootgrid').bootgrid('reload');
+		}
+
+	})
+
+</script>

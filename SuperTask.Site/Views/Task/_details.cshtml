@@ -1,0 +1,576 @@
+﻿@model WorkTask
+@{
+	var resources = ViewBag.Resource as List<Account>;
+	var attachments = ViewBag.Attachments as List<Attachment>;
+	var resourceSelectList = SelectListHelper.GetSelectItems(resources, "UserName", "UserId");
+	var standardItemSelectList = SelectListHelper.GetSelectItems(ViewBag.StandardItems as List<TaskStandardItem>, "ItemName", "ItemId");
+
+	//	TaskHelper.GetSubTaskTypesFromCache(Model.TaskType).Select(x => new SelectListItem { Text = x.Title, Value = x.ID.ToString() });
+}
+
+<div class="widget details">
+
+	<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
+	<form class="form-horizontal" action="@Url.Action("Edit","Task")" role="form" data-after-success="afterDialogSuccess()">
+
+		<div class="widget-header">
+			<h3><i class="fa fa-desktop"></i>任务明细</h3>
+			<div class="btn-group widget-header-toolbar">
+				<button type="submit" class="btn btn-sm btn-success  btn-taskStart"><i class="fa fa-pencil"></i>启动</button>
+				<button type="submit" class="btn btn-sm btn-danger btn-taskSave"><i class="fa fa-pencil"></i>保存</button>
+				<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+			</div>
+		</div>
+
+		<div class="widget-content">
+
+			<div class="row editTaskInfo">
+				<fieldset class="col-sm-6">
+					@Html.HiddenFor(t => t.Projectid)
+					@Html.HiddenFor(t => t.TaskStatus)
+					@Html.HiddenFor(t => t.TaskLevel)
+					@Html.HiddenFor(t => t.SortId)
+					@Html.HiddenFor(t => t.TaskId)
+					@Html.HiddenFor(t => t.ParentId)
+					@Html.HiddenFor(t => t.IsParent)
+					@Html.HiddenFor(x => x.EditType)
+					@Html.HiddenFor(x => x.SubTypeValue)
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.TextBoxFor(t => t.TaskName, new { @class = "form-control" })
+							@Html.ValidationMessageFor(t => t.TaskName)
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(t => t.TaskType, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.DropDownListFor(t => t.TaskType,
+							DictionaryCache.Cached(TaskKeys.TypeGuid)
+							.GetSelectListById(Model.TaskType),
+							new { @class = "form-control dropdown-taskType" })
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(t => t.SubType, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.DropDownListFor(t => t.SubTypeId,
+							new List<SelectListItem>(),
+							new { @class = "form-control dropdown-subType" })
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.DropDownListFor(t => t.ManagerId,
+							resourceSelectList,
+							new { @class = "form-control dropdown-manager" })
+						</div>
+					</div>
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.Reviewer, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.DropDownListFor(t => t.ReviewerID,
+							resourceSelectList,
+							new { @class = "form-control dropdown-reviewer" })
+						</div>
+					</div>
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.Description, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.TextAreaFor(t => t.Description, new { @class = "form-control", @rows = "5" })
+						</div>
+					</div>
+
+
+				</fieldset>
+				<fieldset class="col-sm-6">
+
+					<div class="form-group">
+						@Html.HiddenFor(t => t.CreatorId)
+						@Html.LabelFor(t => t.Creator, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<span class="form-control details-text" style="background-color:#eee;">@Model.Creator</span>
+						</div>
+					</div>
+					<div class="form-group hidden">
+						@Html.LabelFor(t => t.StandardItemId, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.DropDownListFor(t => t.StandardItemId,
+							standardItemSelectList,
+							new { @class = "form-control" })
+						</div>
+					</div>
+					<div class="form-group projectsDropdown">
+						@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@if (Model.Projectid.IsEmpty())
+							{
+							@Html.DropDownListFor(t => t.Projectid,
+							SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+							new { @class = "form-control dropdown-project" })
+							}
+							else
+							{
+							<span class="form-control details-text" style="background-color:#eee;">@Model.ProjectName</span>
+							}
+						</div>
+
+					</div>
+
+					<div class="form-group myTasksDropdown">
+						@Html.LabelFor(t => t.ParentTaskName, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@if (Model.ParentId.IsEmpty()) //新任务父节点为空
+							{
+							<select id="myTasks" class="form-control dropdown-myTasks"></select>
+							}
+							else //否则暂时不让改
+							{
+							<span class="form-control" style="background-color:#eee;">@Model.ParentTaskName</span>
+							}
+						</div>
+					</div>
+
+
+					<div class="form-group">
+						@Html.HiddenFor(t => t.TaskStatus)
+						@Html.LabelFor(t => t.Status, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<span class="form-control details-text" style="background-color:#eee;">@Model.Status</span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.TaskFileType, new { @class = "control-label col-md-3 " })
+						<div class="col-md-9">
+							@Html.DropDownListFor(t => t.TaskFileType,
+							DictionaryCache.Cached(TaskKeys.FileTypeGuid)
+							.GetSelectListById(Model.TaskFileType, new SelectListItem { Text = "默认", Value = Guid.Empty.ToString() }),
+							new { @class = "form-control dropdown-taskFileType" })
+						</div>
+					</div>
+
+				</fieldset>
+			</div>
+
+			<div class="row fileUpload">
+				<fieldset class="col-sm-6">
+
+					<div class="form-group">
+						@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileName" })
+						@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePath" })
+						<label class="col-md-3 control-label">上传文件</label>
+						<div class="col-md-9">
+							<input style="visibility:hidden;position:absolute;" />
+							<div class="input-group">
+								<label id="uploadName" class="form-control oversize uploadName"></label>
+								<span class="input-group-btn">
+									<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
+								</span>
+							</div>
+						</div>
+					</div>
+
+				</fieldset>
+			</div>
+
+			<div class="subTaskValueArea">
+				<div class="alert alert-info ">
+					<div class="row">
+						<div class="col-md-4">填写工作数量</div>
+						<div class="col-md-8 text-right">
+						</div>
+					</div>
+
+				</div>
+
+				<div class="row">
+					<fieldset class="col-sm-6">
+
+						<div class="form-group">
+							@Html.Label($"{Model.SubTaskTypeName}", new { @class = "control-label col-md-3 lb-subTypeTitle" })
+							<div class="col-md-9">
+								<div class="form-group">
+									<span class="form-control sp_subTypeValue" style="background-color:#eee;">@Model.SubTypeValue</span>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+
+					<fieldset class="col-sm-6">
+
+						<div class="form-group">
+							@Html.LabelFor(x=>x.SubTaskScore, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								<div class="form-group">
+									<span class="form-control" style="background-color:#eee;">@Model.SubTaskScore</span>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+
+			<div class="alert alert-success taskEstimate">
+				<div class="row">
+					<div class="col-md-4">任务预估 </div>
+					<div class="col-md-8 text-right">
+						@if (!Model.IsParent && Model.IsProcessStatus)
+						{
+						<a class="btn btn-sm btn-warning btn-taskModify" href="@Url.Action("ReviewRequest", "Task", new { id = Model.TaskId, reviewType = ReviewKeys.ReviewTypeForTkChanged })"><i class="fa fa-refresh"></i>修改申请</a>
+						}
+						else
+						{
+						<button class="btn btn-sm btn-warning btn-taskModify" disabled><i class="fa fa-refresh"></i>修改申请</button>
+						}
+					</div>
+				</div>
+
+			</div>
+
+			<div class="row taskEstimateInfo" style="display:none">
+				<fieldset class="col-sm-6">
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<div class="form-group">
+								<span class="form-control" style="background-color:#eee;">@Model.StartDate.ToString("yyyy-MM-dd")</span>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<div class="form-group">
+								<span class="form-control" style="background-color:#eee;">@Model.EstimateWorkHours</span>
+							</div>
+						</div>
+					</div>
+
+				</fieldset>
+
+				<fieldset class="col-sm-6">
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.EndDate, new { @class = "control-label col-md-3 " })
+						<div class="col-md-9">
+							<div class="form-group">
+								<span class="form-control" style="background-color:#eee;">@Model.EndDate.ToString("yyyy-MM-dd")</span>
+							</div>
+						</div>
+					</div>
+
+				</fieldset>
+			</div>
+
+			<div class="row taskEstimateEdit">
+				<fieldset class="col-sm-6">
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+								@Html.TextBoxFor(t => t.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control startDate", @hasValue = Model.StartDate != DateTime.MinValue })
+								<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
+							@Html.ValidationMessageFor(t => t.EstimateWorkHours)
+						</div>
+					</div>
+
+				</fieldset>
+
+				<fieldset class="col-sm-6">
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.EndDate, new { @class = "control-label col-md-3 " })
+						<div class="col-md-9">
+							<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+								@Html.TextBoxFor(t => t.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate", @hasValue = Model.StartDate != DateTime.MinValue })
+								<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+							</div>
+						</div>
+					</div>
+
+				</fieldset>
+			</div>
+
+			<div class="alert alert-success taskProcess">
+				<div class="row">
+					<div class="col-md-4">任务进度</div>
+				</div>
+			</div>
+
+			<div class="row taskProcess">
+				<fieldset class="col-sm-6">
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.RateOfProgress, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<span class="form-control details-text" style="background-color:#eee;">@Model.RateOfProgress %</span>
+							@Html.HiddenFor(t => t.RateOfProgress, new { @class = "form-control" })
+						</div>
+					</div>
+
+					@if (Model.TaskType == TaskKeys.MaintainedTaskType)
+					{
+					<div class="form-group">
+						@Html.LabelFor(t => t.ServiceCount, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<span class="form-control details-text" style="background-color:#eee;">@Model.ServiceCount</span>
+							@Html.HiddenFor(t => t.ServiceCount, new { @class = "form-control" })
+						</div>
+					</div>
+					}
+
+				</fieldset>
+				<fieldset class="col-sm-6">
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.WorkHours, new { @class = "control-label col-md-3 " })
+						<div class="col-md-9">
+							<span class="form-control details-text" style="background-color:#eee;">@Model.WorkHours</span>
+							@Html.HiddenFor(t => t.WorkHours, new { @class = "form-control" })
+						</div>
+					</div>
+
+				</fieldset>
+			</div>
+
+			<div class="alert taskProcess">
+				<div class="row">
+					<div class="col-md-12 text-right">
+						@if (!Model.IsParent && !Model.IsReviewStatus)
+						{
+						<a class="btn btn-primary btn-taskSubmit" href="@Url.Action("ReviewRequest", "Task", new { id = Model.TaskId, reviewType = ReviewKeys.ReviewTypeForTkSubmit })"><i class="fa fa-star"></i>提交任务</a>
+						}
+						else
+						{
+						<button class="btn btn-primary btn-taskSubmit" disabled>提交任务</button>
+						}
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+	</form>
+
+</div>
+
+<div class="widget attachments">
+
+	<div class="widget-header">
+		<h3><i class="fa fa-paperclip"></i>任务附件   (*包含当前任务日志中的附件)</h3>
+	</div>
+
+	<div class="widget-content">
+
+		@if (attachments == null || attachments.Count <= 0)
+		{
+		<div class="alert alert-success taskEstimate">
+			<div class="row">
+
+				<div class="col-md-4">暂无附件</div>
+			</div>
+		</div>
+		}
+		else
+		{
+		foreach (var att in attachments)
+		{
+		<a href="@att.Url"><h4>@att.RealName</h4></a>
+		<p></p>
+		}
+		}
+
+
+	</div>
+
+</div>
+<script>
+
+	function whenPlan() {
+		$('.taskEstimateInfo,.taskProcess').hide();
+		$('.taskEstimateEdit,.btn-taskStart,.fileUpload').show();
+		var startDate = $('.startDate'),
+			endDate = $('.endDate'),
+			hasStartDate = startDate.attr('hasValue') == 'True',
+			hasEndDate = startDate.attr('hasValue') == 'True';
+		if (!hasStartDate)
+			startDate.val(new Date().Format('yyyy-MM-dd'));
+		if (!hasEndDate)
+			endDate.val(new Date().Format('yyyy-MM-dd'));
+	}
+
+	function whenProcess() {
+		$('.taskEstimateEdit,.btn-taskStart').hide();
+		$('.taskEstimateInfo,.btn-taskSubmit,.taskProcess').show();
+	}
+
+	function whenComplete() {
+		$('.taskEstimateEdit,.btn-taskModify,.btn-taskSubmit,.btn-taskStart,.btn-taskSave,.fileUpload').hide();
+		$('.taskEstimateInfo').show();
+	}
+
+	function whenTempEdit() {
+		$('.taskEstimateEdit').show();
+		$('.taskEstimateInfo,.btn-taskModify,.btn-taskStart,.btn-taskSubmit').hide();
+	}
+
+	function bindTaskSubTypeDropDown(taskTypeId) {
+		var $dp = $('.dropdown-subType');
+		var currentSubType = '@Model.SubTypeId';
+		var door = true && currentSubType != '@Guid.Empty'; //如果第一次加载，读取Model.SubTypeId,否则视为重新选
+		bindDropDownByAjax($dp, '@Url.Action("GetSubTaskTypes", "Task")', { taskTypeId: taskTypeId }, function (v, o) {
+			v = door ? currentSubType : v;
+			door = false;
+			$dp.val(v);
+			// 绑定子类型下拉框和相应逻辑
+			var subTypes = o.data;
+			$(subTypes).each(function () {
+				if (v == this.Value) {
+					$('.lb-subTypeTitle').text(this.Text);
+					$('.lb-unitName').text(this.UnitName);
+					currentSubType = v;
+					return false;
+				}
+			});
+		});
+	}
+
+	function notAllowedEditIfNotSelf() {
+		if ($('#ManagerId').val() != '@Html.GetUserProfile().UserId') {
+			$('.widget-content,.widget-header').find('button').attr('disabled', 'disabled');
+		}
+	}
+
+	function afterDialogSuccess() {
+		var taskId = $('#TaskId').val();
+		var url = '@Url.Action("Details", "Task")' + '?taskId=' + taskId;
+		loadDetail(url);
+	}
+
+	function isTempTask(typeId) {
+		return typeId == '@TaskKeys.TempTaskType' ||
+				typeId == '@TaskKeys.ManageTaskType';
+	}
+
+	function hasSubTaskType(typeId) {
+		return typeId != '@TaskKeys.ProjectTaskType' &&
+			    typeId != '@TaskKeys.TempTaskType' &&
+		       typeId != '@TaskKeys.PlanTaskTaskType';
+	}
+
+	$(function () {
+
+		var isPlanStatus = '@Model.IsPlanStatus' == 'True';
+		var isProcessStatus = '@Model.IsProcessStatus' == 'True';
+		var isCompleteStatus = '@Model.IsCompleteStatus' == 'True';
+		var isTempEditStatus = '@Model.IsTempEditStatus' == 'True';
+		var isDelStatus = '@Model.IsDelteStatus' == 'True';
+		var isReviewStatus = '@Model.IsReviewStatus' == 'True';
+
+		//任务负责人非本人无法进行编辑
+		notAllowedEditIfNotSelf();
+
+		ajaxSubmitForm($('form'));
+
+		$('.dropdown-taskType').searchableSelect({
+			afterSelectItem: function (v) {
+				var typeId = v;
+				if (isTempTask(typeId)) {
+					$('.projectsDropdown,.myTasksDropdown').hide();
+				}
+				else {
+					$('.projectsDropdown,.myTasksDropdown').show();
+				}
+				if (!hasSubTaskType(typeId) || isPlanStatus) {
+					$('.subTaskValueArea').hide();
+				}
+				else
+					$('.subTaskValueArea').show();
+
+				bindTaskSubTypeDropDown(v)
+			}
+		});
+
+		$('.dropdown-manager,.dropdown-reviewer,.dropdown-taskFileType').searchableSelect();
+
+		if (isPlanStatus) {
+			whenPlan();
+		}
+		else if (isCompleteStatus || isDelStatus) {
+			whenComplete();
+		}
+		else if (isProcessStatus || isReviewStatus) {
+			whenProcess();
+		}
+		else if (isTempEditStatus) {
+			whenTempEdit();
+		}
+
+		$('.btn-taskStart').on('click', function () {
+			if (confirm('@Confirm.Task.TASK_CONFIRM_START')) {
+				$('#TaskStatus').val('@TaskKeys.ProcessStatus');
+				$('#EditType').val('@TaskKeys.TaskEditStartType');
+			}
+			else
+				return false;
+		});
+
+		$('.btn-taskSave').on('click', function () {
+			var type;
+			if (isPlanStatus)
+				type = '@TaskKeys.TaskEditPlanType';
+			else if (isProcessStatus || isTempEditStatus)
+				type = '@TaskKeys.TaskEditStartType';
+
+			$('#TaskStatus').val('@Model.TaskStatus');
+			$('#EditType').val(type);
+		});
+
+		$('.btn-taskModify,.btn-taskSubmit').on('click', function () {
+			var isInReview = '@Model.IsReviewStatus' == "True";
+			if (isInReview) {
+				popupMessage({ msg: '@Errors.Task.TASK_IN_REVIEW', result: 'error' });
+				return false;
+			}
+		});
+
+
+		//文件上传
+		$('.dropzone.file').dropzone({
+			addedContainer: '#flyArea',
+			dictResponseError: '上传出错',
+			uploadMultiple: false,
+			maxFilesize: 200,
+			init: function () {
+				this.on('success', function (file, data) {
+					$('.fileName').val(data.filename);
+					$('.filePath').val(data.url);
+					setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
+				});
+				this.on('error', function (file, message) {
+					popupMessage({ result: 'error', msg: message });
+				});
+			}
+		});
+
+		$('#btn-upload').on('click', function () {
+			$('.dropzone').trigger('click');
+		});
+
+	});
+</script>

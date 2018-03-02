@@ -1,0 +1,94 @@
+﻿@model EvalPeriod
+<div class="modal-dialog modal-lg">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑考评周期管理</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("Edit", "EvalPeriod")" role="form" data-after-success="afterDialogSuccess()">
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(m => m.PeriodId)
+						<div class="form-group">
+							@Html.LabelFor(m => m.Name, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(m => m.BeginDate, new { @class = "col-md-3 control-label" })
+							<div class="col-md-9">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(m => m.BeginDate, "{0:yyyy-MM-dd}", new { @class = "form-control" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(m => m.EndDate, new { @class = "col-md-3 control-label" })
+							<div class="col-md-9">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(m => m.AccessBeginDate, new { @class = "col-md-3 control-label" })
+							<div class="col-md-9">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(m => m.AccessBeginDate, "{0:yyyy-MM-dd}", new { @class = "form-control" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(m => m.AccessEndDate, new { @class = "col-md-3 control-label" })
+							<div class="col-md-9">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(m => m.AccessEndDate, "{0:yyyy-MM-dd}", new { @class = "form-control" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(m => m.AnalysisName, new { @class = "col-md-3 control-label" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(m => m.AnalysisType, new SelectList(EvalManager.Engines.Values, dataValueField: "AnalysisKey", dataTextField: "AnalysisName"), new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-9 col-lg-offset-3">
+								<button type="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('.modal-dialog form'));
+
+	})
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		history.go(0);
+	}
+
+</script>

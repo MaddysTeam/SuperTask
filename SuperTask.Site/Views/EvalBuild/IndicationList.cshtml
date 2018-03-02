@@ -1,0 +1,106 @@
+﻿
+@{
+	Layout = "~/Views/Shared/_StudioLayout.cshtml";
+	var pageTitle = ViewBag.Title = "指标管理";
+}
+<div class="col-md-10 content-wrapper">
+	<div class="main-header">
+		<h4><i class="fa fa-users"></i> @pageTitle</h4>
+	</div>
+
+	<div class="main-content">
+
+		<!-- widget -->
+		<div class="widget">
+			<div class="widget-header">
+				<h3>指标管理</h3>
+				<div class="btn-group widget-header-toolbar">
+						<button class="btn btn-sm btn-custom-primary" data-toggle="ajax-modal" data-url="@Url.Action("IndicationEdit", "EvalBuild",new { id=Guid.Empty})" data-target="#firstModal"><i class="fa fa-plus-square"></i> <span>新增指标</span></button>
+				</div>
+			</div>
+			<div class="widget-content">
+
+				<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+					<thead>
+						<tr>
+							<th data-column-id="name">指标名称</th>
+							<th data-column-id="descripiton">指标描述</th>
+							<th data-column-id="typeName">指标类型</th>
+							<th data-column-id="statusName">指标状态</th>
+							<th data-column-id="creator">创建者</th>
+							<th data-column-id="commands" data-formatter="commands" data-sortable="false" data-header-Css-Class="width160">操作</th>
+						</tr>
+					</thead>
+				</table>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+
+@section Scripts{
+ <script>
+ 	function getGridOptions() {
+ 		return $.extend(true, {}, gridOptions, {
+
+ 			url: window.location.href,
+
+ 			formatters: {
+ 				'commands': function (column, row) {
+ 					var id = row.id;
+ 					if (row.isUsed) {
+ 						return '<div class="btn-group btn-group-xs pull-right" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
+												 '<button class="btn btn-success btn-edit" disabled>编辑</button>' +
+												 '<button class="btn btn-danger btn-forbidden" disabled>' + row.statusName + '</button>'
+ 						'</div>';
+ 					}
+					else
+ 						return '<div class="btn-group btn-group-xs pull-right" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
+												 '<button class="btn btn-success btn-edit">编辑</button>' +
+												 '<button class="btn btn-danger btn-status">' + row.statusName + '</button>'
+ 						'</div>';
+ 				},
+ 			},
+ 		});
+ 	}
+
+ 	$(function () {
+
+ 		var grid = $('#bootgrid');
+
+ 		grid.bootgrid(getGridOptions()).on('loaded.rs.jquery.bootgrid', function () {
+ 			grid.find('.btn-edit').on('click', function (e) {
+ 				var id = $(this).parent().data('rowId');
+ 				$('#modelProxy')
+					.data('url', '/EvalBuild/IndicationEdit/' + id)
+					.trigger('click');
+ 			});
+
+ 			grid.find('.btn-status').on('click', function (e) {
+ 				if (confirm("确定需要修改指标状态？")) {
+ 					var id = $(this).parent().data('rowId');
+ 					var url = '@Url.Action("IndicationStatusChange", "EvalBuild")';
+ 					$.post(url, { id: id }, function (data) {
+ 						popupMessage(data, {
+ 							success: function () {
+ 								$('#bootgrid').bootgrid('reload');
+ 							}
+ 						});
+ 					});
+ 				}
+ 				else
+ 					return false;
+ 			});
+ 		});
+
+ 	})
+ </script>
+}
