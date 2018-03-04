@@ -71,9 +71,18 @@ namespace Business.Helper
 
       public static Guid ManageTaskType = Guid.Parse("DF3ABC1D-A33C-3C68-8ACF-C2E5D6C9DC9C");
 
+      public static Guid DesignTaskType = Guid.Parse("2e01bb7f-19ce-4e07-96a2-76575d5a1d2b");
+
+      public static Guid DevelopTaskType = Guid.Parse("68cd7291-bb5a-4024-848a-66eb79c64dc8");
+
+      public static Guid TestTaskType = Guid.Parse("28c7ec86-a1e7-41d1-b9af-38fea64017d7");
+
+      public static Guid DeployTaskType = Guid.Parse("52e91879-ed8b-4fbc-a7a8-9be809cda7fe");
+
+      public static Guid OfficeTaskType = Guid.Parse("03aadd19-1697-4ad1-a77c-cc1ed95a28a9");
+
       public static Guid DefaultType => Guid.Parse("77AAD589-E95B-839E-C1F5-55027AE3BC14");
 
-      public static Guid DefaultSubType => Guid.Parse("459BB5D3-1651-456C-8BAB-CEDE169EABBB");
 
 
       public static Guid TaskEditPlanType => Guid.Parse("ABA6D06D-15E8-4A33-9C02-805675D631FF"); //TODO Add in dic

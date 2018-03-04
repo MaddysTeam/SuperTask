@@ -223,34 +223,49 @@ namespace TheSite.Controllers
          var maintanceTaskTypeId = TaskKeys.MaintainedTaskType;
          var manageTaskTypeId = TaskKeys.ManageTaskType;
          var planTaskTypeId = TaskKeys.PlanTaskTaskType;
+         var designTaskTypeId = TaskKeys.DesignFileType;
+         var developTaskTypeId = TaskKeys.DevelopTaskType;
+         var testTaskTypeId = TaskKeys.TestTaskType;
+         var deployTaskTypeId = TaskKeys.DeployTaskType;
+         var officeTaskTypeId = TaskKeys.OfficeTaskType;
 
          //任务大类
          var projectTaskType = new Dictionary(projectTaskTypeId, taskTypeId, "项目任务", null, "1", null, null, 3);
          var planTaskType = new Dictionary(planTaskTypeId, taskTypeId, "计划任务", null, "1", null, null, 3);
          var tempTaskType = new Dictionary(tempTaskTypeId, taskTypeId, "临时任务", null, "2", null, null, 3);
-         var maintanceTaskType = new Dictionary(maintanceTaskTypeId, taskTypeId, "运维任务", null, "3", null, null, 3);
-         var documentTaskType = new Dictionary(documentTaskTypeId, taskTypeId, "文档任务", null, "4", null, null, 3);
-         var manageTaskType = new Dictionary(manageTaskTypeId, taskTypeId, "管理任务", null, "5", null, null, 3);
+         var maintanceTaskType = new Dictionary(maintanceTaskTypeId, taskTypeId, "运维类任务", null, "3", null, null, 3);
+         var documentTaskType = new Dictionary(documentTaskTypeId, taskTypeId, "文档类任务", null, "4", null, null, 3);
+         var manageTaskType = new Dictionary(manageTaskTypeId, taskTypeId, "管理类任务", null, "5", null, null, 3);
+         var designTaskType = new Dictionary(designTaskTypeId, taskTypeId, "设计类任务", null, "6", null, null, 3);
+         var developTaskType = new Dictionary(developTaskTypeId, taskTypeId, "开发类任务", null, "7", null, null, 3);
+         var testTaskType = new Dictionary(testTaskTypeId, taskTypeId, "测试类任务", null, "8", null, null, 3);
+         var deployTaskType = new Dictionary(deployTaskTypeId, taskTypeId, "部署类任务", null, "9", null, null, 3);
+         var officeTaskType = new Dictionary(officeTaskTypeId, taskTypeId, "内勤类任务", null, "10", null, null, 3);
 
          //任务子类型默认
          var defaultSubTypeId = Guid.NewGuid();
          var dst = new Dictionary(defaultSubTypeId, defaultSubTypeId, "默认", null, null, null, null, 1);
 
          //文档任务子类型
-         var st = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "PPT制作（创新）", "0.3", "3", "0.3 '/页", "页", 4);
-         var st2 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "PPT制作（借鉴）", "0.05", "4", "0.05 '/页", "页", 4);
-         var st3 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "PPT审阅", "0.063", "5", "0.063 '/页", "页", 4);
+         var st = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "PPT制作（创新）", "0.3", "W01", "0.3'/页", "页", 4);
+         var st2 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "PPT制作（借鉴）", "0.05", "W02", "0.05'/页", "页", 4);
+         var st3 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "PPT审阅", "0.063", "W03", "0.063 '/页", "页", 4);
+         var st4 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "资料编制（创新）", "5", "W04", "5 '/篇", "篇", 4);
+         var st5 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "资料整理（收集）", "0.25", "W05", "0.25'/页", "页", 4);
+         var st6 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "资料整理（规范）", "0.119", "W06", "0.119/页", "页", 4);
 
-         //运维任务子类型
-         var st4 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "日常巡检", "1", "6", "1 '/次", "次", 4);
-         var st5 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "技术支持（远程）", "2", "7", "2 '/次", "次", 4);
-         var st6 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "技术支持（上门）", "10", "8", "10 '/次", "次", 4);
-         var st10 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "原运维任务", "0", "0", "0 '/个", "个", 4);
 
-         //管理类任务子类型
-         var st7 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "试用期员工管理", "1.375", "9", "1.375 '/人周", "人周", 4);
-         var st8 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "预决算管理", "3", "10", "3 '/个", "个", 4);
-         var st9 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "需求管理", "0.5", "11", "0.5 '/次", "次", 4);
+
+         ////运维任务子类型
+         //var st4 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "日常巡检", "1", "6", "1 '/次", "次", 4);
+         //var st5 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "技术支持（远程）", "2", "7", "2 '/次", "次", 4);
+         //var st6 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "技术支持（上门）", "10", "8", "10 '/次", "次", 4);
+         //var st10 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "原运维任务", "0", "0", "0 '/个", "个", 4);
+
+         ////管理类任务子类型
+         //var st7 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "试用期员工管理", "1.375", "9", "1.375 '/人周", "人周", 4);
+         //var st8 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "预决算管理", "3", "10", "3 '/个", "个", 4);
+         //var st9 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "需求管理", "0.5", "11", "0.5 '/次", "次", 4);
 
          var dicArray = new Dictionary[] {
             projectTaskType,

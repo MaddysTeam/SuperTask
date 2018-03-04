@@ -1418,29 +1418,6 @@
     <Content Include="assets\plugins\jQueryGantt-master\teamwork-regular-webfont.otf" />
     <Content Include="assets\plugins\jQueryGantt-master\teamwork-regular-webfont.ttf" />
     <Content Include="assets\plugins\jQueryGantt-master\teamwork-regular-webfont.woff" />
-    <Content Include="assets\plugins\raty\.git\config" />
-    <Content Include="assets\plugins\raty\.git\description" />
-    <Content Include="assets\plugins\raty\.git\HEAD" />
-    <Content Include="assets\plugins\raty\.git\hooks\applypatch-msg.sample" />
-    <Content Include="assets\plugins\raty\.git\hooks\commit-msg.sample" />
-    <Content Include="assets\plugins\raty\.git\hooks\post-update.sample" />
-    <Content Include="assets\plugins\raty\.git\hooks\pre-applypatch.sample" />
-    <Content Include="assets\plugins\raty\.git\hooks\pre-commit.sample" />
-    <Content Include="assets\plugins\raty\.git\hooks\pre-push.sample" />
-    <Content Include="assets\plugins\raty\.git\hooks\pre-rebase.sample" />
-    <Content Include="assets\plugins\raty\.git\hooks\pre-receive.sample" />
-    <Content Include="assets\plugins\raty\.git\hooks\prepare-commit-msg.sample" />
-    <Content Include="assets\plugins\raty\.git\hooks\update.sample" />
-    <Content Include="assets\plugins\raty\.git\index" />
-    <Content Include="assets\plugins\raty\.git\info\exclude" />
-    <Content Include="assets\plugins\raty\.git\logs\HEAD" />
-    <Content Include="assets\plugins\raty\.git\logs\refs\heads\master" />
-    <Content Include="assets\plugins\raty\.git\logs\refs\remotes\origin\HEAD" />
-    <Content Include="assets\plugins\raty\.git\objects\pack\pack-18981d5e990a5a0085381375cf3144184b51c04a.idx" />
-    <Content Include="assets\plugins\raty\.git\objects\pack\pack-18981d5e990a5a0085381375cf3144184b51c04a.pack" />
-    <Content Include="assets\plugins\raty\.git\packed-refs" />
-    <Content Include="assets\plugins\raty\.git\refs\heads\master" />
-    <Content Include="assets\plugins\raty\.git\refs\remotes\origin\HEAD" />
     <Content Include="assets\plugins\raty\.travis.yml" />
     <Content Include="assets\plugins\raty\bower.json" />
     <Content Include="assets\plugins\raty\changelog.md" />
@@ -1562,8 +1539,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="assets\plugins\raty\.git\objects\info\" />
-    <Folder Include="assets\plugins\raty\.git\refs\tags\" />
     <Folder Include="Attachments\" />
     <Folder Include="Views\Designer\" />
     <Folder Include="Views\EvalUtil\" />

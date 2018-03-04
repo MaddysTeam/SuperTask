@@ -135,8 +135,9 @@
 				  <tr style="height:40px">
 					 <th class="gdfColHeader" style="width:35px;"></th>
 					 <th class="gdfColHeader gdfResizable" style="width:30px;">层级</th>
-					 <th class="gdfColHeader gdfResizable" style="width:180px;">任务名称</th>
+					 <th class="gdfColHeader gdfResizable" style="width:150px;">任务名称</th>
 					 <th class="gdfColHeader gdfResizable" style="width:70px;">任务类型</th>
+					 <th class="gdfColHeader gdfResizable" style="width:85px;">任务子类型</th>
 					 <th class="gdfColHeader gdfResizable" style="width:70px;">执行人</th>
 					 <th class="gdfColHeader gdfResizable" style="width:70px;">审核人</th>
 					 <th class="gdfColHeader gdfResizable" style="width:80px;">开始时间</th>
@@ -162,11 +163,16 @@
 					<input type="hidden" name="id" value="(#=obj.id#)">
 				  </td>
 				  <td class="gdfCell" style="position:relative" >
-					<select name="taskTypeList" class="taskTypeList" style="width:100%;">
+					<select name="taskTypeList" class="taskTypeList" style="width:100%;" onchange="bindSubType(this,(#=obj.getRow()+1#))">
 					@foreach (var item in taskTypes) {
 						<option value="@item.Value" >@item.Text</option>
 					}
 					</select>
+					</td>
+				   <td class="gdfCell" style="position:relative" >
+					  <select name="subTypeList" class="subTypeList" style="width:100%;" id="subType(#=obj.getRow()+1#)">
+					      <option value="@Guid.Empty" >无</option>
+					  </select>
 					</td>
 				  <td class="gdfCell" style="position:relative" >
 					<select name="executorList" class="executorList" style="width:100%;">
@@ -179,7 +185,8 @@
 					<input type="hidden" class="managerId" name="code" value="(#=obj.code#)"/>
 					<input type="hidden" class="createrId" name="createrId" value="(#=obj.createrId#)"/>
 					<input type="hidden" class="status" name="stat" value="(#=obj.stat#)"/>
-
+					<input type="hidden" id="subTypeId(#=obj.getRow()+1#)" class="subType" name="subType" value="(#=obj.subType#)"/>
+					<input type="hidden" class="subTypeValue" name="subTypeValue" value="(#=obj.subTypeValue#)"/>
 					<input type="hidden" class="description" name="description" value="(#=obj.description#)"/>
 					<input type="hidden" class="workhours" name="workhours" value="(#=obj.workhours#)"/>
 					<input type="hidden" class="serviceCount" name="serviceCount" value="(#=obj.serviceCount#)"/>
@@ -206,6 +213,7 @@
 				  <th class="gdfCell" align="right"></th>
 				  <td class="gdfCell noClip" align="center"></td>
 				  <td class="gdfCell" align="center"><i class="fa fa-lg fa-plus-circle" style="color:lightgray;"></i></td>
+				  <td class="gdfCell"></td>
 				  <td class="gdfCell"></td>
 				  <td class="gdfCell"></td>
 				  <td class="gdfCell"></td>
@@ -374,6 +382,7 @@
 							task.canWrite = true;
 							task.status = 'STATUS_SUSPENDED';
 							task.hasChild = true;
+							//task.subType = '16EABA96-2101-42C6-86E3-AD27669F842A'; //TODO
 
 							//加载我的任务下拉框
 							if (task.isMine)
@@ -402,10 +411,17 @@
 						});
 
 						$('.taskTypeList').each(function (i) {
-							$(this).find('option').each(function (j) {
+							var $o = $(this);
+							$o.change(function () {
+								bindSubType($o, i + 1)
+							});
+							$o.find('option').each(function (j) {
 								var option = $(this);
 								if (option.val() == ge.tasks[i].taskType) {
 									option.prop('selected', 'selected');
+
+									$o.trigger('change'); //读取子类型
+
 								}
 							});
 						});
@@ -434,12 +450,18 @@
 						ge.tasks[i].taskType = $this.val();
 					});
 
+					$('.subTypeList').each(function (i) {
+						var $this = $(this);
+						ge.tasks[i].subType = $this.val();
+					});
+
 
 					//清空我的任务下拉框
 					$myTasksDp.empty();
 
 					var prj = ge.saveProject();
 					var tasks = prj.tasks;
+
 
 					for (var i = 0; i < tasks.length; i++) {
 						tasks[i].start = new Date(tasks[i].start).format('yyyy-MM-dd');
@@ -472,6 +494,23 @@
 							}
 						});
 					})
+				}
+
+				function bindSubType(o, i) {
+					var typeId = $(o).val();
+					var subTypeId = $("#subTypeId" + i).val();
+					var $subTypeDp = $('#subType' + i);
+					$subTypeDp.html('');
+
+					var subType;
+					for (var k = 0; k < subTypeMappings.length; k++) {
+						subType = subTypeMappings[k];
+						if (subType.typeid == typeId)
+							if (subTypeId.toLowerCase()==subType.subId.toLowerCase())
+								$subTypeDp.append('<option value="' + subType.subId + '" selected="selected">' + subType.subText + '</option>');
+							else
+								$subTypeDp.append('<option value="' + subType.subId + '">' + subType.subText + '</option>');
+					}
 				}
 
 
@@ -518,6 +557,26 @@
 				function isGuid(str) {
 					return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str) || str.length == 36;
 				}
+
+
+				//TODO 先暂时写死，到时通过ajax读取
+
+				var subTypeMappings =
+					 [
+						{ typeid: '@TaskKeys.ProjectTaskType', subId: '@Guid.Empty', subText: '无（默认）' },
+						{ typeid: '@TaskKeys.PlanTaskTaskType', subId: '@Guid.Empty', subText: '无（默认）' },
+
+						{ typeid: '@TaskKeys.MaintainedTaskType', subId: '7097AE29-9844-4A50-97E6-FD5BEC77CB61', subText: '日常巡检' },
+					   { typeid: '@TaskKeys.MaintainedTaskType', subId: '16EABA96-2101-42C6-86E3-AD27669F842A', subText: '技术支持（远程）' },
+					   { typeid: '@TaskKeys.MaintainedTaskType', subId: '4031E5A4-7342-40EB-9E06-40BD225D97A7', subText: '技术支持（上门）' },
+
+						{ typeid: '@TaskKeys.DocumentTaskType', subId: '43A704E2-9420-431B-9CEC-263F31866E66', subText: 'PPT制作（创新）' },
+					   { typeid: '@TaskKeys.DocumentTaskType', subId: '1680368C-8322-4771-8903-4A7B49104C63', subText: 'PPT制作（借鉴）' },
+					   { typeid: '@TaskKeys.DocumentTaskType', subId: 'D8FFAA75-D2C5-4D72-AC77-5FFBF979A5F5', subText: 'PPT审阅' }
+				];
+
+
+
 			</script>
 
 

@@ -207,6 +207,7 @@ namespace Business
          };
 
       public static bool IsProjectTask(Guid typeId) => typeId != TaskKeys.TempTaskType && typeId != TaskKeys.ManageTaskType;
+      public static bool HasSubTypeTask(Guid typeId) => typeId != TaskKeys.ProjectTaskType && typeId != TaskKeys.TempTaskType && typeId != TaskKeys.PlanTaskTaskType;
 
       public Result Validate()
       {

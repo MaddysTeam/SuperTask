@@ -258,7 +258,7 @@ namespace TheSite.Controllers
          var task = APQuery.select(t.Asterisk, ma.UserId, ma.UserName, p.ProjectName.As("ProejectName"),
                                     cr.UserId, cr.UserName.As("Creator"),
                                     rr.UserName.As("Reviewer"),
-                                    d.Other, d.Title,d.Code)
+                                    d.Other, d.Title, d.Code)
             .from(t,
                   p.JoinLeft(t.Projectid == p.ProjectId),
                   ma.JoinLeft(t.ManagerId == ma.UserId),
@@ -271,7 +271,7 @@ namespace TheSite.Controllers
             {
                var subTaskTypeUnitName = d.Other.GetValue(r) == null ? "" : d.Other.GetValue(r);
                var subTaskTypeName = d.Title.GetValue(r) == null ? "" : d.Title.GetValue(r);
-               var score = t.SubTypeValue.GetValue(r) *Convert.ToDouble((d.Code.GetValue(r)));
+               var score = t.SubTypeValue.GetValue(r) * Convert.ToDouble((d.Code.GetValue(r)));
                var ta = new WorkTask();
                t.Fullup(r, ta, false);
                ta.Creator = cr.UserName.GetValue(r, "Creator");
@@ -419,15 +419,31 @@ namespace TheSite.Controllers
 
          foreach (var item in tasks)
          {
-            if (pjTasks.Exists(pjTask => pjTask.TaskId == item.id.ToGuid(Guid.Empty)
-                                      && pjTask.ParentId != item.parentId.ToGuid(Guid.Empty)
-                                      && (item.workhours > 0 || item.serviceCount > 0)
-                                     ))
-               return Json(new
+            var pjTask = pjTasks.Find(tk => tk.TaskId == item.id.ToGuid(Guid.Empty));
+            if (pjTask != null)
+            {
+               if (pjTask.TaskId == item.id.ToGuid(Guid.Empty)
+                                     && pjTask.ParentId != item.parentId.ToGuid(Guid.Empty)
+                                     && (item.workhours > 0 || item.serviceCount > 0))
                {
-                  result = AjaxResults.Error,
-                  msg = Errors.Task.NOT_ALLOWED_CHANGE_PARENT
-               });
+                  return Json(new {
+                     result = AjaxResults.Error,
+                     msg = Errors.Task.NOT_ALLOWED_CHANGE_PARENT
+                  });  
+               }
+
+               if(pjTask.WorkHours > 0
+              && pjTask.TaskType != item.taskType.ToGuid(Guid.Empty)
+              && (pjTask.SubTypeId != item.subType.ToGuid(Guid.Empty) || pjTask.TaskType != item.taskType.ToGuid(Guid.Empty)))
+               {
+                  return Json(new
+                  {
+                     result = AjaxResults.Error,
+                     msg = Errors.Task.NOT_ALLOWED_CHANGE_TYPE_IF_HAS_WORKHOUR
+                  });
+               }
+
+            }
          }
 
          foreach (var item in delTaskIds)
@@ -521,7 +537,7 @@ namespace TheSite.Controllers
             TaskLogHelper.CreateLogs(pjTasks, orignalTasks, GetUserInfo().UserId, db);
             TaskLogHelper.CreateLogs(removedList, GetUserInfo().UserId, db);
 
-            //更新项目进度
+            //通过根任务更新项目进度
             db.ProjectDal.UpdatePartial(projectId, new { RateOfProgress = pjTasks[0].RateOfProgress, StartDate = pjTasks[0].StartDate, EndDate = pjTasks[0].EndDate });
 
          }
@@ -679,6 +695,7 @@ namespace TheSite.Controllers
       {
          var uid = GetUserInfo().UserId;
          var originalTk = orignalTasks.Find(t => t.TaskId == vm.id.ToGuid(Guid.Empty));
+         var status = vm.stat.ToGuid(Guid.Empty) == Guid.Empty ? TaskKeys.PlanStatus : vm.stat.ToGuid(Guid.Empty);
          var tk = new WorkTask
          {
             TaskId = vm.id.ToGuid(Guid.Empty),
@@ -693,19 +710,34 @@ namespace TheSite.Controllers
             EndDate = DateTime.Parse(vm.end),
             SortId = vm.sortId,
             ParentId = vm.parentId.ToGuid(Guid.Empty),
-            RateOfProgress = originalTk == null ? vm.progress : originalTk.RateOfProgress,//篡改bug修复（2017-08-08）
-            WorkHours = originalTk == null ? vm.workhours : originalTk.WorkHours,//篡改bug修复（2017-08-08）
+            RateOfProgress = originalTk == null ? vm.progress : originalTk.RateOfProgress,
+            WorkHours = originalTk == null ? vm.workhours : originalTk.WorkHours,
             Description = vm.description,
-            TaskType = vm.taskType == TaskKeys.DefaultType.ToString() || vm.IsParent ? TaskKeys.ProjectTaskType : vm.taskType.ToGuid(Guid.Empty),
+            TaskType = GetTaskTypeID(vm), // 获取任务类型
             ServiceCount = vm.serviceCount,   //运维任务逻辑添加
+            TaskStatus = status,
+            SubTypeId = vm.subType.ToGuid(Guid.Empty), // 获取任务子类型
+            SubTypeValue = vm.subTypeValue // 获取任务子类型工作量
          };
 
-         if (tk.TaskType.IsEmpty())
-            tk.TaskType = TaskKeys.ProjectTaskType;
-
-         tk.SetStatus(vm.stat == TaskKeys.DeleteStatus.ToString() ? TaskKeys.PlanStatus : vm.stat.ToGuid(Guid.Empty));
-
          return tk;
+      }
+
+      private Guid GetTaskTypeID(ArrangeTaskViewModel vm)
+      {
+         var taskType = vm.taskType.ToGuid(Guid.Empty);
+         var isParent = vm.IsParent;
+         var isDefault = taskType == TaskKeys.DefaultType;
+         var hasSubType = WorkTask.HasSubTypeTask(taskType);
+         if (isDefault || isParent || taskType.IsEmpty())
+         {
+            if (!hasSubType)
+               return taskType;
+
+            return TaskKeys.ProjectTaskType;
+         }
+
+         return taskType;
       }
 
 
@@ -731,7 +763,9 @@ namespace TheSite.Controllers
          reviewerId = item.ReviewerID.ToString(),
          createrId = item.CreatorId.ToString(),
          taskType = item.TaskType.ToString(),
-         serviceCount = item.ServiceCount
+         serviceCount = item.ServiceCount,
+         subType = item.SubTypeId.ToString(),
+         subTypeValue = item.SubTypeValue
       };
 
 

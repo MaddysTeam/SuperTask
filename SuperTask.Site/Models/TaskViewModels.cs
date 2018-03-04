@@ -38,6 +38,8 @@ namespace TheSite.Models
       public int serviceCount { get; set; }
 
       public bool IsParent { get; set; }
+      public string subType { get; set; }
+      public double subTypeValue { get; set; }
    }
 
 }
