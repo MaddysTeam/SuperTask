@@ -1,0 +1,26 @@
+﻿@model List<ProjectRole>
+@{ 
+	var hasPermission = Model == null ||
+		Model.First() == null ||
+		Html.HasPermission(Model.First().ProjectId.ToString(), "P_10004");
+}
+
+@foreach (var item in Model)
+{
+	<div class="col-md-3 block">
+		<div class="alert alert-info">
+			<div class="btn-group text-right col-md-12">
+				@if (hasPermission)
+				{
+					<a class="resourceEdit" href="#" data-toggle="ajax-modal" data-target="#firstModal" data-url="@Url.Action("RoleAppEdit", "Resource", new { resourceRoleId = item.PRID })"><i class="fa fa-pencil-square-o fa-lg" title="编辑权限"></i> </a>
+				}
+			</div>
+			<div class="row">
+				<div class="col-sm-5" style="margin:10px; ">资源角色：</div>
+				<div class="col-sm-5" style="margin:10px;">@item.RoleName</div>
+			</div>
+
+		</div>
+	</div>
+}
+

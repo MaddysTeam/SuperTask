@@ -1,0 +1,578 @@
+﻿@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	Session.Remove("previewTasks");//删除预览
+
+	var project = ViewBag.project as Project;
+	var resourceList = SelectListHelper.GetSelectItems(ViewBag.ResourceList as List<Resource>, "ResourceName", "UserId");
+	var myTasks = SelectListHelper.GetSelectItems(ViewBag.myTasks as List<WorkTask>, "TaskName", "TaskId");
+	var submenu = MenuHelper.GetProjectMenuItems(project.ProjectId, Html.GetUserProfile().UserId, MenuHelper.ProjectTaskPageCode);
+	var taskTypes = DictionaryCache
+		.Cached(TaskKeys.TypeGuid)
+		.GetSelectListById(Guid.Empty)
+		.Where(x => WorkTask.IsProjectTask(x.Value.ToGuid(Guid.Empty)));
+}
+<div class="content-wrapper">
+
+	@Html.Partial("_subMenu", submenu)
+
+	<div class="widget-content">
+
+		@section Css{
+			<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+			<link href="~/assets/plugins/jQueryGantt-master/gantt.css" rel="stylesheet" />
+			<link href="~/assets/plugins/jQueryGantt-master/ganttPrint.css" rel="stylesheet" />
+			<link rel="stylesheet" type="text/css" href="~/assets/plugins/jQueryGantt-master/libs/jquery.svg.css">
+		}
+
+
+		<style>
+			.taskEditRow, input, .tableHeader, .gdfCell {
+				font-family: 'Microsoft YaHei UI',"Helvetica Neue",Helvetica,Arial,sans-serif;
+			}
+
+				.taskEditRow input {
+					background: transparent;
+				}
+
+			TH, .tableHeader {
+				background: #1d86ae;
+				color: white;
+				text-align: center;
+				font-weight: lighter;
+			}
+
+			.searchable-select {
+				width: 5%;
+				margin: 8px;
+				text-align: center;
+			}
+
+			input[readonly] {
+				color: inherit;
+			}
+
+			.buttons a:hover {
+				cursor: pointer;
+			}
+		</style>
+
+
+		<div class="buttons">
+			父任务：@Html.DropDownList("dp_myTasks", myTasks, new { @id = "dp_myTasks", @class = "dp_myTasks" })
+
+			<a onclick="$('#workSpace').trigger('addBelowCurrentTask.gantt');" class="textual" title="增加子任务"><span class="glyphicon glyphicon-edit" style="font-size:20px"></span></a>
+			&nbsp;
+			<a onclick="collapse();" class="" title="一键折起"><span class="glyphicon glyphicon-menu-hamburger" style="font-size:20px"></span></a>
+			<span class="ganttButtonSeparator"></span>
+			<a onclick="$('#workSpace').trigger('outdentCurrentTask.gantt');" class="textual" title="缩进"><span class="glyphicon glyphicon-arrow-left" style="font-size:20px"></span></a>
+			<a onclick="$('#workSpace').trigger('indentCurrentTask.gantt');" class="textual" title="退回"><span class="glyphicon glyphicon-arrow-right" style="font-size:20px"></span></a>
+			<span class="ganttButtonSeparator"></span>
+			<a onclick="$('#workSpace').trigger('moveUpCurrentTask.gantt');" class="extual" title="上移"><span class="glyphicon glyphicon-arrow-up" style="font-size:20px"></span></a>
+			<a onclick="$('#workSpace').trigger('moveDownCurrentTask.gantt');" class="textual" title="下移"><span class="glyphicon glyphicon-arrow-down" style="font-size:20px"></span></a>
+			<span class="ganttButtonSeparator"></span>
+			<a onclick="$('#workSpace').trigger('zoomMinus.gantt');" title="缩小"><span class="glyphicon glyphicon-zoom-out" style="font-size:20px"></span></a>
+			<a onclick="$('#workSpace').trigger('zoomPlus.gantt');" title="放大"><span class="glyphicon glyphicon-zoom-in" style="font-size:20px"></span></a>
+			<span class="ganttButtonSeparator"></span>
+			<a onclick="saveGanttOnServer(true); this.style.color='red'" class="textual preview" title="点击预览结果"><span class="glyphicon glyphicon-eye-open" style="font-size:20px"></span></a>
+			&nbsp;
+			<a onclick="location.href = location.href;" class="textual" title="刷新"><span class="glyphicon glyphicon-refresh" style="font-size:20px"></span></a>
+			<span class="ganttButtonSeparator"></span>
+			<a onclick="$('#workSpace').trigger('deleteCurrentTask.gantt');" class="textual" title="删除"><span class="glyphicon glyphicon-trash" style="font-size:20px"></span></a>
+			@if (project != null && !project.IsCompleteStatus && Html.HasPermission(project.ProjectId.ToString(), "P_10001"))
+			{
+				<span class="ganttButtonSeparator"></span>
+				<a onclick="saveGanttOnServer(false);" class="first big" title="保存结果"><span class="fa fa-save" style="font-size:20px"></span></a>
+			}
+			<span class="ganttButtonSeparator"></span>
+			<a class="textual" target="_blank" title="查看资源使用情况" href="@Url.Action("ResourceTasksInfo","ProjectManage",new {projectId=project.ProjectId })"><span class="fa fa-users" style="font-size:20px"></span></a>
+		</div>
+
+
+		<div id="workSpace" style="padding:0px; overflow-y:auto; overflow-x:hidden;border:1px solid #e5e5e5;position:relative;margin:0 5px"></div>
+
+		<div id="taZone" style="display:none;" class="noprint">
+			<textarea rows="8" cols="150" id="ta">
+				{"tasks":[
+				{"id":-1,"name":"新建项目","code":"","level":1,"status":"STATUS_ACTIVE","canWrite":true,"start":1396994400000,"duration":2,"end":1399672799999,"startIsMilestone":true,"endIsMilestone":false,"collapsed":false,"assigs":[],"hasChild":true}
+				],"selectedRow":0,"canWrite":true,"canWriteOnParent":true}
+			</textarea>
+			<button onclick="loadGanttFromServer();">load</button>
+		</div>
+
+		<style>
+			.resEdit {
+				padding: 15px;
+			}
+
+			.resLine {
+				width: 95%;
+				padding: 3px;
+				margin: 5px;
+				border: 1px solid #d0d0d0;
+			}
+
+			.ganttButtonBar h1 {
+				color: #000000;
+				font-weight: bold;
+				font-size: 28px;
+				margin-left: 10px;
+			}
+
+			.splitBox2 svg {
+				overflow: visible;
+			}
+		</style>
+
+		<div id="gantEditorTemplates" style="display:none;">
+			<div class="__template__" type="GANTBUTTONS">
+
+			</div>
+
+			<div class="__template__" type="TASKSEDITHEAD">
+				<!--
+				<table class="gdfTable" cellspacing="0" cellpadding="0">
+				  <thead>
+				  <tr style="height:40px">
+					 <th class="gdfColHeader" style="width:35px;"></th>
+					 <th class="gdfColHeader gdfResizable" style="width:20px;">层级</th>
+					 <th class="gdfColHeader gdfResizable" style="width:150px;">任务名称</th>
+					 <th class="gdfColHeader gdfResizable" style="width:70px;">任务类型</th>
+					 <th class="gdfColHeader gdfResizable" style="width:150px;">任务子类型</th>
+					 <th class="gdfColHeader gdfResizable" style="width:70px;">执行人</th>
+					 <th class="gdfColHeader gdfResizable" style="width:70px;">审核人</th>
+					 <th class="gdfColHeader gdfResizable" style="width:80px;">开始时间</th>
+					 <th class="gdfColHeader gdfResizable" style="width:80px;">结束时间</th>
+					 <th class="gdfColHeader gdfResizable" style="width:40px;">预估工时</th>
+					 <th class="gdfColHeader gdfResizable" style="width:30px;">进度</th>
+					 <th class="gdfColHeader gdfResizable" style="width:55px;">实际工时</th>
+				  </tr>
+				  </thead>
+				</table>
+				-->
+			</div>
+
+			<div class="__template__" type="TASKROW">
+				<!--
+				<tr taskId="(#=obj.id#)" class="taskEditRow" level="(#=level#)">
+				  <th class="gdfCell" align="right" style="cursor:pointer;"><span class="taskRowIndex">(#=obj.getRow()+1#)</span> <span class="teamworkIcon" style="font-size:12px;" >e</span></th>
+
+				  <td class="gdfCell"><input type="text" name="level" value="(#=obj.level?obj.level:''#)" readonly></td>
+				  <td class="gdfCell indentCell" style="padding-left:(#=obj.level*10#)px;">
+					 <div class="(#=obj.isParent()?'exp-controller expcoll exp':'exp-controller'#)" align="center"></div>
+					 <input type="text" name="name" value="(#=obj.name?obj.name:''#)" title="(#=obj.name?obj.name:''#)">
+					<input type="hidden" name="id" value="(#=obj.id#)">
+				  </td>
+				  <td class="gdfCell" style="position:relative" >
+					<select name="taskTypeList" class="taskTypeList" style="width:100%;" onchange="bindSubType(this,(#=obj.getRow()+1#))">
+					@foreach (var item in taskTypes) {
+						<option value="@item.Value" >@item.Text</option>
+					}
+					</select>
+					</td>
+				   <td class="gdfCell" style="position:relative" >
+					  <select name="subTypeList" class="subTypeList" style="width:100%;" id="subType(#=obj.getRow()+1#)">
+					      <option value="@Guid.Empty" >无</option>
+					  </select>
+					</td>
+				  <td class="gdfCell" style="position:relative" >
+					<select name="executorList" class="executorList" style="width:100%;">
+					@foreach (var item in resourceList) {
+						<option value="@item.Value" >@item.Text</option>
+					}
+					</select>
+					<input type="hidden" class="parentId" value="(#=obj.parentId#)" />
+					<input type="hidden" class="rowId" value="(#=obj.getRow()#)" />
+					<input type="hidden" class="managerId" name="code" value="(#=obj.code#)"/>
+					<input type="hidden" class="createrId" name="createrId" value="(#=obj.createrId#)"/>
+					<input type="hidden" class="status" name="stat" value="(#=obj.stat#)"/>
+					<input type="hidden" id="subTypeId(#=obj.getRow()+1#)" class="subType" name="subType" value="(#=obj.subType#)"/>
+					<input type="hidden" class="subTypeValue" name="subTypeValue" value="(#=obj.subTypeValue#)"/>
+					<input type="hidden" class="description" name="description" value="(#=obj.description#)"/>
+					<input type="hidden" class="workhours" name="workhours" value="(#=obj.workhours#)"/>
+					<input type="hidden" class="serviceCount" name="serviceCount" value="(#=obj.serviceCount#)"/>
+				</td>
+				  <td class="gdfCell" style="position:relative" >
+					<select name="reviewerList" class="reviewerList" style="width:100%;">
+						@foreach (var item in resourceList) {
+						<option value="@item.Value">@item.Text</option>
+					}
+					</select>
+				  </td>
+				  <td class="gdfCell"><input type="text" name="start"  value="(#=obj.start#)" class="date" ></td>
+				  <td class="gdfCell"><input type="text" name="end" value="(#=obj.end#)" class="date" ></td>
+				  <td class="gdfCell"><input type="text" name="hours" value="(#=obj.hours#)" ></td>
+				  <td class="gdfCell"><input type="text" name="progress" value="(#=obj.progress#)%" readonly></td>
+				  <td class="gdfCell"><input type="text" name="workhours" value="(#=obj.workhours#)" readonly></td>
+				</tr>
+				-->
+			</div>
+
+			<div class="__template__" type="TASKEMPTYROW">
+				<!--
+				<tr class="taskEditRow emptyRow" >
+				  <th class="gdfCell" align="right"></th>
+				  <td class="gdfCell noClip" align="center"></td>
+				  <td class="gdfCell" align="center"><i class="fa fa-lg fa-plus-circle" style="color:lightgray;"></i></td>
+				  <td class="gdfCell"></td>
+				  <td class="gdfCell"></td>
+				  <td class="gdfCell"></td>
+				  <td class="gdfCell"></td>
+				  <td class="gdfCell"></td>
+				  <td class="gdfCell"></td>
+				  <td class="gdfCell"></td>
+				  <td class="gdfCell"></td>
+				  <td class="gdfCell"></td>
+				</tr>
+				-->
+			</div>
+
+			<div class="__template__" type="TASKBAR">
+				<!--
+				<div class="taskBox taskBoxDiv" taskId="(#=obj.id#)" >
+				  <div class="layout (#=obj.hasExternalDep?'extDep':''#)">
+					 <div class="taskStatus" status="(#=obj.status#)"></div>
+					 <div class="taskProgress" style="width:(#=obj.progress>100?100:obj.progress#)%; background-color:(#=obj.progress>100?'red':'rgb(153,255,51);'#);"></div>
+					 <div class="milestone (#=obj.startIsMilestone?'active':''#)" ></div>
+
+					 <div class="taskLabel"></div>
+					 <div class="milestone end (#=obj.endIsMilestone?'active':''#)" ></div>
+				  </div>
+				</div>
+				-->
+			</div>
+
+			<div class="__template__" type="CHANGE_STATUS">
+				<!--
+				  <div class="taskStatusBox">
+					 <div class="taskStatus cvcColorSquare" status="STATUS_ACTIVE" title="已启动"></div>
+					 <div class="taskStatus cvcColorSquare" status="STATUS_DONE" title="已完成"></div>
+					 <div class="taskStatus cvcColorSquare" status="STATUS_SUSPENDED" title="计划中"></div>
+				  </div>
+				-->
+			</div>
+
+
+			<div class="__template__" type="TASK_EDITOR">
+
+			</div>
+
+
+			<div class="__template__" type="ASSIGNMENT_ROW">
+				<!--
+				<tr taskId="(#=obj.task.id#)" assigId="(#=obj.assig.id#)" class="assigEditRow" >
+				  <td ><select name="resourceId"  class="formElements" (#=obj.assig.id.indexOf("tmp_")==0?"":"disabled"#) ></select></td>
+				  <td ><select type="select" name="roleId"  class="formElements"></select></td>
+				  <td ><input type="text" name="effort" value="(#=getMillisInHoursMinutes(obj.assig.effort)#)" size="5" class="formElements"></td>
+				  <td align="center"><span class="teamworkIcon delAssig" style="cursor: pointer">d</span></td>
+				</tr>
+				-->
+			</div>
+
+
+			<div class="__template__" type="RESOURCE_EDITOR">
+				<!--
+				<div class="resourceEditor" style="padding: 5px;">
+
+				  <h2>Project team</h2>
+				  <table  cellspacing="1" cellpadding="0" width="100%" id="resourcesTable">
+					 <tr>
+						<th style="width:100px;">name</th>
+						<th style="width:30px;" id="addResource"><span class="teamworkIcon" style="cursor: pointer">+</span></th>
+					 </tr>
+				  </table>
+
+				  <div style="text-align: right; padding-top: 20px"><button id="resSaveButton" class="button big">save</button></div>
+				</div>
+				-->
+			</div>
+
+
+			<div class="__template__" type="RESOURCE_ROW">
+				<!--
+				<tr resId="(#=obj.id#)" class="resRow" >
+				  <td ><input type="text" name="name" value="(#=obj.name#)" style="width:100%;" class="formElements"></td>
+				  <td align="center"><span class="teamworkIcon delRes" style="cursor: pointer">d</span></td>
+				</tr>
+				-->
+			</div>
+
+
+		</div>
+
+		@section Plugins{
+			<script src="~/assets/plugins/jQueryGantt-master/libs/jquery.livequery.min.js"></script>
+			<script>
+				jQuery.browser = {}; (function () { jQuery.browser.msie = false; jQuery.browser.version = 0; if (navigator.userAgent.match(/MSIE ([0-9]+)./)) { jQuery.browser.msie = true; jQuery.browser.version = RegExp.$1; } })();
+			</script>
+			<script src="~/assets/plugins/jQueryGantt-master/libs/jquery.timers.js"></script>
+			<script src="~/assets/plugins/jQueryGantt-master/libs/platform.js"></script>
+			<script src="~/assets/plugins/jQueryGantt-master/libs/date.js"></script>
+			<script src="~/assets/plugins/jQueryGantt-master/libs/i18nJs.js"></script>
+			<script src="~/assets/plugins/jQueryGantt-master/libs/dateField/jquery.dateField.js"></script>
+			<script src="~/assets/plugins/jQueryGantt-master/libs/JST/jquery.JST.js"></script>
+			<script type="text/javascript" src="~/assets/plugins/jQueryGantt-master/libs/jquery.svg.min.js"></script>
+
+			<!--In case of jquery 1.7-->
+			<!--<script type="text/javascript" src="libs/jquery.svgdom.pack.js"></script>-->
+			<!--In case of jquery 1.8-->
+			<script type="text/javascript" src="~/assets/plugins/jQueryGantt-master/libs/jquery.svgdom.1.8.js"></script>
+			<script src="~/assets/plugins/jQueryGantt-master/ganttUtilities.js"></script>
+			<script src="~/assets/plugins/jQueryGantt-master/ganttTask.js"></script>
+			<script src="~/assets/plugins/jQueryGantt-master/ganttDrawerSVG.js"></script>
+			<script src="~/assets/plugins/jQueryGantt-master/ganttGridEditor.js"></script>
+			<script src="~/assets/plugins/jQueryGantt-master/ganttMaster.js"></script>
+
+			<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+			<script type="text/javascript">
+
+				var projectId = '@project.ProjectId';
+				var ge;
+				var $myTasksDp = $('#dp_myTasks');
+				var currentSelectTaskId = "";
+				var subTypeMappings = [];
+				@*[{ typeid: '@TaskKeys.ProjectTaskType', subId: '@Guid.Empty', subText: '无（默认）' },];*@
+
+				$(function () {
+
+					$("#ganttemplates").loadTemplates();
+
+					ge = new GanttMaster();
+					var workSpace = $("#workSpace");
+					workSpace.css({ width: $(window).width(), height: 200 });
+					ge.init(workSpace);
+
+					loadMessage();
+
+					if ($myTasksDp.find('option').size() <= 0)
+						loadGanttFromServer();
+
+					$myTasksDp.searchableSelect({
+						afterSelectItem: function (v) {
+							currentSelectTaskId = v;
+							loadGanttFromServer(v);
+						}
+					});
+
+					$(window).resize(function () {
+						workSpace.css({ width: $(window).width() - 1, height: $(window).height() - workSpace.position().top });
+						workSpace.trigger("resize.gantt");
+					}).oneTime(150, "resize", function () { $(this).trigger("resize") });
+
+					$(".splitBox2").hide();
+					$(".splitBox1,.gdfTable").css("width", "100%");
+
+				});
+
+				function loadGanttFromServer(taskId, callback) {
+					$.post('@Url.Action("TaskArrangement", "Task")', { ProjectId: projectId, TaskId: taskId }, function (data) {
+
+						if (data.taskTypes.length > 0) {
+							var taskType;
+							for (var i = 0; i < data.taskTypes.length; i++) {
+								taskType=data.taskTypes[i];
+								subTypeMappings.push({
+									typeid: taskType.ParentID,
+									subId: taskType.ID,
+									subText:taskType.Value + ': '+taskType.Title +taskType.Note
+								});
+							}
+						}
+
+						if (data.tasks.length == 0)
+							return;
+
+						else {
+							data['selectedRow'] = 0;
+							data['canWrite'] = true;
+							data['canWriteOnParent'] = true;
+						}
+
+						var task;
+						for (var i = 0; i < data.tasks.length; i++) {
+							task = data.tasks[i];
+							task.id = data.tasks[i]['id'];
+							task.start = new Date(data.tasks[i]['start']).getTime();
+							task.end = new Date(data.tasks[i]['end']).getTime();
+							task.canWrite = true;
+							task.status = 'STATUS_SUSPENDED';
+							task.hasChild = true;
+
+							//加载我的任务下拉框
+							if (task.isMine)
+								$myTasksDp.append('<option value="' + task.id + '">' + task.name + '</option>');
+						}
+
+
+						ge.loadProject(data);
+
+						//选择默认执行人和审核人
+						$('.executorList').each(function (i) {
+							$(this).find('option').each(function (j) {
+								var option = $(this);
+								if (option.val() == ge.tasks[i].executorId)
+									option.prop('selected', 'selected');
+							});
+						});
+
+						$('.reviewerList').each(function (i) {
+							$(this).find('option').each(function (j) {
+								var option = $(this);
+								if (option.val() == ge.tasks[i].reviewerId) {
+									option.prop('selected', 'selected');
+								}
+							});
+						});
+
+						$('.taskTypeList').each(function (i) {
+							var $o = $(this);
+							
+							$o.find('option').each(function (j) {
+								var option = $(this);
+								if (option.val() == ge.tasks[i].taskType) {
+									option.prop('selected', 'selected');
+
+									$o.change(function () {
+										bindSubType($o, i + 1)
+									}).trigger('change'); //读取子类型
+								}
+							});
+						});
+
+					});
+				}
+
+				function saveGanttOnServer(isPreview) {
+					if (!ge.canWrite)
+						return;
+
+					//将选择的执行人id保存到task对象中
+					$('.executorList').each(function (i) {
+						var $this = $(this);
+						ge.tasks[i].executorId = $this.val()
+					});
+
+					//将选择的审核人id保存到task对象中
+					$('.reviewerList').each(function (i) {
+						var $this = $(this);
+						ge.tasks[i].reviewerId = $this.val();
+					});
+
+					$('.taskTypeList').each(function (i) {
+						var $this = $(this);
+						ge.tasks[i].taskType = $this.val();
+					});
+
+					$('.subTypeList').each(function (i) {
+						var $this = $(this);
+						ge.tasks[i].subType = $this.val();
+					});
+
+
+					//清空我的任务下拉框
+					$myTasksDp.empty();
+
+					var prj = ge.saveProject();
+					var tasks = prj.tasks;
+
+
+					for (var i = 0; i < tasks.length; i++) {
+						tasks[i].start = new Date(tasks[i].start).format('yyyy-MM-dd');
+						tasks[i].end = new Date(tasks[i].end).format('yyyy-MM-dd');
+						tasks[i].projectId = projectId
+						tasks[i].sortId = i + 1;
+						var isGid = isGuid(tasks[i].id.toString());
+						if (!isGid)
+							tasks[i].id = NewGuid();
+
+						tasks[i].isPreview = isPreview
+
+						//将任务加入下拉框
+						$myTasksDp.append('<option value="' + tasks[i].id + '">' + tasks[i].name + '</option>');
+					}
+
+					$myTasksDp.parent().find('.searchable-select').remove();
+
+					$.post('@Url.Action("EditArrangement", "Task")', { tasks: prj.tasks, delTaskIds: prj.deletedTaskIds }, function (data) {
+						popupMessage(data, {
+							success: function (msg) {
+								clearGantt();
+
+								$myTasksDp.searchableSelect({
+									afterSelectItem: function (v) {
+										currentSelectTaskId = v;
+										loadGanttFromServer(v);
+									}
+								});
+							}
+						});
+					})
+				}
+
+				function bindSubType(o, i) {
+					var typeId = $(o).val();
+					var subTypeId = $("#subTypeId" + i).val();
+					var $subTypeDp = $('#subType' + i);
+					$subTypeDp.html('');
+
+					var subType;
+					for (var k = 0; k < subTypeMappings.length; k++) {
+						subType = subTypeMappings[k];
+						if (subType.typeid == typeId)
+							if (subTypeId.toLowerCase()==subType.subId.toLowerCase())
+								$subTypeDp.append('<option value="' + subType.subId + '" selected="selected">' + subType.subText + '</option>');
+							else
+								$subTypeDp.append('<option value="' + subType.subId + '">' + subType.subText + '</option>');
+					}
+				}
+
+
+				function collapse() {
+					$('.taskEditRow:not(:first)').find('.exp').click();
+				}
+
+				function clearGantt() {
+					ge.reset();
+				}
+
+				function loadMessage() {
+					GanttMaster.messages = {
+						"CANNOT_WRITE": "无法写入",
+						"CHANGE_OUT_OF_SCOPE": "NO_RIGHTS_FOR_UPDATE_PARENTS_OUT_OF_EDITOR_SCOPE",
+						"START_IS_MILESTONE": "当前启动时间是里程碑",
+						"END_IS_MILESTONE": "当前结束时间是里程碑",
+						"TASK_HAS_CONSTRAINTS": "TASK_HAS_CONSTRAINTS",
+						"GANTT_ERROR_DEPENDS_ON_OPEN_TASK": "GANTT_ERROR_DEPENDS_ON_OPEN_TASK",
+						"GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK": "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK",
+						"TASK_HAS_EXTERNAL_DEPS": "TASK_HAS_EXTERNAL_DEPS",
+						"GANTT_ERROR_LOADING_DATA_TASK_REMOVED": "GANTT_ERROR_LOADING_DATA_TASK_REMOVED",
+						"ERROR_SETTING_DATES": "错误的时间设置",
+						"CIRCULAR_REFERENCE": "循环引用",
+						"CANNOT_DEPENDS_ON_ANCESTORS": "无法依赖祖先任务",
+						"CANNOT_DEPENDS_ON_DESCENDANTS": "无法依赖子任务",
+						"INVALID_DATE_FORMAT": "错误的日期格式",
+						"TASK_MOVE_INCONSISTENT_LEVEL": "不能在不同层级间移动",
+
+						"GANTT_QUARTER_SHORT": "季度.",
+						"GANTT_SEMESTER_SHORT": "半年."
+					};
+				}
+
+
+				function G4() {
+					return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+				}
+
+				function NewGuid() {
+					return (G4() + G4() + "-" + G4() + "-" + G4() + "-" + G4() + "-" + G4() + G4() + G4());
+				}
+
+				function isGuid(str) {
+					return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str) || str.length == 36;
+				}
+
+
+			</script>
+		}
+	</div>
+
+</div>

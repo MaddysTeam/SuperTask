@@ -1,0 +1,722 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<gen xmlns="http://schemas.symber.com/apgen" namespace="Business">
+	<genSections>
+		<sectionGroup name="code" type="Symber.Web.Compilation.APGenCodeSectionGroup, Symber.Web.APQuery, Version=4.0, Culture=neutral, PublicKeyToken=5f8081ae21b51971">
+			<section name="namespaces" type="Symber.Web.Compilation.APGenNamespacesSection, Symber.Web.APQuery, Version=4.0, Culture=neutral, PublicKeyToken=5f8081ae21b51971"/>
+			<section name="enums" type="Symber.Web.Compilation.APGenEnumsSection, Symber.Web.APQuery, Version=4.0, Culture=neutral, PublicKeyToken=5f8081ae21b51971"/>
+		</sectionGroup>
+		<section name="businessModel" type="Symber.Web.Compilation.APGenBusinessModelSection, Symber.Web.APQuery, Version=4.0, Culture=neutral, PublicKeyToken=5f8081ae21b51971"/>
+	</genSections>
+
+
+	<code>
+		<namespaces>
+		</namespaces>
+	</code>
+
+
+	<businessModel autoSyncDatabase="true" autoInitDatabase="true">
+
+		<tables>
+			
+			<!-- Account & User -->
+			
+			<table name="Account" tableName="Users" comment="用户账号">
+				<columns>
+
+					<add name="UserId" columnName="ID" type="Guid" primaryKey="true"  comment="用户ID"/>
+					<add name="UserName"  columnName="Name" type="string" dataLength="40" required="true" display="用户名" />
+					<add name="Account" type="string" dataLength="40" required="true" display="账号" />
+					<add name="Password" type="string" dataLength="40" required="true" display="密码" />
+					<add name="Status" type="int" isNullable="true"  defaultValue="0" display="账号状态" /> 
+					<add name="Sort" type="int" isNullable="true" defaultValue="0"  display="账号排序号" /> 
+					<add name="Note" type="string" isNullable="true"  dataLength="1000" display="备注" />
+
+				</columns>
+			</table>
+			
+			<table name="UserInfo" tableName="UserInfo" comment="用户信息">
+				<columns>
+
+					<add name="UserId" columnName="ID" type="Guid" primaryKey="true"  comment="用户ID"/>
+					<add name="UserName" type="string" dataLength="40" required="true" display="用户名" />
+					<add name="RealName" type="string" dataLength="40" isNullable="true"  display="真实姓名" />
+					<add name="NickName" type="string" dataLength="40" isNullable="true" display="用户昵称" />
+					<add name="Gender" type="int"  display="性别" />
+					<add name="Department" type="string" dataLength="255" isNullable="true" display="所在部门" />
+					<add name="Position" type="string" dataLength="255" isNullable="true" display="职位" />
+					<add name="Phone" type="string" dataLength="20" isNullable="true" display="公司电话" />
+					<add name="Mobile" type="string" dataLength="20" isNullable="true" display="手机号" />
+					<add name="Email" type="string" dataLength="50" isNullable="true" display="邮箱" />
+					<add name="Birthday" type="DateTime?"  isNullable="true" display="生日" />
+					<add name="Introduce" type="string" dataLength="500" isNullable="true" display="自我介绍"/>
+			
+				</columns>
+			</table>
+			
+			
+			<!-- Role & Permission-->
+
+			<table name="App" tableName="AppLibrary" comment="应用程序库(权限)">
+				<columns>
+
+					<add name="AppId" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="Title"  columnName="Title" type="string" dataLength="255" display="标题"></add>
+					<add name="Address" columnName="Address" type="string" dataLength="20000" display="应用地址"></add>
+					<add name="AppType" columnName="Type" type="Guid"></add>
+					<add name="Code"  columnName="Code" type="string" dataLength="200" isNullable="true"></add>
+					<add name="Note"  columnName="Note" type="string" dataLength="20000" isNullable="true" display="应用描述"></add>
+
+				</columns>
+			</table>
+
+			<table name="Role" tableName="Role" comment="角色">
+				<columns>
+
+					<add name="RoleId" columnName="ID" type="Guid" primaryKey="true"></add>
+					<add name="RoleName"  columnName="Name" type="string" dataLength="200" display="角色名称"></add>
+					<add name="RoleUseMember"  columnName="UseMember" type="string" isNullable="true"  dataLength="8000"></add>
+					<add name="Note"  columnName="Note" type="string" isNullable="true"  dataLength="8000" display="备注"></add>
+					<add name="RoleType"  columnName="Type" type="int" isNullable="true"  comment="角色类型"></add>
+
+				</columns>
+			</table>
+
+			<table name="UserRole" tableName="UsersRole" comment="用户角色">
+				<columns>
+
+					<add name="ID" columnName="ID" type="Guid" primaryKey="true"></add>
+					<add name="UserId" columnName="MemberID" type="Guid" ></add>
+					<add name="RoleId" columnName="RoleID" type="Guid"  ></add>
+					<add name="IsDefault" type="int" ></add>
+
+				</columns>
+			</table>
+
+			<!--<table name="RoleApp" tableName="RoleApp" comment="角色，应用权限">
+				<columns>
+
+					<add name="RoleAppId" columnName="ID" type="Guid" primaryKey="true"></add>
+					<add name="RoleId" columnName="RoleID" type="Guid"></add>
+					<add name="AppId" columnName="AppID" type="Guid"></add>
+					<add name="Title" columnName="Title"  type="string" dataLength="200"></add>
+
+				</columns>
+			</table>-->
+			
+			
+			<!-- Company & Organize -->
+
+			<table name="CompanyInfo" tableName="CompanyInfo" comment="单位表">
+				
+				<columns>
+					<add name="CompanyId" columnName="ID" type="Guid" primaryKey="true"  comment="单位ID"/>
+					<add name="CompanyName" type="string" dataLength="40" required="true" display="单位名称" />
+					<add name="CompanyStatus" type="string" dataLength="40" required="true" display="状态" />
+				</columns>
+				
+			</table>
+
+			<table name="Organize" tableName="Organize" comment="组织、部门">
+				<columns>
+
+					<add name="ID" columnName="ID" type="Guid"  primaryKey="true" display="组织、部门ID"></add>
+					<add name="Name"  type="string"  dataLength="40" display="部门名称" required="true"></add>
+					<add name="ParentID" columnName="ParentID" type="Guid" display="上级部门" comment="最高级别父ID为(00000000-0000-0000-0000-000000000000)"></add>
+					<add name="Path"  type="string"  dataLength="900" display="路径" comment="方便查询"></add>
+					<add name="Type" type="int" display="级别" comment="级别(1,2,3)"/> 
+					<add name="Status" type="int"  dataLength="3" display="状态" />
+					<add name="Sort" type="int"  dataLength="3" display="排序" />
+					<add name="ChildsLength" type="int"  dataLength="10" display="子部门长度" />
+					<add name="ChargeLeader"  type="string"  dataLength="40" display="部门负责人"></add>
+					<add name="Leader"  type="string"  dataLength="40" display="部门领导"></add>
+					<add name="Note"  type="string"  dataLength="255" display="备注"></add>
+
+				</columns>
+			</table>
+
+			<!--<table name="OrgUsers" tableName="UsersRelation" comment="部门，人员">
+				<columns>
+
+					<add name="UserID" columnName="UserID" type="Guid" ></add>
+					<add name="OrganizeID" columnName="OrganizeID" type="Guid"  ></add>
+					<add name="IsMain"  type="int" isNullable="true"  dataLength="20000"></add>
+					<add name="Sort" type="int" isNullable="true" dataLength="3" display="排序" />
+
+				</columns>
+			</table>-->
+			
+			
+			<!-- Project & Resource -->
+
+			<table name="Project" comment="项目">
+				<columns>
+					
+					<add name="ProjectId" columnName="ID" type="Guid"  primaryKey="true" display="项目ID" />
+					<add name="ProjectName" columnName="Name" type="string" dataLength="200"  required="true" display="项目名称"/>
+					<add name="Description" columnName="Description" type="string" dataLength="40000"  isNullable="true" display="项目描述"/>
+					<add name="ProjectStatus" columnName="Status" type="Guid" isNullable="true" display="项目状态" />
+					<add name="ProjectType" columnName="Type" type="Guid" isNullable="true" display="项目类型" />
+					<add name="RateOfProgress" columnName="progress" type="double" isNullable="true"  display="项目进度"/>
+					<add name="PMId" columnName="PMId" type="Guid"  isNullable="true" display="项目负责人ID"/>
+					<add name="CreatorId" columnName="CreateorId" type="Guid"  isNullable="true"  display="项目创建者ID"/>
+					<add name="StartDate"  columnName="StartDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now" display="预估开始时间" />
+					<add name="EndDate"  columnName="EndDate" type="DateTime" isNullable="true" display="预估结束时间" />
+					<add name="RealStartDate"  columnName="RealStartDate" type="DateTime"  isNullable="true" display="实际开始时间" />
+					<add name="RealEndDate"  columnName="RealEndDate" type="DateTime"  isNullable="true" display="实际结束时间" />
+					<add name="ProjectOwner" columnName="Owner" type="string" dataLength="100"  isNullable="true" display="项目甲方" />
+					<add name="CreateDate" columnName="CreateDate" type="DateTime"  isNullable="true"  display="创建时间" />
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true" display="最近修改时间" />
+					<add name="OrgId" columnName="OrgId" type="Guid" isNullable="true" display="项目归属部门"/>
+					<add name="Code" columnName="Code" type="string" dataLength="100"  isNullable="true" display="内部项目编号"/>
+					<add name="RealCode" columnName="RealCode"  type="string" dataLength="100" isNullable="true" display="立项编号"></add>
+					<add name="ReviewerId" columnName="ReviewerId" type="Guid"  isNullable="true" display="审核人ID" />
+					<add name="ProjectExecutor" columnName="Executor"  type="string" dataLength="100"  isNullable="true" display="项目乙方"></add>
+					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true" display="项目经理"/>
+					<add name="ProcessName" type="string"  dataLength="100"   isNullable="true" display="项目进展" ></add>
+					
+					<!--this field will be uncomment if possible
+					<add name="No" type="int" identityType="Provider" />
+					<add name="ProjectLevel" columnName="Level" type="int"  required="true" isNullable="true" display="项目优先级"/>
+					<add name="ParentId"   columnName="parentId" type="Guid"  isNullable="true" display="父项目ID"  />
+					<add name="EstimateCost" columnName="EstCost" type="double" isNullable="true" display="预估支出" />
+					<add name="RealCost" columnName="RealCost" type="double"  isNullable="true" display="实际支出" />
+					<add name="EstimateIncoming" columnName="EstIncoming" isNullable="true" type="double" display="预估收入" />
+					<add name="RealIncoming" columnName="RealIncoming" type="double" isNullable="true" display="实际收入" />-->
+				</columns>
+			</table>
+
+			<table name="ProjectRecord" comment="项目记录">
+				<columns>
+
+					<add name="RecordId" columnName="ID" type="Guid"  primaryKey="true" display="日志ID" />
+					<add name="ProjectName" columnName="ProjectName" type="string" dataLength="200"  required="true" display="项目名称"/>
+					<add name="ProjectId" columnName="ProjectId" type="Guid"  display="项目ID" />
+					<add name="Progress" columnName="progress" type="double" isNullable="true"  display="项目进度"/>
+					<add name="RecordDate" columnName="RecordDate" type="DateTime" isNullable="true" display="记录时间"/>
+					<add name="ProcessName" type="string"  dataLength="100"   isNullable="true" display="项目进展" ></add>
+					<add name="ProjectStatus" columnName="ProjectStatus" type="Guid" isNullable="true" display="项目状态" />
+					<add name="ProjectType" columnName="ProjectType" type="Guid" isNullable="true" display="项目类型" />
+					<add name="RateOfProgress" columnName="RateOfProgress" type="double" isNullable="true"  display="项目进度"/>
+					<add name="PMId" columnName="PMId" type="Guid"  isNullable="true" display="项目负责人ID"/>
+					<add name="StartDate"  columnName="StartDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now" display="预估开始时间" />
+					<add name="EndDate"  columnName="EndDate" type="DateTime" isNullable="true" display="预估结束时间" />
+					<add name="ProjectOwner" columnName="ProjectOwner" type="string" dataLength="100"  isNullable="true" display="项目甲方" />
+					<add name="RealCode" columnName="RealCode"  type="string" dataLength="100" isNullable="true" display="立项编号"></add>
+					<add name="ReviewerId" columnName="ReviewerId" type="Guid"  isNullable="true" display="审核人ID" />
+					<add name="ProjectExecutor" columnName="ProjectExecutor"  type="string" dataLength="100"  isNullable="true" display="项目乙方"></add>
+					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true" display="项目经理"/>
+					<add name="Code" columnName="Code" type="string" dataLength="100"  isNullable="true" display="内部项目编号"/>
+					<add name="OperatorId" columnName="OperatorId" type="Guid"  isNullable="true" display="操作人"/>
+					
+				</columns>
+			</table>
+
+			<table name="ProjectRole" tableName="ProjectRole" comment="项目角色">
+				<columns>
+
+					<add name="PRID" columnName="ID" type="Guid" primaryKey="true"></add>
+					<add name="ProjectId" columnName="ProjectID" type="Guid" ></add>
+					<add name="RoleId" columnName="RoleID" type="Guid"  ></add>
+					<add name="IsDefault" type="int" dataLength="1" defaultValue="1" comment="是否是默认角色 1:是 0 否" ></add>
+					<add name="AppIds"  columnName="AppIds" type="string" dataLength="200" isNullable="true"  display="项目角色权限" comment="权限Id用逗号分开"></add>
+				
+				</columns>
+			</table>
+
+			<table name="Resource" comment="项目资源">
+				<columns>
+
+					<add name="ResourceId" columnName="ResourceId" type="Guid" primaryKey="true" comment="资源ID"/>
+					<add name="UserId" columnName="UserId" type="Guid" comment="资源人ID"/>
+					<add name="Projectid" columnName="Projectid" type="Guid" isNullable="true"  comment="项目ID" />
+					<add name="TaskId" columnName="TaskId" type="Guid"  isNullable="true"  comment="任务ID"/>
+					<add name="ResourceName"  columnName="Name" type="string" dataLength="100"  display="资源名称" ></add>
+					<add name="ResourceTypes"  columnName="Types" type="string" dataLength="200" isNullable="true"  display="资源类型" comment="资源角色用逗号分开"></add>
+					<add name="Description" columnName="Description" type="string" dataLength="40000" isNullable="true"  display="资源描述" />
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now"  display="创建时间" />
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" isNullable="true" display="修改时间" />
+					<add name="Status" columnName="Status" type="Guid"  isNullable="true"  display="资源状态" ></add>
+
+				</columns>
+			</table>
+
+			<!-- Task -->
+			
+			<table name="WorkTask"  comment="工作任务">
+				<columns>
+
+					<add name="TaskId" columnName="ID" type="Guid"  primaryKey="true" display="任务ID" />
+					<add name="Projectid" columnName="ProjectId" type="Guid" display="项目ID" />
+					<add name="TaskName" columnName="Name" type="string"  dataLength="200" required="true" display="任务名称"/>
+					<add name="Description" columnName="Description" type="string" dataLength="40000"  isNullable="true" display="任务描述"/>
+					<add name="TaskType"  columnName="Type" type="Guid"  isNullable="true"   display="任务类型" />
+					<add name="TaskLevel"  columnName="Level" type="int"  isNullable="true"  defaultValue="1" display="任务级别" />
+					<add name="TaskStatus"  columnName="Status" type="Guid"  isNullable="true"  display="任务状态" />
+					<add name="RateOfProgress" columnName="Progress" type="double" defaultValue="0"  display="任务进度"/>
+					<add name="ParentId"  columnName="ParentId"  type="Guid"  isNullable="true" display="父任务ID" />
+					<add name="WorkHours"  columnName="WorkHours" type="double"  isNullable="true" display="已用工时" />
+					<add name="EstimateWorkHours"  columnName="EstimateWorkHours" type="double"  isNullable="true" display="预计工时" />
+					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true"  display="任务负责人ID" />
+					<add name="CreatorId" columnName="CreatorId" type="Guid"   isNullable="true" display="任务创建者ID" />
+					<add name="ReviewerID" columnName="ReviewerId" type="Guid"   isNullable="true" display="任务审核者ID" />
+					<add name="StartDate"  columnName="StartDate" type="DateTime"  isNullable="true" defaultValue="DateTime.Now" display="开始时间" />
+					<add name="EndDate"  columnName="EndDate" type="DateTime"  isNullable="true" defaultValue="DateTime.Now"  display="结束时间" />
+					<add name="RealStartDate"  columnName="RealStartDate" type="DateTime"  isNullable="true" display="实际开始时间" />
+					<add name="RealEndDate"  columnName="RealEndDate" type="DateTime"  isNullable="true" display="实际结束时间" />
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />	
+					<add name="SortId" columnName="SortId" type="int" isNullable="true" comment="排序Id" />
+					<add name="IsParent"  columnName="IsParent" type="bool" comment="是否是父任务" ></add>
+					
+					<!--该字段用于文档归类，体现在每个项目管理中的文件管理板块-->
+					<add name="TaskFileType"  columnName="FileType" type="Guid"   display="文档类型" />
+					
+					<!--该字段只有运维任务用到-->
+					<add name="ServiceCount" columnName="ServiceCount" type="int" isNullable="true" display="运维数量" comment="（该字段只为运维任务创建）"></add>
+					
+					<!--该字段在考核模块和复杂度管理板块用到-->
+					<add name="StandardItemId" columnName="StandardItemId" isNullable="true" type="Guid" display="标准复杂度" comment="标准项ID" />
+
+					<!--该字段在任务子类型功能中用到，可能用于将来的自动考核-->
+					<add name="SubTypeId"  columnName="SubTypeId" type="Guid"  isNullable="true" display="子类型"/>
+					<add name="SubTypeValue"  columnName="SubTypeValue" type="double"  isNullable="true"  defaultValue="0" display="任务子类型值" />
+
+				</columns>
+			</table>
+
+			<table name="WorkTaskLog" comment="任务记录">
+				<columns>
+
+					<add name="LogID" columnName="ID" type="Guid"  primaryKey="true" display="计划ID" />
+					<add name="TaskManagerId" columnName="ManagerId" type="Guid"  isNullable="true"  display="任务负责人ID" />
+					<add name="ProjectId" columnName="ProjectId" type="Guid" isNullable="true"  display="项目ID" />
+					<add name="TaskId" columnName="TaskId" isNullable="true" type="Guid"  display="任务ID" />
+					<add name="StartDate" columnName="StartDate" type="DateTime" isNullable="true" display="开始时间" />
+					<add name="EndDate" columnName="EndDate" type="DateTime" isNullable="true" display="结束时间" />
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now"  display="创建时间" />
+					<add name="EstimateWorkHours"  columnName="EstimateWorkHours" type="double"  isNullable="true" display="计划工时" />
+					<!--2017-07-06 Add-->
+					<add name="TaskType"  columnName="TaskType" type="Guid"  isNullable="true"   display="任务类型" />
+					<add name="TaskStatus"  columnName="TaskStatus" type="Guid"  isNullable="true"  display="任务状态" />
+					<add name="RateOfProgress" columnName="RateOfProgress" type="double" defaultValue="0"  display="任务进度"/>
+					<add name="ParentId"  columnName="ParentId"  type="Guid"  isNullable="true" display="父任务ID" />
+					<add name="WorkHours"  columnName="WorkHours" type="double"  isNullable="true" display="已用工时" />
+					<add name="ReviewerID" columnName="ReviewerId" type="Guid"   isNullable="true" display="任务审核者ID" />
+					<add name="OperatorId" columnName="OperatorId" type="Guid"   isNullable="true" display="操作者ID" />
+					<add name="TaskName"  columnName="TaskName" type="string" dataLength="100"  display="任务名称" ></add>
+					<add name="ServiceCount" columnName="ServiceCount" type="int" isNullable="true" display="运维数量" comment="（该字段只为运维任务创建）"></add>
+
+				</columns>
+			</table>
+
+			<table name="WorkTaskComplextiy" comment="任务复杂度">
+				<columns>
+					
+				<add name="ComplextiyId" columnName="ID" type="Guid"  primaryKey="true" display="任务复杂度ID" />	
+				<add name="TaskId" columnName="TaskId" type="Guid" display="任务ID" />
+				<add name="Complexity" columnName="Complexity" type="double" isNullable="true" display="任务复杂度"></add>
+				<add name="CreatorId" columnName="CreatorId" type="Guid"   isNullable="true" display="复杂度设定者ID" />
+			   <add name="CreatorRoleId" columnName="CreatorRoleId" type="Guid"   isNullable="true" display="复杂度设定者角色ID" />
+				<add name="CreateDate" columnName="CreateDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now"  display="创建时间" />
+				<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
+				<!--<add name="IsStandard" columnName="IsStandard" type="bool" isNullable="true" display="是否是标准复杂度"></add>-->
+				
+				</columns>
+			</table>
+
+			<table name="WorkTaskIssue" comment="任务问题">
+				<columns>
+
+					<add name="TaskIssueId" columnName="ID" type="Guid"  primaryKey="true" display="任务质量ID" />
+					<add name="TaskId" columnName="TaskId" type="Guid" display="任务ID" />
+					<add name="IssueId" columnName="IssueId" type="Guid" display="问题类型" ></add>
+					<add name="Description" columnName="Description" type="string" dataLength="10000" display="任务质量描述" />
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now"  display="创建时间" />
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
+
+				</columns>
+			</table>
+
+			<table name="TaskCompelxtiyRole" comment="任务复杂度调整角色权重，(例如项目经理-调整某个复杂度为50%的占比，所有角色占比和为100%)，注意如果是标准复杂度，角色为空">
+				<columns>
+					
+					<add name="CompelxtiyRoleId" columnName="ID" type="Guid" primaryKey="true"></add>
+					<add name="RoleId" columnName="RoleId" isNullable="true" type="Guid"></add>
+					<add name="Propertion" columnName="Propertion" type="double" display="复杂度权重" ></add>
+					<add name="IsStandard" columnName="IsStandard" type="bool" display="是否是标准复杂度"></add>
+					
+				</columns>
+			</table>
+
+			<table name="TaskStandardItem"  comment="任务标准项（包含标准复杂度和标准工时）">
+				<columns>
+
+					<add name="ItemId" columnName="ID" type="Guid"  primaryKey="true" display="标准项ID" />
+					<add name="ItemName" columnName="Name" type="string" dataLength="100" display="标准项名称" />
+					<add name="ItemDescription" columnName="Description" type="string" dataLength="10000" display="标准项描述" />
+					<add name="StandardComplextiy" columnName="Complextiy" type="int" isNullable="true" display="标准复杂度" comment="标准复杂度"></add>
+					<add name="StandardWorkhours" columnName="WorkHours" type="double" isNullable="true" display="标准工时" comment="标准工时"></add>
+					<add name="SortId"  columnName="SortId" type="int"  isNullable="true"  display="排序字段" />
+					
+				</columns>
+			</table>
+
+			<table name="IssueItem"  comment="问题项">
+				<columns>
+
+					<add name="ItemId" columnName="ID" type="Guid"  primaryKey="true" display="问题项ID" />
+					<add name="ItemName" columnName="Name" type="string" dataLength="100" display="问题项名称" />
+					<add name="Issuelevel" columnName="Level" type="int" defaultValue="0" display="问题级别"></add>
+					<add name="IssueDescription" columnName="Description" type="string" dataLength="10000" display="问题项描述" />
+
+				</columns>
+			</table>
+			
+			
+			<!-- Journal -->
+			
+			<table name="WorkJournal" tableName="WorkJournal" comment="工作日志">
+				<columns>
+
+					<add name="JournalId" columnName="ID" type="Guid"  primaryKey="true" comment="工作日志ID" />
+					<add name="UserId" columnName="UserId" type="Guid"  comment="人员ID" />
+					<add name="Projectid" columnName="Projectid" type="Guid"  isNullable="true" comment="项目ID" />
+					<add name="TaskId" columnName="TaskId" type="Guid" required="true" comment="任务ID"/>
+					<add name="Progress" columnName="progress" type="double" defaultValue="0"  display="任务进度"/>
+					<add name="WorkHours"  columnName="WorkHours" type="double" defaultValue="0"   display="今日工时"/>
+					<add name="RecordDate" columnName="RecordDate" type="DateTime" isNullable="true" display="记录时间"/>
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" isNullable="true"  display="创建时间" />
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" isNullable="true" display="最近修改时间" />	
+					<add name="Comment" columnName="Comment" type="string" isNullable="true" dataLength="40000" display="日志描述"/>
+					<add name="Status" columnName="Status" type="Guid" isNullable="true"  display="日志状态（已记录，未记录）"/>
+					<add name="AttachmentId" columnName="AttachmentId" type="Guid" isNullable="true"></add>
+					<add name="RecordType" columnName="RecordType" type="Guid" isNullable="true"  display="日志记录方式（自动，手动）"/>
+					<add name="TaskEstimateWorkHours"  columnName="TaskEstimateWorkHours" type="double" display="预估工时" ></add>
+					
+					<!--该字段只有运维任务用到-->
+					<add name="ServiceCount" columnName="ServiceCount" type="int" isNullable="true" display="当日运维数量" comment="（该字段只为运维任务创建）"></add>
+					
+					<!-- 任务类型，子类型，子类型值和任务状态-->
+					<add name="TaskType"  columnName="TaskType" type="Guid"  isNullable="true"  display="任务类型" />
+					<add name="TaskStatus"  columnName="TaskStatus" type="Guid"  isNullable="true" display="任务状态" />
+					<add name="TaskSubType"  columnName="TaskSubType" type="Guid"  isNullable="true"  display="子类型" />
+					<add name="TaskSubTypeValue"  columnName="TaskSubTypeValue" type="double"  isNullable="true" />
+					
+				</columns>
+			</table>
+			
+			<!-- Attachment & Dictionary -->
+
+			<table name="Attachment" tableName="Attachments" comment="文件">
+				<columns>
+
+					<add name="AttachmentId" columnName="ID" type="Guid"  primaryKey="true" comment="附件ID"></add>
+					<add name="Projectid"  type="Guid"  comment="项目ID"></add>
+					<add name="TaskId"  type="Guid"  required="true" comment="任务ID"></add>
+					<add name="CategoryId" type="Guid" required="true" isNullable="true" comment="文件种类ID" ></add>
+					<add name="RealName" type="string" dataLength="40" required="true" display="真实姓名"/>
+					<add name="Url" type="string"  dataLength="255" display="文件上传地址路径" />
+					<add name="FileExtName" type="string"  dataLength="10" display="附件后缀名" />
+					<add name="UploadDate" type="DateTime"  display="文件上传时间"/>
+					<add name="PublishUserId" type="Guid"  display="上传者Id" />
+
+				</columns>
+			</table>
+
+			<table name="Dictionary" tableName="Dictionary" comment="字典">
+				<columns>
+
+					<add name="ID" columnName="ID" type="Guid"  primaryKey="true"></add>
+					<add name="ParentID" columnName="ParentID" isNullable="true" type="Guid"></add>
+					<add name="Title"  type="string" isNullable="true"  dataLength="20000"></add>
+					<add name="Code" type="string" isNullable="true"  dataLength="500"/>
+					<add name="Value" type="string" isNullable="true"   dataLength="20000"  />
+					<add name="Note" type="string" isNullable="true"  dataLength="20000"/>
+					<add name="Other" type="string" isNullable="true"  dataLength="20000"  />
+					<add name="Sort" type="int" isNullable="true"  dataLength="3"  />
+
+				</columns>
+			</table>
+
+			<!-- Workflow & Review -->
+
+			<table name="Review" tableName="Review">
+				<columns>
+					
+					<add name="ReviewId" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="SenderID" columnName="SenderId" type="Guid" ></add>
+					<add name="ReceiverID" columnName="ReceiverId" type="Guid" ></add>
+					<add name="TaskId"  columnName="TaskId" type="Guid" ></add>
+					<add name="ProjectId"  columnName="ProjectId" type="Guid" ></add>
+					<add name="ReviewType" columnName="Type" type="Guid"></add>
+					<add name="Result" columnName="Result" type="Guid"></add>
+					<add name="SendDate" columnName="SendDate" type="DateTime" defaultValue="DateTime.Now"></add>
+					<add name="ReviewDate" columnName="ReviewDate" type="DateTime"  isNullable="true" defaultValue="DateTime.Now"></add>
+					<add name="AttachmentUrl" columnName="AttachmentId" type="string" dataLength="10000" isNullable="true"></add>
+					<add name="Comment"  columnName="Comment" type="string" dataLength="20000"></add>
+					<add name="Title"  columnName="Title" type="string" dataLength="50" isNullable="true"></add>
+					
+				</columns>
+			</table>
+
+			<table name="WorkflowTask" tableName="WorkFlowTask" comment="流程任务（专属于第三方工作流）">
+				<columns>
+
+					<add name="TaskId" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="FlowId" columnName="FlowID" type="Guid" ></add>
+					<add name="StepID" columnName="StepID" type="Guid" ></add>
+					<add name="StepName"  columnName="StepName" type="string" dataLength="500"	></add>
+					<add name="SenderName"  columnName="SenderName" type="string" dataLength="50"	></add>
+					<add name="ReceiveName"  columnName="ReceiveName" type="string" dataLength="50"></add>
+					<add name="InstanceID" columnName="InstanceID"  type="string" dataLength="50"></add>
+					<add name="GroupID" columnName="GroupID" type="Guid" ></add>
+					<add name="Type" columnName="Type" type="int" ></add>
+					<add name="Title"  type="string" isNullable="true"  dataLength="20000"></add>
+					<add name="SenderID" columnName="SenderID" type="Guid" ></add>
+					<add name="ReceiveID" columnName="ReceiveID" type="Guid" ></add>
+					<add name="SenderTime" columnName="SenderTime" type="DateTime" ></add>
+					<add name="ReceiveTime" columnName="ReceiveTime" type="DateTime" ></add>
+					<add name="CompletedTime" columnName="CompletedTime" type="DateTime" isNullable="true"></add>
+					<add name="CompletedTime1" columnName="CompletedTime1" type="DateTime" isNullable="true"></add>
+					<add name="Comment"  columnName="Comment" type="string" dataLength="20000"	 isNullable="true"></add>
+					<add name="IsSign" columnName="IsSign" type="int" isNullable="true" ></add>
+					<add name="Status" columnName="Status" type="int"></add>
+					<add name="Note"  columnName="Note" type="string" dataLength="20000"	  isNullable="true"></add>
+					<add name="Sort" columnName="Sort" type="int" ></add>
+					
+				</columns>
+			</table>
+
+			<!-- Eval 2017-08 build-->
+
+			<table name="Indication" tableName="Indication" comment="指标">
+				<columns>
+
+					<add name="IndicationId" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="IndicationName" columnName="Name" type="string"  dataLength="200" required="true" display="指标名称"/>
+					<add name="Description" columnName="Description" type="string" dataLength="40000"  isNullable="true" display="指标描述"/>
+					<add name="CreaterId" columnName="CreaterId" type="Guid" ></add>
+					<add name="IndicationType" columnName="Type" type="int"></add>
+					<add name="IndicationStatus" columnName="Status" type="int"></add>
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
+					<add name="UseCount" columnName="UseCount" type="int" display="使用次数"></add>	
+				
+				</columns>
+			</table>
+
+			<table name="EvalIndication" tableName="EvalIndication" comment="考核表-指标-关联">
+				<columns>
+					
+					<add name="Id" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="IndicationId" columnName="IndicationId" type="Guid" ></add>
+					<add name="TableId" columnName="TableId" type="Guid"></add>
+					<add name="AccessorRoleId" columnName="AccessorRoleId" type="Guid"></add>
+					<add name="FullScore"  columnName="FullScore" type="double" display="指标满分" />
+					<add name="Propertion"  columnName="Propertion" type="double" display="分值权重" />
+					<add name="EvalType"  columnName="Type" type="int"  display="考核类型" />
+
+				</columns>	
+			</table>
+
+			<table name="EvalIndicationItem" tableName="EvalIndicationItem" comment="考核-指标-指标项">
+				<columns>
+
+					<add name="ItemId" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="EvalIndicationId" columnName="EvalIndicationId" type="Guid" ></add>
+					<add name="ItemName" columnName="Name" type="string"  dataLength="200" required="true" display="指标项名称"/>
+					<add name="ItemScore"  columnName="Score" type="double"  isNullable="true" display="指标项分数" />
+					<add name="ItemValue" columnName="Value" type="string"  dataLength="200" required="true" display="指标项值"/>
+
+				</columns>
+			</table>
+
+			<table name="EvalTable" tableName="EvalTable" comment="考核表">
+				<columns>
+
+					<add name="TableId" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="TableName" columnName="Name" type="string"  dataLength="200" required="true" display="考核表名称"/>
+					<add name="Description" columnName="Description" type="string" dataLength="1000"  isNullable="true" display="描述" comment="需要手动改成nvarcharMax"/>
+					<add name="TableType"  columnName="Type" type="int"  isNullable="false" display="考核表类型" />
+					<add name="TableStatus" columnName="Status" type="int" display="考核表状态"></add>
+					<add name="FullScore"  columnName="FullScore" type="double" display="考核表总分" />
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
+					<add name="CreaterId" columnName="CreaterId" type="Guid"  display="创建人"></add>
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
+					<add name="ModifierId" columnName="ModifierId" type="Guid"  display="修改人"></add>
+					<add name="UseCount" columnName="UseCount" type="int" display="使用次数"></add>
+					<add name="AccessorRoleIds" columnName="AccessorRoleIds" type="string" display="考核者角色" comment="用逗号分开(需要手动改成nvarcharMax)"></add>
+					<add name="MemberRoleIds" columnName="MemberRoleIds" type="string" display="被考核者角色" comment="用逗号分开(需要手动改成nvarcharMax)"></add>
+					<add name="PerviouslyTableStatus" columnName="PerviouslyTableStatus" type="int" isNullable="true" display="考核表先前状态" comment="用于状态还原"></add>
+
+				</columns>
+			</table>
+
+			<table name="EvalPeriod" comment="评价-周期">
+				<columns>
+
+					<add name="PeriodId" columnName="ID" type="Guid" primaryKey="true" display="周期ID"/>
+
+					<!-- General Information -->
+					<add name="Name" type="string" dataLength="100" display="周期名称"/>
+					<add name="BeginDate" type="DateTime" display="开始时间（考核区间）"/>
+					<add name="EndDate" type="DateTime" display="结束时间（考核区间）"/>
+					<add name="AccessBeginDate" type="DateTime" display="开始时间（操作区间）"/>
+					<add name="AccessEndDate" type="DateTime" display="结束时间（操作区间）"/>
+					<add name="AnalysisName" type="String" dataLength="100" display="算法模型名称"/>
+					<add name="AnalysisType" type="String" dataLength="100" display="算法模型类型"/>
+					<add name="IsCurrent" type="bool" display="是否当前考核期"/>
+					
+				</columns>
+			</table>
+
+			<table name="EvalTableGroup" tableName="EvalTableGroup" comment="考核表组">
+				<columns>
+
+					<add name="TableGroupId" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="TableGroupName" columnName="Name" type="string"  dataLength="200" display="考核表组名称"/>
+					<add name="PeriodId" type="Guid"  display="考核周期ID"/>
+					<add name="TargetRoleId" type="Guid" display="考核对象角色"></add>
+
+				</columns>
+			</table>
+
+			<table name="EvalTableGroupItem">
+				<columns>
+					
+					<add name="GroupItemId" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="TableGroupId" columnName="TableGroupId" type="Guid" ></add>
+					<add name="TableId" columnName="TableId" type="Guid"></add>
+					<add name="Propertion"  columnName="Propertion" type="double" display="分值权重" />
+					
+				</columns>
+			</table>
+			
+			<table name="EvalGroup" tableName="EvalGroup" comment="考核组">
+				<columns>
+
+					<add name="GroupId" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="GroupName" columnName="Name" type="string" dataLength="100"  display="组名称"></add>
+					<add name="GroupType" columnName="Type"  display="组类型" type="string" dataLength="100" ></add>
+					<add name="CreaterId" columnName="CreaterId" type="Guid"  display="创建者id" ></add>
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
+					<add name="AccessorCount" columnName="AccessorCount" type="int" display="评审人数量"></add>
+					<add name="TargetCount" columnName="TargetCount" type="int" display="参与考核人数量"></add>
+					
+				</columns>
+			</table>
+
+			<table name="EvalGroupTarget" comment="考核组-评审对象">
+				<columns>
+					
+					<add name="GroupTargetId" columnName="ID" type="Guid" primaryKey="true" display="考核对象成员ID" />
+					<add name="GroupId" type="Guid" display="考核组ID" />
+					<add name="MemberId" type="Guid" display="考核对象ID" />
+					<add name="TableIds" columnName="TableIds" type="string" display="考核表" comment="考核表id,评审对象可能对应不同的考核表"></add>
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  display="修改时间" />
+					
+				</columns>
+			</table>
+
+			<table name="EvalGroupAccessor" comment="考核组-评审人">
+				<columns>
+
+					<add name="GroupAccessorId" columnName="ID" type="Guid"  primaryKey="true" display="评审人组成员ID" />
+					<add name="GroupId" type="Guid" display="考核组ID" comment="考核组ID"/>
+					<add name="AccessorId" type="Guid" display="评审人" comment="评审人ID"/>
+					<add name="TableIds" columnName="TableIds" type="string" display="选择考核表" comment="考核表id,评审人可能评审不同的考核表"></add>
+					<add name="IsLeader" columnName="IsLeader" type="bool" display="是否是组长"></add>
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  display="修改时间" />
+					
+				</columns>
+			</table>
+			
+			<table name="EvalAccessorTarget" comment="评审人-评审对象">
+				<columns>
+
+					<add name="AccessorTargetId" columnName="ID" type="Guid"  primaryKey="true" />
+					<add name="GroupId" type="Guid" display="考核组ID" comment="考核组ID"/>
+					<add name="AccessorId" type="Guid" display="评审人ID" comment="评审人ID"/>
+					<add name="TargetId" type="Guid" display="评审对象ID" comment="评审对象ID"/>
+					<add name="EvalType"   type="int"  isNullable="false" display="考核类型" />
+					<add name="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  display="修改时间" />
+
+				</columns>
+			</table>
+			
+			<table name="EvalPeriodTable" comment="考核-周期-考核表">
+				<columns>
+
+					<add name="PeriodTableId" columnName="ID" type="Guid" ></add>
+					<add name="PeriodId" columnName="PeriodId" type="Guid" ></add>
+					<add name="TableId" columnName="TableId" type="Guid" ></add>
+
+				</columns>
+			</table>
+			
+			<table name="EvalResult" comment="评价-结果">
+				<columns>
+
+					<add name="ResultId" columnName="ID" type="Guid" primaryKey="true"  display="评价结果ID"/>
+					<add name="PeriodId" type="Guid" display="周期ID"/>
+					<add name="GroupId" type="Guid" display="单位ID"/>
+					<add name="TableId" type="Guid" display="考核表ID"/>
+					<add name="TargetId" type="Guid" display="被考核人ID"/>
+					<add name="AccesserRoleId" type="Guid" display="考评人角色" comment="考评人角色ID"/>
+					<add name="AccesserId" type="Guid" display="考评人" comment="考评人ID"/>
+					<add name="AccessDate" type="DateTime" display="考评时间"/>
+					<add name="Score" type="double" display="得分"/>
+					<add name="EvalType" type="int" display="考核类型（主观考核，自动考核）"/>
+					<add name="TargetRoleId" type="Guid" display="考评对象角色" comment="考评对象角色ID"/>
+					
+				</columns>
+			</table>
+
+			<table name="EvalResultItem" comment="评价-结果-结果项">
+				<columns>
+
+					<add name="ResultItemId" columnName="ID" type="Guid" primaryKey="true" display="结果项ID"/>
+					<add name="ResultId" type="Guid" display="评价结果ID"/>
+					<add name="IndicationId" columnName="IndicationId" type="Guid"  ></add>
+					<add name="EvalItemKey" type="string" dataLength="200" isNullable="true" display="指标项"/>
+					<add name="ChooseValue" type="string" dataLength="20" isNullable="true" display="选择值"/>
+					<add name="ResultValue" type="string" dataLength="100" isNullable="true" display="输入值"/>
+					<add name="Score" type="double" display="得分"/>
+					
+				</columns>
+			</table>
+			
+			<!-- Shared Folder -->
+			
+			<table name="Folder"  comment="文件夹">
+				<columns>
+
+					<add name="FolderId" columnName="ID" type="Guid" primaryKey="true" display="文件夹ID"></add>
+					<add name="ParentId" columnName="ParentId" type="Guid" isNullable="false"></add>
+					<add name="SortId" columnName="SortId" type="int"></add>
+					<add name="FolderName" columnName="Name" type="string" dataLength="100" isNullable="false" display="文件夹名称"></add>
+					<add name="FolderType" columnName="Type" type="int" ></add>
+					<add name="FolderPath" columnName="Path" type="string" dataLength="1000" isNullable="false"></add>
+					<add name="FileCount" columnName="FileCount" type="int"></add>
+					<add name="FolderCount" columnName="FolderCount" type="int"></add>
+					<add name="OperatorId" columnName="OperatorId" type="Guid"></add>
+
+				</columns>
+			</table>
+
+			<table name="FolderFile">
+				<columns>
+
+					<add name="FolderFileId" columnName="ID" type="Guid" primaryKey="true"></add>
+					<add name="FolderId" columnName="FolderId" type="Guid"></add>
+					<add name="AttachmentId" columnName="FileId" type="Guid"></add>
+
+				</columns>
+			</table>
+			
+			
+		</tables>
+
+	</businessModel>
+	
+</gen>

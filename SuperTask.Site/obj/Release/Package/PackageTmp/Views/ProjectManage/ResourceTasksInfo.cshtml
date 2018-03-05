@@ -1,0 +1,112 @@
+﻿@model List<UserInfo>
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	var pageTitle = ViewBag.Title = "资源使用情况";
+	var projectId = Request["projectId"];
+}
+
+@section Css{
+<link href="~/assets/plugins/fullCalendar/css/fullcalendar.min.css" rel="stylesheet" />
+<link href="~/assets/plugins/fullCalendar/css/fullcalendar.print.min.css" rel="stylesheet" media="print" />
+}
+
+<style>
+	#calendar {
+		max-width: 900px;
+		margin: 0 auto;
+	}
+</style>
+
+
+<div class="content-wrapper">
+
+	<!-- main -->
+	<div class="content">
+
+		<!-- resource filter -->
+		<div class="row">
+			<div class="form-horizontal">
+
+				<div class="col-sm-10">
+					<div class="form-group">
+						<label class="col-md-4 control-label">项目人员</label>
+						<div class="col-md-2">
+							@Html.DropDownList("dropdown_Resource", SelectListHelper.GetSelectItems(Model, "UserName", "UserId") , new { @id = "resourceId", @class = "dropdown_owner form-control" })
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<div id='calendar'>
+
+		</div>
+
+	</div>
+	<!-- /main -->
+</div>
+@section Plugins{
+<script src="~/assets/plugins/fullCalendar/js/moment.min.js"></script>
+<script src="~/assets/plugins/fullCalendar/js/fullcalendar.min.js"></script>
+<script src="~/assets/plugins/fullCalendar/js/locale-all.js"></script>
+}
+
+@section Scripts{
+	<script>
+		$(function () {
+
+			var projectId = '@projectId';
+			var userId = $('#resourceId').val();
+
+			loadCalendar(projectId, userId);
+
+			$('#resourceId').change(function () {
+				userId = $(this).val();
+				updateCalendar(projectId, userId);
+			});
+
+		});
+
+		function loadCalendar(projectId, userId) {
+			$.post('@Url.Action("ResourceTasksInfo", "ProjectManage")', { projectId: projectId, userId:userId }, function (data) {
+				var evnets = getEvents(data.rows);
+				$('#calendar').fullCalendar({
+					locale: 'zh-cn',
+					header: {
+						left: 'prev,next today',
+						center: 'title',
+						right: 'month,listWeek'
+					},
+					contentHeight: 1000,
+					defaultDate: new Date(),
+					navLinks: false, 
+					editable: false,
+					eventLimit: true, 
+					events: evnets
+				});
+			});
+		}
+
+		function getEvents(o) {
+			var events=[];
+			$(o).each(function () {
+				var o = this;
+				events.push({
+					title: o.title,
+					start: o.start,
+					end: o.end
+				});
+			});
+			return events;
+		}
+
+		function updateCalendar(projectId, userId) {
+			$.post('@Url.Action("ResourceTasksInfo", "ProjectManage")', { projectId: projectId, userId: userId }, function (data) {
+				var events = getEvents(data.rows);
+				$('#calendar').fullCalendar('removeEvents');
+				$('#calendar').fullCalendar('renderEvents', events);
+			});
+		}
+	</script>
+	}

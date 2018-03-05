@@ -1,0 +1,102 @@
+﻿
+@{
+    ViewBag.Title = "考评人管理";
+    Layout = "~/Views/Shared/_StudioLayout.cshtml";
+}
+
+<div class="col-md-10 content-wrapper">
+
+	<div class="main-content">
+		<!-- widget -->
+		<div class="widget">
+			<div class="widget-header">
+				<h3>考评人管理</h3>
+				<div class="btn-group widget-header-toolbar">
+						<button class="btn btn-sm btn-custom-primary" data-toggle="ajax-modal" data-url="@Url.Action("AccessorEdit", "EvalGroup",new { groupAccessorId=Guid.Empty})" data-target="#firstModal"><i class="fa fa-plus-square"></i> <span>新增考评者</span></button>
+				</div>
+			</div>
+
+			<div class="widget-content">
+
+				<!-- Grid -->
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								<th data-column-id="name">考评者名称</th>
+								@*<th data-column-id="isLeader">是否是组长</th>*@
+								<th data-column-id="modifyDate"data-formatter="DateOnly">修改时间</th>
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+			<!-- /widget content -->
+		</div>
+		<!-- /widget -->
+		@*<input type="hidden" id="Owner" value="@ThisApp.SelectAll" />
+		<input type="hidden" id="Executor" value="@ThisApp.SelectAll" />*@
+	</div>
+</div>
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+@section scripts{
+	<script>
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+				url: window.location.href,
+
+				formatters: {
+					'commands': function (column, row) {
+						var id = row.id;
+						var accessorId = row.accessorId;
+						return '<div class="btn-group btn-group-xs pull-right" data-accessor-id="' + accessorId + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
+												 '<button class="btn btn-success btn-edit">编辑</button>' +
+												 '<button class="btn btn-info btn-editTargets">选择考核对象</button>' +
+												 '<button class="btn btn-danger btn-remove">移除</button>'
+						'</div>';
+					},
+				},
+
+			});
+		}
+
+		$(function () {
+
+			$('#bootgrid').bootgrid(getGridOptions()).on('loaded.rs.jquery.bootgrid', function () {
+				$(this).find('.btn-edit').on('click', function (e) {
+					var id = $(this).parent().data('rowId');
+					$('#modelProxy')
+						.data('url', '@Url.Action("AccessorEdit", "EvalGroup")?groupAccessorId=' + id)
+						.trigger('click');
+});
+
+				$(this).find('.btn-editTargets').on('click', function (e) {
+					var id = $(this).parent().data('accessorId');
+					$('#modelProxy')
+						.data('url', '@Url.Action("BindTargets", "EvalGroup")?accessorId=' + id)
+						.trigger('click');
+				});
+
+				$(this).find('.btn-remove').on('click', function (e) {
+					var id = $(this).parent().data('rowId');
+					$.post('@Url.Action("RemoveAccessor", "EvalGroup")', { groupAccessorId:id}, function (data) {
+						popupMessage(data, {
+							success: function () {
+								$('#bootgrid').bootgrid('reload');
+							}
+						});
+					});
+				});
+			});
+
+		});
+
+	</script>
+}

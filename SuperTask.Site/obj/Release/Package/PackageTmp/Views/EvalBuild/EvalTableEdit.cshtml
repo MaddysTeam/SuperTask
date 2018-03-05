@@ -1,0 +1,139 @@
+﻿@model EvalTable
+@{ 
+
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑角色</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+			@using (Html.BeginForm("EvalTableEdit", "EvalBuild", FormMethod.Post, new { id = "form", role = "form", @class = "form-horizontal" }))
+			{
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(t => t.TableId)
+						@Html.HiddenFor(t => t.CreaterId)
+						@Html.HiddenFor(t => t.CreateDate)
+						@Html.HiddenFor(t => t.TableStatus)
+						@Html.HiddenFor(t => t.UseCount)
+						@Html.HiddenFor(t => t.AccessorRoleIds)
+						@Html.HiddenFor(t => t.MemberRoleIds)
+
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(t => t.TableName)</label>
+							<div class="col-md-9">
+								@Html.TextBoxFor(t => t.TableName, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(t => t.FullScore)</label>
+							<div class="col-md-9">
+								@Html.TextBoxFor(t => t.FullScore, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(t => t.AccessorRoleIds)</label>
+							<div class="col-md-9">
+								@Html.DropDownList("AccessorRoles",
+															ViewBag.AccessorRoles as List<SelectListItem>,
+															  new { @class = "form-control dropdown-AccessorRoles", @multiple = "multiple" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(t => t.MemberRoleIds)</label>
+							<div class="col-md-9">
+								@Html.DropDownList("MemberRoles",
+															ViewBag.MemberRoles as List<SelectListItem>,
+															  new { @class = "form-control dropdown-MemberRoles", @multiple = "multiple" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(t => t.TableType)</label>
+							<div class="col-md-9">
+								@Html.DropDownListFor(t=>t.TableType,
+								DictionaryCache.Cached(EvalTableKeys.TableTypeKeyGuid).GetSelectList(0), 
+								 new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(t => t.Description)</label>
+							<div class="col-md-9">
+								@Html.TextAreaFor(t => t.Description, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9 ">
+								<button type="submit" id="submit" class="btn btn-primary btn-block btn-save"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			}
+		</div>
+
+	</div>
+	<!-- end widget -->
+
+</div>
+
+<script>
+
+	$(function () {
+
+		var $form = $('.modal-dialog form');
+		$.validator.unobtrusive.parse($form);
+
+		$form.submit(function () {
+			$('#AccessorRoleIds').val($('.dropdown-AccessorRoles').val());
+			$('#MemberRoleIds').val($('.dropdown-MemberRoles').val());
+
+			var $form = $(this);
+
+			$form.valid() && $.post($form.attr('action'), $form.serialize(), function (data, status) {
+				popupMessage(data, {
+					success: function () { commitedNotice(); }
+				});
+			});
+
+			return false;
+		});
+
+
+		var accessorRoleVals = '@Model.AccessorRoleIds'.split(',');	
+		$('.dropdown-AccessorRoles').multiselect('select', accessorRoleVals);
+
+		var memberRoleVals = '@Model.MemberRoleIds'.split(',');
+		$('.dropdown-MemberRoles').multiselect('select', memberRoleVals);
+
+
+		$('.btn-save').click(function () {
+			if (confirm("该量表处在制作中，如果修改量表属性需要重新制作，确定需要修改？")) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		});
+
+	});
+	// ajax update form
+	
+
+	function commitedNotice() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+</script>

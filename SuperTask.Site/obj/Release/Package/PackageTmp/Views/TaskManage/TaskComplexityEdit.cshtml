@@ -1,0 +1,58 @@
+﻿@model WorkTaskComplextiy
+@{ 
+	var complexitylist = ThisApp.DefaultTaskComplexities.Select(x=>new SelectListItem { Text=x.ToString(),Value=x.ToString(),Selected=Model.Complexity==x});
+	//var roleList = SelectListHelper.GetSelectItems(ViewBag.Roles as List<Role>, "RoleName", "RoleId", null, null);
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 调整任务复杂度</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("TaskComplexityEdit", "TaskManage")" role="form" data-after-success="afterDialogSuccess()">
+				@Html.AntiForgeryToken()
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(wtc => wtc.ComplextiyId)
+					   @Html.HiddenFor(wtc => wtc.TaskId)
+						@Html.HiddenFor(wtc => wtc.CreatorRoleId)
+						@Html.HiddenFor(wtc => wtc.CreateDate)
+						@Html.HiddenFor(wtc => wtc.CreatorId)
+						<div class="form-group">
+							@Html.LabelFor(wtc=>wtc.Complexity, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(wtc => wtc.Complexity, complexitylist, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9 ">
+								<button type="submit" id="submit" class="btn btn-primary btn-block"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+<script>
+
+	$(function () {
+		ajaxSubmitForm($('.modal-dialog form'));
+	});
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+</script>

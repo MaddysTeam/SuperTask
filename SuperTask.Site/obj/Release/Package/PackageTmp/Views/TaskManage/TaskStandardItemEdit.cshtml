@@ -1,0 +1,75 @@
+﻿@model TaskStandardItem
+@{
+	var standardComplextyList = WorkTask.StandardComplexityList.Select(s => new SelectListItem { Text = s.ToString(), Value = s.ToString() });
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑标准复杂度</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("TaskStandardItemEdit", "TaskManage")" role="form" data-after-success="afterDialogSuccess()">
+				@Html.AntiForgeryToken()
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(tsi => tsi.ItemId)
+						<div class="form-group">
+							@Html.LabelFor(wti => wti.ItemName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextBoxFor(wti => wti.ItemName, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(wti => wti.ItemDescription, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextAreaFor(wti => wti.ItemDescription, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(wti => wti.StandardWorkhours, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextBoxFor(wti => wti.StandardWorkhours, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(wti => wti.StandardComplextiy, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(wti => wti.StandardComplextiy, standardComplextyList, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9 ">
+								<button type="submit" id="submit" class="btn btn-primary btn-block"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('.modal-dialog form'));
+
+	});
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+</script>

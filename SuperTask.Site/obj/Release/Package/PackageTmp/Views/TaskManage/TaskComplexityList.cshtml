@@ -1,0 +1,112 @@
+﻿@{
+	Layout = "~/Views/Shared/_StudioLayout.cshtml";
+	var pageTitle = ViewBag.Title = "调整任务复杂度";
+	var roleSelectList = SelectListHelper.GetSelectItems(ViewBag.Roles as List<Role>,"RoleName","RoleId",null,null);
+}
+<div class="content-wrapper col-md-10">
+
+	<div class="main-content">
+		<!-- widget -->
+		<div class="widget">
+			<div class="widget-header">
+				<h3>@pageTitle</h3>
+				<div class="btn-group widget-header-toolbar">
+					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+				</div>
+			</div>
+
+			<div class="widget-content">
+				<div class="row">
+
+					<div class="col-sm-6 form-horizontal">
+						<div class="form-group">
+							<label class="col-md-4 control-label">选择角色</label>
+							<div class="col-md-4">
+								@Html.DropDownList("dropdown_roles",roleSelectList, new { @class = "dropdown_roles form-control" })
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+				<!-- Grid -->
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								<th data-column-id="task">任务名称</th>
+								<th data-column-id="project">所属项目</th>
+								<th data-column-id="roleName">操作角色</th>
+								<th data-column-id="standard">标准复杂度</th>
+								<th data-column-id="complexity">复杂度</th>
+								<th data-column-id="createDate">修改时间</th>
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+			<!-- /widget content -->
+		</div>
+		<!-- /widget -->
+
+	</div>
+</div>
+
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+
+@section Scripts {
+	<script>
+		function getGlobalRequest() {
+			return {
+				roleId: $('.dropdown_roles').val(),
+			};
+		}
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: window.location.href,
+
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+				formatters: {
+					'commands': function (column, row) {
+						var id = row.id;
+						return '<div class="btn-group btn-group-xs pull-right" data-row-id="' + row.id + '" data-task-id="' + row.taskId + '" data-role-id="' + row.roleId + '" >' +
+							'<button class="btn btn-lg btn-success btn-complexity">调整复杂度</button></div>';
+					},
+				},
+			});
+		}
+
+		$(function () {
+
+			var grid = $('#bootgrid');
+			grid.bootgrid(getGridOptions())
+			.on('loaded.rs.jquery.bootgrid', function () {
+
+				grid.find('.btn-complexity').on('click', function (e) {
+					var id = $(this).parent().data('rowId');
+					var taskId = $(this).parent().data('taskId');
+					var roleId = $(this).parent().data('roleId');
+					$('#modelProxy')
+						.data('url', '/TaskManage/TaskComplexityEdit/?id=' + id + '&taskId=' + taskId+'&roleId='+roleId)
+						.trigger('click');
+				});
+			});
+
+
+			$('.dropdown_roles').change(function () {
+				$('#bootgrid').bootgrid('reload');
+			});
+
+		});
+	</script>
+}

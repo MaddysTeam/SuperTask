@@ -1,0 +1,278 @@
+﻿@{
+	var pageTitle = ViewBag.Title = "我的任务";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var requestTaskType = Request["TaskType"] ?? string.Empty;
+	var requestTaskStatus = Request["TaskStatus"] ?? string.Empty;
+	var requestTaskRange = Request["TaskRange"] ?? string.Empty;
+	var defaultItem = new SelectListItem { Text = "全部", Value = TaskKeys.SelectAll.ToString() };
+	var statusList = DictionaryCache.Cached(TaskKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), defaultItem).ToList();
+	var typeList = DictionaryCache.Cached(TaskKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), defaultItem).ToList();
+	var rangeList = DictionaryCache.Cached(TaskKeys.RangeTypeGuid).GetSelectListById(requestTaskRange.ToGuid(Guid.Empty), defaultItem).ToList();
+	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId", null, defaultItem);
+}
+@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+}
+
+<div class="content-wrapper">
+
+	<!-- main -->
+	<div class="content">
+		<div>
+			<button class="btn btn-danger" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Task")" data-target="#firstModal"><i class="fa fa-plus-square"></i>新建</button>
+			@*<button class="btn btn-info btn-startAll" data-toggle="ajax-modal" data-url="" data-target="#firstModal"><i class="fa fa-hourglass-start"></i>启动</button>*@
+		</div>
+		<div class="row" style="margin-bottom:20px; margin-top:10px;">
+			<!-- 任务范围筛选下拉框 -->
+			<div class="col-md-3">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						<label class="col-md-4 control-label">任务范围</label>
+						<div class="col-md-3">
+							@Html.DropDownList("dpRange", rangeList, new { @class = "form-control dropdown-taskRange" })
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<!-- 任务状态筛选下拉框 -->
+			<div class="col-md-3">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						<label class="col-md-4 control-label">任务状态</label>
+						<div class="col-md-3">
+							@Html.DropDownList("dpStatus", statusList, new { @class = "form-control dropdown-taskStatus" })
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<!-- /任务状态筛选下拉框 -->
+			<!-- 项目类型筛选下拉框 -->
+			<div class="col-sm-3">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						<label class="col-md-4 control-label">任务类型</label>
+						<div class="col-md-3">
+							@Html.DropDownList("dpTypes", typeList, new { @class = "form-control dropdown-taskTypes" })
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /项目类型筛选下拉框 -->
+			<!-- 项目筛选下拉框 -->
+			<div class="col-sm-3">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						<label class="col-md-4 control-label">项目名称</label>
+						<div class="col-md-3">
+							@Html.DropDownList("dpProjects", projectsSelectList, new { @class = "form-control dropdown-myProjects" })
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /任务搜索框 -->
+			<div class="col-sm-3">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						<label class="col-md-4 control-label"><strong style="color:red">*</strong>任务名称</label>
+						<div class="col-md-7" style="margin-top:5px;">
+							<input type="text" placeholder="输入任务名称" class="form-control txt-taskName " id="TaskName"  />
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /搜索按钮 -->
+
+		</div>
+
+		<div class="row">
+			<div class="col-md-4">
+				<div class="widget" style="height:600px; overflow:auto">
+					<div class="widget-header">
+						<h3><i class="fa fa-paperclip"></i>任务列表</h3>
+						<div class="btn-group widget-header-toolbar">
+							<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+						</div>
+					</div>
+
+					<div class="widget-content taskList" style="overflow: hidden; width: auto;">
+
+					</div>
+
+				</div>
+			</div>
+			<div class="row col-md-8">
+
+				<div class="col-md-12 details">
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- /main -->
+	<input type="hidden" id="Range" />
+	<input type="hidden" id="Status" />
+	<input type="hidden" id="ProjectIds" />
+	<input type="hidden" id="Types" />
+	<input type="hidden" id="SearchType" value="@(TaskKeys.SearchByDetaultType)" />
+	<input type="hidden" id="UserId" value="@Html.GetUserProfile().UserId" />
+</div>
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal fade" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+@section Scripts{
+	<script>
+
+		function loadList(next) {
+
+			var $list = $('.taskList');
+			$list.empty();
+			var listOptions =
+				{
+					SearchType: $('#SearchType').val(),
+					UserId: $('#UserId').val(),
+					ViewName: '_list',
+					Status: $('#Status').val(),
+					ProjectId: $('#ProjectIds').val(),
+					Type: $('#Types').val(),
+					RangeType: $('#Range').val(),
+					IsShowParent: true,
+					TaskNamePhrase: $('#TaskName').val()
+				};
+			$.post('@Url.Action("List","Task")', listOptions, function (html) {
+				$list.append(html);
+				if (typeof next == "function") {
+					next();
+				}
+			});
+		}
+
+		function loadDetail(url, next) {
+			if (url) {
+				$.post(url, function (details) {
+					$('.details').empty();
+					$('.details').append(details);
+
+					if (typeof next == "function") {
+						next();
+					}
+				});
+			}
+		}
+
+		function bindTaskClickEvent() {
+			$('.task').unbind("click").on('click', function (e) {
+
+				e.stopPropagation()
+
+				var $this = $(this);
+
+				$(".taskList").find('.task').removeClass('alert');
+				$this.addClass('alert');
+
+				var url = $this.data('url');
+				loadDetail(url);
+
+				if (e.target.nodeName == "I" && confirm("确定要删除该任务么")) {
+					$.post('@Url.Action("Delete","Task")', { id: $this.data('id') }, function (data) {
+
+						popupMessage(data, {
+							success: function () {
+								$this.hide();
+								var url = $('.task').first().data('url');
+								loadDetail(url); //默认加载第一个任务明细
+							}
+						});
+
+					
+					});
+					return false;
+				}
+
+			});
+		}
+
+		function load(cb) {
+			loadList(function () {
+				bindTaskClickEvent();
+
+				var url = $('.task').first().data('url');
+				loadDetail(url); //默认加载第一个任务明细
+
+				if (cb)
+					cb();
+			});
+		}
+
+		$(function () {
+		
+
+			var door = false;
+
+			$('.dropdown-taskRange').searchableSelect({
+				afterSelectItem: function (v) {
+					$('#Range').val(v);
+					if (door)
+						load();
+				}
+			});
+			$('.dropdown-taskStatus').searchableSelect({
+				afterSelectItem: function (v) {
+					$('#Status').val(v);
+					if (door)
+						load();
+				}
+			});
+
+			$('.dropdown-myProjects').searchableSelect({
+				afterSelectItem: function (v) {
+					$('#ProjectIds').val(v);
+					if (door)
+						load();
+				}
+			});
+
+			$('.dropdown-taskTypes').searchableSelect({
+				afterSelectItem: function (v) {
+					$('#Types').val(v);
+
+					if (v == '@TaskKeys.TempTaskType')
+						$('.ProjectIds').val('@TaskKeys.SelectAll');
+
+					if (door)
+						load();
+
+				}
+			});
+
+
+			$('.txt-taskName').on('blur', function () {
+					load();
+			}).on('keydown', function (e) {
+				if (e.keyCode==13)
+					load();
+			});
+
+
+			var requestTaskType = '@requestTaskType';
+			var requestTaskStatus = '@requestTaskStatus';
+			if (requestTaskType != "")
+				$('#TaskTypes').val(requestTaskType)
+			if (requestTaskStatus != "")
+				$('#Status').val(requestTaskStatus)
+
+
+			load(function () { door = !door; });
+		});
+	</script>
+}

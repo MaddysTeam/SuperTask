@@ -1,0 +1,39 @@
+﻿@model EvalBuilderViewModel
+@foreach (var pair in Model.EvalTable.EvalIndications)
+{
+	var item = pair.Key;
+	var fullScore = pair.Value.First().FullScore;
+	<div class="alert alert-info">
+		<div class="row itemTitle">
+			<div class="col-sm-10">
+				<i class="fa fa-star"></i>		@item.IndicationName
+			</div>
+			<div class="important  subItem">分值：<label class="fullScore">@fullScore</label></div>
+		</div>
+		<div class="row subItem">
+			<div class="col-sm-2 important">设置分值:</div>
+			<div class="col-sm-4"><input placeholder="输入分值" class="score form-control" value="@fullScore" readonly /></div>
+		</div>
+		<hr class="subItem" />
+
+		@foreach (var evalItem in pair.Value)
+		{
+			<div class="row subItem">
+				<div class="col-sm-2">@(evalItem.AccessorRoleName)(权重%):</div>
+				<div class="col-sm-4"><input placeholder="输入权重" class="weight form-control" value="@evalItem.Propertion" readonly /></div>
+				<input type="hidden" class="roleId" value="@evalItem.AccessorRoleId" />
+				<input type="hidden" class="evalIndicationId" value="@evalItem.Id" />
+			</div>
+		}
+		@if (!Model.EvalTable.IsBuildDone)
+		{
+		<div class="text-right subItem">
+			<button  class="btn btn-success btn-ok hidden">确定</button>
+			<button  class="btn btn-info btn-modify ">修改</button>
+		</div>
+		}
+		<input type="hidden" class="indicationId" value="@item.IndicationId" />
+		<input type="hidden" class="evalType" value="@item.IndicationType" />
+
+	</div>
+}

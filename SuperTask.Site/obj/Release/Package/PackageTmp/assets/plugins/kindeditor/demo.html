@@ -1,0 +1,92 @@
+﻿<!--<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <link href="themes/default/default.css" rel="stylesheet" />
+</head>
+<body>
+
+    <form>
+        <textarea name="content" id="content" style="width:800px;height:200px;"></textarea>
+    </form>
+
+    <script src="kindeditor-min.js"></script>
+    <script type="text/javascript">
+    KindEditor.ready(function (K) {
+        var options = {
+            uploadJson: 'asp.net/upload_json.ashx',
+            fileManagerJson: 'asp.net/file_manager_json.ashx',
+            allowFileManager : true
+        };
+
+        window.editor = K.create('#content', options);
+    });
+    </script>
+</body>
+</html>-->
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Auto Height Examples</title>
+    <style>
+        form {
+            margin: 0;
+        }
+
+        textarea {
+            display: block;
+        }
+    </style>
+    <link href="themes/default/default.css" rel="stylesheet" />
+    <script charset="utf-8" src="kindeditor.js"></script>
+    <script src="zh_CN.js"></script>
+    <script>
+        KindEditor.ready(function (K) {
+            var options = {
+                uploadJson: 'asp.net/upload_json.ashx',
+                fileManagerJson: 'asp.net/file_manager_json.ashx',
+                allowFileManager: true
+            };
+
+            K.create('textarea[name="content"]',  options);
+			});
+    </script>
+</head>
+<body>
+    <h3>自动调整高度</h3>
+    <form>
+        <textarea name="content" style="width:800px;height:200px;"></textarea>
+    </form>
+
+	<!--<embed name="ke-insertVideo" src="/assets/plugins/kindeditor/ckeditor/plugins/insertVideo/ckplayer6.8/ckplayer/ckplayer.swf" width="550" height="400" align="middle" allowscriptaccess="always" quality="high" flashvars="f=/Attachments/media/20161110/20161110102621_4058.flv&p=2&c=0&e=0" loop="true" type="application/x-shockwave-flash" />-->
+
+   <!--<embed name="ke-insertVideo" src="/assets/plugins/kindeditor/ckeditor/plugins/insertVideo/ckplayer6.8/ckplayer/ckplayer.swf" width="550" height="400" align="middle" allowscriptaccess="always" quality="high" flashvars="f=http://101.198.161.214/f/videos/20160817/201608171425340_634.flv" loop="true" type="application/x-shockwave-flash" />-->
+    
+	<!--<embed src="http://101.198.161.214/f/videos/20141118/20141118881004_839.flv" controls="console" hidden=no type="application/x-shockwave-flash" width="550" height="400" autostart="false" loop="true" />-->
+
+	<!--<embed src="/assets/plugins/kindeditor/attached/media/20160817/201608171425415_653.flv" type="application/x-shockwave-flash" width="550" height="400" autostart="false" loop="true" />-->
+	
+	<!--<embed name="ke-insertVideo" src="/assets/plugins/kindeditor/ckeditor/plugins/insertVideo/ckplayer6.8/ckplayer/ckplayer.swf" width="550" height="400" align="middle" allowscriptaccess="always" quality="high" flashvars="f=/Attachments/media/20161110/20161110103509_3573.mp4&p=2&c=0&e=0" loop="true" type="application/x-shockwave-flash" />-->
+
+	<!--<embed name="ke-insertVideo" src="/assets/plugins/kindeditor/ckeditor/plugins/insertVideo/ckplayer6.8/ckplayer/ckplayer.swf" width="550" height="400" align="middle" allowscriptaccess="always" quality="high" flashvars="f=/Attachments/media/20161110/20161110103639_7137.avi&p=2&c=0&e=0" loop="true" type="application/x-shockwave-flash" />-->
+
+	<!--<embed name="ke-insertVideo" src="/assets/plugins/kindeditor/ckeditor/plugins/insertVideo/ckplayer6.8/ckplayer/ckplayer.swf" width="550" height="400" align="middle" allowscriptaccess="always" quality="high" flashvars="f=/Attachments/media/20161110/20161110103947_9142.wav&p=2&c=0&e=0" loop="true" type="application/x-shockwave-flash" />-->
+
+	<!--<embed src="/Attachments/media/20161110/20161110103947_9142.wav" width="200" height="200" loop="true">-->
+
+	<!--<embed name="ke-insertVideo" src="/Attachments/media/20161110/20161110110830_1206.wav" width="550" height="400" allowscriptaccess="always" loop="true" />-->
+    
+	<embed name="ke-insertVideo" src="/Attachments/media/20161110/20161110125610_6594.swf" width="350" height="300" align="middle" allowscriptaccess="always" quality="high" loop="true" type="application/x-shockwave-flash">
+
+
+
+
+	<audio controls="controls">
+		<source src="/Attachments/media/20161110/20161110110830_1206.wav" />
+	</audio> 
+</body>
+</html>

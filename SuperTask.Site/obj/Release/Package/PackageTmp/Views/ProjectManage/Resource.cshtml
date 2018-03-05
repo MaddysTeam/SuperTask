@@ -1,0 +1,118 @@
+﻿@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var projectId = Request["projectId"];
+	var project = ProjectrHelper.GetCurrentProject(projectId.ToGuid(Guid.Empty),null,true);
+	var resource = ViewBag.CurrentResource as Resource;
+	var submenu = MenuHelper.GetProjectMenuItems(projectId.ToGuid(Guid.Empty), Html.GetUserProfile().UserId, MenuHelper.ProjectResourcePageCode);
+
+}
+@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+}
+<style>
+	.addResource:hover{background:#E7A13D;}
+</style>
+<div class="content-wrapper">
+
+	@Html.Partial("_subMenu", submenu)
+
+	<div class="widget">
+
+		<div class="widget-header">
+			<h3><i class="fa fa-info"></i>编辑人力资源</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<div class="row blockArea">
+				@if (project!=null && !project.IsCompleteStatus && Html.HasPermission(projectId,"P_10003"))
+				{
+					<div class="col-md-3" style="background-color:transparent;">
+					
+						<a href="#"  data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Resource", new {id=Guid.Empty, projectId = projectId })" data-target="#firstModal">
+							<div class="alert addResource" style="border:1px solid #eee">
+								<div class="center-block  text-center">
+									<i class="center  glyphicon glyphicon-plus-sign" style="font-size:80px; color:lightgray; margin-top:13%; margin-bottom:13%"></i>
+								</div>
+							</div>
+						</a>
+					
+					</div>
+				}
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="widget">
+
+		<div class="widget-header">
+			<h3><i class="fa fa-info"></i>编辑角色权限</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<div class="row roleBlockArea">
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+
+@section Scripts{
+	<script>
+		function loadList() {
+
+			$('.block').remove();
+
+			var listOptions =
+				{
+					SearchType: '@ResourceKeys.DefaultSearchType',
+					ProjectId: '@projectId',
+					ViewName: '_list'
+				};
+			$.post("@Url.Action("List", "Resource")", listOptions, function (html) {
+				$('.blockArea').append(html);
+			});
+
+
+			var rolelistOptions =
+				{
+					ProjectId: '@projectId',
+					ViewName: '_roleList'
+				};
+
+			$.post("@Url.Action("RoleList", "Resource")", rolelistOptions, function (html) {
+				$('.roleBlockArea').append(html);
+			});
+		}
+
+		$(function () {
+
+			loadList();
+
+		});
+
+	</script>
+
+}

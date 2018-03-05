@@ -48,7 +48,7 @@ namespace Business
 
       public bool IsReviewStatus => TaskStatus == TaskKeys.ReviewStatus;
 
-      public bool IsProjectTaskType => TaskType != TaskKeys.TempTaskType && TaskType != TaskKeys.ManageTaskType;
+      public bool IsProjectTaskType => TaskType != TaskKeys.TempTaskType && TaskType != TaskKeys.ManageTaskType && TaskType != TaskKeys.OfficeTaskType;
 
       public bool IsTempTaskType => !IsProjectTaskType;
 
@@ -206,7 +206,7 @@ namespace Business
             SortId = 1 //表示根任务
          };
 
-      public static bool IsProjectTask(Guid typeId) => typeId != TaskKeys.TempTaskType && typeId != TaskKeys.ManageTaskType;
+      public static bool IsProjectTask(Guid typeId) => typeId != TaskKeys.TempTaskType && typeId != TaskKeys.ManageTaskType && typeId != TaskKeys.OfficeTaskType;
       public static bool HasSubTypeTask(Guid typeId) => typeId != TaskKeys.ProjectTaskType && typeId != TaskKeys.TempTaskType && typeId != TaskKeys.PlanTaskTaskType;
 
       public Result Validate()

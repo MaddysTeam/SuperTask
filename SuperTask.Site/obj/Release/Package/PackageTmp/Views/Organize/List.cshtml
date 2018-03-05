@@ -1,0 +1,78 @@
+﻿@{
+	var pageTitle = ViewBag.Title = "部门管理";
+	Layout = "~/Views/Shared/_StudioLayout.cshtml";
+}
+<div class="col-md-10 content-wrapper">
+	<div class="row">
+		<div class="col-lg-4 ">
+			<ul class="breadcrumb">
+				<li class="active"><i class="fa fa-home"></i>首页</li>
+				<li class="active">@pageTitle</li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- main -->
+	<div class="content">
+		<div class="main-header">
+			<h2><i class="fa fa-university fa-fw"></i> @pageTitle</h2>
+			<em>  </em>
+		</div>
+
+		<div class="main-content">
+
+			<!-- top action buttons -->
+			<div class="gallery-buttons bottom-30px">
+				<button class="btn btn-md btn-custom-primary" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Organize")" data-target="#firstModal"><i class="fa fa-plus-square"></i> <span>新增部门</span></button>
+			</div>
+			<!-- /top action buttons -->
+
+			<!-- widget -->
+			<div class="widget">
+				<div class="widget-header">
+					<h3><i class="fa fa-paperclip"></i> @pageTitle</h3>
+					<div class="btn-group widget-header-toolbar">
+						<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+						<a href="javascript:;" title="全屏" class="btn-borderless btn-expand"><i class="fa fa-expand"></i></a>
+					</div>
+				</div>
+				<div class="widget-content">
+
+					<div id="jstreeModal">
+						
+					</div>
+
+				</div>
+				<!-- /widget content -->
+			</div>
+			<!-- /widget -->
+
+		</div>
+		<!-- /main-content -->
+	</div>
+	<!-- /main -->
+</div>
+
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+
+	</div>
+	<!-- Modal end -->
+}
+
+@section Css{
+	@Styles.Render("~/css/jstree")
+}
+
+@section Plugins{
+	@Scripts.Render("~/js/jstree")
+}
+
+@section Scripts{
+
+<script src="~/assets/js/Organize/list.js" type="text/javascript"></script>
+
+}

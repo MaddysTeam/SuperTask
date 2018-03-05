@@ -1,0 +1,51 @@
+﻿@model List<Resource>
+@{
+	var hasPermission = Model == null ||
+		Model.First() == null ||
+		Html.HasPermission(Model.First().Projectid.ToString(), "P_10003");
+}
+@foreach(var item in Model)
+{
+<div class="col-md-3 block">
+	<div class="alert alert-success">
+		<div class="btn-group text-right col-md-12">
+			@if (hasPermission)
+			{
+			<a class="resourceEdit" href="#" data-toggle="ajax-modal" data-target="#firstModal" data-url="@Url.Action("Edit", "Resource", new { id = item.ResourceId, projectId = item.Projectid })"><i class="fa fa-pencil fa-lg"></i> </a>
+				<b>&nbsp;</b>
+			<a class="resourceDelete" href="#" data-url="@Url.Action("Delete", "Resource", new { id = item.ResourceId })"><i class="fa fa-close fa-lg"></i> </a>
+			}
+		</div>
+		<div class="row">
+			
+			<div class="col-sm-5" style="margin:10px; ">资源名称：</div>
+			<div class="col-sm-5" style="margin:10px;">@item.ResourceName</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-5" style="margin:10px;">资源类型：</div>
+			<div class="col-sm-5" style="margin:10px; ">@item.TypeNames</div>
+		</div>
+	</div>
+</div>
+}
+
+<script>
+	$(function () {
+
+		$('.resourceDelete').on('click', function () {
+			var url = $(this).data('url');
+			if (confirm('@Confirm.Resource.RESOURCE_CONFIRM_DELETE')){
+				$.post(url, function (data) {
+					popupMessage(data, {
+						success: function () {
+							loadList();
+						}
+					});
+				});
+			}
+			else
+				return false;
+
+		});
+	});
+</script>

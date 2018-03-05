@@ -1,0 +1,46 @@
+﻿@model List<MenuModel>
+
+<!-- left sidebar -->
+<div class="col-md-2 left-sidebar">
+	@if (Model != null && Model.Count > 0)
+	{
+
+
+		<!-- main-nav -->
+		<nav class="main-nav">
+			<ul class="main-menu">
+
+
+				@foreach (var item in Model)
+				{
+					<li>
+						<a href="@item.Url">
+							<i class="@item.Icon"></i>
+							<span class="text">@item.Title</span>
+						</a>
+					</li>
+				}
+
+				@*<li>
+						<a href="@Url.Action("Index", "Home")">
+							<i class="fa fa-home fa-fw"></i>
+							<span class="text">首页</span>
+						</a>
+					</li>*@
+
+			</ul>
+		</nav>
+		<!-- /main-nav -->
+
+		<div class="sidebar-minified js-toggle-minified">
+			<i class="fa fa-angle-left"></i>
+		</div>
+
+		<!-- sidebar content -->
+		<div class="sidebar-content">
+		</div>
+		<!-- /sidebar content -->
+	}
+
+</div>
+<!-- /left sidebar -->

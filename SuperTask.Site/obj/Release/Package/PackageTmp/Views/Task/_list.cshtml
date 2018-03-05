@@ -1,0 +1,53 @@
+﻿@model List<WorkTask>
+
+<style>
+	ul.activity-list>li:hover{ background:#eee}
+	ul.activity-list>li .activity-icon{background:#FF6633;color:white; font-size:10px; font-weight:bold; font-family:Arial}
+</style>
+	<ul class="list-unstyled activity-list">
+		@{ var i = 0;
+			foreach (var item in Model)
+			{
+				var def = i == 0 ? "alert-info" : "alert-success";
+				<li class="task" data-id="@item.TaskId" data-url="@item.DataUrl" >
+						<i class="activity-icon pull-left taksIcon3">@(i+1) </i>
+						<p>@item.TaskName <span class="timestamp">@item.Manager</span></p>
+					@if (item.TaskType==TaskKeys.TempTaskType)
+					{
+						<p>【临时任务】</p>
+					}
+					else if (item.TaskType == TaskKeys.MaintainedTaskType)
+					{
+						<p>【项目运维】@item.ProjectName</p>
+					}
+					else
+					{
+						<p>【项目】@item.ProjectName</p>
+					}
+					<p>&nbsp;</p>
+					<p class="timestamp">
+						已用工时： <span class="label label-danger">@item.WorkHours</span>
+					</p>
+					<p>&nbsp;</p>
+					<p class="timestamp">
+						任务进度： <span class="label label-info">@item.RateOfProgress%</span>
+					</p>
+					<div class="progress progress-xs" style="margin:10px;">
+						<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="@item.RateOfProgress" aria-valuemin="0" aria-valuemax="100" style="width: @item.RateOfProgress%">
+							<span class="sr-only"></span>
+						</div>
+					</div>
+					@if (item.TaskStatus!=TaskKeys.DeleteStatus)
+					{
+					<div class="text-right">
+						<a class="btn_delete" title="删除" href="#"><i class="fa fa-lg fa-trash-o"></i></a>
+					</div>
+					}
+				</li>
+			
+				i++;
+			}
+		}
+	</ul>
+
+
