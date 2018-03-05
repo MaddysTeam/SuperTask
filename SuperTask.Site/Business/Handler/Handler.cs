@@ -59,9 +59,14 @@ namespace Business
          {TaskKeys.ProjectTaskType, new ProjectTaskEditHandler()  },
          {TaskKeys.PlanTaskTaskType, new ProjectTaskEditHandler()  },
          {TaskKeys.TempTaskType, new TempTaskEditHandler()  },
-         {TaskKeys.MaintainedTaskType, new LeafTaskEditHandler(new ProjectTaskEditHandler())  },
          {TaskKeys.DocumentTaskType, new LeafTaskEditHandler(new ProjectTaskEditHandler())  },
-         {TaskKeys.ManageTaskType,new TempTaskEditHandler()  }
+         {TaskKeys.DesignTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler()) },
+         {TaskKeys.DevelopTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler()) },
+         {TaskKeys.TestTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler()) },
+         {TaskKeys.DeployTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler()) },
+         {TaskKeys.MaintainedTaskType, new LeafTaskEditHandler(new ProjectTaskEditHandler())  },
+         {TaskKeys.ManageTaskType,new TempTaskEditHandler()  },
+         {TaskKeys.OfficeTaskType,new TempTaskEditHandler()  },
       };
 
       public static Dictionary<Guid, ResourceSearchHandler> ResourceSearchHandlers = new Dictionary<Guid, ResourceSearchHandler>
@@ -86,9 +91,14 @@ namespace Business
          {TaskKeys.ProjectTaskType, new WorkJournalEditHandler()  },
          {TaskKeys.PlanTaskTaskType, new WorkJournalEditHandler()  },
          {TaskKeys.TempTaskType, new WorkJournalEditHandler()  },
-         {TaskKeys.MaintainedTaskType, new WorkJournalEditHandler()  },
          {TaskKeys.DocumentTaskType, new WorkJournalEditHandler()  },
+         {TaskKeys.DesignTaskType, new WorkJournalEditHandler()  },
+         {TaskKeys.DevelopTaskType, new WorkJournalEditHandler()  },
+         {TaskKeys.TestTaskType, new WorkJournalEditHandler()  },
+         {TaskKeys.DeployTaskType, new WorkJournalEditHandler()  },
+         {TaskKeys.MaintainedTaskType, new WorkJournalEditHandler()  },
          {TaskKeys.ManageTaskType, new WorkJournalEditHandler()  },
+         {TaskKeys.OfficeTaskType, new WorkJournalEditHandler()  },
       };
 
       public static Dictionary<string, PDFHandler> PDFHandlers = new Dictionary<string, PDFHandler>

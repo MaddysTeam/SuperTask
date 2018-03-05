@@ -39,7 +39,7 @@ namespace Business
       }
 
 
-      public static CacheUnit Cached(Guid parentId)
+      public static CacheUnit Cached(Guid parentId, bool getAll = false)
       {
          var unitDict = ThisAppCache.GetCache<Dictionary<Guid, CacheUnit>>();
 
@@ -47,13 +47,16 @@ namespace Business
          {
             ThisAppCache.SetCache(unitDict = new Dictionary<Guid, CacheUnit>());
          }
-
          if (!unitDict.ContainsKey(parentId))
          {
+            List<Dictionary> items;
             using (APDBDef db = new APDBDef())
             {
                var d = APDBDef.Dictionary;
-               var items = db.DictionaryDal.ConditionQuery(d.ParentID == parentId, null, null, null);
+               if (getAll)
+                  items = db.DictionaryDal.ConditionQuery(null, null, null, null);
+               else
+                  items = db.DictionaryDal.ConditionQuery(d.ParentID == parentId, null, null, null);
 
                var cacheUnit = new CacheUnit(parentId, items);
                unitDict[parentId] = cacheUnit;
@@ -158,8 +161,8 @@ namespace Business
 
       public static IEnumerable<SelectListItem> GetSelectListById(this CacheUnit unit, Guid id, SelectListItem defaultItem = null)
       {
-         var result = GetSelectListById(unit,id);
-         if (defaultItem != null && result != null && result.Count()> 0)
+         var result = GetSelectListById(unit, id);
+         if (defaultItem != null && result != null && result.Count() > 0)
          {
             var list = result.ToList();
             list.Insert(0, defaultItem);
@@ -200,6 +203,17 @@ namespace Business
             {
                dic.Add(item.Value);
             }
+         }
+
+         return dic;
+      }
+
+      public static List<Dictionary> GetAll(this CacheUnit unit)
+      {
+         var dic = new List<Dictionary>();
+         foreach (var item in unit.GuidDicItems)
+         {
+            dic.Add(item.Value);
          }
 
          return dic;

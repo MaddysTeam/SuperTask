@@ -351,9 +351,12 @@ namespace TheSite.Controllers
 
          var tasks = GetTaskViewModels(list, rootTask);
 
+         var taskTypes = DictionaryHelper.GetAll();
+
          return Json(new
          {
-            tasks
+            tasks,
+            taskTypes
          });
       }
 
@@ -419,20 +422,31 @@ namespace TheSite.Controllers
 
          foreach (var item in tasks)
          {
+            var pjParent = pjTasks.Find(tk => tk.TaskId == item.parentId.ToGuid(Guid.Empty));
+            if (pjParent != null && pjParent.SubTypeValue > 0)
+            {
+               return Json(new
+               {
+                  result = AjaxResults.Error,
+                  msg = Errors.Task.NOT_ALLOWED_BE_PARNET_TYPE_IF_LEAF_TASK
+               });
+            }
+
             var pjTask = pjTasks.Find(tk => tk.TaskId == item.id.ToGuid(Guid.Empty));
             if (pjTask != null)
             {
                if (pjTask.TaskId == item.id.ToGuid(Guid.Empty)
                                      && pjTask.ParentId != item.parentId.ToGuid(Guid.Empty)
-                                     && (item.workhours > 0 || item.serviceCount > 0))
+                                     && (item.workhours > 0 || item.subTypeValue > 0))
                {
-                  return Json(new {
+                  return Json(new
+                  {
                      result = AjaxResults.Error,
                      msg = Errors.Task.NOT_ALLOWED_CHANGE_PARENT
-                  });  
+                  });
                }
 
-               if(pjTask.WorkHours > 0
+               if (pjTask.WorkHours > 0
               && pjTask.TaskType != item.taskType.ToGuid(Guid.Empty)
               && (pjTask.SubTypeId != item.subType.ToGuid(Guid.Empty) || pjTask.TaskType != item.taskType.ToGuid(Guid.Empty)))
                {

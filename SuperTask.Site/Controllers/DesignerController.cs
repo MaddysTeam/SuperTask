@@ -216,7 +216,7 @@ namespace TheSite.Controllers
 
       public void InitialTaskType()
       {
-         var taskTypeId = TaskKeys.TypeGuid;
+        var taskTypeId = TaskKeys.TypeGuid;
          var projectTaskTypeId = TaskKeys.ProjectTaskType;
          var tempTaskTypeId = TaskKeys.TempTaskType;
          var documentTaskTypeId = TaskKeys.DocumentTaskType;
@@ -247,25 +247,110 @@ namespace TheSite.Controllers
          var dst = new Dictionary(defaultSubTypeId, defaultSubTypeId, "默认", null, null, null, null, 1);
 
          //文档任务子类型
-         var st = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "PPT制作（创新）", "0.3", "W01", "0.3'/页", "页", 4);
+         var st1 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "PPT制作（创新）", "0.3", "W01", "0.3'/页", "页", 4);
          var st2 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "PPT制作（借鉴）", "0.05", "W02", "0.05'/页", "页", 4);
          var st3 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "PPT审阅", "0.063", "W03", "0.063 '/页", "页", 4);
          var st4 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "资料编制（创新）", "5", "W04", "5 '/篇", "篇", 4);
          var st5 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "资料整理（收集）", "0.25", "W05", "0.25'/页", "页", 4);
          var st6 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "资料整理（规范）", "0.119", "W06", "0.119/页", "页", 4);
+         var st7 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "资料文档审阅", "0.09", "W07", "0.09/页", "页", 4);
+         var st8 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "项目验收材料汇编", "3", "W08", "3/页", "页", 4);
+         var st9 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "会议纪要（外部）", "1", "W09", "1/篇", "篇", 4);
+         var st10 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "会议纪要（内部）", "0.8", "W10", "0.8/篇", "篇", 4);
+         var st11 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "项目合同编制", "2", "W10", "2/篇", "篇", 4);
+         var st12 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "招标需求编制（简单）", "8", "W12", "8/篇", "篇", 4);
+         var st13 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "招标需求编制（复杂）", "10", "W12", "10/篇", "篇", 4);
+         var st14 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "项目方案编制（简单）", "14.286", "W13", "14.286/篇", "篇", 4);
+         var st15 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "项目方案编制（复杂）", "22.222", "W13", "22.222/篇", "篇", 4);
+         var st16 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "项目方案编制（多系统）", "50", "W13", "50/篇", "篇", 4);
+         var st17 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "需求规格说明书", "20", "W14", "20/篇", "篇", 4);
+         var st18 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "需求分析说明书（简单）", "28.571", "W15", "28.571/篇", "篇", 4);
+         var st19 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "需求分析说明书（复杂）", "40", "W15", "40/篇", "篇", 4);
+         var st20= new Dictionary(Guid.NewGuid(), documentTaskTypeId, "概要设计文档", "20", "W16", "20/篇", "篇", 4);
+         var st21 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "详细设计文档（简单）", "25", "W17", "25/篇", "篇", 4);
+         var st22 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "详细设计文档（复杂）", "50", "W17", "50/篇", "篇", 4);
+         var st23 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "用户操作手册", "1", "W18", "1/模块", "模块", 4);
+         var st24 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "系统维护手册", "5", "W19", "5/篇", "篇", 4);
+         var st25 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "运维报告", "2", "W20", "2/篇", "篇", 4);
+         var st26 = new Dictionary(Guid.NewGuid(), documentTaskTypeId, "测试用例编制", "0.15", "W21", "0.15/个", "个", 4);
 
+         var st27 = new Dictionary(Guid.NewGuid(), designTaskTypeId, "原型制作", "0.8", "S01", "0.8/页", "页", 4);
+         var st28 = new Dictionary(Guid.NewGuid(), designTaskTypeId, "页面设计（首页）", "10", "S02", "10/页", "页", 4);
+         var st29 = new Dictionary(Guid.NewGuid(), designTaskTypeId, "页面设计（内页）", "2.8", "S02", "2.8/页", "页", 4);
+         var st30 = new Dictionary(Guid.NewGuid(), designTaskTypeId, "多媒体制作（片头动画）", "0.7", "S03", "0.7/秒", "秒", 4);
+         var st31 = new Dictionary(Guid.NewGuid(), designTaskTypeId, "多媒体制作（情景交互）", "0.35", "S03", "0.35/秒", "秒", 4);
+         var st32 = new Dictionary(Guid.NewGuid(), designTaskTypeId, "多媒体制作（情景动画）", "0.28", "S03", "0.28/秒", "秒", 4);
+         var st33 = new Dictionary(Guid.NewGuid(), designTaskTypeId, "海报画册设计", "10", "S04", "10/套", "套", 4);
+         var st34 = new Dictionary(Guid.NewGuid(), designTaskTypeId, "系统前端设计", "15", "S05", "15/套", "套", 4);
+         var st35 = new Dictionary(Guid.NewGuid(), designTaskTypeId, "系统架构设计", "15", "S06", "15/套", "套", 4);
+         var st36 = new Dictionary(Guid.NewGuid(), designTaskTypeId, "系统数据库设计", "15", "S07", "15/套", "套", 4);
+         var st37 = new Dictionary(Guid.NewGuid(), designTaskTypeId, "开发框架设计", "15", "S08", "15/套", "套", 4);
 
+         var st38 = new Dictionary(Guid.NewGuid(), developTaskTypeId, "UI框架搭建", "15", "K01", "15/套", "套", 4);
+         var st39 = new Dictionary(Guid.NewGuid(), developTaskTypeId, "前端页面开发", "2", "K02", "2/页", "页", 4);
+         var st40 = new Dictionary(Guid.NewGuid(), developTaskTypeId, "静态页面制作", "0.5", "K03", "0.5/页", "页", 4);
+         var st41 = new Dictionary(Guid.NewGuid(), developTaskTypeId, "开发框架搭建（全新）", "3.333", "K04", "3.333/套", "套", 4);
+         var st42 = new Dictionary(Guid.NewGuid(), developTaskTypeId, "开发框架搭建（重建）", "1.667", "K04", "1.667/套", "套", 4);
+         var st43 = new Dictionary(Guid.NewGuid(), developTaskTypeId, "业务功能模块开发", "0.333", "K05", "0.333/个", "个", 4);
+         var st44 = new Dictionary(Guid.NewGuid(), developTaskTypeId, "业务功能模块修改", "0.222", "K06", "0.222/个", "个", 4);
+         var st45 = new Dictionary(Guid.NewGuid(), developTaskTypeId, "核心功能模块开发", "1", "K07", "1/个", "个", 4);
+         var st46 = new Dictionary(Guid.NewGuid(), developTaskTypeId, "核心功能模块修改", "0.5", "K08", "0.5/个", "个", 4);
+         var st47 = new Dictionary(Guid.NewGuid(), developTaskTypeId, "代码检查", "0.8", "K09", "0.8/小时", "小时", 4);
 
-         ////运维任务子类型
-         //var st4 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "日常巡检", "1", "6", "1 '/次", "次", 4);
-         //var st5 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "技术支持（远程）", "2", "7", "2 '/次", "次", 4);
-         //var st6 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "技术支持（上门）", "10", "8", "10 '/次", "次", 4);
-         //var st10 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "原运维任务", "0", "0", "0 '/个", "个", 4);
+         var st48 = new Dictionary(Guid.NewGuid(), testTaskTypeId, "业务功能测试", "0.333", "C01", "0.333/个", "个", 4);
+         var st49 = new Dictionary(Guid.NewGuid(), testTaskTypeId, "系统性能测试", "10", "C02", "10/次", "次", 4);
+         var st50 = new Dictionary(Guid.NewGuid(), testTaskTypeId, "系统安全测试", "10", "C03", "10/次", "次", 4);
 
-         ////管理类任务子类型
-         //var st7 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "试用期员工管理", "1.375", "9", "1.375 '/人周", "人周", 4);
-         //var st8 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "预决算管理", "3", "10", "3 '/个", "个", 4);
-         //var st9 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "需求管理", "0.5", "11", "0.5 '/次", "次", 4);
+         var st51 = new Dictionary(Guid.NewGuid(), deployTaskTypeId, "中间件安装", "2", "B01", "2/个", "个", 4);
+         var st52 = new Dictionary(Guid.NewGuid(), deployTaskTypeId, "应用部署（单点）", "0.5", "B02", "0.5/次", "次", 4);
+         var st53 = new Dictionary(Guid.NewGuid(), deployTaskTypeId, "应用部署（集群）", "1", "B03", "1/次", "次", 4);
+         var st54 = new Dictionary(Guid.NewGuid(), deployTaskTypeId, "配置调优", "5", "B04", "5/次", "次", 4);
+         var st55 = new Dictionary(Guid.NewGuid(), deployTaskTypeId, "数据库部署（单点）", "3", "B05", "3/次", "次", 4);
+         var st56 = new Dictionary(Guid.NewGuid(), deployTaskTypeId, "数据库部署（集群）", "15", "B06", "15/次", "次", 4);
+
+         var st57 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "日常巡检", "1", "Y01", "1'/次", "次", 4);
+         var st58 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "技术支持（远程）", "2", "Y02", "2'/次", "次", 4);
+         var st59 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "技术支持（上门）", "10", "Y03", "10'/次", "次", 4);
+         var st60 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "数据查询", "0.111", "Y04", "0.111'/次", "次", 4);
+         var st61 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "数据更新", "0.15", "Y05", "0.15'/次", "次", 4);
+         var st62 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "数据统计（≦3表）", "0.3", "Y06", "0.3'/次", "次", 4);
+         var st63 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "数据统计（≦5表）", "0.5", "Y06", "0.5'/次", "次", 4);
+         var st64 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "数据统计（﹥5表）", "1", "Y06", "1'/次", "次", 4);
+         var st65 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "数据备份", "0.5", "Y07", "0.5'/个", "个", 4);
+         var st66 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "数据恢复", "1.5", "Y08", "1.5'/个", "个", 4);
+         var st67 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "数据库脚本编制（普通）", "0.15", "Y09", "0.15'/个", "个", 4);
+         var st68 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "数据库脚本编制（复杂）", "0.333", "Y09", "0.333'/个", "个", 4);
+         var st69 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "数据库补丁升级", "3", "Y10", "3'/个", "个", 4);
+         var st70 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "中间件补丁升级", "2", "Y11", "2'/个", "个", 4);
+         var st71 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "等保协调工作", "15", "Y12", "15'/个", "个", 4);
+         var st72 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "等保修复工作", "25", "Y13", "25'/个", "个", 4);
+         var st73 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "客户培训（讲课）", "10", "Y14", "10'/次", "次", 4);
+         var st74 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "客户培训（安排）", "5", "Y15", "5'/次", "次", 4);
+         var st75 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "通知公告", "1", "Y16", "1'/个", "个", 4);
+         var st76 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "客户服务（QQ/EMAIL/TEL）", "0.25", "Y17", "0.25'/个", "个", 4);
+         var st77 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "原运维任务", "0", "0", "0 '/个", "个", 4);
+
+         var st78 = new Dictionary(Guid.NewGuid(),manageTaskTypeId, "试用期员工管理", "1.375", "G01", "1.375'/人周", "人周", 4);
+         var st79 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "预决算管理", "3", "G02", "3'/个", "个", 4);
+         var st80 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "需求管理", "0.5", "G03", "0.5/次", "次", 4);
+         var st81 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "实习生管理", "1.375", "G04", "1.375'/人周", "人周", 4);
+         var st82 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "内部培训（讲师）", "3", "G01", "3'/小时", "小时", 4);
+         var st83 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "内部培训（学习）", "1", "G01", "1'/小时", "小时", 4);
+
+         var st84 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "出差", "8", "N01", "8'/天", "天", 4);
+         var st85 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "SQA报告", "5", "N02", "5'/次", "次", 4);
+         var st86 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "文件归档", "0.417", "N03", "0.417'/件", "件", 4);
+         var st87 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "立项审批和申请", "5", "N04", "5'/件", "件", 4);
+         var st88 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "创建检查文档", "2.5", "N05", "2.5'/套", "件", 4);
+         var st89 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "部门管理规范建立", "5", "N06", "5'/页", "页", 4);
+         var st90 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "用品申领", "0.833", "N07", "0.833'/次", "次", 4);
+         var st91 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "事务通知", "0.417", "N08", "0.417'/次", "次", 4);
+         var st92 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "会议室预订", "0.417", "N09", "0.417'/次", "次", 4);
+         var st93 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "项目报销", "2.5", "N10", "2.5'/次", "次", 4);
+         var st94 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "交通补助申领和发放", "12.5", "N11", "12.5'/次", "次", 4);
+         var st95 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "福利发放", "0.833", "N12", "0.833'/次", "次", 4);
+         var st96 = new Dictionary(Guid.NewGuid(), officeTaskTypeId, "行政事务", "0.833", "N13", "0.833'/小时", "小时", 4);
+
 
          var dicArray = new Dictionary[] {
             projectTaskType,
@@ -274,25 +359,38 @@ namespace TheSite.Controllers
             maintanceTaskType,
             documentTaskType,
             manageTaskType,
+            designTaskType,
+            developTaskType,
+            testTaskType,
+            deployTaskType,
+            officeTaskType,
             dst,
-            st,
-            st2,
-            st3,
-            st4,
-            st5,
-            st6,
-            st7,
-            st8,
-            st9
+            st1,st2,st3,st4,st5,st6,st7,st8,st9,st10,
+            st11,st12,st13,st14,st15,st16,st17,st18,st19,st20,
+            st21,st22,st23,st24,st25,st26,st27,st28,st29,st30,
+            st31,st32,st33,st34,st35,st36,st37,st38,st39,st40,
+            st41,st42,st43,st44,st45,st46,st47,st48,st49,st50,
+            st51,st52,st53,st54,st55,st56,st57,st58,st59,st60,
+            st61,st62,st63,st64,st65,st66,st67,st68,st69,st70,
+            st71,st72,st73,st74,st75,st76,st77,st78,st79,st80,
+            st81,st82,st83,st84,st85,st86,st87,st88,st89,st90,
+            st91,st92,st93,st94,st95,st96
+
          }.ToList();
 
          db.DictionaryDal.ConditionDelete(
             d.ParentID == taskTypeId |
+            d.ParentID == planTaskTypeId |
             d.ParentID == projectTaskTypeId |
             d.ParentID == tempTaskTypeId |
             d.ParentID == documentTaskTypeId |
             d.ParentID == maintanceTaskTypeId |
-            d.ParentID == manageTaskTypeId
+            d.ParentID == manageTaskTypeId |
+            d.ParentID == designTaskTypeId |
+            d.ParentID == developTaskTypeId |
+            d.ParentID == testTaskTypeId |
+            d.ParentID == deployTaskTypeId |
+            d.ParentID == officeTaskTypeId
             );
          foreach (var item in dicArray)
             db.DictionaryDal.Insert(item);

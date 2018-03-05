@@ -134,10 +134,10 @@
 				  <thead>
 				  <tr style="height:40px">
 					 <th class="gdfColHeader" style="width:35px;"></th>
-					 <th class="gdfColHeader gdfResizable" style="width:30px;">层级</th>
+					 <th class="gdfColHeader gdfResizable" style="width:20px;">层级</th>
 					 <th class="gdfColHeader gdfResizable" style="width:150px;">任务名称</th>
 					 <th class="gdfColHeader gdfResizable" style="width:70px;">任务类型</th>
-					 <th class="gdfColHeader gdfResizable" style="width:85px;">任务子类型</th>
+					 <th class="gdfColHeader gdfResizable" style="width:150px;">任务子类型</th>
 					 <th class="gdfColHeader gdfResizable" style="width:70px;">执行人</th>
 					 <th class="gdfColHeader gdfResizable" style="width:70px;">审核人</th>
 					 <th class="gdfColHeader gdfResizable" style="width:80px;">开始时间</th>
@@ -329,6 +329,8 @@
 				var ge;
 				var $myTasksDp = $('#dp_myTasks');
 				var currentSelectTaskId = "";
+				var subTypeMappings = [];
+				@*[{ typeid: '@TaskKeys.ProjectTaskType', subId: '@Guid.Empty', subText: '无（默认）' },];*@
 
 				$(function () {
 
@@ -364,6 +366,18 @@
 				function loadGanttFromServer(taskId, callback) {
 					$.post('@Url.Action("TaskArrangement", "Task")', { ProjectId: projectId, TaskId: taskId }, function (data) {
 
+						if (data.taskTypes.length > 0) {
+							var taskType;
+							for (var i = 0; i < data.taskTypes.length; i++) {
+								taskType=data.taskTypes[i];
+								subTypeMappings.push({
+									typeid: taskType.ParentID,
+									subId: taskType.ID,
+									subText:taskType.Value + ': '+taskType.Title +taskType.Note
+								});
+							}
+						}
+
 						if (data.tasks.length == 0)
 							return;
 
@@ -382,7 +396,6 @@
 							task.canWrite = true;
 							task.status = 'STATUS_SUSPENDED';
 							task.hasChild = true;
-							//task.subType = '16EABA96-2101-42C6-86E3-AD27669F842A'; //TODO
 
 							//加载我的任务下拉框
 							if (task.isMine)
@@ -412,16 +425,15 @@
 
 						$('.taskTypeList').each(function (i) {
 							var $o = $(this);
-							$o.change(function () {
-								bindSubType($o, i + 1)
-							});
+							
 							$o.find('option').each(function (j) {
 								var option = $(this);
 								if (option.val() == ge.tasks[i].taskType) {
 									option.prop('selected', 'selected');
 
-									$o.trigger('change'); //读取子类型
-
+									$o.change(function () {
+										bindSubType($o, i + 1)
+									}).trigger('change'); //读取子类型
 								}
 							});
 						});
@@ -559,27 +571,7 @@
 				}
 
 
-				//TODO 先暂时写死，到时通过ajax读取
-
-				var subTypeMappings =
-					 [
-						{ typeid: '@TaskKeys.ProjectTaskType', subId: '@Guid.Empty', subText: '无（默认）' },
-						{ typeid: '@TaskKeys.PlanTaskTaskType', subId: '@Guid.Empty', subText: '无（默认）' },
-
-						{ typeid: '@TaskKeys.MaintainedTaskType', subId: '7097AE29-9844-4A50-97E6-FD5BEC77CB61', subText: '日常巡检' },
-					   { typeid: '@TaskKeys.MaintainedTaskType', subId: '16EABA96-2101-42C6-86E3-AD27669F842A', subText: '技术支持（远程）' },
-					   { typeid: '@TaskKeys.MaintainedTaskType', subId: '4031E5A4-7342-40EB-9E06-40BD225D97A7', subText: '技术支持（上门）' },
-
-						{ typeid: '@TaskKeys.DocumentTaskType', subId: '43A704E2-9420-431B-9CEC-263F31866E66', subText: 'PPT制作（创新）' },
-					   { typeid: '@TaskKeys.DocumentTaskType', subId: '1680368C-8322-4771-8903-4A7B49104C63', subText: 'PPT制作（借鉴）' },
-					   { typeid: '@TaskKeys.DocumentTaskType', subId: 'D8FFAA75-D2C5-4D72-AC77-5FFBF979A5F5', subText: 'PPT审阅' }
-				];
-
-
-
 			</script>
-
-
 		}
 	</div>
 
