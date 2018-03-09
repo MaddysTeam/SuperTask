@@ -84,17 +84,6 @@ namespace Business.Helper
       public static Guid DefaultType => Guid.Parse("77AAD589-E95B-839E-C1F5-55027AE3BC14");
 
 
-
-      public static Guid TaskEditPlanType => Guid.Parse("ABA6D06D-15E8-4A33-9C02-805675D631FF"); //TODO Add in dic
-
-      public static Guid TaskEditStartType => Guid.Parse("6937E453-15A0-F5FE-C807-DC4B12EE9580"); //TODO Add in dic
-
-      public static Guid TaskEditCompleteType => Guid.Parse("E42E2E11-90C0-685A-C4AB-5D5D2B4E34CB"); //TODO Add in dic
-
-      public static Guid TaskEditDeleteType => Guid.Parse("AC63467D-3632-0C38-BF39-61D23AD49D92"); //TODO Add in dic
-
-      public static Guid TaskTransferType => Guid.Parse("8CB4510B-E443-1674-30BB-5E00C83E1E83"); //TODO Add in dic
-
       public static int TaskNameDisplayLength = 10;
 
       public static double DefaultEstimateHours = 0;

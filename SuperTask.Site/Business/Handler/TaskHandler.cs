@@ -103,10 +103,12 @@ namespace Business
       public TaskEditHandler()
       {
          EditStrategy = new Dictionary<Guid, Action<EditContext>>();
-         EditStrategy.Add(TaskKeys.TaskEditPlanType, WhenPlan);
-         EditStrategy.Add(TaskKeys.TaskEditStartType, WhenStart);
-         EditStrategy.Add(TaskKeys.TaskEditCompleteType, WhenComplete);
-         EditStrategy.Add(TaskKeys.TaskEditDeleteType, WhenDelete);
+         EditStrategy.Add(TaskKeys.PlanStatus, WhenPlan);
+         EditStrategy.Add(TaskKeys.ProcessStatus, WhenStart);
+         EditStrategy.Add(TaskKeys.ReviewStatus, WhenReview);
+         EditStrategy.Add(TaskKeys.TaskTempEditStatus, WhenTempEdit);
+         EditStrategy.Add(TaskKeys.CompleteStatus, WhenComplete);
+         EditStrategy.Add(TaskKeys.DeleteStatus, WhenDelete);
       }
 
 
@@ -127,17 +129,39 @@ namespace Business
          public List<WorkTask> DeletedTasks { get; set; }
       }
 
+      protected virtual Result Validate(WorkTask task, TaskEditOption ctx) { throw new NotImplementedException(); }
+
+      protected virtual void UploadAttachment(Attachment attachment, WorkTask task, APDBDef db)
+      {
+         if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
+         {
+            attachment.TaskId = task.TaskId;
+            attachment.Projectid = task.Projectid;
+            attachment.PublishUserId = task.ManagerId;
+            attachment.UploadDate = DateTime.Now;
+            attachment.AttachmentId = Guid.NewGuid();
+
+            db.AttachmentDal.Insert(attachment);
+         }
+      }
 
       protected virtual void WhenPlan(EditContext ctx) { }
-
 
       protected virtual void WhenStart(EditContext ctx)
       {
          ctx.Task.Start();
       }
 
+      protected virtual void WhenReview(EditContext ctx)
+      {
+         ctx.Task.SetStatus(TaskKeys.ReviewStatus);
+      }
 
-      protected virtual Result Validate(WorkTask task, TaskEditOption ctx) { throw new NotImplementedException(); }
+      protected virtual void WhenTempEdit(EditContext ctx)
+      {
+         //任务临时修改后会进入执行状态
+         ctx.Task.SetStatus(TaskKeys.ProcessStatus);
+      }
 
       protected virtual void WhenComplete(EditContext ctx)
       {
@@ -163,20 +187,6 @@ namespace Business
          }
 
          ctx.Task.SetStatus(TaskKeys.DeleteStatus);
-      }
-
-      protected virtual void UploadAttachment(Attachment attachment, WorkTask task, APDBDef db)
-      {
-         if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
-         {
-            attachment.TaskId = task.TaskId;
-            attachment.Projectid = task.Projectid;
-            attachment.PublishUserId = task.ManagerId;
-            attachment.UploadDate = DateTime.Now;
-            attachment.AttachmentId = Guid.NewGuid();
-
-            db.AttachmentDal.Insert(attachment);
-         }
       }
 
    }
@@ -279,11 +289,11 @@ namespace Business
             ResourceHelper.AddUserToResourceIfNotExist(pj.ProjectId, task.TaskId, task.ReviewerID, ResourceKeys.OtherType, db);
 
             var ctx = new EditContext();
-            if (EditStrategy.ContainsKey(task.EditType))
+            if (EditStrategy.ContainsKey(task.TaskStatus))
             {
                //执行不同状态时的逻辑
                ctx = new EditContext { Project = pj, Task = task, db = db, Result = re, AllTasks = tks, OrignalTasks = orignalTks, OperatorId = option.OperatorId };
-               EditStrategy[task.EditType].Invoke(ctx);
+               EditStrategy[task.TaskStatus].Invoke(ctx);
 
                if (!ctx.Result.IsSuccess)
                {
@@ -385,6 +395,13 @@ namespace Business
             {
                re.IsSuccess = false;
                re.Msg = Errors.Task.TASKS_OUT_OF_PROJECT_RANGE;
+            }
+
+         if (pj.IsProcessStatus || pj.IsEditStatus)
+            if (task.IsParent && otk != null && (otk.EndDate > task.EndDate || otk.StartDate != task.StartDate))
+            {
+               re.IsSuccess = false;
+               re.Msg = Errors.Task.PARENT_ONLY_ALLOW_DELAY_WHEN_PROJECT_START;
             }
 
          return re;
@@ -514,8 +531,8 @@ namespace Business
          ClearTask(task);
 
          var ctx = new EditContext { Task = task, db = db, Result = re };
-         if (EditStrategy.ContainsKey(task.EditType))
-            EditStrategy[task.EditType].Invoke(ctx);
+         if (EditStrategy.ContainsKey(task.TaskStatus))
+            EditStrategy[task.TaskStatus].Invoke(ctx);
 
          if (ctx.Result.IsSuccess)
             if (taskIndb != null)

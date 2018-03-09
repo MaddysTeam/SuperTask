@@ -1,0 +1,164 @@
+﻿@using Business.Config;
+@model WorkTask
+@{
+	var currentUserId = Html.GetUserProfile() == null ? Guid.Empty:  Html.GetUserProfile().UserId;
+}
+
+<style>
+	.dropzonePop {
+		display: none;
+	}
+</style>
+
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑任务</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form action="@Url.Action("UploadFile", "Attachment")" class="dropzonePop filePop"></form>
+			<form class="form-horizontal" action="@Url.Action("Edit", "Task")" role="form" data-after-success="afterDialogSuccess()">
+				<div class="row">
+
+					<fieldset class="col-sm-12">
+
+						@Html.HiddenFor(t => t.TaskId, new { @class = "taskId" })
+						@Html.HiddenFor(t => t.ParentId, new { @class = "parentId" })
+						@Html.HiddenFor(t => t.ManagerId, new { @class = "managerId" })
+						@Html.HiddenFor(t => t.CreatorId)
+
+						@Html.HiddenFor(t => t.TaskType)
+						@Html.HiddenFor(t => t.SubTypeId)
+						@Html.HiddenFor(t => t.TaskStatus)
+						@Html.HiddenFor(t => t.StandardItemId)
+						@Html.HiddenFor(t => t.ManagerId)
+						@Html.HiddenFor(t => t.ReviewerID)
+						@Html.HiddenFor(t => t.Projectid)
+						@Html.HiddenFor(t => t.ParentId)
+						@Html.HiddenFor(t => t.SortId)
+						@Html.HiddenFor(t => t.TaskLevel)
+						@Html.HiddenFor(t => t.IsParent)
+						@Html.HiddenFor(t => t.WorkHours)
+
+						<div class="form-group">
+							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextBoxFor(t => t.TaskName, new { @class = "form-control" })
+								@Html.ValidationMessageFor(t => t.TaskName)
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(t => t.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control startDate", @hasValue = Model.StartDate != DateTime.MinValue })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(t => t.EndDate, new { @class = "control-label col-md-3 " })
+							<div class="col-md-9">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(t => t.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate", @hasValue = Model.StartDate != DateTime.MinValue })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+						@if (!Model.IsParent)
+						{
+						<div class="form-group">
+							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
+							</div>
+						</div>
+						}
+						else
+						{
+							@Html.HiddenFor(t => t.EstimateWorkHours)
+						}
+
+						<div class="form-group">
+							@Html.LabelFor(t => t.Description, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextAreaFor(t => t.Description, new { @class = "form-control", @rows = "5" })
+							</div>
+						</div>
+
+						@if (Model.ManagerId == currentUserId)
+						{
+						<div class="form-group">
+							@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileNamePop" })
+							@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePathPop" })
+							<label class="col-md-3 control-label">上传文件</label>
+							<div class="col-md-9">
+								<input style="visibility:hidden;position:absolute;" />
+								<div class="input-group">
+									<label id="uploadNamePop" class="form-control oversize uploadNamePop"></label>
+									<span class="input-group-btn">
+										<button class="btn btn-danger" type="button" id="btn-uploadPop">附件上传</button>
+									</span>
+								</div>
+							</div>
+						</div>
+
+					
+						<div class="form-group">
+							<div class="col-sm-9 col-lg-offset-3">
+								<button type="submit" class="btn btn-primary btn-block-half btn-save"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+						}
+
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+</div>
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('.modal-dialog form'), true);
+
+		//文件上传
+		$('.dropzonePop.filePop').dropzone({
+			addedContainer: '#flyArea',
+			dictResponseError: '上传出错',
+			uploadMultiple: false,
+			maxFilesize: 200,
+			init: function () {
+				this.on('success', function (file, data) {
+					$('.fileNamePop').val(data.filename);
+					$('.filePathPop').val(data.url);
+					setTimeout(function () { $('.uploadNamePop').html(data.filename); }, 1000);
+				});
+				this.on('error', function (file, message) {
+					popupMessage({ result: 'error', msg: message });
+				});
+			}
+		});
+
+		$('#btn-uploadPop').on('click', function () {
+			$('.dropzonePop').trigger('click');
+		});
+
+	})
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+</script>

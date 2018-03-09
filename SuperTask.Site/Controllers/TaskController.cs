@@ -128,8 +128,7 @@ namespace TheSite.Controllers
             DateTime.Now.GetNextMondayIfIsWeekend(),
             DateTime.Now.GetNextMondayIfIsWeekend().AddDays(1),
             TaskKeys.PlanStatus,
-            TaskKeys.ProjectTaskType,
-            TaskKeys.TaskEditPlanType
+            TaskKeys.ProjectTaskType
             );
 
          return PartialView(task);
@@ -234,7 +233,6 @@ namespace TheSite.Controllers
       public ActionResult Delete(Guid id)
       {
          var delTk = db.WorkTaskDal.PrimaryGet(id);
-         delTk.EditType = TaskKeys.TaskEditDeleteType;
 
          return Edit(delTk);
       }
@@ -457,6 +455,14 @@ namespace TheSite.Controllers
                   });
                }
 
+               if (pjTask.IsCompleteStatus)
+               {
+                  return Json(new
+                  {
+                     result = AjaxResults.Error,
+                     msg = Errors.Task.NOT_ALLOWED_CHANGE_TYPE_IF_HAS_COMPLETED
+                  });
+               }
             }
          }
 
@@ -576,6 +582,146 @@ namespace TheSite.Controllers
             msg = "编辑成功"
          });
 
+      }
+
+
+      // GET: Task/PlanTaskList
+      //	POST-Ajax: Task/PlanTaskList
+      // GET: TaskManage/PlanTaskEdit
+      // Post: TaskManage/PlanTaskStart
+
+      public ActionResult PlanTaskList()
+      {
+         var ac = APDBDef.Account; //TODO: 资源逻辑以后修改
+
+         ViewBag.Projects = MyJoinedProjects();
+
+         ViewBag.Resources = db.AccountDal.ConditionQuery(ac.Status == 0, null, null, null); //可用资源
+
+         return View();
+      }
+
+      [HttpPost]
+      public ActionResult PlanTaskList(Guid projectId,Guid resourceId,DateTime start, DateTime end,
+                                      int current, int rowCount, AjaxOrder sort, string searchPhrase)
+      {
+         var user = GetUserInfo();
+         var rev = APDBDef.Review;
+         var u = APDBDef.UserInfo;
+         //var ru = APDBDef.UserInfo.As("");
+         var re = APDBDef.Resource;
+         var p = APDBDef.Project;
+
+         var subQuery = APQuery.select(re.UserId).from(re, p.JoinInner(re.Projectid == p.ProjectId & (p.ManagerId == user.UserId | p.PMId==user.UserId)));
+         var query = APQuery.select(t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.EstimateWorkHours, t.TaskStatus, t.IsParent,t.ManagerId,
+                                     rev.TaskId, rev.ReceiverID, p.ProjectName.As("projectName"), u.UserName.As("userName"), u.UserId.As("userId")
+                                   //ru.UserName.As("receiverName")
+                                   )
+                                  .from(t,
+                                        u.JoinInner(u.UserId == t.ManagerId),
+                                        p.JoinInner(p.ProjectId == t.Projectid),
+                                        rev.JoinLeft(rev.TaskId == t.TaskId))
+                                 .where(t.TaskType == TaskKeys.PlanTaskTaskType & t.ManagerId.In(subQuery)
+                                      & t.StartDate >= start & t.EndDate <= end)
+                                 .group_by(
+                                          t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.EstimateWorkHours, t.TaskStatus, t.IsParent,t.ManagerId,
+                                          rev.TaskId, rev.ReceiverID, p.ProjectName, u.UserName, u.UserId)
+                                  .order_by(t.ManagerId.Asc,t.StartDate.Desc,t.EndDate.Desc);
+
+         if (!projectId.IsEmpty() && projectId != AppKeys.SelectAll)
+            query.where_and(t.Projectid == projectId);
+
+         if (!resourceId.IsEmpty() && resourceId != AppKeys.SelectAll)
+            query.where_and(t.ManagerId == resourceId);
+
+         //分页
+
+         query = query
+              .primary(t.TaskId)
+              .skip((current - 1) * rowCount)
+              .take(rowCount);
+
+
+         //过滤条件
+         //模糊搜索用户名、实名进行
+
+         searchPhrase = searchPhrase.Trim();
+         if (searchPhrase != "")
+         {
+            query.where_and(t.TaskName.Match(searchPhrase) |
+               p.ProjectName.Match(searchPhrase) |
+               u.UserName.Match(searchPhrase) 
+               );
+         }
+
+
+         //排序条件表达式
+
+         if (sort != null)
+         {
+            switch (sort.ID)
+            {
+               case "project": query.order_by(sort.OrderBy(p.ProjectName)); break;
+               case "task": query.order_by(sort.OrderBy(t.TaskName)); break;
+               case "manager": query.order_by(sort.OrderBy(u.UserName)); break;
+               case "start": query.order_by(sort.OrderBy(t.StartDate)); break;
+               case "end": query.order_by(sort.OrderBy(t.EndDate)); break;
+               case "status": query.order_by(sort.OrderBy(t.TaskStatus)); break;
+            }
+         }
+
+
+         //获得查询的总数量
+
+         var total = db.ExecuteSizeOfSelect(query);
+
+         var result = query.query(db, rd =>
+         {
+            var userId = u.UserId.GetValue(rd, "userId");
+            var reviewerId = rev.ReceiverID.GetValue(rd);
+            var statusId = t.TaskStatus.GetValue(rd);
+            return new
+            {
+               id = t.TaskId.GetValue(rd),
+               task = t.TaskName.GetValue(rd),
+               statusId = statusId,
+               status = TaskKeys.GetStatusKeyByValue(statusId),
+               project = p.ProjectName.GetValue(rd, "projectName"),
+               start = t.StartDate.GetValue(rd),
+               end = t.EndDate.GetValue(rd),
+               manager = u.UserName.GetValue(rd),
+               managerId = userId,
+               isParent = t.IsParent.GetValue(rd),
+               isMe = userId == user.UserId,
+               reviewerId = reviewerId,
+               reviewer = "",//ru.UserName.GetValue(rd, "receiverName"),
+               reviewerIsMe = reviewerId == user.UserId
+            };
+         }).ToList();
+
+         return Json(new
+         {
+            rows = result,
+            current,
+            rowCount,
+            total
+         });
+      }
+
+      public ActionResult PlanTaskEdit(Guid id)
+      {
+         var task = db.WorkTaskDal.PrimaryGet(id);
+
+         return PartialView(task);
+      }
+
+      [HttpPost]
+      public ActionResult PlanTaskStart(Guid taskId)
+      {
+         var task = db.WorkTaskDal.PrimaryGet(taskId);
+         task.SetStatus(TaskKeys.ProcessStatus);
+
+         return Edit(task);
       }
 
 

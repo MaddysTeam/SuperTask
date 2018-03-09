@@ -112,7 +112,7 @@ namespace Business
       {
          var re = v.Result;
 
-         if (t.IsParent)
+         if (t.IsParent && !t.IsPlanTask)
          {
             re.IsSuccess = false;
             re.Msg = Errors.Task.PARENT_NOT_ALLOWED_CHANGE_DATE;

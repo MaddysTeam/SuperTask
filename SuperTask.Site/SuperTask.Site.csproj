@@ -1536,10 +1536,13 @@
     <Content Include="Views\ShareFolder\FilePreview.cshtml" />
     <Content Include="Views\TaskManage\TaskStandardItemList.cshtml" />
     <Content Include="Views\TaskManage\TaskStandardItemEdit.cshtml" />
+    <Content Include="Views\Task\PlanTaskList.cshtml" />
+    <Content Include="Views\Task\PlanTaskEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Attachments\" />
+    <Folder Include="Models\SearchOptions\" />
     <Folder Include="Views\Designer\" />
     <Folder Include="Views\EvalUtil\" />
     <Folder Include="Views\Json\" />

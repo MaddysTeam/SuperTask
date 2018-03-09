@@ -14,22 +14,21 @@ namespace TheSite.Controllers
    public class WorkFlowTaskController : BaseController
    {
 
-      APDBDef.WorkflowTaskTableDef wft = APDBDef.WorkflowTask;
-      APDBDef.ReviewTableDef r = APDBDef.Review;
+     static APDBDef.WorkflowTaskTableDef wft = APDBDef.WorkflowTask;
+     static APDBDef.ReviewTableDef r = APDBDef.Review;
 
 
       // GET: WorkFlowTask/Search
       // POST-Ajax: WorkFlowTask/Search
 
-      public ActionResult Search()
-
+      public ActionResult Search(Guid? taskId)
       {
          return View();
       }
 
 
       [HttpPost]
-      public ActionResult Search(string searchType, int current, int rowCount, AjaxOrder sort, string searchPhrase)
+      public ActionResult Search(Guid taskid,string searchType, int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
          var user = GetUserInfo();
 
@@ -49,6 +48,9 @@ namespace TheSite.Controllers
                             .where(wft.ReceiveID == user.UserId | wft.SenderID==user.UserId)
                             .where_and(wft.Sort == 2)
                             .order_by(r.SendDate.Desc);
+
+         if (!taskid.IsEmpty())
+            query.where_and(r.TaskId==taskid);
 
          if (searchType == ReviewKeys.ResultWait.ToString())
             query.where_and(r.Result == ReviewKeys.ResultWait);//待审核流程
@@ -122,7 +124,6 @@ namespace TheSite.Controllers
                DateRange=string.Format("{0}  至  {1}",t.StartDate.GetValue(rd),t.EndDate.GetValue(rd)),
                TaskEsHours=t.EstimateWorkHours.GetValue(rd),
                TaskHours=t.WorkHours.GetValue(rd)
-               
             };
 
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(review);

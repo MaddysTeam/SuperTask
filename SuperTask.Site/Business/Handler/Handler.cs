@@ -65,8 +65,8 @@ namespace Business
          {TaskKeys.TestTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler()) },
          {TaskKeys.DeployTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler()) },
          {TaskKeys.MaintainedTaskType, new LeafTaskEditHandler(new ProjectTaskEditHandler())  },
-         {TaskKeys.ManageTaskType,new TempTaskEditHandler()  },
-         {TaskKeys.OfficeTaskType,new TempTaskEditHandler()  },
+         {TaskKeys.ManageTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler())  },
+         {TaskKeys.OfficeTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler())  },
       };
 
       public static Dictionary<Guid, ResourceSearchHandler> ResourceSearchHandlers = new Dictionary<Guid, ResourceSearchHandler>

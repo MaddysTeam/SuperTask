@@ -55,6 +55,7 @@ namespace Business.Helper
          public const string NOT_ALLOWED_CHANGE_PARENT = "已经有实际工时或维护任务数量的子任务无法更换父任务";
          public const string NOT_ALLOWED_DELETE_IF_HAS_WORKHOUR = "已经有实际工时的任务无法删除";
          public const string NOT_ALLOWED_CHANGE_TYPE_IF_HAS_WORKHOUR = "已经有实际工时的任务无法修改类型和子类型";
+         public const string NOT_ALLOWED_CHANGE_TYPE_IF_HAS_COMPLETED = "已经结束的任务无法修改类型和子类型";
          public const string NOT_ALLOWED_BE_PARNET_TYPE_IF_LEAF_TASK= "已经有工时的叶子任务无法变为父任务";
          public const string ALL_TASKS_STARTED = "该项目所有任务均已启动";
          public const string LEAF_TASK_CANNOT_BE_PARENT = "叶子任务不能作为父任务";
@@ -63,6 +64,7 @@ namespace Business.Helper
          public const string MAINTAINED_TASK_NOT_ALLOWED_CHANGE_FROM_OTHER_TASK_TYPE = "有工时的非运维任务无法转为运维任务";
          public const string TEMP_TASK_WHICH_HAS_WORKHOURS_NOT_ALLOWED_CHANG_AS_PROJECT_TASK = "已经有实际工时的临时任务，无法添加为项目任务";
          public const string NOT_HAVE_ANY_TASKS = "项目无任务";
+         public const string PARENT_ONLY_ALLOW_DELAY_WHEN_PROJECT_START = "项目启动后，父任务时间只能延期";
       }
 
 

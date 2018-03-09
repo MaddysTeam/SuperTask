@@ -48,7 +48,7 @@ namespace Business
 
       public bool IsReviewStatus => TaskStatus == TaskKeys.ReviewStatus;
 
-      public bool IsProjectTaskType => TaskType != TaskKeys.TempTaskType && TaskType != TaskKeys.ManageTaskType && TaskType != TaskKeys.OfficeTaskType;
+      public bool IsProjectTaskType => TaskType != TaskKeys.TempTaskType;
 
       public bool IsTempTaskType => !IsProjectTaskType;
 
@@ -58,7 +58,7 @@ namespace Business
 
       public bool HasSubType => TaskType != TaskKeys.ProjectTaskType && TaskType != TaskKeys.TempTaskType;
 
-      public Guid EditType { get; set; }
+      //public Guid EditType { get; set; }
 
       public string DataUrl { get; set; }
 
@@ -113,6 +113,8 @@ namespace Business
       /// </summary>
       public double StandardWorkhours { get; set; }
 
+      public bool IsPlanTask => TaskType == TaskKeys.PlanTaskTaskType;
+
       public void SetStatus(Guid status) => this.TaskStatus = status;
 
 
@@ -134,7 +136,6 @@ namespace Business
       {
          RealEndDate = realEndDate;
          SetStatus(TaskKeys.CompleteStatus);
-         EditType = TaskKeys.TaskEditCompleteType;
          RateOfProgress = 100;
       }
 
@@ -151,7 +152,7 @@ namespace Business
       }
 
 
-      public static WorkTask Create(Guid defaultUserId, DateTime start, DateTime end, Guid status, Guid type, Guid editType)
+      public static WorkTask Create(Guid defaultUserId, DateTime start, DateTime end, Guid status, Guid type)
          => new WorkTask
          {
             TaskId = Guid.NewGuid(),
@@ -162,7 +163,6 @@ namespace Business
             ManagerId = defaultUserId,
             CreatorId = defaultUserId,
             ReviewerID = defaultUserId,
-            EditType = editType
          };
 
 
@@ -206,7 +206,7 @@ namespace Business
             SortId = 1 //表示根任务
          };
 
-      public static bool IsProjectTask(Guid typeId) => typeId != TaskKeys.TempTaskType && typeId != TaskKeys.ManageTaskType && typeId != TaskKeys.OfficeTaskType;
+      public static bool IsProjectTask(Guid typeId) => typeId != TaskKeys.TempTaskType;
       public static bool HasSubTypeTask(Guid typeId) => typeId != TaskKeys.ProjectTaskType && typeId != TaskKeys.TempTaskType && typeId != TaskKeys.PlanTaskTaskType;
 
       public Result Validate()

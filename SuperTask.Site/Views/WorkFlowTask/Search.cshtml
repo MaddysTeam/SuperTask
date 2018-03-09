@@ -2,6 +2,8 @@
 @{
 	var pageTitle = ViewBag.Title = "我的流程";
 	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var taskId = Request["taskId"] == null ? Guid.Empty.ToString() : Request["taskId"];
 }
 
 <div class="content-wrapper">
@@ -64,11 +66,12 @@
 
 	</div>
 </div>
-
+<input type="hidden" id="taskId" value="@taskId" />
 @section Scripts {
 	<script>
 		function getGlobalRequest() {
 			return {
+				taskId: $('#taskId').val(),
 				searchType: $('#SearchType').val()
 			};
 		}
@@ -107,8 +110,6 @@
 			var grid = $('#bootgrid');
 			grid.bootgrid(getGridOptions())
 			.on('loaded.rs.jquery.bootgrid', function () {
-
-
 				var manUrl = '@Url.Action("FlowIndex", "WorkFlowRun")';
 
 				grid.find('.btn-detail').on('click', function (e) {
@@ -119,7 +120,6 @@
 				});
 
 			});
-
 
 			$('#SearchType').on('change', function () {
 				$('#bootgrid').bootgrid('reload');
