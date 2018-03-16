@@ -141,6 +141,15 @@ namespace Business.Helper
       }
 
 
+      public static WorkTask CreateAndSaveRootTaskInDB(UserInfo user,Project project, APDBDef db)
+      {
+         var currentTask = WorkTask.CreateProjectRootTask(user.UserId, user.UserName, project);
+         db.WorkTaskDal.Insert(currentTask);
+
+         return currentTask;
+      }
+
+
       private static void LoopToAppendChildren(List<Node<WorkTask>> all, Node<WorkTask> parent)
       {
          var subItems = all.Where(ee => ee.ParentId == parent.NodeId).ToList();

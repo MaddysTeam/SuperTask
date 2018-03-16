@@ -43,7 +43,7 @@ namespace Business
 
       public static Dictionary<Guid, ProjectTemplateEditHandler> ProjectTemplateEditHandlers = new Dictionary<Guid, ProjectTemplateEditHandler>
       {
-          {ProjectKeys.DefaultProjectType,new DevelopmentProjectTemplateEditHandler() }
+          {ProjectKeys.DevelopmentProjectType,new DevelopmentProjectTemplateEditHandler() }
       };
 
       public static Dictionary<Guid, DefaultTaskSearchHandler> TaskSearchHandlers = new Dictionary<Guid, DefaultTaskSearchHandler>

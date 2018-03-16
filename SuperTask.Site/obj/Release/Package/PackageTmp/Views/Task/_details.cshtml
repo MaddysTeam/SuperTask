@@ -33,7 +33,6 @@
 					@Html.HiddenFor(t => t.TaskId)
 					@Html.HiddenFor(t => t.ParentId)
 					@Html.HiddenFor(t => t.IsParent)
-					@Html.HiddenFor(x => x.EditType)
 					@Html.HiddenFor(x => x.SubTypeValue)
 
 					<div class="form-group">
@@ -463,8 +462,7 @@
 	}
 
 	function isTempTask(typeId) {
-		return typeId == '@TaskKeys.TempTaskType' ||
-				typeId == '@TaskKeys.ManageTaskType';
+		return typeId == '@TaskKeys.TempTaskType';
 	}
 
 	function hasSubTaskType(typeId) {
@@ -524,21 +522,13 @@
 		$('.btn-taskStart').on('click', function () {
 			if (confirm('@Confirm.Task.TASK_CONFIRM_START')) {
 				$('#TaskStatus').val('@TaskKeys.ProcessStatus');
-				$('#EditType').val('@TaskKeys.TaskEditStartType');
 			}
 			else
 				return false;
 		});
 
 		$('.btn-taskSave').on('click', function () {
-			var type;
-			if (isPlanStatus)
-				type = '@TaskKeys.TaskEditPlanType';
-			else if (isProcessStatus || isTempEditStatus)
-				type = '@TaskKeys.TaskEditStartType';
-
 			$('#TaskStatus').val('@Model.TaskStatus');
-			$('#EditType').val(type);
 		});
 
 		$('.btn-taskModify,.btn-taskSubmit').on('click', function () {

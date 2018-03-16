@@ -18,6 +18,7 @@ namespace Business
          EditStrategy.Add(ProjectKeys.PlanStatus, WhenPlan);
          EditStrategy.Add(ProjectKeys.ProcessStatus, WhenStart);
          EditStrategy.Add(ProjectKeys.CompleteStatus, WhenComplete);
+         EditStrategy.Add(ProjectKeys.ForceCloseStatus, WhenForceClose);
       }
 
 
@@ -90,11 +91,10 @@ namespace Business
          db.ResourceDal.Insert(currentResource);
 
          //创建项目下的资源角色
-         ResourceHelper.AddDefaultResoureRoles(project.ProjectId, db);
+         ResourceHelper.AddDefaultResoureRoles(project, db);
 
          //创建项目下的第一个默认任务   
-         var currentTask = WorkTask.CreateProjectRootTask(user.UserId, user.UserName, project);
-         db.WorkTaskDal.Insert(currentTask);
+         TaskHelper.CreateAndSaveRootTaskInDB(user, project, db);
 
          //创建项目记录
          ProjectRecordHelper.CreateRecord(project, user.UserId, db);
@@ -171,6 +171,26 @@ namespace Business
       protected virtual void WhenComplete(EditContext ctx)
       {
          ctx.Project.Complete();
+      }
+
+      protected virtual void WhenForceClose(EditContext ctx)
+      {
+         if (ctx != null
+            && ctx.db != null
+            && ctx.Project != null
+            && !ctx.Project.ProjectId.IsEmpty())
+         {
+            var t = APDBDef.WorkTask;
+            APQuery.update(t)
+                   .set(
+                        t.TaskStatus.SetValue(TaskKeys.CompleteStatus),
+                        t.RateOfProgress.SetValue(100),
+                        t.RealEndDate.SetValue(DateTime.Now))
+                   .where(t.Projectid == ctx.Project.ProjectId)
+                   .execute(ctx.db);
+
+            WhenComplete(ctx);
+         }
       }
 
 
@@ -259,7 +279,7 @@ namespace Business
 
          db.WorkTaskDal.ConditionDelete(r.Projectid == projectId & r.ParentId == Guid.Empty & r.SortId == 1);
 
-         var rootTask = WorkTask.Create(createrId, projectId, "软件开发类项目", start, end,TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 1, 1, true, Guid.Empty);
+         var rootTask = WorkTask.Create(createrId, projectId, "软件开发类项目", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 1, 1, true, Guid.Empty);
          var task1 = WorkTask.Create(createrId, projectId, "功能模块", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 1, 2, true, rootTask.TaskId);
          var task2 = WorkTask.Create(createrId, projectId, "功能子模块1-1", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 3, 3, false, task1.TaskId);
          var task3 = WorkTask.Create(createrId, projectId, "功能子模块1-2", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 3, 4, false, task1.TaskId);

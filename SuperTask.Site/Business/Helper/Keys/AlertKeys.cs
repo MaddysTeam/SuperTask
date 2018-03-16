@@ -212,6 +212,7 @@ namespace Business.Helper
          public const string PROJECT_CONFIRM_START = "确定要项目启动？";
          public const string File_CONFIRM_DELETE = "确定要删除项目文件？";
          public const string PROJECT_CONFIRM_COMPLETE = "确定要标记项目完成？";
+         public const string PROJECT_FORCE_CLOSE= "确定要强制关闭本项目？";
       }
 
 

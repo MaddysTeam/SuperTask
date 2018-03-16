@@ -8,6 +8,36 @@ namespace Business.Helper
 
    public static class ResourceHelper
    {
+      private static Dictionary<Guid, List<Resource>> _currentProjectResource;
+
+      public static List<Resource> GetCurrentProjectResources(Guid projectId, bool isForceClear, APDBDef db = null)
+      {
+         if (_currentProjectResource != null && _currentProjectResource.ContainsKey(projectId))
+            return _currentProjectResource[projectId];
+
+         db = db ?? new APDBDef();
+         var re = APDBDef.Resource;
+         var resources = db.ResourceDal.ConditionQuery(re.Projectid == projectId, null, null, null);
+         if (resources.Count <= 0) return new List<Resource>();
+         _currentProjectResource = _currentProjectResource ?? new Dictionary<Guid, List<Resource>>();
+         _currentProjectResource.Add(projectId, resources);
+
+         return resources;
+      }
+
+      public static Resource GetCurrentProjectResource(Guid projectId, Guid userId, bool isForceClear, APDBDef db = null)
+      {
+         var resources = GetCurrentProjectResources(projectId, isForceClear, db);
+
+         return resources.Find(r => r.UserId == userId);
+      }
+
+      public static void CleanResourceCache()
+      {
+         if (_currentProjectResource != null)
+            _currentProjectResource.Clear();
+      }
+
 
       public static void ReplaceLeader(Guid projectId, Guid managerId, Guid headerId, APDBDef db)
       {
@@ -42,6 +72,8 @@ namespace Business.Helper
 
          foreach (var item in resources)
             db.ResourceDal.Insert(item);
+
+         db.ProjectDal.UpdatePartial(projectId, new { ManagerId = managerId });
       }
 
 
@@ -69,6 +101,9 @@ namespace Business.Helper
 
          foreach (var item in resources)
             db.ResourceDal.Insert(item);
+
+         db.ProjectDal.UpdatePartial(projectId, new { ManagerId = headerId });
+
       }
 
 
@@ -96,17 +131,10 @@ namespace Business.Helper
          }
 
          if (resource.IsPM())
-         {
-            ResourceHelper.ReplacePM(resource.Projectid, resource.UserId, db);
-            db.ProjectDal.UpdatePartial(resource.Projectid, new { ManagerId = resource.UserId });
-         }
+            ReplacePM(resource.Projectid, resource.UserId, db);
 
          if (resource.IsHeader())
-         {
-            ResourceHelper.ReplaceHeader(resource.Projectid, resource.UserId, db);
-            db.ProjectDal.UpdatePartial(resource.Projectid, new { PMId = resource.UserId });
-         }
-
+            ReplaceHeader(resource.Projectid, resource.UserId, db);
       }
 
 
@@ -132,7 +160,7 @@ namespace Business.Helper
       }
 
 
-      public static void AddDefaultResoureRoles(Guid projectId, APDBDef db)
+      public static void AddDefaultResoureRoles(Project project, APDBDef db)
       {
          var r = APDBDef.Role;
          var app = APDBDef.App;
@@ -146,7 +174,7 @@ namespace Business.Helper
                db.ProjectRoleDal.Insert(new ProjectRole
                {
                   PRID = Guid.NewGuid(),
-                  ProjectId = projectId,
+                  ProjectId = project.ProjectId,
                   RoleId = item.RoleId,
                   RoleName = item.RoleName,
                   AppIds = item.RoleName == RoleKeys.HEADER ||

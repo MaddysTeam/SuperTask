@@ -149,16 +149,10 @@ namespace TheSite.Controllers
             }
 
             if (resource.IsPM())
-            {
                ResourceHelper.ReplacePM(resource.Projectid, resource.UserId, db);
-               db.ProjectDal.UpdatePartial(resource.Projectid, new { ManagerId = resource.UserId });
-            }
 
             if (resource.IsHeader())
-            {
                ResourceHelper.ReplaceHeader(resource.Projectid, resource.UserId, db);
-               db.ProjectDal.UpdatePartial(resource.Projectid, new { PMId = resource.UserId });
-            }
 
             //编辑后检查，如果没有领导角色则提示，如果没有项目经理或负责人，在项目属性中修改
             var resources = db.ResourceDal.ConditionQuery(re.Projectid == resource.Projectid, null, null, null);
@@ -191,6 +185,8 @@ namespace TheSite.Controllers
             });
          }
 
+
+         ResourceHelper.CleanResourceCache();
 
          return Json(new
          {

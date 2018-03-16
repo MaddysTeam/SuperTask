@@ -1180,7 +1180,6 @@
     <Content Include="assets\plugins\pdf.object\.gitignore" />
     <Content Include="assets\plugins\pdf.object\pdfobject.js" />
     <Content Include="assets\plugins\pdf.object\pdfobject.min.js" />
-    <Content Include="assets\plugins\raty\.gitignore" />
     <Content Include="assets\plugins\raty\demo\favicon.ico" />
     <Content Include="assets\plugins\raty\demo\fonts\wbotelhos.svg" />
     <Content Include="assets\plugins\raty\demo\images\0.png" />

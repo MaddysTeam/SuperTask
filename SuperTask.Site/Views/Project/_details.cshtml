@@ -26,6 +26,7 @@
 				{
 				<button type="submit" class="btn btn-danger btn-sm btn-save">保存</button>
 				<button type="submit" class="btn btn-success btn-sm btn-start">启动</button>
+				<button type="submit" class="btn btn-info btn-sm btn-forceClose" title="注意：强制关闭后，项目所有任务都关闭，项目状态也为关闭状态"><i class="fa fa-question-circle"></i>强制关闭</button>
 				}
 				<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
 			</div>
@@ -305,8 +306,10 @@
 			}
 		});
 
-		$('.btn-complete').on('click', function () {
-			$('#ProjectStatus').val('@ProjectKeys.CompleteStatus');
+		$('.btn-forceClose').on('click', function () {
+			if (confirm('@Confirm.Project.PROJECT_FORCE_CLOSE')) {
+				$('#ProjectStatus').val('@ProjectKeys.ForceCloseStatus');
+			}
 		});
 
 		$('.btn-save').on('click', function () {

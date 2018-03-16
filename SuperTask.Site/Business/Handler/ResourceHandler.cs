@@ -46,4 +46,25 @@ namespace Business
 
    }
 
+
+   public class ResourceEditHandler : IHandler<APSqlSelectCommand, ResourceEditOption>
+   {
+
+      public void Handle(APSqlSelectCommand t, ResourceEditOption v)
+      {
+         throw new NotImplementedException();
+      }
+
+   }
+
+
+   public class ResourceEditOption : EditOption
+   {
+
+      public Guid SourceId { get; set; }
+      public Guid ProjectId { get; set; }
+      public Guid TaskId { get; set; }
+
+   }
+
 }

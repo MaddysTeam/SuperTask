@@ -332,24 +332,30 @@ namespace TheSite.Controllers
          var re = APDBDef.Resource;
          var user = GetUserInfo();
 
+         WorkTask rootTask = null;
+         var taskTypes = DictionaryHelper.GetAll();
          var previewTasks = Session["previewTasks"];
          var list = previewTasks != null ? previewTasks as List<WorkTask>
                                 : db.WorkTaskDal.ConditionQuery(t.Projectid == option.ProjectId
                                                              & t.TaskStatus != TaskKeys.DeleteStatus, t.SortId.Asc, null, null);
+         if (list.Count() <= 0)
+         {
+            var project = ProjectrHelper.GetCurrentProject(option.ProjectId);
+            rootTask = TaskHelper.CreateAndSaveRootTaskInDB(user, project, db);
+            return Json(new
+            {
+               tasks= GetTaskViewModels(list, rootTask),
+               taskTypes
+            });
+         }
 
-         var resource = db.ResourceDal
-            .ConditionQuery(re.Projectid == option.ProjectId & re.UserId == user.UserId, null, null, null)
-            .FirstOrDefault();
-
-         WorkTask rootTask = null;
+         var resource = ResourceHelper.GetCurrentProjectResource(option.ProjectId, user.UserId, false, db);
          if (resource != null && resource.IsLeader())
             rootTask = list.OrderBy(tk => tk.SortId).First();
          else
             rootTask = list.Find(x => x.TaskId == option.TaskId);
 
          var tasks = GetTaskViewModels(list, rootTask);
-
-         var taskTypes = DictionaryHelper.GetAll();
 
          return Json(new
          {
@@ -445,8 +451,8 @@ namespace TheSite.Controllers
                }
 
                if (pjTask.WorkHours > 0
-              && pjTask.TaskType != item.taskType.ToGuid(Guid.Empty)
-              && (pjTask.SubTypeId != item.subType.ToGuid(Guid.Empty) || pjTask.TaskType != item.taskType.ToGuid(Guid.Empty)))
+                && pjTask.TaskType != item.taskType.ToGuid(Guid.Empty)
+                && pjTask.SubTypeId != item.subType.ToGuid(Guid.Empty))
                {
                   return Json(new
                   {
@@ -455,7 +461,9 @@ namespace TheSite.Controllers
                   });
                }
 
-               if (pjTask.IsCompleteStatus)
+               if (pjTask.IsCompleteStatus 
+                  && pjTask.TaskType != item.taskType.ToGuid(Guid.Empty)
+                  && pjTask.SubTypeId != item.subType.ToGuid(Guid.Empty))
                {
                   return Json(new
                   {
@@ -608,24 +616,26 @@ namespace TheSite.Controllers
          var user = GetUserInfo();
          var rev = APDBDef.Review;
          var u = APDBDef.UserInfo;
-         //var ru = APDBDef.UserInfo.As("");
+         var ru = APDBDef.UserInfo.As("reu");
          var re = APDBDef.Resource;
          var p = APDBDef.Project;
 
          var subQuery = APQuery.select(re.UserId).from(re, p.JoinInner(re.Projectid == p.ProjectId & (p.ManagerId == user.UserId | p.PMId==user.UserId)));
-         var query = APQuery.select(t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.EstimateWorkHours, t.TaskStatus, t.IsParent,t.ManagerId,
-                                     rev.TaskId, rev.ReceiverID, p.ProjectName.As("projectName"), u.UserName.As("userName"), u.UserId.As("userId")
-                                   //ru.UserName.As("receiverName")
+         var query = APQuery.select(t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.EstimateWorkHours, t.TaskStatus, t.IsParent, t.ManagerId,
+                                    rev.TaskId, rev.ReceiverID, p.ProjectName.As("projectName"), u.UserName.As("userName"), u.UserId.As("userId"),
+                                    ru.UserName.As("receiver"), ru.UserId
                                    )
                                   .from(t,
                                         u.JoinInner(u.UserId == t.ManagerId),
                                         p.JoinInner(p.ProjectId == t.Projectid),
-                                        rev.JoinLeft(rev.TaskId == t.TaskId))
+                                        rev.JoinLeft(rev.TaskId == t.TaskId),
+                                        ru.JoinLeft(t.ReviewerID==ru.UserId)
+                                        )
                                  .where(t.TaskType == TaskKeys.PlanTaskTaskType & t.ManagerId.In(subQuery)
                                       & t.StartDate >= start & t.EndDate <= end)
                                  .group_by(
                                           t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.EstimateWorkHours, t.TaskStatus, t.IsParent,t.ManagerId,
-                                          rev.TaskId, rev.ReceiverID, p.ProjectName, u.UserName, u.UserId)
+                                          rev.TaskId, rev.ReceiverID, p.ProjectName, u.UserName, u.UserId,ru.UserId,ru.UserName)
                                   .order_by(t.ManagerId.Asc,t.StartDate.Desc,t.EndDate.Desc);
 
          if (!projectId.IsEmpty() && projectId != AppKeys.SelectAll)
@@ -650,7 +660,8 @@ namespace TheSite.Controllers
          {
             query.where_and(t.TaskName.Match(searchPhrase) |
                p.ProjectName.Match(searchPhrase) |
-               u.UserName.Match(searchPhrase) 
+               u.UserName.Match(searchPhrase) |
+               ru.UserName.Match(searchPhrase)
                );
          }
 
@@ -667,6 +678,7 @@ namespace TheSite.Controllers
                case "start": query.order_by(sort.OrderBy(t.StartDate)); break;
                case "end": query.order_by(sort.OrderBy(t.EndDate)); break;
                case "status": query.order_by(sort.OrderBy(t.TaskStatus)); break;
+               case "reviewer": query.order_by(sort.OrderBy(ru.UserName)); break;
             }
          }
 
@@ -694,7 +706,7 @@ namespace TheSite.Controllers
                isParent = t.IsParent.GetValue(rd),
                isMe = userId == user.UserId,
                reviewerId = reviewerId,
-               reviewer = "",//ru.UserName.GetValue(rd, "receiverName"),
+               reviewer = ru.UserName.GetValue(rd, "receiver"),
                reviewerIsMe = reviewerId == user.UserId
             };
          }).ToList();

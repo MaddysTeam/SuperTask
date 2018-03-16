@@ -31,11 +31,12 @@ namespace Business.Helper
 
       public static Guid ReviewStatus = Guid.Parse("DF2ADC6A-A35C-4A47-9CBF-C2D4C5C9DB6C");
 
+      public static Guid ForceCloseStatus = Guid.Parse("DF2ADC7D-B45C-4B57-9CBF-C2D4C5C8CC5C");
+
 
       public static Guid DefaultProjectType = Guid.Parse("DF2ADC7b-A32C-4B47-9CBF-C2D4C5C9DB7C"); // TODO
 
-
-
+      public static Guid DevelopmentProjectType = Guid.Parse("b3246e56-ccce-43f0-b379-c39cbc41eaa7");
 
       public const string ProjectCodePrefix = "LX_";
 
