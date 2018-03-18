@@ -38,7 +38,8 @@ namespace Business.Helper
                   RecordType = GetRecordType(tk),
                   TaskStatus = tk.TaskStatus,
                   TaskType = tk.TaskType,
-                  TaskSubType=tk.SubType
+                  TaskSubType=tk.SubType,
+                  Progress=tk.RateOfProgress,
                });
       }
 

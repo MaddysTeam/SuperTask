@@ -2,3 +2,4 @@ C:\project\教软公司项目\SuperTask_v2\SuperTask\SuperTask.ThirdParty\LitJSO
 C:\project\教软公司项目\SuperTask_v2\SuperTask\SuperTask.ThirdParty\LitJSON\bin\Release\LitJSON.pdb
 C:\project\教软公司项目\SuperTask_v2\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Release\LitJSON.dll
 C:\project\教软公司项目\SuperTask_v2\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Release\LitJSON.pdb
+C:\project\教软公司项目\SuperTask_v2\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Release\LitJSON.csprojResolveAssemblyReference.cache

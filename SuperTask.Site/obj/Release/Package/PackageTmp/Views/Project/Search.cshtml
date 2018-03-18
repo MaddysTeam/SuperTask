@@ -136,7 +136,7 @@
 					location.href = manUrl + '?projectId=' + id + '&userId=' + userId + '&projectName=' + name;
 				});
 
-				var tasksUrl='@Url.Action("TaskArrangement", "ProjectManage")'
+				var tasksUrl = '@Url.Action("TaskArrangement", "ProjectManage")'
 				grid.find('.btn-tasks').on('click', function (e) {
 					var id = $(this).parent().data('rowId');
 					location.href = tasksUrl + '?projectId=' + id;
@@ -163,7 +163,7 @@
 
 			$('.btn-template').click(function () {
 				if (confirm("确定通过模板创建项目？")) {
-					$.post('@Url.Action("CreateByTemplate", "Project")', { projectType: 1 }, function (data) {
+					$.post('@Url.Action("CreateByTemplate", "Project")', { projectType: '@ProjectKeys.DevelopmentProjectType' }, function (data) {
 						popupMessage(data, {
 							success: function () {
 								$('#bootgrid').bootgrid('reload');

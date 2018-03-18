@@ -266,6 +266,8 @@ namespace Business
             && task.WorkHours == WorkHours
             && task.ManagerId == ManagerId
             && task.ReviewerID == ReviewerID
+            && task.SubTypeId ==SubTypeId
+            && task.SubTypeValue==SubTypeValue
             )
          {
             return true;

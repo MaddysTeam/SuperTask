@@ -315,7 +315,9 @@ namespace Business
 
 
             //创建或者修改所有父任务的工作日志
-            WorkJournalHelper.CreateOrUpdateJournalByTasks(tks, db);
+            var parentTks = TaskHelper.GetAllParents(task,tks);
+            WorkJournalHelper.CreateOrUpdateJournalByTasks(parentTks, db);
+            WorkJournalHelper.CreateOrUpdateJournalByTask(task,db);
 
             //创建任务记录日志（非系统日志）
             TaskLogHelper.CreateLogs(tks, orignalTks, option.OperatorId, db);
@@ -493,8 +495,6 @@ namespace Business
             if (item.IsParent)
             {
                item.SetParentProgress();
-
-               //WorkJournalHelper.UpdateLatestJournal(item, db);
             }
 
             db.WorkTaskDal.Update(item);

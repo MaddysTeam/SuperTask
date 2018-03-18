@@ -59,20 +59,33 @@ namespace Business.Helper
          return list;
       }
 
+      
+      public static List<WorkTask> GetAllParents(WorkTask child, List<WorkTask> all)
+      {
+         var parents = new List<WorkTask>();
+         while (!child.ParentId.IsEmpty())
+         {
+            var parent = all.Find(x=>x.TaskId == child.ParentId);
+            parents.Add(parent);
+
+            child = parent;
+         }
+
+         return parents;
+      }
+
 
       /// <summary>
       /// 设置任务进度
       /// </summary>
       /// <param name="tasks">所有任务</param>
-      /// <param name="parent">父任务实体</param>
+      /// <param name="root">父任务实体</param>
       /// <returns></returns>
-      public static void SetTasksProcessRate(List<WorkTask> tasks, WorkTask parent)
+      public static void SetTasksProcessRate(List<WorkTask> tasks, WorkTask root)
       {
-
-         if (parent == null) return;
-
-
-         parent.ParentId = Guid.Empty;
+         if (root == null) return;
+         if (!root.ParentId.IsEmpty())
+            root.ParentId = Guid.Empty;
 
          var nodes = new List<Node<WorkTask>>();
 
@@ -86,7 +99,7 @@ namespace Business.Helper
             nodes.Add(new Node<WorkTask> { NodeId = tk.TaskId, ParentId = tk.ParentId, Instance = tk });
          }
 
-         var parentNode = new Node<WorkTask> { NodeId = parent.TaskId, Instance = parent };
+         var parentNode = new Node<WorkTask> { NodeId = root.TaskId, Instance = root };
          LoopToAppendChildren(nodes, parentNode);
       }
 

@@ -233,6 +233,8 @@ namespace TheSite.Controllers
       public ActionResult Delete(Guid id)
       {
          var delTk = db.WorkTaskDal.PrimaryGet(id);
+         if (delTk != null)
+            delTk.SetStatus(TaskKeys.DeleteStatus);
 
          return Edit(delTk);
       }
@@ -344,7 +346,7 @@ namespace TheSite.Controllers
             rootTask = TaskHelper.CreateAndSaveRootTaskInDB(user, project, db);
             return Json(new
             {
-               tasks= GetTaskViewModels(list, rootTask),
+               tasks = GetTaskViewModels(list, rootTask),
                taskTypes
             });
          }
@@ -461,7 +463,7 @@ namespace TheSite.Controllers
                   });
                }
 
-               if (pjTask.IsCompleteStatus 
+               if (pjTask.IsCompleteStatus
                   && pjTask.TaskType != item.taskType.ToGuid(Guid.Empty)
                   && pjTask.SubTypeId != item.subType.ToGuid(Guid.Empty))
                {
@@ -549,15 +551,16 @@ namespace TheSite.Controllers
                //父任务进度赋值,注意子任务没有赋值意义
                tk.SetParentProgress();
 
+               var originTask = orignalTasks.Find(x => x.TaskId == tk.TaskId);
+
                //如果项目已启动，任务自动启动 TODO：部门一些人要求更改
                if (project.IsProcessStatus && tk.IsPlanStatus && tk.EstimateWorkHours > 0)
                   tk.Start();
 
                db.WorkTaskDal.Insert(tk);
 
-               //可能任务负责人会发生变化，当前任务日志（今日日志）会更新至新负责人（只针对启动后的任务，对于计划期无效）
-               //也可能已完成的任务再次被启动后，日志的新增
-               WorkJournalHelper.CreateOrUpdateJournalByTask(tk, db);
+               if (originTask== null || !originTask.Equals(tk))
+                  WorkJournalHelper.CreateOrUpdateJournalByTask(tk, db);
 
                idx++;
             }
@@ -610,7 +613,7 @@ namespace TheSite.Controllers
       }
 
       [HttpPost]
-      public ActionResult PlanTaskList(Guid projectId,Guid resourceId,DateTime start, DateTime end,
+      public ActionResult PlanTaskList(Guid projectId, Guid resourceId, DateTime start, DateTime end,
                                       int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
          var user = GetUserInfo();
@@ -620,7 +623,7 @@ namespace TheSite.Controllers
          var re = APDBDef.Resource;
          var p = APDBDef.Project;
 
-         var subQuery = APQuery.select(re.UserId).from(re, p.JoinInner(re.Projectid == p.ProjectId & (p.ManagerId == user.UserId | p.PMId==user.UserId)));
+         var subQuery = APQuery.select(re.UserId).from(re, p.JoinInner(re.Projectid == p.ProjectId & (p.ManagerId == user.UserId | p.PMId == user.UserId)));
          var query = APQuery.select(t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.EstimateWorkHours, t.TaskStatus, t.IsParent, t.ManagerId,
                                     rev.TaskId, rev.ReceiverID, p.ProjectName.As("projectName"), u.UserName.As("userName"), u.UserId.As("userId"),
                                     ru.UserName.As("receiver"), ru.UserId
@@ -629,14 +632,14 @@ namespace TheSite.Controllers
                                         u.JoinInner(u.UserId == t.ManagerId),
                                         p.JoinInner(p.ProjectId == t.Projectid),
                                         rev.JoinLeft(rev.TaskId == t.TaskId),
-                                        ru.JoinLeft(t.ReviewerID==ru.UserId)
+                                        ru.JoinLeft(t.ReviewerID == ru.UserId)
                                         )
                                  .where(t.TaskType == TaskKeys.PlanTaskTaskType & t.ManagerId.In(subQuery)
                                       & t.StartDate >= start & t.EndDate <= end)
                                  .group_by(
-                                          t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.EstimateWorkHours, t.TaskStatus, t.IsParent,t.ManagerId,
-                                          rev.TaskId, rev.ReceiverID, p.ProjectName, u.UserName, u.UserId,ru.UserId,ru.UserName)
-                                  .order_by(t.ManagerId.Asc,t.StartDate.Desc,t.EndDate.Desc);
+                                          t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.EstimateWorkHours, t.TaskStatus, t.IsParent, t.ManagerId,
+                                          rev.TaskId, rev.ReceiverID, p.ProjectName, u.UserName, u.UserId, ru.UserId, ru.UserName)
+                                  .order_by(t.ManagerId.Asc, t.StartDate.Desc, t.EndDate.Desc);
 
          if (!projectId.IsEmpty() && projectId != AppKeys.SelectAll)
             query.where_and(t.Projectid == projectId);
