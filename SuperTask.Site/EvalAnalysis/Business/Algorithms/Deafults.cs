@@ -24,7 +24,8 @@ namespace TheSite.EvalAnalysis
       public static Guid ExcutiveCapabilityId = Guid.Parse("F07A4ED9-FDFB-4AC0-A72E-FFA8ECB49978");
       public static Guid CostControlId = Guid.Parse("F09E2DE9-FAFB-4AC1-A72F-FFA8ECA41978");
       public static Guid BugetDiviationId = Guid.Parse("F14A2DE3-FFFB-4BC0-AB2E-FFA8ECA42978");
-
+      public static Guid PlanTaskAccuracyId = Guid.Parse("69a09e94-257b-4230-9ef0-179994aa3bb0");
+      public static Guid TaskQuantityId = Guid.Parse("339f4f72-4f89-41ea-84ef-fbff16f4ddbe");
 
       /// <summary>
       /// 工作量算法
@@ -380,6 +381,104 @@ namespace TheSite.EvalAnalysis
       }
 
 
+
+      internal class PlanTaskAccuracy : IIndicationAlgorithmn<AutoEvalParams, EvalResultItem>
+      {
+
+         public Func<AutoEvalParams, EvalResultItem> Algorithmn
+         => (paras) =>
+         {
+            var wk = APDBDef.WorkTask;
+
+            double score = 0;
+            var period = EvalPeriod.PrimaryGet(paras.PeriodId);
+            var evalIndication = paras.EvalIndication;
+
+            // 这里分2重情况 
+            // 1 如果计划任务在考核周期内已经完成且预估结束时间大于考核周期开始时间 则算入待考核的任务范围
+            // 2 如果计划任务在执行期且预估结束时间在考核周期范围之内 则算入待考核的任务范围
+            var planTasks = WorkTask.ConditionQuery(
+                                                wk.ManagerId == paras.TargetId
+                                              & wk.TaskType == TaskKeys.PlanTaskTaskType
+                                              & (
+                                                 (wk.TaskStatus == TaskKeys.CompleteStatus
+                                                & wk.EndDate > period.BeginDate
+                                                & wk.RealEndDate >= period.BeginDate
+                                                & wk.RealEndDate <= period.EndDate) |
+                                                 ( wk.TaskStatus==TaskKeys.ProcessStatus 
+                                                & wk.EndDate > period.BeginDate & wk.EndDate < period.EndDate)
+                                                )
+
+                                              , null);
+            if (planTasks.Count > 0)
+            {
+               var goodPlanTasks = planTasks.FindAll(t => t.RealEndDate <= t.EndDate);
+               score = (goodPlanTasks.Count / planTasks.Count) * evalIndication.FullScore;
+            }
+
+            if (score > paras.EvalIndication.FullScore)
+               score = paras.EvalIndication.FullScore;
+
+            return new EvalResultItem
+            {
+               ResultItemId = Guid.NewGuid(),
+               PeriodId = paras.PeriodId,
+               Score = score,
+               TableId = paras.CurrentTableId,
+               IndicationId = paras.EvalIndication.IndicationId
+            };
+         };
+
+         public Guid Id => PlanTaskAccuracyId;
+
+         public string Name => "计划准确率2018";
+
+      }
+
+      internal class WorkTaskQuantity : IIndicationAlgorithmn<AutoEvalParams, EvalResultItem>
+      {
+
+         public Func<AutoEvalParams, EvalResultItem> Algorithmn
+         => (paras) =>
+         {
+            var wk = APDBDef.WorkTask;
+
+            double score = 0;
+            var period = EvalPeriod.PrimaryGet(paras.PeriodId);
+            var evalIndication = paras.EvalIndication;
+            var tasks = Util.GetWorkTaskByWorkJournal(paras);
+            var dics = DictionaryHelper.GetAll();
+
+            if (tasks.Count > 0)
+            {
+               tasks.ForEach(t => {
+                  var dic = dics.Find(d => d.ID == t.SubTypeId);
+                  if (dic != null)
+                     score += Convert.ToDouble(dic.Code) * t.SubTypeValue; 
+               });
+            }
+
+            if (score > paras.EvalIndication.FullScore)
+               score = paras.EvalIndication.FullScore;
+
+            return new EvalResultItem
+            {
+               ResultItemId = Guid.NewGuid(),
+               PeriodId = paras.PeriodId,
+               Score = score,
+               TableId = paras.CurrentTableId,
+               IndicationId = paras.EvalIndication.IndicationId
+            };
+         };
+
+         public Guid Id => TaskQuantityId;
+
+         public string Name => "工作任务数量2018";
+
+      }
+
+
+
       class Util
       {
 
@@ -396,7 +495,9 @@ namespace TheSite.EvalAnalysis
 
             var period = EvalPeriod.PrimaryGet(paras.PeriodId);
 
-            var result = APQuery.select(wj.TaskId, wj.WorkHours.Sum().As("TotalWorkHours"), st.StandardWorkhours, st.StandardComplextiy)
+            var result = APQuery.select(wj.TaskId, 
+                                        wj.WorkHours.Sum().As("TotalWorkHours"),wj.TaskSubTypeValue.Sum().As("TotalWorkQuantity"), wj.TaskSubType,
+                                        st.StandardWorkhours, st.StandardComplextiy)
                             .from(wj,
                                   t.JoinInner(wj.TaskId == t.TaskId),
                                   st.JoinLeft(st.ItemId == t.StandardItemId)
@@ -405,7 +506,7 @@ namespace TheSite.EvalAnalysis
                             & wj.RecordDate <= period.EndDate
                             & t.ManagerId == paras.TargetId
                             & t.IsParent == false)
-                            .group_by(wj.TaskId, t.EstimateWorkHours, st.StandardWorkhours, st.StandardComplextiy)
+                            .group_by(wj.TaskId, t.EstimateWorkHours, st.StandardWorkhours, st.StandardComplextiy,wj.TaskSubType)
                             .query(paras.db, r =>
                             {
                                var StandardComplexity = st.StandardComplextiy.GetValue(r);
@@ -416,7 +517,9 @@ namespace TheSite.EvalAnalysis
                                   TaskId = wj.TaskId.GetValue(r),
                                   WorkHours = wj.WorkHours.GetValue(r, "TotalWorkHours"),
                                   StandardComplextiy = StandardComplexity,
-                                  StandardWorkhours = st.StandardWorkhours.GetValue(r)
+                                  StandardWorkhours = st.StandardWorkhours.GetValue(r),
+                                  SubTypeValue = wj.TaskSubTypeValue.GetValue(r, "TotalWorkQuantity"),
+                                  SubTypeId = wj.TaskSubType.GetValue(r)
                                };
                             }).ToList();
 
@@ -438,7 +541,7 @@ namespace TheSite.EvalAnalysis
             var period = EvalPeriod.PrimaryGet(paras.PeriodId);
             var tasks = Util.GetWorkTaskByWorkJournal(paras); //通过日志获取考核时间范围内的所有考核对象负责的任务
             var subQuery = APQuery.select(wj.TaskId)
-                            .from(wj,t.JoinInner(wj.TaskId == t.TaskId))
+                            .from(wj, t.JoinInner(wj.TaskId == t.TaskId))
                             .where(wj.RecordDate >= period.BeginDate
                             & wj.RecordDate <= period.EndDate
                             & t.ManagerId == paras.TargetId

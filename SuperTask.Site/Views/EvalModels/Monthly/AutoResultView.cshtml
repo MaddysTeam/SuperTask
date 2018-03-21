@@ -17,6 +17,8 @@
 				@{
 					foreach (var item in Model)
 					{
+						if (item != null && item.EvalIndication != null)
+						{
 						<tr class="evalItem">
 							<td style="width:150px">
 								@item.EvalIndication.IndicationName
@@ -26,6 +28,15 @@
 							<td style="width:100px"><input name="realScore" id="hint" type="text" class="form-control score" value="@item.Score" readonly /></td>
 							
 						</tr>
+						}
+						else
+						{
+							<tr>
+								<td>
+									<strong>您所属的角色无法查看考核结果！</strong>
+								</td>
+							</tr>
+						}
 					}
 				}
 

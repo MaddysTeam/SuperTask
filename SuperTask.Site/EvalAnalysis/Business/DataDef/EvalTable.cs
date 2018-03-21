@@ -64,14 +64,14 @@ namespace Business
          return EvalResult.ConditionQueryCount(er.TableId==TableId)>0;
       }
 
-      public static List<EvalIndication> GetEvalIndications(Guid tableId,APDBDef db=null)
-      {
-         var ei = APDBDef.EvalIndication;
+      //public static List<EvalIndication> GetEvalIndications(Guid tableId,APDBDef db=null)
+      //{
+      //   var ei = APDBDef.EvalIndication;
 
-         db = db ?? new APDBDef();
+      //   db = db ?? new APDBDef();
 
-         return EvalIndication.ConditionQuery(ei.TableId == tableId, null);
-      }
+      //   return EvalIndication.ConditionQuery(ei.TableId == tableId, null);
+      //}
 
    }
 

@@ -14,7 +14,7 @@ namespace TheSite.Models
       public Guid TargetId { get; set; }
       public Guid AccessorId { get; set; }
       public Guid PeriodId { get; set; }
-      public APDBDef db { get; set; }
+      public APDBDef db { get; set; } = new APDBDef();
       public Guid CurrentTableId { get; set; }
       public Guid AccessorRoleId { get; set; }
       public Guid TargetRoleId { get; set; }

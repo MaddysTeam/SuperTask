@@ -65,12 +65,11 @@ namespace TheSite.EvalAnalysis
 
       public static List<EvalResultItem> GetEvalReultItems(EvalParams paras)
       {
-         var db = paras.db ?? new APDBDef();
-         var evalIndications = GetEvalIndications(paras, db);
+         var evalIndications = GetEvalIndications(paras);
          if (evalIndications == null) return null;
 
          //获取考评结果
-         var evalResultItmes = GetEvalResultItems(paras, db);
+         var evalResultItmes = GetEvalResultItems(paras);
 
          //如果打过分则将指标实体放入考核结果明细
          if (evalResultItmes != null && evalResultItmes.Count > 0)
@@ -87,6 +86,34 @@ namespace TheSite.EvalAnalysis
 
 
          return evalResultItmes;
+      }
+
+
+      public static List<EvalIndication> GetEvalIndications(EvalParams paras)
+      {
+         var evalIndications = APQuery.select(ei.FullScore, ei.Propertion, i.IndicationId, i.IndicationName, i.Description, evt.TableId.As("tableId"))
+                             .from(ei,
+                                   i.JoinLeft(ei.IndicationId == i.IndicationId),
+                                   evt.JoinLeft(ei.TableId == evt.TableId));
+         
+         if (!paras.AccessorRoleId.IsEmpty())
+            evalIndications.where_and(ei.AccessorRoleId == paras.AccessorRoleId);
+         if (!paras.CurrentTableId.IsEmpty())
+            evalIndications.where_and(ei.TableId == paras.CurrentTableId);
+
+         var results = evalIndications.query(paras.db, r =>
+         {
+            return new EvalIndication
+            {
+               IndicationName = i.IndicationName.GetValue(r),
+               IndicationDescription = i.Description.GetValue(r),
+               FullScore = ei.FullScore.GetValue(r),// * (ei.Propertion.GetValue(r) / 100),
+               TableId = evt.TableId.GetValue(r, "tableId"),
+               IndicationId = i.IndicationId.GetValue(r)
+            };
+         }).ToList();
+
+         return results;
       }
 
 
@@ -124,7 +151,7 @@ namespace TheSite.EvalAnalysis
       }
 
 
-      private static List<EvalResultItem> GetEvalResultItems(EvalParams paras, APDBDef db)
+      private static List<EvalResultItem> GetEvalResultItems(EvalParams paras)
       {
          var evalResultItmes = APQuery.select(eri.Asterisk)
            .from(er, eri.JoinInner(er.ResultId == eri.ResultId))
@@ -139,41 +166,12 @@ namespace TheSite.EvalAnalysis
          if(!paras.TargetRoleId.IsEmpty())
             evalResultItmes.where_and(er.TargetRoleId == paras.TargetRoleId);
 
-         var results = evalResultItmes.query(db, r =>
+         var results = evalResultItmes.query(paras.db, r =>
              {
                 var evalresultItem = new EvalResultItem();
                 eri.Fullup(r, evalresultItem, false);
                 return evalresultItem;
              }).ToList();
-
-         return results;
-      }
-
-
-      private static List<EvalIndication> GetEvalIndications(EvalParams paras, APDBDef db)
-      {
-         var evalIndications = APQuery.select(ei.FullScore, ei.Propertion, i.IndicationId, i.IndicationName, i.Description, evt.TableId.As("tableId"))
-                             .from(ei,
-                                   i.JoinLeft(ei.IndicationId == i.IndicationId),
-                                   evt.JoinLeft(ei.TableId == evt.TableId));
-         //.where(ei.AccessorRoleId == paras.AccessorRoleId & evt.TableId == paras.CurrentTableId);
-
-         if (!paras.AccessorRoleId.IsEmpty())
-            evalIndications.where_and(ei.AccessorRoleId == paras.AccessorRoleId);
-         if (!paras.CurrentTableId.IsEmpty())
-            evalIndications.where_and(ei.TableId == paras.CurrentTableId);
-
-         var results = evalIndications.query(db, r =>
-                               {
-                                  return new EvalIndication
-                                  {
-                                     IndicationName = i.IndicationName.GetValue(r),
-                                     IndicationDescription = i.Description.GetValue(r),
-                                     FullScore = ei.FullScore.GetValue(r),// * (ei.Propertion.GetValue(r) / 100),
-                                    TableId = evt.TableId.GetValue(r, "tableId"),
-                                     IndicationId = i.IndicationId.GetValue(r)
-                                  };
-                               }).ToList();
 
          return results;
       }

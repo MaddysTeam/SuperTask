@@ -18,7 +18,7 @@ namespace TheSite.Controllers
 
       public ActionResult InitialDictionary()
       {
-         InitialTaskType();
+         InitialEval();
 
          return View();
       }
@@ -46,73 +46,76 @@ namespace TheSite.Controllers
       public void InitialEval()
       {
          //增加考核管理员
-         var evalManagerId = RoleKeys.EvalManagerId.ToGuid(Guid.Empty);
-         Role.PrimaryDelete(evalManagerId);
-         db.RoleDal.Insert(new Role { RoleId = evalManagerId, RoleName = "考核管理员", RoleType = RoleKeys.SystemType });
+         //var evalManagerId = RoleKeys.EvalManagerId.ToGuid(Guid.Empty);
+         //Role.PrimaryDelete(evalManagerId);
+         //db.RoleDal.Insert(new Role { RoleId = evalManagerId, RoleName = "考核管理员", RoleType = RoleKeys.SystemType });
 
-         //增加同事角色
-         var workMateId = RoleKeys.WorkMateRoleId.ToGuid(Guid.Empty);
-         Role.PrimaryDelete(workMateId);
-         db.RoleDal.Insert(new Role { RoleId = workMateId, RoleName = "同事", RoleType = RoleKeys.SystemType });
+         ////增加同事角色
+         //var workMateId = RoleKeys.WorkMateRoleId.ToGuid(Guid.Empty);
+         //Role.PrimaryDelete(workMateId);
+         //db.RoleDal.Insert(new Role { RoleId = workMateId, RoleName = "同事", RoleType = RoleKeys.SystemType });
 
-         db.EvalGroupDal.ConditionDelete(null);
+         //db.EvalGroupDal.ConditionDelete(null);
 
-         //设置默认考核组
-         db.EvalGroupDal.Insert(new EvalGroup
-         {
-            GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty),
-            GroupName = EvalGroupConfig.DefaultName,
-            CreaterId = GetUserInfo().UserId,
-            CreateDate = DateTime.Now
-         });
+         ////设置默认考核组
+         //db.EvalGroupDal.Insert(new EvalGroup
+         //{
+         //   GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty),
+         //   GroupName = EvalGroupConfig.DefaultName,
+         //   CreaterId = GetUserInfo().UserId,
+         //   CreateDate = DateTime.Now
+         //});
 
-         db.TaskCompelxtiyRoleDal.ConditionDelete(null);
+         //db.TaskCompelxtiyRoleDal.ConditionDelete(null);
 
-         var crs = new List<TaskCompelxtiyRole>
-         {
-            new TaskCompelxtiyRole
-            {
-               CompelxtiyRoleId = Guid.NewGuid(),
-               RoleId = RoleKeys.ProjectManagerId.ToGuid(Guid.Empty), //项目经理默认占比
-               Propertion = 50,
-               IsStandard = false,
-            },
-          new TaskCompelxtiyRole
-            {
-               CompelxtiyRoleId = Guid.NewGuid(),
-               RoleId =Guid.Empty, //技术经理默认占比
-               Propertion = 30,
-               IsStandard = true,
-            },
-            new TaskCompelxtiyRole
-            {
-               CompelxtiyRoleId = Guid.NewGuid(),
-               RoleId =Guid.Empty, //标准复杂度默认占比
-               Propertion = 20,
-               IsStandard = true,
-            },
-         };
+         //var crs = new List<TaskCompelxtiyRole>
+         //{
+         //   new TaskCompelxtiyRole
+         //   {
+         //      CompelxtiyRoleId = Guid.NewGuid(),
+         //      RoleId = RoleKeys.ProjectManagerId.ToGuid(Guid.Empty), //项目经理默认占比
+         //      Propertion = 50,
+         //      IsStandard = false,
+         //   },
+         // new TaskCompelxtiyRole
+         //   {
+         //      CompelxtiyRoleId = Guid.NewGuid(),
+         //      RoleId =Guid.Empty, //技术经理默认占比
+         //      Propertion = 30,
+         //      IsStandard = true,
+         //   },
+         //   new TaskCompelxtiyRole
+         //   {
+         //      CompelxtiyRoleId = Guid.NewGuid(),
+         //      RoleId =Guid.Empty, //标准复杂度默认占比
+         //      Propertion = 20,
+         //      IsStandard = true,
+         //   },
+         //};
 
-         //设置默认复杂度操作角色
-         foreach (var item in crs)
-            db.TaskCompelxtiyRoleDal.Insert(item);
+         ////设置默认复杂度操作角色
+         //foreach (var item in crs)
+         //   db.TaskCompelxtiyRoleDal.Insert(item);
 
 
-         // 删除原先的自动考核指标
-         var i = APDBDef.Indication;
-         db.IndicationDal.ConditionDelete(i.IndicationType == IndicationKeys.AutoType);
+         //// 删除原先的自动考核指标
+         //var i = APDBDef.Indication;
+         //db.IndicationDal.ConditionDelete(i.IndicationType == IndicationKeys.AutoType);
 
          //将自动计算的指标放入数据库
          var indicationIds = new Dictionary<string, Guid> {
-            { "工作量", DefaultAlgorithms.WorkQuantityId },
-            { "工作效率", DefaultAlgorithms.WorkEfficiencyId },
-            { "工作复杂度", DefaultAlgorithms.WorkComplexityId },
-            { "BUG量", DefaultAlgorithms.BUGQuantityId },
-            { "交付物确认数量", DefaultAlgorithms.TaskUploadFileQuantityId },
-            { "执行力", DefaultAlgorithms.ExcutiveCapabilityId },
-            { "成本控制", DefaultAlgorithms.CostControlId },
-            { "预算偏差", DefaultAlgorithms.BugetDiviationId },
-            { "项目质量", DefaultAlgorithms.ProjectQualtiyId },
+            //{ "工作量", DefaultAlgorithms.WorkQuantityId },
+            //{ "工作效率", DefaultAlgorithms.WorkEfficiencyId },
+            //{ "工作复杂度", DefaultAlgorithms.WorkComplexityId },
+            //{ "BUG量", DefaultAlgorithms.BUGQuantityId },
+            //{ "交付物确认数量", DefaultAlgorithms.TaskUploadFileQuantityId },
+            //{ "执行力", DefaultAlgorithms.ExcutiveCapabilityId },
+            //{ "成本控制", DefaultAlgorithms.CostControlId },
+            //{ "预算偏差", DefaultAlgorithms.BugetDiviationId },
+            //{ "项目质量", DefaultAlgorithms.ProjectQualtiyId },
+
+            {"工作量2018", DefaultAlgorithms.TaskQuantityId },
+            {"计划精准性2018", DefaultAlgorithms.PlanTaskAccuracyId },
 
          };
 
@@ -132,76 +135,76 @@ namespace TheSite.Controllers
 
 
          //删除原先的标准工时和标准复杂度
-         var tsi = APDBDef.TaskStandardItem;
-         db.TaskStandardItemDal.ConditionDelete(null);
+         //var tsi = APDBDef.TaskStandardItem;
+         //db.TaskStandardItemDal.ConditionDelete(null);
 
-         //任务表新增标准工时和标准复杂度字段
-         List<TaskStandardItem> items = new List<TaskStandardItem> {
-            new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="默认", StandardComplextiy=3, StandardWorkhours=3,SortId=1 },
-            new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="M1", StandardComplextiy=2, StandardWorkhours=16,SortId=2 },
-            new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="M2", StandardComplextiy=2, StandardWorkhours=16,SortId=3 },
-            new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="M3", StandardComplextiy=2, StandardWorkhours=8 ,SortId=4},
-            new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="M4", StandardComplextiy=2, StandardWorkhours=4 ,SortId=5},
-            new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="M5", StandardComplextiy=2, StandardWorkhours=8,SortId=6 },
+         ////任务表新增标准工时和标准复杂度字段
+         //List<TaskStandardItem> items = new List<TaskStandardItem> {
+         //   new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="默认", StandardComplextiy=3, StandardWorkhours=3,SortId=1 },
+         //   new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="M1", StandardComplextiy=2, StandardWorkhours=16,SortId=2 },
+         //   new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="M2", StandardComplextiy=2, StandardWorkhours=16,SortId=3 },
+         //   new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="M3", StandardComplextiy=2, StandardWorkhours=8 ,SortId=4},
+         //   new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="M4", StandardComplextiy=2, StandardWorkhours=4 ,SortId=5},
+         //   new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="M5", StandardComplextiy=2, StandardWorkhours=8,SortId=6 },
 
-            new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="Q1", StandardComplextiy=2, StandardWorkhours=4,SortId=7 },
-            new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="Q2", StandardComplextiy=2, StandardWorkhours=3,SortId=8 },
-            new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="Q3", StandardComplextiy=2, StandardWorkhours=0.1 ,SortId=9},
-            new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="Q4", StandardComplextiy=2, StandardWorkhours=0.1,SortId=10 },
-         };
+         //   new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="Q1", StandardComplextiy=2, StandardWorkhours=4,SortId=7 },
+         //   new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="Q2", StandardComplextiy=2, StandardWorkhours=3,SortId=8 },
+         //   new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="Q3", StandardComplextiy=2, StandardWorkhours=0.1 ,SortId=9},
+         //   new TaskStandardItem { ItemId=Guid.NewGuid(),  ItemName="Q4", StandardComplextiy=2, StandardWorkhours=0.1,SortId=10 },
+         //};
 
-         items.ForEach((item) =>
-         {
-            db.TaskStandardItemDal.Insert(item);
-         });
+         //items.ForEach((item) =>
+         //{
+         //   db.TaskStandardItemDal.Insert(item);
+         //});
 
-         //设置所有任务的默认标准复杂度
-         var allTasks = WorkTask.GetAll();
-         var standardId = items.FirstOrDefault(item => item.ItemName == "默认").ItemId;
-         foreach (var item in allTasks)
-            WorkTask.UpdatePartial(item.TaskId, new { StandardItemId = standardId });
-
-
-
-         //指标类型
-
-         db.DictionaryDal.ConditionDelete(d.ParentID == IndicationKeys.IndicaitonTypeKeyGuid);
-
-         var subjectType = new Dictionary(IndicationKeys.SubjectTypeGuid, IndicationKeys.IndicaitonTypeKeyGuid, "主动", null, IndicationKeys.SubjectType.ToString(), null, null, 4);
-         var autoType = new Dictionary(IndicationKeys.AutoTypeGuid, IndicationKeys.IndicaitonTypeKeyGuid, "自动", null, IndicationKeys.AutoType.ToString(), null, null, 4);
-
-         var dicArray = new Dictionary[] { subjectType, autoType }.ToList();
-
-         foreach (var item in dicArray)
-            db.DictionaryDal.Insert(item);
+         ////设置所有任务的默认标准复杂度
+         //var allTasks = WorkTask.GetAll();
+         //var standardId = items.FirstOrDefault(item => item.ItemName == "默认").ItemId;
+         //foreach (var item in allTasks)
+         //   WorkTask.UpdatePartial(item.TaskId, new { StandardItemId = standardId });
 
 
-         //考核表类型
 
-         db.DictionaryDal.ConditionDelete(d.ParentID == EvalTableKeys.TableTypeKeyGuid);
+         ////指标类型
 
-         subjectType = new Dictionary(EvalTableKeys.SubjectTypeGuid, EvalTableKeys.TableTypeKeyGuid, "主动", null, EvalTableKeys.SubjectType.ToString(), null, null, 4);
-         autoType = new Dictionary(EvalTableKeys.AutoTypeGuid, EvalTableKeys.TableTypeKeyGuid, "自动", null, EvalTableKeys.AutoType.ToString(), null, null, 4);
+         //db.DictionaryDal.ConditionDelete(d.ParentID == IndicationKeys.IndicaitonTypeKeyGuid);
 
-         dicArray = new Dictionary[] { subjectType, autoType }.ToList();
+         //var subjectType = new Dictionary(IndicationKeys.SubjectTypeGuid, IndicationKeys.IndicaitonTypeKeyGuid, "主动", null, IndicationKeys.SubjectType.ToString(), null, null, 4);
+         //var autoType = new Dictionary(IndicationKeys.AutoTypeGuid, IndicationKeys.IndicaitonTypeKeyGuid, "自动", null, IndicationKeys.AutoType.ToString(), null, null, 4);
 
-         foreach (var item in dicArray)
-            db.DictionaryDal.Insert(item);
+         //var dicArray = new Dictionary[] { subjectType, autoType }.ToList();
+
+         //foreach (var item in dicArray)
+         //   db.DictionaryDal.Insert(item);
 
 
-         //考核表状态
+         ////考核表类型
 
-         db.DictionaryDal.ConditionDelete(d.ParentID == EvalTableKeys.TableStatusKeyGuid);
+         //db.DictionaryDal.ConditionDelete(d.ParentID == EvalTableKeys.TableTypeKeyGuid);
 
-         var disableStatus = new Dictionary(EvalTableKeys.DisableStatusGuid, EvalTableKeys.TableStatusKeyGuid, "禁用", null, EvalTableKeys.DisableStatus.ToString(), null, null, 4);
-         var readyStatus = new Dictionary(EvalTableKeys.ReadyStatusGuid, EvalTableKeys.TableStatusKeyGuid, "准备中", null, EvalTableKeys.ReadyStatus.ToString(), null, null, 4);
-         var processStatus = new Dictionary(EvalTableKeys.ProcessStatusGuid, EvalTableKeys.TableStatusKeyGuid, "执行中", null, EvalTableKeys.ProcessStatus.ToString(), null, null, 4);
-         var doneStatus = new Dictionary(EvalTableKeys.DoneStatusGuid, EvalTableKeys.TableStatusKeyGuid, "制作完毕", null, EvalTableKeys.DoneStatus.ToString(), null, null, 4);
+         //subjectType = new Dictionary(EvalTableKeys.SubjectTypeGuid, EvalTableKeys.TableTypeKeyGuid, "主动", null, EvalTableKeys.SubjectType.ToString(), null, null, 4);
+         //autoType = new Dictionary(EvalTableKeys.AutoTypeGuid, EvalTableKeys.TableTypeKeyGuid, "自动", null, EvalTableKeys.AutoType.ToString(), null, null, 4);
 
-         dicArray = new Dictionary[] { disableStatus, readyStatus, processStatus, doneStatus }.ToList();
+         //dicArray = new Dictionary[] { subjectType, autoType }.ToList();
 
-         foreach (var item in dicArray)
-            db.DictionaryDal.Insert(item);
+         //foreach (var item in dicArray)
+         //   db.DictionaryDal.Insert(item);
+
+
+         ////考核表状态
+
+         //db.DictionaryDal.ConditionDelete(d.ParentID == EvalTableKeys.TableStatusKeyGuid);
+
+         //var disableStatus = new Dictionary(EvalTableKeys.DisableStatusGuid, EvalTableKeys.TableStatusKeyGuid, "禁用", null, EvalTableKeys.DisableStatus.ToString(), null, null, 4);
+         //var readyStatus = new Dictionary(EvalTableKeys.ReadyStatusGuid, EvalTableKeys.TableStatusKeyGuid, "准备中", null, EvalTableKeys.ReadyStatus.ToString(), null, null, 4);
+         //var processStatus = new Dictionary(EvalTableKeys.ProcessStatusGuid, EvalTableKeys.TableStatusKeyGuid, "执行中", null, EvalTableKeys.ProcessStatus.ToString(), null, null, 4);
+         //var doneStatus = new Dictionary(EvalTableKeys.DoneStatusGuid, EvalTableKeys.TableStatusKeyGuid, "制作完毕", null, EvalTableKeys.DoneStatus.ToString(), null, null, 4);
+
+         //dicArray = new Dictionary[] { disableStatus, readyStatus, processStatus, doneStatus }.ToList();
+
+         //foreach (var item in dicArray)
+         //   db.DictionaryDal.Insert(item);
 
 
          //需要还原applibrary， workflowtask, review, dictionary 表从生产环境导出(删除现有表),review 重新设置主键，dbConnection 表中设置本地连接字符串

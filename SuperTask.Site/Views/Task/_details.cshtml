@@ -2,7 +2,7 @@
 @{
 	var resources = ViewBag.Resource as List<Account>;
 	var attachments = ViewBag.Attachments as List<Attachment>;
-	var resourceSelectList = SelectListHelper.GetSelectItems(resources, "UserName", "UserId");
+	var resourceSelectList = SelectListHelper.GetSelectItems(resources, "UserName", "UserId",null,new SelectListItem { Text=Model.Manager,Value=Model.ManagerId.ToString() });
 	var standardItemSelectList = SelectListHelper.GetSelectItems(ViewBag.StandardItems as List<TaskStandardItem>, "ItemName", "ItemId");
 
 	//	TaskHelper.GetSubTaskTypesFromCache(Model.TaskType).Select(x => new SelectListItem { Text = x.Title, Value = x.ID.ToString() });
