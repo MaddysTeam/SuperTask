@@ -3,3 +3,8 @@ C:\project\教软公司项目\SuperTask_v2\SuperTask\SuperTask.ThirdParty\LitJSO
 C:\project\教软公司项目\SuperTask_v2\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Release\LitJSON.dll
 C:\project\教软公司项目\SuperTask_v2\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Release\LitJSON.pdb
 C:\project\教软公司项目\SuperTask_v2\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Release\LitJSON.csprojResolveAssemblyReference.cache
+E:\项目文件(GitLab)\SuperTask\SuperTask.ThirdParty\LitJSON\bin\Release\LitJSON.dll
+E:\项目文件(GitLab)\SuperTask\SuperTask.ThirdParty\LitJSON\bin\Release\LitJSON.pdb
+E:\项目文件(GitLab)\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Release\LitJSON.csprojResolveAssemblyReference.cache
+E:\项目文件(GitLab)\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Release\LitJSON.dll
+E:\项目文件(GitLab)\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Release\LitJSON.pdb

@@ -221,6 +221,7 @@ namespace Business.Helper
          public const string TASK_CONFIRM_START = "确定要任务启动？";
          public const string TASK_CONFIRM_DELETE = "确定要删除项目文件？";
          public const string TASK_SUBMIT_REQUEST = "确定要提交该任务？";
+         public const string TASK_SUBMIT_EDIT = "确定要发出修改任务申请？";
       }
 
 

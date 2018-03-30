@@ -80,12 +80,6 @@ namespace Business
          {ReviewKeys.ReviewTypeForTkSubmit, new TaskSubmitRequestHandler()  },
       };
 
-      public static Dictionary<Guid, WorkJournalSearchHandler> JournalSearchHandlers = new Dictionary<Guid, WorkJournalSearchHandler>
-      {
-         {JournalKeys.SearchToday, new TodayJournalSearchHandler()  },
-         {JournalKeys.SearchDateRange, new DateRangeJournalSearchHandler()  },
-      };
-
       public static Dictionary<Guid, WorkJournalEditHandler> JournalEditHandlers = new Dictionary<Guid, WorkJournalEditHandler>
       {
          {TaskKeys.ProjectTaskType, new WorkJournalEditHandler()  },

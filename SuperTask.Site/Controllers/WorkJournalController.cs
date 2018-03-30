@@ -32,8 +32,7 @@ namespace TheSite.Controllers
 
       [HttpPost]
       public ActionResult Search(int current, int rowCount, AjaxOrder sort,
-         string searchPhrase, Guid searchType, Guid? projectId,
-         string start, string end, Guid selectDateType)
+         string searchPhrase, Guid? projectId, DateTime start, DateTime end)
       {
          ThrowNotAjax();
 
@@ -48,30 +47,24 @@ namespace TheSite.Controllers
                                 p.ProjectId.As("ProjectId"), p.ProjectName.As("ProjectName"),
                                 at.AttachmentId.As("AttachmentId"), at.Url, at.RealName,
                                 d.Title, d.Other, d.Note
-                                );
-
-         HandleManager.JournalSearchHandlers[searchType].Handle(query,
-            new WorkJournalSearchOption
-            {
-               db = db,
-               User = user,
-               Start = DateTime.Parse(start),
-               End = DateTime.Parse(end),
-               SelectDateType = selectDateType,
-
-               wj = wj,
-               t = t,
-               at = at,
-               p = p,
-               d = d
-            });
+                                ).from(wj,
+                        t.JoinInner(t.TaskId == wj.TaskId),
+                        p.JoinLeft(p.ProjectId == wj.Projectid),//左连接项目表的话可以保证其他任务类型可以显示
+                        d.JoinLeft(d.ID == t.SubTypeId),
+                        at.JoinLeft(at.AttachmentId == wj.AttachmentId)
+                        )
+                  .where( 
+            wj.UserId == user.UserId &
+            t.IsParent == false &
+            t.TaskType != TaskKeys.PlanTaskTaskType &
+            t.TaskStatus != TaskKeys.PlanStatus &
+            wj.RecordDate >= start.TodayStart() & 
+            wj.RecordDate < end.TodayEnd());
 
          if (projectId != null && !projectId.Value.IsEmpty() && projectId.Value != ProjectKeys.SelectAll)
          {
             query.where_and(wj.Projectid == projectId);
          }
-
-         query.where_and(t.IsParent == false);
 
          query.primary(wj.JournalId)
               .skip((current - 1) * rowCount)

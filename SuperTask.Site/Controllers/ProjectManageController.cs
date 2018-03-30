@@ -79,7 +79,7 @@ namespace TheSite.Controllers
                                   p.JoinInner(t.Projectid == p.ProjectId),
                                   u.JoinInner(t.ManagerId == u.UserId)
                                   )
-                            .where(t.ManagerId.In(subquery) & u.UserId != "D1E6E02A-40FF-4F5A-80C3-24710996B9AE".ToGuid(Guid.Empty)
+                            .where(t.ManagerId.In(subquery) & u.UserId != ResourceKeys.TempBossId
                             & t.EndDate >= DateTime.Now.MonthStart() & t.StartDate <= DateTime.Now.MonthEnd()
                             ).take(5);//TODO:先暂时把部门老大不算入资源
 

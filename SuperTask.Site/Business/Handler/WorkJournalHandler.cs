@@ -7,78 +7,6 @@ using TheSite.Models;
 namespace Business
 {
 
-   public class WorkJournalSearchHandler : IHandler<APSqlSelectCommand, WorkJournalSearchOption>
-   {
-
-      public virtual void Handle(APSqlSelectCommand query, WorkJournalSearchOption option)
-      {
-         throw new NotImplementedException();
-      }
-
-   }
-
-   public class TodayJournalSearchHandler : WorkJournalSearchHandler
-   {
-
-      public override void Handle(APSqlSelectCommand query, WorkJournalSearchOption option)
-      {
-         var wj =option.wj;
-         var t = option.t;
-         var at = option.at;
-         var p = option.p;
-         var d = option.d;
-
-         var db = option.db;
-         var user = option.User;
-
-         var startDate = DateTime.Now.TodayStart();   // DateTime.Now.TodayStart();
-         var endDate = DateTime.Now.TodayEnd(); //DateTime.Now.TodayEnd();
-
-
-         query.from(wj,
-                          t.JoinInner(t.TaskId == wj.TaskId),
-                          p.JoinLeft(p.ProjectId == wj.Projectid),//左连接项目表的话可以保证其他任务类型可以显示
-                          d.JoinLeft(d.ID == t.SubTypeId),
-                          at.JoinLeft(at.AttachmentId == wj.AttachmentId)
-                          )
-                    .where(wj.RecordDate >= startDate
-                         & wj.RecordDate < endDate
-                         & wj.UserId == user.UserId
-                         & (t.TaskStatus != TaskKeys.PlanStatus));
-      }
-
-   }
-
-   public class DateRangeJournalSearchHandler : WorkJournalSearchHandler
-   {
-
-      public override void Handle(APSqlSelectCommand query, WorkJournalSearchOption option)
-      {
-         var wj = option.wj;
-         var t = option.t;
-         var at = option.at;
-         var p = option.p;
-         var d = option.d;
-
-         var startDate = option.Start;   // DateTime.Now.TodayStart();
-         var endDate = option.End; //DateTime.Now.TodayEnd();
-         var user = option.User;
-         var selectDateType = option.SelectDateType;
-
-         query.from(wj,
-               t.JoinInner(t.TaskId == wj.TaskId),
-               p.JoinLeft(p.ProjectId == wj.Projectid),
-               d.JoinLeft(d.ID == t.SubTypeId),
-               at.JoinLeft(at.AttachmentId == wj.AttachmentId))
-          .where(
-              wj.UserId == user.UserId)
-              .where_and(wj.RecordDate >= startDate.TodayStart() & wj.RecordDate < endDate.TodayEnd())
-              .where_and(t.TaskStatus != TaskKeys.PlanStatus);
-      }
-
-   }
-
-
    public class WorkJournalEditHandler : IHandler<WorkJournal, WorkJournalEditOption>
    {
 
@@ -238,32 +166,6 @@ namespace Business
 
          return val - orignal + addVal;
       }
-
-   }
-
-
-   public class WorkJournalSearchOption : SearchOption
-   {
-
-      public UserInfo User { get; set; }
-
-      public DateTime Start { get; set; }
-
-      public DateTime End { get; set; }
-
-      public Guid SelectDateType { get; set; }
-
-      /// <summary>
-      /// 任务id,用在通过任务找相关任务负责人的日志
-      /// </summary>
-      public Guid TaskId { get; set; }
-
-      public APDBDef db { get; set; }
-      public APDBDef.WorkJournalTableDef wj { get; set; }
-      public APDBDef.WorkTaskTableDef t { get; set; }
-      public APDBDef.AttachmentTableDef at { get; set; }
-      public APDBDef.ProjectTableDef p { get; set; }
-      public APDBDef.DictionaryTableDef d { get; set; }
 
    }
 

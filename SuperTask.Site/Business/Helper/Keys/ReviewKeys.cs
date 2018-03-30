@@ -38,30 +38,8 @@ namespace Business.Helper
 
       public static string GetTypeKeyByValue<V>(V val) => DictionaryHelper.GetDicByValue(TypeGuid, val).Title;
 
-
       public static string GetStatusKeyByValue<V>(V val) => DictionaryHelper.GetDicByValue(StatusGuid, val).Title;
 
-
    }
-
-
-   //public enum ReviewType
-   //{
-   //   ProjectcChange = 1,
-   //   TaskChange = 2,
-   //   TaskSubmit=3,
-   //   //Failed=4,
-   //   ProjectFail=4,
-   //   TaskFail=5
-   //}
-
-   //public enum RemviewResult
-   //{
-   //   unknow=0,
-   //   Wait=1,
-   //   Success=2,
-   //   Failed=3,
-   //   Closed=4,
-   //}
 
 }

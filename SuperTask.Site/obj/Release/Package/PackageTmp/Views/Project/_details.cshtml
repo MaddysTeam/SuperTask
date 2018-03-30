@@ -71,7 +71,6 @@
 						</div>
 					</div>
 					<div class="form-group">
-						@Html.HiddenFor(p => p.PMId)
 						@Html.LabelFor(p => p.Header, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
 							@Html.DropDownListFor(p => p.PMId,
@@ -80,7 +79,6 @@
 						</div>
 					</div>
 					<div class="form-group">
-						@Html.HiddenFor(p => p.ManagerId)
 						@Html.LabelFor(p => p.Manager, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
 							@Html.DropDownListFor(p => p.ManagerId,
@@ -89,7 +87,6 @@
 						</div>
 					</div>
 					<div class="form-group">
-						@Html.HiddenFor(p => p.ReviewerId)
 						@Html.LabelFor(p => p.Reviewer, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
 							@Html.DropDownListFor(p => p.ReviewerId,

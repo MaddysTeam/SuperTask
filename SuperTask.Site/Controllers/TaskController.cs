@@ -559,7 +559,7 @@ namespace TheSite.Controllers
 
                db.WorkTaskDal.Insert(tk);
 
-               if (originTask== null || !originTask.Equals(tk))
+               if (originTask == null || !originTask.Equals(tk))
                   WorkJournalHelper.CreateOrUpdateJournalByTask(tk, db);
 
                idx++;
@@ -600,6 +600,7 @@ namespace TheSite.Controllers
       //	POST-Ajax: Task/PlanTaskList
       // GET: TaskManage/PlanTaskEdit
       // Post: TaskManage/PlanTaskStart
+      // Post: TaskManage/PlanTaskDeny
 
       public ActionResult PlanTaskList()
       {
@@ -617,28 +618,23 @@ namespace TheSite.Controllers
                                       int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
          var user = GetUserInfo();
-         var rev = APDBDef.Review;
          var u = APDBDef.UserInfo;
          var ru = APDBDef.UserInfo.As("reu");
          var re = APDBDef.Resource;
          var p = APDBDef.Project;
 
          var subQuery = APQuery.select(re.UserId).from(re, p.JoinInner(re.Projectid == p.ProjectId & (p.ManagerId == user.UserId | p.PMId == user.UserId)));
-         var query = APQuery.select(t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.EstimateWorkHours, t.TaskStatus, t.IsParent, t.ManagerId,
-                                    rev.TaskId, rev.ReceiverID, p.ProjectName.As("projectName"), u.UserName.As("userName"), u.UserId.As("userId"),
+         var query = APQuery.select(t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.ReviewerID, t.EstimateWorkHours, t.TaskStatus, t.IsParent, t.ManagerId,
+                                    p.ProjectName.As("projectName"), u.UserName.As("userName"), u.UserId.As("userId"),
                                     ru.UserName.As("receiver"), ru.UserId
                                    )
                                   .from(t,
                                         u.JoinInner(u.UserId == t.ManagerId),
                                         p.JoinInner(p.ProjectId == t.Projectid),
-                                        rev.JoinLeft(rev.TaskId == t.TaskId),
                                         ru.JoinLeft(t.ReviewerID == ru.UserId)
                                         )
                                  .where(t.TaskType == TaskKeys.PlanTaskTaskType & t.ManagerId.In(subQuery)
                                       & t.StartDate >= start & t.EndDate <= end)
-                                 .group_by(
-                                          t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.EstimateWorkHours, t.TaskStatus, t.IsParent, t.ManagerId,
-                                          rev.TaskId, rev.ReceiverID, p.ProjectName, u.UserName, u.UserId, ru.UserId, ru.UserName)
                                   .order_by(t.ManagerId.Asc, t.StartDate.Desc, t.EndDate.Desc);
 
          if (!projectId.IsEmpty() && projectId != AppKeys.SelectAll)
@@ -647,12 +643,10 @@ namespace TheSite.Controllers
          if (!resourceId.IsEmpty() && resourceId != AppKeys.SelectAll)
             query.where_and(t.ManagerId == resourceId);
 
-         //分页
 
-         query = query
-              .primary(t.TaskId)
-              .skip((current - 1) * rowCount)
-              .take(rowCount);
+         query = query.primary(t.TaskId)
+            .skip(rowCount * (current - 1))
+            .take(rowCount);
 
 
          //过滤条件
@@ -685,17 +679,14 @@ namespace TheSite.Controllers
             }
          }
 
-
-         //获得查询的总数量
-
          var total = db.ExecuteSizeOfSelect(query);
 
          var result = query.query(db, rd =>
          {
             var userId = u.UserId.GetValue(rd, "userId");
-            var reviewerId = rev.ReceiverID.GetValue(rd);
+            var reviewerId = t.ReviewerID.GetValue(rd);
             var statusId = t.TaskStatus.GetValue(rd);
-            return new
+            return new PlanTaskViewModel
             {
                id = t.TaskId.GetValue(rd),
                task = t.TaskName.GetValue(rd),
@@ -735,6 +726,15 @@ namespace TheSite.Controllers
       {
          var task = db.WorkTaskDal.PrimaryGet(taskId);
          task.SetStatus(TaskKeys.ProcessStatus);
+
+         return Edit(task);
+      }
+
+      [HttpPost]
+      public ActionResult PlanTaskDeny(Guid taskId)
+      {
+         var task = db.WorkTaskDal.PrimaryGet(taskId);
+         task.SetStatus(TaskKeys.PlanStatus);
 
          return Edit(task);
       }
@@ -944,7 +944,7 @@ namespace TheSite.Controllers
       };
 
 
-      private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedProjects(GetUserInfo().UserId, db);
+      private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedProjects(GetUserInfo().UserId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus);
 
 
       private void BindParentId(List<ArrangeTaskViewModel> tasks)

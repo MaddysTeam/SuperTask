@@ -156,7 +156,10 @@
 							else
 								buttons += '<button class="btn btn-lg" disable>父任务无需提交</button>';
 						}
-						else if (!isMe && reviewerIsMe && row.statusId == '@TaskKeys.ReviewStatus') {
+						else if (reviewerIsMe && row.statusId=='@TaskKeys.ProcessStatus') {
+							buttons += '<button class="btn btn-lg btn-info btn-deny">不合理退回</button>';
+						}
+						else if (reviewerIsMe && row.statusId == '@TaskKeys.ReviewStatus') {
 							buttons += '<button class="btn btn-lg btn-success btn-view">查看详细</button>';
 							buttons += '<button class="btn btn-lg btn-info btn-review">去审核</button>';
 						}
@@ -182,7 +185,9 @@
 			var editUrl = '@Url.Action("PlanTaskEdit", "Task")';
 			var startUrl = '@Url.Action("PlanTaskStart", "Task")';
 			var reqeustUrl = '@Url.Action("ReviewRequest", "Task")';
-			var reviewUrl ='@Url.Action("Search", "WorkFlowTask")'
+			var denyUrl = '@Url.Action("PlanTaskDeny", "Task")'
+			var reviewUrl = '@Url.Action("Search", "WorkFlowTask")';
+	
 
 			var grid = $('#bootgrid');
 			grid.bootgrid(getGridOptions())
@@ -235,6 +240,19 @@
 					var url = reviewUrl + '?taskId=' + rowId;
 
 					window.open(url);
+				});
+
+				grid.find('.btn-deny').on('click', function (e) {
+					var rowId = $(this).parent().data('rowId');
+					var url = denyUrl + '?taskId=' + rowId;
+
+					$.post(url, { taskId: rowId }, function (data) {
+						popupMessage(data, {
+							success: function () {
+								$('#bootgrid').bootgrid('reload');
+							}
+						});
+					});
 				});
 
 			});

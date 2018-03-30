@@ -145,7 +145,7 @@ namespace Business
             //TODO: will delete later,for temp; 这里的逻辑会在不久之后删除,因为现在改起来会很麻烦！
             if (roles.Any(role => role.RoleName == "admin"))
             {
-               userInfo = _db.UserInfoDal.PrimaryGet("D1E6E02A-40FF-4F5A-80C3-24710996B9AE".ToGuid(Guid.Empty));
+               userInfo = _db.UserInfoDal.PrimaryGet(ResourceKeys.TempBossId);
                userInfo.UserName = "admin(不要做任何保存动作！切记)";
             }
 

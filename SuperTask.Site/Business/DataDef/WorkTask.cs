@@ -207,7 +207,9 @@ namespace Business
          };
 
       public static bool IsProjectTask(Guid typeId) => typeId != TaskKeys.TempTaskType;
-      public static bool HasSubTypeTask(Guid typeId) => typeId != TaskKeys.ProjectTaskType && typeId != TaskKeys.TempTaskType && typeId != TaskKeys.PlanTaskTaskType;
+
+      // 只有项目任务才能包含除了临时任务外其他类型任务
+      public static bool HasSubTypeTask(Guid typeId) => typeId != TaskKeys.ProjectTaskType && typeId != TaskKeys.TempTaskType;
 
       public Result Validate()
       {

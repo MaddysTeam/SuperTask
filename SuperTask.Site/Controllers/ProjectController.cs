@@ -62,7 +62,7 @@ namespace TheSite.Controllers
                   u.JoinLeft(u.UserId == p.ManagerId),
                   r.JoinInner((r.Projectid == p.ProjectId & r.UserId == user.UserId))
                   )
-            .where(p.ProjectStatus != ProjectKeys.DeleteStatus);
+            .where(p.ProjectStatus.NotIn(ProjectKeys.DeleteStatus, ProjectKeys.CompleteStatus));
 
          if (owner != ThisApp.SelectAll)
             query.where_and(p.ProjectOwner == owner);

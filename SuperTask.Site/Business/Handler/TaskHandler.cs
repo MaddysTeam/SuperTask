@@ -276,7 +276,7 @@ namespace Business
 
          }
 
-         //开启事务
+
          db.BeginTrans();
 
 
@@ -345,6 +345,11 @@ namespace Business
             return;
          }
 
+         //fix bug: 有点复杂，有可能并发同时修改任务树会导致sortId 的错乱，
+         // 结果是任务节点发生上移的问题（父任务的sortId 可能会大于子任务
+         var parentTk = db.WorkTaskDal.PrimaryGet(task.ParentId);
+         if(parentTk != null && parentTk.SortId >= task.SortId)
+            db.WorkTaskDal.UpdatePartial(task.TaskId,new { SortId = parentTk.SortId + 1, TaskLevel = parentTk.TaskLevel + 1 });
 
          re.IsSuccess = true;
          re.Msg = "操作成功";
