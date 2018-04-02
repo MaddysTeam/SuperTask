@@ -315,9 +315,9 @@ namespace Business
 
 
             //创建或者修改所有父任务的工作日志
-            var parentTks = TaskHelper.GetAllParents(task,tks);
+            var parentTks = TaskHelper.GetAllParents(task, tks);
             WorkJournalHelper.CreateOrUpdateJournalByTasks(parentTks, db);
-            WorkJournalHelper.CreateOrUpdateJournalByTask(task,db);
+            WorkJournalHelper.CreateOrUpdateJournalByTask(task, db);
 
             //创建任务记录日志（非系统日志）
             TaskLogHelper.CreateLogs(tks, orignalTks, option.OperatorId, db);
@@ -348,8 +348,8 @@ namespace Business
          //fix bug: 有点复杂，有可能并发同时修改任务树会导致sortId 的错乱，
          // 结果是任务节点发生上移的问题（父任务的sortId 可能会大于子任务
          var parentTk = db.WorkTaskDal.PrimaryGet(task.ParentId);
-         if(parentTk != null && parentTk.SortId >= task.SortId)
-            db.WorkTaskDal.UpdatePartial(task.TaskId,new { SortId = parentTk.SortId + 1, TaskLevel = parentTk.TaskLevel + 1 });
+         if (parentTk != null && parentTk.SortId >= task.SortId)
+            db.WorkTaskDal.UpdatePartial(task.TaskId, new { SortId = parentTk.SortId + 1, TaskLevel = parentTk.TaskLevel + 1 });
 
          re.IsSuccess = true;
          re.Msg = "操作成功";
@@ -410,6 +410,16 @@ namespace Business
                re.IsSuccess = false;
                re.Msg = Errors.Task.PARENT_ONLY_ALLOW_DELAY_WHEN_PROJECT_START;
             }
+
+         if (option.Tasks.Count > 0)
+         {
+            var parent = option.Tasks.Find(tk => tk.TaskId == task.ParentId);
+            if(parent.HasSubType && parent.SubTypeValue > 0)
+            {
+               re.IsSuccess = false;
+               re.Msg = Errors.Task.NOT_ALLOWED_BE_PARNET_TYPE_IF_LEAF_TASK;
+            }
+         }
 
          return re;
       }

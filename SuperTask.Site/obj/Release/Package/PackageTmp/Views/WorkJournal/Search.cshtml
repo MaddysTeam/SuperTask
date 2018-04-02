@@ -130,7 +130,6 @@
 				start: $('#Start').val(),
 				end: $('#End').val(),
 				searchType: $('#SearchType').val(),
-				selectDateType: $('#SelectDateType').val(),
 				projectId: $('.dropdown-myProjects').val()
 			};
 		}
@@ -251,18 +250,14 @@
 				if (typeVal == "byStart") {
 					$('#SearchType').val('@JournalKeys.SearchDateRange');
 					$('.startDate, .endDate').removeClass('hidden');
-					$('#SelectDateType').val('@JournalKeys.StartDateSelect');
-
 				}
 				else if (typeVal == "byEnd") {
 					$('#SearchType').val('@JournalKeys.SearchDateRange');
 					$('.startDate, .endDate').removeClass('hidden');
-					$('#SelectDateType').val('@JournalKeys.EndDateSelect');
 				}
 				else {
 					$('.startDate, .endDate').addClass('hidden');
 					$('#SearchType').val('@JournalKeys.SearchToday');
-					$('#SelectDateType').val(0);
 				}
 
 				$('#bootgrid').bootgrid('reload');

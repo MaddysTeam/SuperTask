@@ -201,8 +201,7 @@
 		$('.dropdown-taskType2').searchableSelect({
 			afterSelectItem: function (v) {
 				var isTempTask =
-					v == '@TaskKeys.TempTaskType' ||
-					v == '@TaskKeys.ManageTaskType';
+					v == '@TaskKeys.TempTaskType';
 
 				if (isTempTask)
 					$('.projectsDropdown,.myTasksDropdown').hide();

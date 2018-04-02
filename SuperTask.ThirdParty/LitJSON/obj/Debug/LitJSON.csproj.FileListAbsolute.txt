@@ -12,3 +12,4 @@ E:\项目文件(GitLab)\SuperTask\SuperTask.ThirdParty\LitJSON\bin\Debug\LitJSON
 E:\项目文件(GitLab)\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Debug\LitJSON.csprojResolveAssemblyReference.cache
 E:\项目文件(GitLab)\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Debug\LitJSON.dll
 E:\项目文件(GitLab)\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Debug\LitJSON.pdb
+C:\project\教软公司项目\SuperTask_v2\SuperTask\SuperTask.ThirdParty\LitJSON\obj\Debug\LitJSON.csprojResolveAssemblyReference.cache
