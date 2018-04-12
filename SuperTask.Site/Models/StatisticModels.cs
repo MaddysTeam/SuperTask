@@ -31,7 +31,6 @@ namespace TheSite.Models
       public bool IsTotal { get; set; } = false;
    }
 
-
    public class EvalReportModel
    {
       public Guid EvalResultId { get; set; }
@@ -45,15 +44,12 @@ namespace TheSite.Models
       public string PeriodName { get; set; }
       public double Score { get; set; }
       public int EvalCount { get; set; }
-
-     
    }
 
    public class EvalResultDetailsViewModel: EvalReportModel
    {
       public Guid AccesserRoleId { get; set; }
       public Guid AccesserId { get; set; }
-
       public Guid IndicationId { get; set; }
       public double Propertion { get; set; }
       public double FullScore  { get; set; }
@@ -63,6 +59,35 @@ namespace TheSite.Models
 
       public List<EvalPeriodTable> PeriodTables = new List<EvalPeriodTable>();
       public Dictionary<Guid, List<EvalResultItem>> TableResultItems = new Dictionary<Guid, List<EvalResultItem>>();
+   }
+
+
+   public class PersonalScore
+   {
+      public Guid UserId { get; set; }
+      public string UserName { get; set; }
+      public double Score { get; set; }
+      public double Code { get; set; }
+      public double SubValue { get; set; }
+      public string SubType { get; set; }
+      public string TaskName { get; set; }
+      public string ProjectName { get; set; }
+      public Guid ProjectId { get; set; }
+      public Guid TaskId { get; set; }
+   }
+
+   public class PersonalScoreViewModel
+   {
+      public string UserId { get; set; }
+      public string UserName { get; set; }
+      public string Score { get; set; }
+      public string TaskId { get; set; }
+      public string TaskName { get; set; }
+      public string ProjectId { get; set; }
+      public string ProjectName { get; set; }
+      public string SubValue { get; set; }
+      public string SubType { get; set; }
+      public string UnitScore { get; set; }
    }
 
 

@@ -50,6 +50,8 @@ namespace Business
 
       public bool IsProjectTaskType => TaskType != TaskKeys.TempTaskType;
 
+      public bool IsProjectTypeOnly => TaskType == TaskKeys.ProjectTaskType;
+
       public bool IsTempTaskType => !IsProjectTaskType;
 
       public bool HasArrangement => TaskLevel > 0 && SortId > 0;
@@ -57,8 +59,6 @@ namespace Business
       public bool HasPlan => EstimateWorkHours > 0;
 
       public bool HasSubType => TaskType != TaskKeys.ProjectTaskType && TaskType != TaskKeys.TempTaskType;
-
-      //public Guid EditType { get; set; }
 
       public string DataUrl { get; set; }
 
@@ -78,7 +78,18 @@ namespace Business
          }
       }
 
-      public static List<int> StandardComplexityList => new List<int> { 1, 2, 3, 4, 5 };
+      public override Guid SubTypeId
+      {
+         get
+         {
+            return base.SubTypeId;
+         }
+
+         set
+         {
+            base.SubTypeId = IsProjectTypeOnly ? Guid.Empty : value;
+         }
+      }
 
       /// <summary>
       /// 这个字段为了计算任务完成率,作为分子使用
@@ -113,10 +124,16 @@ namespace Business
       /// </summary>
       public double StandardWorkhours { get; set; }
 
+   }
+
+   public partial class WorkTask
+   {
+
+      public bool IsWorked => WorkHours > 0 || SubTypeValue > 0;
+
       public bool IsPlanTask => TaskType == TaskKeys.PlanTaskTaskType;
 
       public void SetStatus(Guid status) => this.TaskStatus = status;
-
 
       public virtual void SetEsitmateDate(DateTime start, DateTime end)
       {
@@ -151,6 +168,95 @@ namespace Business
          }
       }
 
+      public Result Validate()
+      {
+         var message = Success.Task.EDIT_SUCCESS;
+         var result = true;
+
+         if (TaskId.IsEmpty())
+         {
+            message = Errors.Task.NOT_ALLOWED_ID_NULL;
+            result = false;
+         }
+         else if (string.IsNullOrEmpty(TaskName))
+         {
+            message = Errors.Task.NOT_ALLOWED_NAME_NULL;
+            result = false;
+         }
+         else if (ManagerId.IsEmpty())
+         {
+            message = Errors.Task.NOT_ALLOWED_MANAGER_NULL;
+            result = false;
+         }
+         else if (StartDate > EndDate && EndDate > DateTime.MinValue)
+         {
+            message = Errors.Task.NOT_ALLOWED_DATE_INVALIDATE_RANGE;
+            result = false;
+         }
+
+         else if (SecurityScenario.SpecialCharChecker.HasSpecialChar(TaskName))
+         {
+            message = Errors.Task.NOT_ALLOWED_SEPCIAL_CHAR;
+            result = false;
+         }
+
+         return new Result { IsSuccess = result, Msg = message };
+      }
+
+      public bool IsEqualsWithViewModel(ArrangeTaskViewModel viewModel)
+      {
+         if (viewModel == null) return false;
+
+         if (viewModel.start.ToDateTime() == StartDate
+          && viewModel.end.ToDateTime() == EndDate
+          && viewModel.taskType.ToGuid(Guid.Empty) == TaskType
+          && viewModel.stat.ToGuid(Guid.Empty) == TaskStatus
+          && viewModel.progress == RateOfProgress
+          && viewModel.parentId.ToGuid(Guid.Empty) == ParentId
+          && viewModel.workhours == WorkHours
+          && viewModel.reviewerId.ToGuid(Guid.Empty) == ReviewerID
+          && viewModel.subType.ToGuid(Guid.Empty) == SubTypeId
+          && viewModel.subTypeValue == SubTypeValue
+          )
+         {
+            return true;
+         }
+
+         return false;
+      }
+
+      public override bool Equals(object obj)
+      {
+         return IsEquals(obj as WorkTask);
+      }
+
+      protected virtual bool IsEquals(WorkTask task)
+      {
+         if (task == null) return false;
+
+         if (task.TaskName == TaskName
+            && task.StartDate == StartDate
+            && task.EndDate == EndDate
+            && task.EstimateWorkHours == EstimateWorkHours
+            && task.TaskType == TaskType
+            && task.TaskStatus == TaskStatus
+            && task.RateOfProgress == RateOfProgress
+            && task.ParentId == ParentId
+            && task.WorkHours == WorkHours
+            && task.ManagerId == ManagerId
+            && task.ReviewerID == ReviewerID
+            && task.SubTypeId == SubTypeId
+            && task.SubTypeValue == SubTypeValue
+            )
+         {
+            return true;
+         }
+
+
+         return false;
+      }
+
+      public static List<int> StandardComplexityList => new List<int> { 1, 2, 3, 4, 5 };
 
       public static WorkTask Create(Guid defaultUserId, DateTime start, DateTime end, Guid status, Guid type)
          => new WorkTask
@@ -162,7 +268,7 @@ namespace Business
             EndDate = end,
             ManagerId = defaultUserId,
             CreatorId = defaultUserId,
-            ReviewerID = defaultUserId,
+            ReviewerID = defaultUserId,   
          };
 
 
@@ -210,74 +316,6 @@ namespace Business
 
       // 只有项目任务才能包含除了临时任务外其他类型任务
       public static bool HasSubTypeTask(Guid typeId) => typeId != TaskKeys.ProjectTaskType && typeId != TaskKeys.TempTaskType;
-
-      public Result Validate()
-      {
-         var message = Success.Task.EDIT_SUCCESS;
-         var result = true;
-
-         if (TaskId.IsEmpty())
-         {
-            message = Errors.Task.NOT_ALLOWED_ID_NULL;
-            result = false;
-         }
-         else if (string.IsNullOrEmpty(TaskName))
-         {
-            message = Errors.Task.NOT_ALLOWED_NAME_NULL;
-            result = false;
-         }
-         else if (ManagerId.IsEmpty())
-         {
-            message = Errors.Task.NOT_ALLOWED_MANAGER_NULL;
-            result = false;
-         }
-         else if (StartDate > EndDate && EndDate > DateTime.MinValue)
-         {
-            message = Errors.Task.NOT_ALLOWED_DATE_INVALIDATE_RANGE;
-            result = false;
-         }
-
-         else if (SecurityScenario.SpecialCharChecker.HasSpecialChar(TaskName))
-         {
-            message = Errors.Task.NOT_ALLOWED_SEPCIAL_CHAR;
-            result = false;
-         }
-
-         return new Result { IsSuccess = result, Msg = message };
-      }
-
-
-      public override bool Equals(object obj)
-      {
-         return IsEquals(obj as WorkTask);
-      }
-
-
-      protected virtual bool IsEquals(WorkTask task)
-      {
-         if (task == null) return false;
-
-         if (task.TaskName == TaskName
-            && task.StartDate == StartDate
-            && task.EndDate == EndDate
-            && task.EstimateWorkHours == EstimateWorkHours
-            && task.TaskType == TaskType
-            && task.TaskStatus == TaskStatus
-            && task.RateOfProgress == RateOfProgress
-            && task.ParentId == ParentId
-            && task.WorkHours == WorkHours
-            && task.ManagerId == ManagerId
-            && task.ReviewerID == ReviewerID
-            && task.SubTypeId ==SubTypeId
-            && task.SubTypeValue==SubTypeValue
-            )
-         {
-            return true;
-         }
-
-
-         return false;
-      }
 
    }
 

@@ -47,6 +47,9 @@ namespace Business
          if (option.ProjectId != TaskKeys.SelectAll)
             query.where_and(t.Projectid == option.ProjectId);
 
+         if (!option.TaskId.IsEmpty())
+            query.where_and(t.TaskId == option.TaskId);
+
          if (!string.IsNullOrEmpty(option.TaskNamePhrase))
             query.where_and(t.TaskName.Match(option.TaskNamePhrase));
 
@@ -178,8 +181,7 @@ namespace Business
 
       protected virtual void WhenDelete(EditContext ctx)
       {
-         var delTk = ctx.Task;
-         if (delTk.WorkHours > 0)
+         if (ctx.Task.IsWorked)
          {
             ctx.Result.IsSuccess = false;
             ctx.Result.Msg = "已经有实际工时的任务无法删除";
@@ -378,10 +380,17 @@ namespace Business
             re.IsSuccess = false;
             re.Msg = Errors.Task.NOT_HAVE_ANY_TASKS;
          }
-         else if (otk != null && otk.WorkHours > 0 && otk.TaskType == TaskKeys.TempTaskType)
+         else if (otk != null && otk.IsWorked  && otk.TaskType == TaskKeys.TempTaskType)
          {
             re.IsSuccess = false;
             re.Msg = Errors.Task.TEMP_TASK_WHICH_HAS_WORKHOURS_NOT_ALLOWED_CHANG_AS_PROJECT_TASK;
+         }
+         else if(otk!=null && otk.IsWorked && 
+            (otk.SubTypeId!=task.SubTypeId || otk.TaskType != task.TaskType)
+            )
+         {
+            re.IsSuccess = false;
+            re.Msg = Errors.Task.NOT_ALLOWED_CHANGE_IF_IS_WORKED;
          }
          else if (task.ParentId.IsEmpty() && task.SortId > 1)
          {
@@ -414,10 +423,16 @@ namespace Business
          if (option.Tasks.Count > 0)
          {
             var parent = option.Tasks.Find(tk => tk.TaskId == task.ParentId);
-            if(parent.HasSubType && parent.SubTypeValue > 0)
+            if (parent != null && !parent.IsProjectTypeOnly && parent.IsWorked)
             {
                re.IsSuccess = false;
                re.Msg = Errors.Task.NOT_ALLOWED_BE_PARNET_TYPE_IF_LEAF_TASK;
+            }
+
+            if (parent != null && parent.IsPlanTask)
+            {
+               re.IsSuccess = false;
+               re.Msg = Errors.Task.NOT_ALLOWED_HAS_CHILD_IF_PARENT_IS_PLANTASK;
             }
          }
 
@@ -468,7 +483,7 @@ namespace Business
             return;
          }
 
-         if (delTk.WorkHours > 0)
+         if (delTk.IsWorked)
          {
             re.IsSuccess = false;
             re.Msg = Errors.Task.NOT_ALLOWED_DELETE_IF_WORKHOURS_IS_NOT_ZERO;
@@ -614,6 +629,8 @@ namespace Business
 
       public override void Handle(WorkTask task, TaskEditOption option)
       {
+         var originalTask = option.Original; 
+
          // 叶子任务无法成为根任务
          if (task.IsRoot)
          {
@@ -623,12 +640,19 @@ namespace Business
          }
 
          // 叶子任务一旦启动，记录过子任务工作数量的无法修改成其他子任务
-         if (option.Original != null &&
-            task.SubTypeId != option.Original.SubTypeId &&
-            task.SubTypeValue > 0)
+         if (originalTask != null &&
+            task.SubTypeId != originalTask.SubTypeId &&
+            task.IsWorked)
          {
             option.Result.IsSuccess = false;
             option.Result.Msg = Errors.Task.LEAF_TASK_CANNOT_BE_CHANGE;
+            return;
+         }
+
+         if(originalTask!=null && originalTask.IsPlanTask && !task.IsPlanTask && !task.IsPlanStatus)
+         {
+            option.Result.IsSuccess = false;
+            option.Result.Msg = Errors.Task.NOT_ALLOWED_CHANGE_IF_IS_PLANTASK_IS_PROCESS;
             return;
          }
 

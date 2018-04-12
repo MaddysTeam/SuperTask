@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Business.Helper;
+using System;
 
 namespace TheSite.Models
 {
@@ -29,34 +30,11 @@ namespace TheSite.Models
       public string executorId { get; set; }
       public string reviewerId { get; set; }
       public string createrId { get; set; }
-      //运维任务逻辑添加
       public string taskType { get; set; }
       public int serviceCount { get; set; }
-
       public bool IsParent { get; set; }
       public string subType { get; set; }
       public double subTypeValue { get; set; }
-
-   }
-
-
-   public class PlanTaskViewModel
-   {
-
-      public Guid id { get; set; }
-      public string task { get; set; }
-      public Guid statusId { get; set; }
-      public string status { get; set; }
-      public string project { get; set; }
-      public DateTime start { get; set; }
-      public DateTime end { get; set; }
-      public string manager { get; set; }
-      public Guid managerId { get; set; }
-      public bool isParent { get; set; }
-      public bool isMe { get; set; }
-      public Guid reviewerId { get; set; }
-      public string reviewer { get; set; }
-      public bool reviewerIsMe { get; set; }
 
    }
 

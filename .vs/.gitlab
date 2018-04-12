@@ -1,0 +1,11 @@
+{
+  "User": {
+    "id": 36,
+    "username": "zhenghch",
+    "name": "郑华超",
+    "email": "zhenghch@sou.edu.cn",
+    "new_portrait": null,
+    "host": "http://gitlab.sherc.net/",
+    "two_factor_enabled": false
+  }
+}

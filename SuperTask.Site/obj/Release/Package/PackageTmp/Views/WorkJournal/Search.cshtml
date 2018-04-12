@@ -1,4 +1,4 @@
-﻿@{
+﻿	@{
 	var pageTitle = "工作日志";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	var defaultItem = new SelectListItem { Text = "全部", Value = ProjectKeys.SelectAll.ToString() };
@@ -53,8 +53,6 @@
 										<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 									</div>
 
-									<input type="hidden" id="SearchType" value="@JournalKeys.SearchToday" />
-									<input type="hidden" id="SelectDateType" value="@JournalKeys.StartDateSelect"  />
 								</div>
 							</div>
 						</div>
@@ -129,7 +127,6 @@
 			return {
 				start: $('#Start').val(),
 				end: $('#End').val(),
-				searchType: $('#SearchType').val(),
 				projectId: $('.dropdown-myProjects').val()
 			};
 		}
@@ -141,7 +138,7 @@
 
 				responseHandler: function (data) {
 					var response = {
-						current: data.current,  
+						current: data.current,
 						rowCount: data.rowCount,
 						rows: data.rows,
 						total: data.total
@@ -248,16 +245,15 @@
 				var typeVal = $(this).val();
 
 				if (typeVal == "byStart") {
-					$('#SearchType').val('@JournalKeys.SearchDateRange');
 					$('.startDate, .endDate').removeClass('hidden');
 				}
 				else if (typeVal == "byEnd") {
-					$('#SearchType').val('@JournalKeys.SearchDateRange');
 					$('.startDate, .endDate').removeClass('hidden');
 				}
 				else {
 					$('.startDate, .endDate').addClass('hidden');
-					$('#SearchType').val('@JournalKeys.SearchToday');
+					$('#Start').val('@DateTime.Now.TodayStart()');
+					$('#End').val('@DateTime.Now.TodayEnd()');
 				}
 
 				$('#bootgrid').bootgrid('reload');

@@ -57,8 +57,7 @@ namespace Business
       {
          {TaskKeys.DefaultType, new TaskEditHandler()  },
          {TaskKeys.ProjectTaskType, new ProjectTaskEditHandler()  },
-         {TaskKeys.PlanTaskTaskType, new ProjectTaskEditHandler()  },
-         {TaskKeys.TempTaskType, new TempTaskEditHandler()  },
+         {TaskKeys.PlanTaskTaskType, new LeafTaskEditHandler(new ProjectTaskEditHandler())  },
          {TaskKeys.DocumentTaskType, new LeafTaskEditHandler(new ProjectTaskEditHandler())  },
          {TaskKeys.DesignTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler()) },
          {TaskKeys.DevelopTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler()) },
@@ -67,6 +66,8 @@ namespace Business
          {TaskKeys.MaintainedTaskType, new LeafTaskEditHandler(new ProjectTaskEditHandler())  },
          {TaskKeys.ManageTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler())  },
          {TaskKeys.OfficeTaskType,new LeafTaskEditHandler(new ProjectTaskEditHandler())  },
+
+         {TaskKeys.TempTaskType, new TempTaskEditHandler()  },
       };
 
       public static Dictionary<Guid, ResourceSearchHandler> ResourceSearchHandlers = new Dictionary<Guid, ResourceSearchHandler>

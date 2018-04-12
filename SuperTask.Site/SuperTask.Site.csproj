@@ -1546,6 +1546,8 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Content Include="Views\Statistic\PersonalScoreReport.cshtml" />
+    <Content Include="Views\Statistic\PersonalScoreDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,14 +1,14 @@
-﻿using Business;
-using Business.Helper;
+﻿using Business.Helper;
 using Symber.Web.Data;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using TheSite.Models;
-using System.Linq;
-using System;
 
 namespace TheSite.Controllers
 {
+
    public class StatisticController : BaseController
    {
 
@@ -130,7 +130,7 @@ namespace TheSite.Controllers
             result = result.FindAll(r => r.UserName.IndexOf(searchPhrase) >= 0 || r.ProjectName.IndexOf(searchPhrase) >= 0);
          }
 
-         if (sort != null && result.Count>0)
+         if (sort != null && result.Count > 0)
             switch (sort.ID)
             {
                case "ProjectName": result = result.OrderBy(r => r.ProjectName).ToList(); break;
@@ -144,16 +144,18 @@ namespace TheSite.Controllers
             result = result.Skip((current - 1) * rowCount).Take(rowCount).ToList();
 
          //添加总计数据
-         result.Add(new PersonalReportModel {
+         result.Add(new PersonalReportModel
+         {
             IsTotal = true,
             ProjectName = "总计",
-            TotalTaskCount=result.Sum(t=>t.TotalTaskCount),
-            CompleteTaskCount=result.Sum(t=>t.CompleteTaskCount),
-            PlanCount=result.Sum(t=>t.PlanCount),
-            ProcessCount=result.Sum(t=>t.ProcessCount),
-            ReviewCount=result.Sum(t=>t.ReviewCount),
-            DelCount=result.Sum(t=>t.DelCount),
-            WorkHours = result.Sum(t => t.WorkHours) });
+            TotalTaskCount = result.Sum(t => t.TotalTaskCount),
+            CompleteTaskCount = result.Sum(t => t.CompleteTaskCount),
+            PlanCount = result.Sum(t => t.PlanCount),
+            ProcessCount = result.Sum(t => t.ProcessCount),
+            ReviewCount = result.Sum(t => t.ReviewCount),
+            DelCount = result.Sum(t => t.DelCount),
+            WorkHours = result.Sum(t => t.WorkHours)
+         });
 
          return Json(new
          {
@@ -163,6 +165,123 @@ namespace TheSite.Controllers
             total
          });
 
+      }
+
+
+      // GET: Statistic/PersonalScoreReport
+      // POST-Ajax: Statistic/PersonalScoreReport
+
+      public ActionResult PersonalScoreReport()
+      {
+         return View();
+      }
+
+      [HttpPost]
+      public ActionResult PersonalScoreReport(int current, int rowCount, AjaxOrder sort, string start, string end, string searchPhrase)
+      {
+         var sql = @"select u.id as UserId, u.UserName,t.ID,wj.TaskSubTypeValue as SubValue,d.Code from WorkJournal wj
+                     inner join WorkTask t 
+                     on t.id=wj.TaskId
+                     inner join UserInfo u
+                     on u.id=t.ManagerId
+                     left join Dictionary d 
+                     on d.ID=t.SubTypeId
+                     where TaskSubTypeValue > 0
+                     and wj.RecordDate>@StartDate and RecordDate<@EndDate
+                     and t.IsParent=0 ";
+
+         var scores = DapperHelper.QueryBySQL<PersonalScore>(sql, new { StartDate = start, EndDate = end });
+         var result = new List<PersonalScoreViewModel>();
+         var total = 0;
+         if (scores.Count > 0)
+         {
+            var scoreViewModels = scores.GroupBy(x => new { x.UserId, x.UserName })
+                                                    .Select(x => new PersonalScoreViewModel
+                                                    {
+                                                       UserId=x.Key.UserId.ToString(),
+                                                       Score = x.Sum(y => y.SubValue * y.Code).ToString("0.00"),
+                                                       UserName = x.Key.UserName
+                                                    });
+            total = scoreViewModels.Count();
+            if (total > 0)
+               result = scoreViewModels.Skip(rowCount*(current-1)).Take(rowCount).ToList();
+         }
+
+         return Json(new
+         {
+            rows = result,
+            current,
+            rowCount,
+            total
+         });
+      }
+
+
+      // GET: Statistic/PersonalScoreDetails
+      // POST-Ajax: Statistic/PersonalScoreDetails
+
+      public ActionResult PersonalScoreDetails(Guid userId)
+      {
+         return View(userId);
+      }
+
+      [HttpPost]
+      public ActionResult PersonalScoreDetails(int current, int rowCount, AjaxOrder sort,Guid userId, string start, string end, string searchPhrase)
+      {
+         var total = 0;
+         var result = new List<PersonalScoreViewModel>();
+         var sql = @"select 
+                            u.UserName,
+                            t.name as TaskName,
+                            wj.TaskSubTypeValue as SubValue,
+                            d.Code,
+                            p.id as ProjectId,
+                            t.id as TaskId,
+                            p.Name as ProjectName,
+                            d.Title as SubType 
+                     from WorkJournal wj
+                     inner join WorkTask t 
+                     on t.id=wj.TaskId
+                     inner join UserInfo u
+                     on u.id=t.ManagerId
+                     inner join Project p
+                     on p.id=t.ProjectId
+                     left join Dictionary d 
+                     on d.ID=t.SubTypeId
+                     where TaskSubTypeValue > 0
+                     and wj.RecordDate>@StartDate and RecordDate<@EndDate
+                     and t.IsParent=0
+                     and t.managerId=@ManagerId";
+
+         var scores = DapperHelper.QueryBySQL<PersonalScore>(sql, new { ManagerId=userId, StartDate = start, EndDate = end });
+         if (scores.Count > 0)
+         {
+            var scoreViewModels = scores.GroupBy(x => new { x.UserId, x.UserName, x.ProjectId,x.TaskId, x.TaskName, x.ProjectName, x.Code, x.SubType })
+                                                    .Select(x => new PersonalScoreViewModel
+                                                    {
+                                                       UserId= userId.ToString(),
+                                                       Score = x.Sum(y => y.SubValue * y.Code).ToString("0.00"),
+                                                       SubValue = x.Sum(y => y.SubValue).ToString(),
+                                                       SubType = x.Key.SubType,
+                                                       UnitScore =x.Key.Code.ToString(),
+                                                       UserName = x.Key.UserName,
+                                                       TaskName=x.Key.TaskName,
+                                                       ProjectId=x.Key.ProjectId.ToString(),
+                                                       ProjectName = x.Key.ProjectName,
+                                                       TaskId=x.Key.TaskId.ToString()
+                                                    });
+            total = scoreViewModels.Count();
+            if (total > 0)
+               result = scoreViewModels.Skip(rowCount * (current - 1)).Take(rowCount).ToList();
+         }
+
+         return Json(new
+         {
+            rows = result,
+            current,
+            rowCount,
+            total
+         });
       }
 
    }

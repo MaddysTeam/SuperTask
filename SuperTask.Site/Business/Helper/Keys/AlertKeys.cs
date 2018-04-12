@@ -53,9 +53,12 @@ namespace Business.Helper
          public const string NOT_ALLOWED_PARENT_EMPTY = "必须选择父任务";
          public const string EDIT_FAILED = "任务编辑失败";
          public const string NOT_ALLOWED_CHANGE_PARENT = "已经有实际工时或维护任务数量的子任务无法更换父任务";
+         public const string NOT_ALLOWED_HAS_CHILD_IF_PARENT_IS_PLANTASK = "计划任务不能作为父任务";
          public const string NOT_ALLOWED_DELETE_IF_HAS_WORKHOUR = "已经有实际工时的任务无法删除";
-         public const string NOT_ALLOWED_CHANGE_TYPE_IF_HAS_WORKHOUR = "已经有实际工时的任务无法修改类型和子类型";
-         public const string NOT_ALLOWED_CHANGE_TYPE_IF_HAS_COMPLETED = "已经结束的任务无法修改类型和子类型";
+         public const string NOT_ALLOWED_CHANGE_IF_IS_WORKED = "已经有实际工时或工作数量的任务无法修改";
+         public const string NOT_ALLOWED_CHANGE_IF_IS_PLANTASK_IS_PROCESS = "已经启动的计划任务无法修改";
+         public const string NOT_ALLOWED_CHANGE_IF_IS_NOT_PLAN_STATUS = "非计划期间计划任务无法被修改";
+         public const string NOT_ALLOWED_CHANGE_TYPE_IF_HAS_WORK = "已经有工时或者工作数量的子任务无法修改类型";
          public const string NOT_ALLOWED_BE_PARNET_TYPE_IF_LEAF_TASK= "已经有工时的交付（叶子）任务无法变为父任务";
          public const string ALL_TASKS_STARTED = "该项目所有任务均已启动";
          public const string LEAF_TASK_CANNOT_BE_PARENT = "叶子任务不能作为父任务";

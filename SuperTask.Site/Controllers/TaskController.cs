@@ -428,58 +428,44 @@ namespace TheSite.Controllers
 
          foreach (var item in tasks)
          {
-            var pjParent = pjTasks.Find(tk => tk.TaskId == item.parentId.ToGuid(Guid.Empty));
-            if (pjParent != null && pjParent.SubTypeValue > 0)
+            var pjTask = pjTasks.Find(tk => tk.TaskId == item.id.ToGuid(Guid.Empty));
+            if (pjTask == null) continue;
+            if (pjTask.TaskId == item.id.ToGuid(Guid.Empty)
+                                    && pjTask.ParentId != item.parentId.ToGuid(Guid.Empty)
+                                    && pjTask.IsWorked)
             {
                return Json(new
                {
                   result = AjaxResults.Error,
-                  msg = Errors.Task.NOT_ALLOWED_BE_PARNET_TYPE_IF_LEAF_TASK
+                  msg = Errors.Task.NOT_ALLOWED_CHANGE_PARENT
                });
             }
 
-            var pjTask = pjTasks.Find(tk => tk.TaskId == item.id.ToGuid(Guid.Empty));
-            if (pjTask != null)
+            if (pjTask.IsWorked
+                && (pjTask.TaskType != item.taskType.ToGuid(Guid.Empty) || pjTask.SubTypeId != item.subType.ToGuid(Guid.Empty)
+                ))
             {
-               if (pjTask.TaskId == item.id.ToGuid(Guid.Empty)
-                                     && pjTask.ParentId != item.parentId.ToGuid(Guid.Empty)
-                                     && (item.workhours > 0 || item.subTypeValue > 0))
+               return Json(new
                {
-                  return Json(new
-                  {
-                     result = AjaxResults.Error,
-                     msg = Errors.Task.NOT_ALLOWED_CHANGE_PARENT
-                  });
-               }
+                  result = AjaxResults.Error,
+                  msg = Errors.Task.NOT_ALLOWED_CHANGE_TYPE_IF_HAS_WORK
+               });
+            }
 
-               if (pjTask.WorkHours > 0
-                && pjTask.TaskType != item.taskType.ToGuid(Guid.Empty)
-                && pjTask.SubTypeId != item.subType.ToGuid(Guid.Empty))
+            if (pjTask.IsPlanTask && !pjTask.IsPlanStatus && !pjTask.IsEqualsWithViewModel(item))
+            {
+               return Json(new
                {
-                  return Json(new
-                  {
-                     result = AjaxResults.Error,
-                     msg = Errors.Task.NOT_ALLOWED_CHANGE_TYPE_IF_HAS_WORKHOUR
-                  });
-               }
-
-               if (pjTask.IsCompleteStatus
-                  && pjTask.TaskType != item.taskType.ToGuid(Guid.Empty)
-                  && pjTask.SubTypeId != item.subType.ToGuid(Guid.Empty))
-               {
-                  return Json(new
-                  {
-                     result = AjaxResults.Error,
-                     msg = Errors.Task.NOT_ALLOWED_CHANGE_TYPE_IF_HAS_COMPLETED
-                  });
-               }
+                  result = AjaxResults.Error,
+                  msg = Errors.Task.NOT_ALLOWED_CHANGE_IF_IS_NOT_PLAN_STATUS
+               });
             }
          }
 
          foreach (var item in delTaskIds)
          {
             if (pjTasks.Exists(pjTask => pjTask.TaskId == item.ToGuid(Guid.Empty)
-                                     && pjTask.WorkHours > 0))
+                                     && pjTask.IsWorked))
                return Json(new
                {
                   result = AjaxResults.Error,
@@ -551,14 +537,13 @@ namespace TheSite.Controllers
                //父任务进度赋值,注意子任务没有赋值意义
                tk.SetParentProgress();
 
-               var originTask = orignalTasks.Find(x => x.TaskId == tk.TaskId);
-
                //如果项目已启动，任务自动启动 TODO：部门一些人要求更改
                if (project.IsProcessStatus && tk.IsPlanStatus && tk.EstimateWorkHours > 0)
                   tk.Start();
 
                db.WorkTaskDal.Insert(tk);
 
+               var originTask = orignalTasks.Find(x => x.TaskId == tk.TaskId);
                if (originTask == null || !originTask.Equals(tk))
                   WorkJournalHelper.CreateOrUpdateJournalByTask(tk, db);
 
@@ -643,10 +628,13 @@ namespace TheSite.Controllers
          if (!resourceId.IsEmpty() && resourceId != AppKeys.SelectAll)
             query.where_and(t.ManagerId == resourceId);
 
+         //TODO:懒得改，如果是领导角色只显示执行中的计划任务
+         if (user.UserId == ResourceKeys.TempBossId)
+            query.where_and(t.TaskStatus != TaskKeys.PlanStatus);
 
          query = query.primary(t.TaskId)
-            .skip(rowCount * (current - 1))
-            .take(rowCount);
+         .skip(rowCount * (current - 1))
+         .take(rowCount);
 
 
          //过滤条件
@@ -686,7 +674,7 @@ namespace TheSite.Controllers
             var userId = u.UserId.GetValue(rd, "userId");
             var reviewerId = t.ReviewerID.GetValue(rd);
             var statusId = t.TaskStatus.GetValue(rd);
-            return new PlanTaskViewModel
+            return new
             {
                id = t.TaskId.GetValue(rd),
                task = t.TaskName.GetValue(rd),
