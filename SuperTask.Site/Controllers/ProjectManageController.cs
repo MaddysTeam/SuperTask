@@ -272,10 +272,10 @@ namespace TheSite.Controllers
          var userId = this.GetUserInfo().UserId;
 
 
-         var query = APQuery.select(wj.JournalId, wj.Comment, wj.RecordDate, wj.Progress, wj.WorkHours, wj.RecordType,
+         var query = APQuery.select(wj.JournalId, wj.Comment, wj.RecordDate, wj.Progress, wj.WorkHours, wj.RecordType,wj.TaskSubTypeValue,
             wj.ServiceCount, p.ProjectId.As("ProjectId"), p.ProjectName.As("ProjectName"),
             t.TaskId.As("TaskId"), t.TaskName.As("TaskName"), 
-            t.RateOfProgress, t.WorkHours, t.StartDate, t.EndDate, t.TaskType,t.SubTypeValue,
+            t.RateOfProgress, t.WorkHours, t.StartDate, t.EndDate, t.TaskType,
             at.Url, at.AttachmentId.As("AttachmentId"))
             .from(t,
                   p.JoinLeft(p.ProjectId == t.Projectid),
@@ -351,7 +351,7 @@ namespace TheSite.Controllers
                hasAttachment = !at.AttachmentId.GetValue(rd, "AttachmentId").IsEmpty(),
                recordType = wj.RecordType.GetValue(rd) == JournalKeys.ManuRecordType ? "人工输入" : "父节点自动计算",
                taskType = t.TaskType.GetValue(rd),
-               subTypeValue=t.SubTypeValue.GetValue(rd) // 任务子类型的工作数量
+               subTypeValue=wj.TaskSubTypeValue.GetValue(rd) // 任务子类型的工作数量
             };
          }).ToList();
 

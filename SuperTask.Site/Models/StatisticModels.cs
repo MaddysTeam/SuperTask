@@ -90,5 +90,15 @@ namespace TheSite.Models
       public string UnitScore { get; set; }
    }
 
+   public class PersonalScoreExportViewModel
+   {
+      public string UserName { get; set; }
+      public string ProjectName { get; set; }
+      public string TaskName { get; set; }
+      public string SubType { get; set; }
+      public string UnitScore { get; set; }
+      public string SubValue { get; set; }
+      public string Score { get; set; }
+   }
 
 }

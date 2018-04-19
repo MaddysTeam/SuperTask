@@ -61,7 +61,7 @@
 								<th data-column-id="SubType">任务类型</th>
 								<th data-column-id="SubValue">工作数量</th>
 								<th data-column-id="UnitScore">分值</th>
-								<th data-column-id="Score" data-formatter="double">得分</th>
+								<th data-column-id="Score" data-formatter="Score" >得分</th>
 
 							</tr>
 						</thead>
@@ -102,7 +102,28 @@
 
 				url: window.location.href,
 
-				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); }
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+				
+				formatters:{
+					'Score': function (column, row) {
+						return '<a target="_blank" href="/ProjectManage/ProcessInfo?'
+							+ 'projectId='
+							+ row.ProjectId
+							+ '&taskId='
+							+ row.TaskId
+							+ '&userId='
+							+ row.UserId
+							+ '&SearchType='
+							+ '@TaskKeys.SearchByPersonal'
+							+ '&startDate='
+							+ $('#start').val()
+							+ '&endDate='
+							+ $('#end').val()
+							+ '">'
+							+ row.Score
+							+ '</a>';
+					}
+				}
 
 			});
 		}

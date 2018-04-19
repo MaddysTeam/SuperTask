@@ -23,7 +23,7 @@
 							</td>
 							<td style="width:150px">@item.EvalIndication.IndicationDescription</td>
 							<td style="width:50px"><input name="fullScore" class="form-control fullScore" value="@item.EvalIndication.FullScore" readonly/></td>
-							<td style="width:100px"><input name="realScore" id="hint" type="text" class="form-control score" value="@item.Score" readonly /></td>
+							<td style="width:100px"><input name="realScore" id="hint" type="text" class="form-control score" value="@item.Score.ToString("0.00")" readonly /></td>
 							
 						</tr>
 					}

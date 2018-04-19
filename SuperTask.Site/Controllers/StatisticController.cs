@@ -284,6 +284,57 @@ namespace TheSite.Controllers
          });
       }
 
+
+      public ActionResult PersonalScoreExport(string start, string end, string searchPhrase)
+      {
+         var result = new List<PersonalScoreViewModel>();
+         var sql = @"select 
+                            u.UserName,
+                            t.name as TaskName,
+                            wj.TaskSubTypeValue as SubValue,
+                            d.Code,
+                            p.id as ProjectId,
+                            t.id as TaskId,
+                            p.Name as ProjectName,
+                            d.Title as SubType 
+                     from WorkJournal wj
+                     inner join WorkTask t 
+                     on t.id=wj.TaskId
+                     inner join UserInfo u
+                     on u.id=t.ManagerId
+                     inner join Project p
+                     on p.id=t.ProjectId
+                     left join Dictionary d 
+                     on d.ID=t.SubTypeId
+                     where TaskSubTypeValue > 0
+                     and wj.RecordDate>@StartDate and RecordDate<@EndDate
+                     and t.IsParent=0";
+
+         var scores = DapperHelper.QueryBySQL<PersonalScore>(sql, new {StartDate = start, EndDate = end });
+         if (scores.Count > 0)
+         {
+            var scoreViewModels = scores.GroupBy(x => new { x.UserId, x.UserName, x.ProjectId, x.TaskId, x.TaskName, x.ProjectName, x.Code, x.SubType })
+                                                    .Select(x => new PersonalScoreExportViewModel
+                                                    {
+                                                       Score = x.Sum(y => y.SubValue * y.Code).ToString("0.00"),
+                                                       SubValue = x.Sum(y => y.SubValue).ToString(),
+                                                       SubType = x.Key.SubType,
+                                                       UnitScore = x.Key.Code.ToString(),
+                                                       UserName = x.Key.UserName,
+                                                       TaskName = x.Key.TaskName,
+                                                       ProjectName = x.Key.ProjectName,
+                                                    }).ToList();
+
+            var book = ExportHelper.ExportToExcel(scoreViewModels,new string[] {"用户名","项目名称", "任务名称","任务子类型","任务子类型分值","工作数量","得分" });
+            var ms = new System.IO.MemoryStream();
+            book.Write(ms);
+            ms.Seek(0, System.IO.SeekOrigin.Begin);
+
+            return File(ms, "application/vnd.ms-excel", $"本周期得分统计{start}-{end}.xls");
+         }
+
+         return Content("没有数据导出");
+      }
    }
 
 }

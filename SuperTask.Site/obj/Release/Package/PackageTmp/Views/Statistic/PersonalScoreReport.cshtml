@@ -11,6 +11,7 @@
 			<div class="widget-header">
 				<h3>得分统计报表</h3>
 				<div class="btn-group widget-header-toolbar">
+					<button class="btn btn-sm btn-info btn-export">导出</button>
 					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
 				</div>
 			</div>
@@ -116,7 +117,13 @@
 				$('#bootgrid').bootgrid('reload');
 			});
 
-
+			$('.btn-export').click(function () {
+				var start = $('#start').val();
+				var end = $('#end').val();
+				var url = '@Url.Action("PersonalScoreExport", "Statistic")?start=' + start + '&end=' + end;
+				window.open(url);
+				//window.location.href = url;
+			});
 		});
 	</script>
 }

@@ -211,3 +211,11 @@ E:\项目文件(GitLab)\SuperTask\SuperTask.Site\bin\zh-Hans\System.Web.WebPages
 E:\项目文件(GitLab)\SuperTask\SuperTask.Site\obj\Release\SuperTask.Site.csprojResolveAssemblyReference.cache
 E:\项目文件(GitLab)\SuperTask\SuperTask.Site\obj\Release\SuperTask.Site.dll
 E:\项目文件(GitLab)\SuperTask\SuperTask.Site\obj\Release\SuperTask.Site.pdb
+E:\项目文件(GitLab)\SuperTask\SuperTask.Site\bin\ICSharpCode.SharpZipLib.dll
+E:\项目文件(GitLab)\SuperTask\SuperTask.Site\bin\NPOI.dll
+E:\项目文件(GitLab)\SuperTask\SuperTask.Site\bin\NPOI.OOXML.dll
+E:\项目文件(GitLab)\SuperTask\SuperTask.Site\bin\NPOI.OpenXml4Net.dll
+E:\项目文件(GitLab)\SuperTask\SuperTask.Site\bin\NPOI.OpenXmlFormats.dll
+E:\项目文件(GitLab)\SuperTask\SuperTask.Site\bin\NPOI.xml
+E:\项目文件(GitLab)\SuperTask\SuperTask.Site\bin\zh-Hans\System.Web.Mvc.resources.dll
+E:\项目文件(GitLab)\SuperTask\SuperTask.Site\bin\zh-Hans\System.Web.Razor.resources.dll

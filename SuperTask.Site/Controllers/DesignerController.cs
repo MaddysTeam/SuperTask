@@ -19,6 +19,7 @@ namespace TheSite.Controllers
       public ActionResult InitialDictionary()
       {
          // InitialTaskType();
+         InitialEval();
 
          return View();
       }
@@ -114,9 +115,10 @@ namespace TheSite.Controllers
             //{ "预算偏差", DefaultAlgorithms.BugetDiviationId },
             //{ "项目质量", DefaultAlgorithms.ProjectQualtiyId },
 
-            {"工作量2018", DefaultAlgorithms.TaskQuantityId },
-            {"计划精准性2018", DefaultAlgorithms.PlanTaskAccuracyId },
-
+            //{"工作量", DefaultAlgorithms.TaskQuantityId },
+            //{"计划完成度", DefaultAlgorithms.PlanTaskComplentionId },
+            //{"计划时效性", DefaultAlgorithms.PlanTaskTimelinessId }
+              {"日志更新时效性", DefaultAlgorithms.WorkJournalFillingRateId }
          };
 
          foreach (var item in indicationIds)

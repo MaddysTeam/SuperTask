@@ -330,7 +330,6 @@
 				var $myTasksDp = $('#dp_myTasks');
 				var currentSelectTaskId = "";
 				var subTypeMappings = [];
-				@*[{ typeid: '@TaskKeys.ProjectTaskType', subId: '@Guid.Empty', subText: '无（默认）' },];*@
 
 				$(function () {
 
@@ -365,7 +364,7 @@
 
 				function loadGanttFromServer(taskId, callback) {
 					$.post('@Url.Action("TaskArrangement", "Task")', { ProjectId: projectId, TaskId: taskId }, function (data) {
-
+						subTypeMappings = [];
 						if (data.taskTypes.length > 0) {
 							var taskType;
 							for (var i = 0; i < data.taskTypes.length; i++) {

@@ -176,8 +176,10 @@ namespace TheSite.EvalAnalysis
          _builder.BuildAutoEvalProcess(DefaultAlgorithms.TaskUploadFileQuantityId, new DefaultAlgorithms.TaskUploadFileQuantity());
          _builder.BuildAutoEvalProcess(DefaultAlgorithms.CostControlId, new DefaultAlgorithms.CostControl());
          _builder.BuildAutoEvalProcess(DefaultAlgorithms.BugetDiviationId, new DefaultAlgorithms.BugetDiviation());
-         _builder.BuildAutoEvalProcess(DefaultAlgorithms.PlanTaskAccuracyId,new DefaultAlgorithms.PlanTaskAccuracy());
          _builder.BuildAutoEvalProcess(DefaultAlgorithms.TaskQuantityId, new DefaultAlgorithms.WorkTaskQuantity());
+         _builder.BuildAutoEvalProcess(DefaultAlgorithms.PlanTaskComplentionId, new DefaultAlgorithms.PlanTaskCompletion());
+         _builder.BuildAutoEvalProcess(DefaultAlgorithms.PlanTaskTimelinessId, new DefaultAlgorithms.PlanTaskTimeliness());
+         _builder.BuildAutoEvalProcess(DefaultAlgorithms.WorkJournalFillingRateId, new DefaultAlgorithms.WorkJournalFillingRate());
       }
 
 
