@@ -47,33 +47,33 @@
 			</li>
 			}
 			<li>
-				<a href="#" class="js-sub-menu-toggle">
-					<i class="fa fa-pencil-square-o"></i>
-					<span class="text">主观考管理</span>
-				</a>
-				<ul class="sub-menu">
-					<li>
-						<a href="@Url.Action("EvalMemberList", "EvalManage")">
-							<i class="fa fa-gear fa-fw"></i>
-							<span class="text">执行考评</span>
-						</a>
-					</li>
-					<li>
-						<a href="@Url.Action("PeriodEvalMemberList", "EvalManage")">
-							<i class="fa fa-gear fa-fw"></i>
-							<span class="text">查看往期考评结果</span> 
-						</a>
-					</li>
-				</ul>
-			</li>
-			<li>
 				<a href="@Url.Action("EvalResultReport", "EvalStatistic",new { targetId=Html.GetUserProfile().UserId})">
 					<i class="fa fa-pencil-square-o"></i>
 					<span class="text">我的成绩</span>
 				</a>
 			</li>
-			@if (isEvalManger)
+			@if (isEvalManger || isLeader)
 			{
+			<li>
+					<a href="#" class="js-sub-menu-toggle">
+						<i class="fa fa-pencil-square-o"></i>
+						<span class="text">主观考管理</span>
+					</a>
+					<ul class="sub-menu">
+						<li>
+							<a href="@Url.Action("EvalMemberList", "EvalManage")">
+								<i class="fa fa-gear fa-fw"></i>
+								<span class="text">执行考评</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("PeriodEvalMemberList", "EvalManage")">
+								<i class="fa fa-gear fa-fw"></i>
+								<span class="text">查看往期考评结果</span>
+							</a>
+						</li>
+					</ul>
+				</li>
 			<li>
 				<a href="#" class="js-sub-menu-toggle">
 					<i class="fa fa-pencil-square-o"></i>

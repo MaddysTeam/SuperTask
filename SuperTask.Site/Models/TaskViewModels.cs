@@ -35,6 +35,8 @@ namespace TheSite.Models
       public bool IsParent { get; set; }
       public string subType { get; set; }
       public double subTypeValue { get; set; }
+      public string realStart { get; set; }
+      public string realEnd { get; set; }
 
    }
 

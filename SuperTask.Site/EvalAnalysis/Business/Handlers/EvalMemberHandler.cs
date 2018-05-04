@@ -26,6 +26,7 @@ namespace TheSite.EvalAnalysis
       protected static APDBDef.EvalGroupTargetTableDef egt = APDBDef.EvalGroupTarget;
       protected static APDBDef.UserRoleTableDef ur = APDBDef.UserRole;
       protected static APDBDef.RoleTableDef ro = APDBDef.Role;
+      protected static APDBDef.EvalAccessorTargetTableDef ett = APDBDef.EvalAccessorTarget;
 
       protected EvalManager _evalManager;
 
@@ -58,21 +59,22 @@ namespace TheSite.EvalAnalysis
 
          accessorRoleId = accessorRoleId.IsEmpty() ? EvalConfig.AutoAccessorRoleId.ToGuid(Guid.Empty) : accessorRoleId;
 
+         var subQuery = APQuery.select(ett.TargetId).from(ett).where(ett.AccessorId==accessorId); // 搜索成员小组id
          var results = APQuery.select(egt.MemberId, egt.TableIds, u.UserName, er.ResultId.Count().As("EvalCount"), ro.RoleName.As("RoleName"), ro.RoleId.As("TargetRoleId"))
                          .from(egt,
                          ur.JoinInner(egt.MemberId == ur.UserId),
                          ro.JoinInner(ur.RoleId == ro.RoleId),
-                         u.JoinInner(u.UserId == egt.MemberId),
+                         u .JoinInner(u.UserId == egt.MemberId),
                          er.JoinLeft(egt.MemberId == er.TargetId
                                             & er.AccesserId == accessorId
                                             & er.AccesserRoleId == accessorRoleId
                                             & er.TargetRoleId== ro.RoleId
                                             & er.EvalType == EvalTableKeys.AutoType))
+                          .where(egt.MemberId.In(subQuery))
                           .group_by(egt.MemberId, egt.TableIds, u.UserName, ur.RoleId, ro.RoleName, ro.RoleId)
                           .query(db, r =>
                           {
                              var tableIds = egt.TableIds.GetValue(r);
-
                              return new EvalMember
                              {
                                 MemberId = egt.MemberId.GetValue(r),

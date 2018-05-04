@@ -402,7 +402,7 @@ namespace TheSite.EvalAnalysis
                                                    & wk.EndDate >= period.BeginDate
                                                    & wk.EndDate <= period.EndDate
                                                    & wk.TaskType == TaskKeys.PlanTaskTaskType
-                                                   & (wk.TaskStatus == TaskKeys.ProcessStatus | wk.TaskStatus == TaskKeys.CompleteStatus)
+                                                   & (wk.TaskStatus != TaskKeys.PlanStatus & wk.TaskStatus != TaskKeys.DeleteStatus)
                                                    , null);
             if (planTasks.Count > 0)
             {
@@ -450,12 +450,14 @@ namespace TheSite.EvalAnalysis
                                            & wk.EndDate >= period.BeginDate
                                            & wk.EndDate <= period.EndDate
                                            & wk.TaskType == TaskKeys.PlanTaskTaskType
-                                           & (wk.TaskStatus == TaskKeys.ProcessStatus | wk.TaskStatus == TaskKeys.CompleteStatus)
+                                           & wk.TaskStatus != TaskKeys.PlanStatus
+                                           & wk.TaskStatus != TaskKeys.DeleteStatus
                                            , null);
-         if (planTasks.Count > 0)
+         var completeTasks = planTasks.Where(x => x.TaskStatus == TaskKeys.CompleteStatus);
+         if (planTasks.Count > 0 && completeTasks.Count() > 0)
          {
             var planDays = planTasks.Sum(x => x.EndDate == x.StartDate ? 1 : (x.EndDate - x.StartDate).Days);
-            var overtimeDays = planTasks.Sum(x => (x.RealEndDate - x.EndDate).Days);
+            var overtimeDays = completeTasks.Sum(x => (x.RealEndDate - x.EndDate).Days);
             overtimeDays = overtimeDays < 0 ? 0 : overtimeDays;
             score = ((double)(planDays - overtimeDays) / planDays) * paras.EvalIndication.FullScore;
          }
@@ -507,7 +509,7 @@ namespace TheSite.EvalAnalysis
                });
             }
 
-            score = score > paras.EvalIndication.FullScore ? paras.EvalIndication.FullScore : score;
+            score = score >= 100 ? paras.EvalIndication.FullScore : (score / 100) * paras.EvalIndication.FullScore;
             score = score < 0 ? 0 : score;
 
             return new EvalResultItem
@@ -542,11 +544,14 @@ namespace TheSite.EvalAnalysis
             var period = EvalPeriod.PrimaryGet(paras.PeriodId);
             var days = (period.EndDate - period.BeginDate).Days;
             days = days <= 0 ? 1 : days;
-            var fillingDays = paras.db.WorkJournalDal.ConditionQueryCount(
+            var journals = paras.db.WorkJournalDal.ConditionQuery(
                wj.UserId == paras.TargetId &
-               wj.RecordDate >= period.BeginDate & 
-               wj.RecordDate <= period.EndDate   &
-               (wj.WorkHours > 0 | wj.TaskSubTypeValue > 0));
+               wj.RecordDate >= period.BeginDate &
+               wj.RecordDate <= period.EndDate &
+               wj.WorkHours > 0 &
+               wj.TaskSubTypeValue > 0, null, null, null);
+
+            var fillingDays = journals.Count <= 0 ? 0 : journals.GroupBy(x => x.RecordDate).Count();
 
             score = ((double)fillingDays / days) * paras.EvalIndication.FullScore;
             score = score > paras.EvalIndication.FullScore ? paras.EvalIndication.FullScore : score;

@@ -216,8 +216,9 @@ namespace TheSite.Controllers
                {
                   Value = x.ID.ToString(),
                   Text = string.IsNullOrEmpty(x.Note) ? x.Title : $"{x.Title} [{x.Note}]",
-                  UnitName = x.Other
-               })
+                  UnitName = x.Other,
+                  SortId = x.Sort
+               }).OrderBy(x => x.SortId) //TODO:会修改暂时按照sortId 排序
             });
          }
          else
@@ -347,7 +348,7 @@ namespace TheSite.Controllers
             return Json(new
             {
                tasks = GetTaskViewModels(list, rootTask),
-               taskTypes
+               taskTypes = taskTypes == null ? null : taskTypes.OrderBy(x => x.Sort)
             });
          }
 
@@ -362,7 +363,7 @@ namespace TheSite.Controllers
          return Json(new
          {
             tasks,
-            taskTypes
+            taskTypes = taskTypes == null ? null : taskTypes.OrderBy(x => x.Sort)
          });
       }
 
@@ -609,7 +610,7 @@ namespace TheSite.Controllers
          var p = APDBDef.Project;
 
          var subQuery = APQuery.select(re.UserId).from(re, p.JoinInner(re.Projectid == p.ProjectId & (p.ManagerId == user.UserId | p.PMId == user.UserId)));
-         var query = APQuery.select(t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.ReviewerID, t.EstimateWorkHours, t.TaskStatus, t.IsParent, t.ManagerId,
+         var query = APQuery.select(t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.ReviewerID, t.EstimateWorkHours, t.TaskStatus, t.IsParent, t.ManagerId, t.RealEndDate,
                                     p.ProjectName.As("projectName"), u.UserName.As("userName"), u.UserId.As("userId"),
                                     ru.UserName.As("receiver"), ru.UserId
                                    )
@@ -674,6 +675,7 @@ namespace TheSite.Controllers
             var userId = u.UserId.GetValue(rd, "userId");
             var reviewerId = t.ReviewerID.GetValue(rd);
             var statusId = t.TaskStatus.GetValue(rd);
+            var realEnd = t.RealEndDate.GetValue(rd);
             return new
             {
                id = t.TaskId.GetValue(rd),
@@ -689,7 +691,8 @@ namespace TheSite.Controllers
                isMe = userId == user.UserId,
                reviewerId = reviewerId,
                reviewer = ru.UserName.GetValue(rd, "receiver"),
-               reviewerIsMe = reviewerId == user.UserId
+               reviewerIsMe = reviewerId == user.UserId,
+               realEnd = realEnd.IsEmpty() ? "无" : realEnd.ToString()
             };
          }).ToList();
 
@@ -781,7 +784,9 @@ namespace TheSite.Controllers
 
 
          //重定向到首页
-         return RedirectToAction("Search", "WorkFlowTask");
+         // return RedirectToAction("Search", "WorkFlowTask");
+
+         return Content("<script>window.location.href='about:blank'; window.close();</script>");
       }
 
       public ActionResult AfterSubmitReview(Guid instanceId)
@@ -800,7 +805,8 @@ namespace TheSite.Controllers
 
 
          //重定向到首页
-         return RedirectToAction("Search", "WorkFlowTask");
+         // return RedirectToAction("Search", "WorkFlowTask");
+         return Content("<script>window.location.href='about:blank'; window.close();</script>");
       }
 
       public ActionResult AfterEditReviewSend(Guid instanceId)
@@ -847,7 +853,10 @@ namespace TheSite.Controllers
          db.WorkTaskDal.Update(task);
 
          //重定向到首页
-         return RedirectToAction("Search", "WorkFlowTask");
+         //return RedirectToAction("Search", "WorkFlowTask");
+
+         //关闭页面
+         return Content("<script>window.location.href='about:blank'; window.close();</script>");
       }
 
 
@@ -880,7 +889,9 @@ namespace TheSite.Controllers
             ServiceCount = vm.serviceCount,   //运维任务逻辑添加
             TaskStatus = status,
             SubTypeId = vm.subType.ToGuid(Guid.Empty), // 获取任务子类型
-            SubTypeValue = vm.subTypeValue // 获取任务子类型工作量
+            SubTypeValue = vm.subTypeValue,// 获取任务子类型工作量
+            RealStartDate = string.IsNullOrEmpty(vm.realStart) ? DateTime.MinValue : DateTime.Parse(vm.realStart),
+            RealEndDate = string.IsNullOrEmpty(vm.realEnd) ? DateTime.MinValue : DateTime.Parse(vm.realEnd),
          };
 
          return tk;
@@ -928,7 +939,9 @@ namespace TheSite.Controllers
          taskType = item.TaskType.ToString(),
          serviceCount = item.ServiceCount,
          subType = item.SubTypeId.ToString(),
-         subTypeValue = item.SubTypeValue
+         subTypeValue = item.SubTypeValue,
+         realStart = item.RealStartDate.ToString(),
+         realEnd = item.RealEndDate.ToString()
       };
 
 

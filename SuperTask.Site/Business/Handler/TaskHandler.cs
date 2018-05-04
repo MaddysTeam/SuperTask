@@ -380,13 +380,13 @@ namespace Business
             re.IsSuccess = false;
             re.Msg = Errors.Task.NOT_HAVE_ANY_TASKS;
          }
-         else if (otk != null && otk.IsWorked  && otk.TaskType == TaskKeys.TempTaskType)
+         else if (otk != null && otk.IsWorked && otk.TaskType == TaskKeys.TempTaskType)
          {
             re.IsSuccess = false;
             re.Msg = Errors.Task.TEMP_TASK_WHICH_HAS_WORKHOURS_NOT_ALLOWED_CHANG_AS_PROJECT_TASK;
          }
-         else if(otk!=null && otk.IsWorked && 
-            (otk.SubTypeId!=task.SubTypeId || otk.TaskType != task.TaskType)
+         else if (otk != null && otk.IsWorked &&
+            (otk.SubTypeId != task.SubTypeId || otk.TaskType != task.TaskType)
             )
          {
             re.IsSuccess = false;
@@ -402,8 +402,8 @@ namespace Business
             re.IsSuccess = false;
             re.Msg = Errors.Task.NOT_ALLOWED_ESTIMATE_HOURS_ZERO;
          }
-
-         if (pj.IsProcessStatus || pj.IsEditStatus)
+         else if (pj.IsProcessStatus || pj.IsEditStatus)
+         {
             if (task.StartDate > pj.EndDate ||
                task.StartDate < pj.StartDate ||
                task.EndDate > pj.EndDate ||
@@ -413,14 +413,13 @@ namespace Business
                re.Msg = Errors.Task.TASKS_OUT_OF_PROJECT_RANGE;
             }
 
-         if (pj.IsProcessStatus || pj.IsEditStatus)
             if (task.IsParent && otk != null && (otk.EndDate > task.EndDate || otk.StartDate != task.StartDate))
             {
                re.IsSuccess = false;
                re.Msg = Errors.Task.PARENT_ONLY_ALLOW_DELAY_WHEN_PROJECT_START;
             }
-
-         if (option.Tasks.Count > 0)
+         }
+         else if (option.Tasks.Count > 0)
          {
             var parent = option.Tasks.Find(tk => tk.TaskId == task.ParentId);
             if (parent != null && !parent.IsProjectTypeOnly && parent.IsWorked)
@@ -629,7 +628,7 @@ namespace Business
 
       public override void Handle(WorkTask task, TaskEditOption option)
       {
-         var originalTask = option.Original; 
+         var originalTask = option.Original;
 
          // 叶子任务无法成为根任务
          if (task.IsRoot)
@@ -649,7 +648,7 @@ namespace Business
             return;
          }
 
-         if(originalTask!=null && originalTask.IsPlanTask && !task.IsPlanTask && !task.IsPlanStatus)
+         if (originalTask != null && originalTask.IsPlanTask && !task.IsPlanTask && !task.IsPlanStatus)
          {
             option.Result.IsSuccess = false;
             option.Result.Msg = Errors.Task.NOT_ALLOWED_CHANGE_IF_IS_PLANTASK_IS_PROCESS;
@@ -661,7 +660,8 @@ namespace Business
          if (tasks != null && tasks.Count > 0)
          {
             var parent = option.Tasks.Find(tk => tk.TaskId == task.ParentId);
-            parent.TaskType = TaskKeys.ProjectTaskType;
+            if (parent != null)
+               parent.TaskType = TaskKeys.ProjectTaskType;
          }
 
          if (_innderHandler != null)

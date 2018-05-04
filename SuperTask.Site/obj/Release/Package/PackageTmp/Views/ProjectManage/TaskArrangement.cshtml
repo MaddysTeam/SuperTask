@@ -190,6 +190,8 @@
 					<input type="hidden" class="description" name="description" value="(#=obj.description#)"/>
 					<input type="hidden" class="workhours" name="workhours" value="(#=obj.workhours#)"/>
 					<input type="hidden" class="serviceCount" name="serviceCount" value="(#=obj.serviceCount#)"/>
+					<input type="hidden" class="realStart" name="realStart" value="(#=obj.realStart#)"/>
+					<input type="hidden" class="realEnd" name="realEnd" value="(#=obj.realEnd#)"/>
 				</td>
 				  <td class="gdfCell" style="position:relative" >
 					<select name="reviewerList" class="reviewerList" style="width:100%;">
@@ -330,7 +332,6 @@
 				var $myTasksDp = $('#dp_myTasks');
 				var currentSelectTaskId = "";
 				var subTypeMappings = [];
-				@*[{ typeid: '@TaskKeys.ProjectTaskType', subId: '@Guid.Empty', subText: '无（默认）' },];*@
 
 				$(function () {
 
@@ -365,7 +366,7 @@
 
 				function loadGanttFromServer(taskId, callback) {
 					$.post('@Url.Action("TaskArrangement", "Task")', { ProjectId: projectId, TaskId: taskId }, function (data) {
-
+						subTypeMappings = [];
 						if (data.taskTypes.length > 0) {
 							var taskType;
 							for (var i = 0; i < data.taskTypes.length; i++) {

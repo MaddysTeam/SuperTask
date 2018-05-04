@@ -116,7 +116,7 @@
 					var query = $(this).parent().data('query');
 					var json = $(this).parent().data('json');
 					var href = manUrl + '?' + query + '&ObjJson=' + JSON.stringify(json);
-					location.href = href;
+					window.open(href);
 				});
 
 			});

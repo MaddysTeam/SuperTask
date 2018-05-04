@@ -26,12 +26,12 @@
 
 			<div class="row editTaskInfo">
 				<fieldset class="col-sm-6">
-					@Html.HiddenFor(t => t.Projectid)
+					@Html.HiddenFor(t => t.Projectid, new { @class = "myProjectId" })
 					@Html.HiddenFor(t => t.TaskStatus)
 					@Html.HiddenFor(t => t.TaskLevel)
 					@Html.HiddenFor(t => t.SortId)
 					@Html.HiddenFor(t => t.TaskId)
-					@Html.HiddenFor(t => t.ParentId)
+					@Html.HiddenFor(t => t.ParentId,new {@class= "myParentId" })
 					@Html.HiddenFor(t => t.IsParent)
 					@Html.HiddenFor(x => x.SubTypeValue)
 
@@ -471,6 +471,15 @@
 		       typeId != '@TaskKeys.PlanTaskTaskType';
 	}
 
+	function bindTasksDropDown(projectId) {
+		var $dp = $('.dropdown-myTasks');
+		bindDropDownByAjax($dp, '@Url.Action("GetMyTasks", "Task")', { projectId: projectId }, function (o) {
+			$('.myProjectId').val(projectId);
+			$('.myParentId').val(o);
+		});
+	}
+
+
 	$(function () {
 
 		var isPlanStatus = '@Model.IsPlanStatus' == 'True';
@@ -536,6 +545,12 @@
 			if (isInReview) {
 				popupMessage({ msg: '@Errors.Task.TASK_IN_REVIEW', result: 'error' });
 				return false;
+			}
+		});
+
+		$('.dropdown-project').searchableSelect({
+			afterSelectItem: function (v) {
+				bindTasksDropDown(v);
 			}
 		});
 
