@@ -42,6 +42,8 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult EvalMemberList(Guid roleId, int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
+         //var period = EvalPeriod.GetCurrentPeriod(db);
+
          var memberViewModels = new AccessorTargetsHandler().GetTargetMembers(GetUserInfo().UserId, roleId, db);
 
          var total = memberViewModels.Count();

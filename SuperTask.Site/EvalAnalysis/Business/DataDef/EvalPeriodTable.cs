@@ -89,7 +89,7 @@ namespace Business
       public static List<EvalPeriodTable> GetAvaliableEvalTables(Guid targetId, Guid accessorRoleId, Guid targetRoleId, int evalType, List<EvalResult> evalResults, APDBDef db = null)
       {
          db = db ?? new APDBDef();
-         var originTables = EvalPeriodTable.GetAllAvaliableEvalPeriodTables(db, EvalKeys.SubjectType);
+         var originTables = EvalPeriodTable.GetAllAvaliableEvalPeriodTables(db, evalType);
 
          //从考核结果得到考核表
          var resultTables = new List<EvalPeriodTable>();
@@ -133,6 +133,7 @@ namespace Business
 
          //根据其角色读取允许使用的考核表
 
+         
          var targetAllowedTables = GetEvalPeriodTablesByTableIds(evalgroupTarget.TableIds, evalType, db);
          if (targetAllowedTables.Count > 0)
             originTables = targetAllowedTables;

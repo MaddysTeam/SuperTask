@@ -69,7 +69,9 @@ namespace TheSite.EvalAnalysis
                                             & er.AccesserId == accessorId
                                             & er.AccesserRoleId == accessorRoleId
                                             & er.TargetRoleId== ro.RoleId
-                                            & er.EvalType == EvalTableKeys.AutoType))
+                                            & er.EvalType == EvalTableKeys.AutoType
+                                            & er.PeriodId.In(currentPeriods.Select(p => p.PeriodId).ToArray()))
+                                            )
                           .where(egt.MemberId.In(subQuery))
                           .group_by(egt.MemberId, egt.TableIds, u.UserName, ur.RoleId, ro.RoleName, ro.RoleId)
                           .query(db, r =>
@@ -162,7 +164,9 @@ namespace TheSite.EvalAnalysis
                                          & er.AccesserId == accessorId
                                          & er.AccesserRoleId == accessorRoleId
                                          & er.TargetRoleId==ro.RoleId
-                                         & er.EvalType == EvalTableKeys.SubjectType),
+                                         & er.EvalType == EvalTableKeys.SubjectType
+                                         & er.PeriodId.In(currentPeriods.Select(p => p.PeriodId).ToArray())
+                                         ),
                              u.JoinLeft(egt.MemberId == u.UserId)
                              
                              )
