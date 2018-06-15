@@ -2,6 +2,8 @@
 @{
 	var pageTitle = ViewBag.Title = "考核结果";
 	Layout = "~/Views/Shared/_StudioLayout.cshtml";
+
+	var periods = SelectListHelper.GetSelectItems(ViewBag.Periods as List<EvalPeriod>, "Name", "PeriodId");
 }
 @section Css{
 	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
@@ -22,14 +24,14 @@
 			<div class="widget-content">
 				<div class="row">
 
-					@*<div class="col-sm-4">
+					<div class="col-sm-4">
 						<div class="form-group">
-							<label class="col-md-4 control-label">这里添加过滤下拉框</label>
+							<label class="col-md-4 control-label">选择考核周期</label>
 							<div class="col-md-4">
-								@Html.DropDownList("dropdown_owner", owners, new { @class = "dropdown_owner" })
+								@Html.DropDownList("dropdown_owner", periods, new { @class = " dropdown_period" })
 							</div>
 						</div>
-					</div>*@
+					</div>
 
 				</div>
 				<!-- Grid -->
@@ -41,6 +43,7 @@
 								<th data-column-id="TargetName">考核对象</th>
 								<th data-column-id="TargetRoleName">对象角色</th>
 								<th data-column-id="Score">得分</th>
+								<th data-column-id="adjustScore" data-formatter="adjustScore">调整得分</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
 							</tr>
 						</thead>
@@ -53,11 +56,14 @@
 		<!-- /widget -->
 	</div>
 </div>
-
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
 @section Scripts {
 	<script>
 		function getGlobalRequest() {
 			return {
+				periodId: $('.dropdown_period').val()
 			};
 		}
 
@@ -75,6 +81,9 @@
 						return '<div class="btn-group btn-group-xs pull-right">' +
 							'<a target="blank" href="' + url + '" class="btn btn-lg btn-success btn-details">详细信息</a></div>';
 					},
+					'adjustScore': function () {
+						return '<div class="pull-right"><input/>确认</div>';
+					}
 				},
 			});
 		}
@@ -86,6 +95,8 @@
 			grid.bootgrid(getGridOptions())
 			.on('loaded.rs.jquery.bootgrid', function () {
 			});
+
+			$('.dropdown_period').searchableSelect();
 
 		});
 	</script>
