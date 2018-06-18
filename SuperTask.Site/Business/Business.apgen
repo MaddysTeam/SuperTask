@@ -668,6 +668,8 @@
 					<add name="Score" type="double" display="得分"/>
 					<add name="EvalType" type="int" display="考核类型（主观考核，自动考核）"/>
 					<add name="TargetRoleId" type="Guid" display="考评对象角色" comment="考评对象角色ID"/>
+					<!-- add 2018-06-18 build-->
+					<add name="AdjustScore" type="double" display="调整分" comment="调整分ID"/>
 					
 				</columns>
 			</table>

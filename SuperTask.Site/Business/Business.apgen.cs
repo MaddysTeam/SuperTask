@@ -9324,6 +9324,8 @@ namespace Business {
             
             private GuidAPColumnDef _targetRoleId;
             
+            private DoubleAPColumnDef _adjustScore;
+            
             public EvalResultTableDef(string tableName) : 
                     base(tableName) {
             }
@@ -9476,6 +9478,19 @@ namespace Business {
             }
             
             /// <summary>
+            /// AdjustScore ColumnDef
+            /// </summary>
+            public virtual DoubleAPColumnDef AdjustScore {
+                get {
+                    if (Object.ReferenceEquals(_adjustScore, null)) {
+                        _adjustScore = new DoubleAPColumnDef(this, "AdjustScore", false);
+                        _adjustScore.Display = "调整分";
+                    }
+                    return _adjustScore;
+                }
+            }
+            
+            /// <summary>
             /// Default Index
             /// </summary>
             public virtual APSqlOrderPhrase DefaultOrder {
@@ -9506,6 +9521,7 @@ namespace Business {
                 data.Score = Score.GetValue<double>(reader, throwIfValidColumnName);
                 data.EvalType = EvalType.GetValue<int>(reader, throwIfValidColumnName);
                 data.TargetRoleId = TargetRoleId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.AdjustScore = AdjustScore.GetValue<double>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -14792,7 +14808,7 @@ namespace Business {
             /// Insert Data.
             /// </summary>
             public virtual void Insert(EvalResult data) {
-                var query = APQuery.insert(APDBDef.EvalResult).values(APDBDef.EvalResult.ResultId.SetValue(data.ResultId), APDBDef.EvalResult.PeriodId.SetValue(data.PeriodId), APDBDef.EvalResult.GroupId.SetValue(data.GroupId), APDBDef.EvalResult.TableId.SetValue(data.TableId), APDBDef.EvalResult.TargetId.SetValue(data.TargetId), APDBDef.EvalResult.AccesserRoleId.SetValue(data.AccesserRoleId), APDBDef.EvalResult.AccesserId.SetValue(data.AccesserId), APDBDef.EvalResult.AccessDate.SetValue(data.AccessDate), APDBDef.EvalResult.Score.SetValue(data.Score), APDBDef.EvalResult.EvalType.SetValue(data.EvalType), APDBDef.EvalResult.TargetRoleId.SetValue(data.TargetRoleId));
+                var query = APQuery.insert(APDBDef.EvalResult).values(APDBDef.EvalResult.ResultId.SetValue(data.ResultId), APDBDef.EvalResult.PeriodId.SetValue(data.PeriodId), APDBDef.EvalResult.GroupId.SetValue(data.GroupId), APDBDef.EvalResult.TableId.SetValue(data.TableId), APDBDef.EvalResult.TargetId.SetValue(data.TargetId), APDBDef.EvalResult.AccesserRoleId.SetValue(data.AccesserRoleId), APDBDef.EvalResult.AccesserId.SetValue(data.AccesserId), APDBDef.EvalResult.AccessDate.SetValue(data.AccessDate), APDBDef.EvalResult.Score.SetValue(data.Score), APDBDef.EvalResult.EvalType.SetValue(data.EvalType), APDBDef.EvalResult.TargetRoleId.SetValue(data.TargetRoleId), APDBDef.EvalResult.AdjustScore.SetValue(data.AdjustScore));
                 ExecuteNonQuery(query);
             }
             
@@ -14800,7 +14816,7 @@ namespace Business {
             /// Update Data.
             /// </summary>
             public virtual void Update(EvalResult data) {
-                var query = APQuery.update(APDBDef.EvalResult).values(APDBDef.EvalResult.PeriodId.SetValue(data.PeriodId), APDBDef.EvalResult.GroupId.SetValue(data.GroupId), APDBDef.EvalResult.TableId.SetValue(data.TableId), APDBDef.EvalResult.TargetId.SetValue(data.TargetId), APDBDef.EvalResult.AccesserRoleId.SetValue(data.AccesserRoleId), APDBDef.EvalResult.AccesserId.SetValue(data.AccesserId), APDBDef.EvalResult.AccessDate.SetValue(data.AccessDate), APDBDef.EvalResult.Score.SetValue(data.Score), APDBDef.EvalResult.EvalType.SetValue(data.EvalType), APDBDef.EvalResult.TargetRoleId.SetValue(data.TargetRoleId)).where((APDBDef.EvalResult.ResultId == data.ResultId));
+                var query = APQuery.update(APDBDef.EvalResult).values(APDBDef.EvalResult.PeriodId.SetValue(data.PeriodId), APDBDef.EvalResult.GroupId.SetValue(data.GroupId), APDBDef.EvalResult.TableId.SetValue(data.TableId), APDBDef.EvalResult.TargetId.SetValue(data.TargetId), APDBDef.EvalResult.AccesserRoleId.SetValue(data.AccesserRoleId), APDBDef.EvalResult.AccesserId.SetValue(data.AccesserId), APDBDef.EvalResult.AccessDate.SetValue(data.AccessDate), APDBDef.EvalResult.Score.SetValue(data.Score), APDBDef.EvalResult.EvalType.SetValue(data.EvalType), APDBDef.EvalResult.TargetRoleId.SetValue(data.TargetRoleId), APDBDef.EvalResult.AdjustScore.SetValue(data.AdjustScore)).where((APDBDef.EvalResult.ResultId == data.ResultId));
                 ExecuteNonQuery(query);
             }
             
@@ -36896,6 +36912,11 @@ namespace Business {
         private System.Guid _targetRoleId;
         
         /// <summary>
+        /// 调整分ID
+        /// </summary>
+        private double _adjustScore;
+        
+        /// <summary>
         /// Default constructor.
         /// </summary>
         public EvalResultBase() {
@@ -36904,7 +36925,7 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalResultBase(System.Guid resultId, System.Guid periodId, System.Guid groupId, System.Guid tableId, System.Guid targetId, System.Guid accesserRoleId, System.Guid accesserId, System.DateTime accessDate, double score, int evalType, System.Guid targetRoleId) {
+        public EvalResultBase(System.Guid resultId, System.Guid periodId, System.Guid groupId, System.Guid tableId, System.Guid targetId, System.Guid accesserRoleId, System.Guid accesserId, System.DateTime accessDate, double score, int evalType, System.Guid targetRoleId, double adjustScore) {
             _resultId = resultId;
             _periodId = periodId;
             _groupId = groupId;
@@ -36916,6 +36937,7 @@ namespace Business {
             _score = score;
             _evalType = evalType;
             _targetRoleId = targetRoleId;
+            _adjustScore = adjustScore;
         }
         
         /// <summary>
@@ -37161,6 +37183,28 @@ namespace Business {
         }
         
         /// <summary>
+        /// 调整分ID
+        /// </summary>
+        [Display(Name="调整分")]
+        public virtual double AdjustScore {
+            get {
+                return _adjustScore;
+            }
+            set {
+                _adjustScore = value;
+            }
+        }
+        
+        /// <summary>
+        /// 调整分ID APColumnDef
+        /// </summary>
+        public static DoubleAPColumnDef AdjustScoreDef {
+            get {
+                return APDBDef.EvalResult.AdjustScore;
+            }
+        }
+        
+        /// <summary>
         /// EvalResultTableDef APTableDef
         /// </summary>
         public static APDBDef.EvalResultTableDef TableDef {
@@ -37193,6 +37237,7 @@ namespace Business {
             Score = data.Score;
             EvalType = data.EvalType;
             TargetRoleId = data.TargetRoleId;
+            AdjustScore = data.AdjustScore;
         }
         
         /// <summary>
@@ -37230,6 +37275,9 @@ namespace Business {
                 return false;
             }
             if ((TargetRoleId != data.TargetRoleId)) {
+                return false;
+            }
+            if ((AdjustScore != data.AdjustScore)) {
                 return false;
             }
             return true;
@@ -37328,8 +37376,8 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalResult(System.Guid resultId, System.Guid periodId, System.Guid groupId, System.Guid tableId, System.Guid targetId, System.Guid accesserRoleId, System.Guid accesserId, System.DateTime accessDate, double score, int evalType, System.Guid targetRoleId) : 
-                base(resultId, periodId, groupId, tableId, targetId, accesserRoleId, accesserId, accessDate, score, evalType, targetRoleId) {
+        public EvalResult(System.Guid resultId, System.Guid periodId, System.Guid groupId, System.Guid tableId, System.Guid targetId, System.Guid accesserRoleId, System.Guid accesserId, System.DateTime accessDate, double score, int evalType, System.Guid targetRoleId, double adjustScore) : 
+                base(resultId, periodId, groupId, tableId, targetId, accesserRoleId, accesserId, accessDate, score, evalType, targetRoleId, adjustScore) {
         }
     }
     

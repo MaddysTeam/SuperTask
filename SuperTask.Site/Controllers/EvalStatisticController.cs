@@ -36,6 +36,7 @@ namespace TheSite.Controllers
 		                     er.targetroleId,
 		                     er.AccesserRoleId,
 		                     ep.id as periodId,
+                           er.adjustScore as adjustScore,
 		                     ep.name as periodName,
 		                     u.UserName as targetName, 
 		                     et.Name as tableName, 
@@ -68,10 +69,11 @@ namespace TheSite.Controllers
 	                     targetName 'targetName',
 	                     avg(score) as 'score',
 	                     targetRoleName as 'targetRoleName',
-	                     tableId as 'tableid'
+	                     tableId as 'tableid',
+                        adjustScore
 	                     into #temp2
 	                     from #temp1
-	                     group by AccesserRoleId,targetroleId,periodId,periodName,targetName,targetRoleName,targetId,eriId,tableId
+	                     group by AccesserRoleId,targetroleId,periodId,periodName,targetName,targetRoleName,targetId,eriId,tableId,adjustScore
 							   
 	                     select
 	                     t.PeriodId  as 'PeriodId',
@@ -80,13 +82,14 @@ namespace TheSite.Controllers
 	                     t.TargetName as 'TargetName',
 	                     t.targetRoleId as 'TargetRoleId',
                         t.targetRoleName as 'TargetRoleName',
+                        t.adjustScore as 'AdjustScore',
 	                     round(sum(t.Score*(etgi.Propertion/100)),1) Score
 	                     from #temp2 t 
 	                     join [dbo].[EvalTableGroupItem] etgi
 	                     on t.Tableid=etgi.TableId
 	                     join EvalTableGroup etg
 	                     on  etgi.TableGroupId=etg.ID and etg.targetRoleId=t.targetRoleId
-	                     group by t.PeriodId,t.PeriodName, t.TargetId,t.TargetName,t.targetRoleId,t.targetRoleName";
+	                     group by t.PeriodId,t.PeriodName, t.TargetId,t.TargetName,t.targetRoleId,t.targetRoleName,t.adjustScore";
 
 
          var models = DapperHelper.QueryBySQL<EvalReportModel>(sql);

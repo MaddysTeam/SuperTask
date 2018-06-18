@@ -217,6 +217,24 @@ namespace TheSite.Controllers
       }
 
 
+      [HttpPost]
+      public ActionResult AdjustScore(Guid resultId,double adjustScore)
+      {
+         var er = APDBDef.EvalResult;
+
+         APQuery.update(er)
+            .set(er.AdjustScore, adjustScore)
+            .where(er.ResultId == resultId)
+            .execute(db);
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.EvalResult.Adjust_SUCCESS
+         });
+      }
+
+
       //	POST-Ajax: EvalManage/AutoEval
 
       [HttpPost]
@@ -333,4 +351,5 @@ namespace TheSite.Controllers
       }
 
    }
+
 }

@@ -44,6 +44,7 @@ namespace TheSite.Models
       public string PeriodName { get; set; }
       public double Score { get; set; }
       public int EvalCount { get; set; }
+      public double AdjustScore { get; set; }
    }
 
    public class EvalResultDetailsViewModel: EvalReportModel

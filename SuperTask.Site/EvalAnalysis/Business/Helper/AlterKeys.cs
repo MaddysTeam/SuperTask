@@ -70,6 +70,11 @@ namespace Business.Helper
          public const string Bind_Target_SUCCESS = "成功绑定考核对象";
       }
 
+      public class EvalResult
+      {
+         public const string Adjust_SUCCESS = "调整分成功";
+      }
+
    }
 
    public static partial class Confirm
