@@ -42,9 +42,9 @@
 								<th data-column-id="PeriodName">考核周期</th>
 								<th data-column-id="TargetName">考核对象</th>
 								<th data-column-id="TargetRoleName">对象角色</th>
-								<th data-column-id="Score">得分</th>
-								<th data-column-id="adjustScore" data-formatter="adjustScore">调整得分</th>
-								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
+								<th data-column-id="Score" data-formatter="adjustScore">得分</th>
+								@*<th data-column-id="adjustScore" >调整得分</th>*@
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-Css-Class="width180">操作</th>
 							</tr>
 						</thead>
 					</table>
@@ -81,8 +81,8 @@
 						return '<div class="btn-group btn-group-xs pull-right">' +
 							'<a target="blank" href="' + url + '" class="btn btn-lg btn-success btn-details">详细信息</a></div>';
 					},
-					'adjustScore': function () {
-						return '<div class="pull-right"><input/>确认</div>';
+					'adjustScore': function (column, row) {
+						return '<div class="form-group"><label class="col-md-3">' + (row.Score+row.AdjustScore) + '</label><div class="col-md-6"><a class="plus" href="#">+</a> <a class="minus" href="#">-</a></div></div>';
 					}
 				},
 			});
@@ -94,6 +94,8 @@
 			var grid = $('#bootgrid');
 			grid.bootgrid(getGridOptions())
 			.on('loaded.rs.jquery.bootgrid', function () {
+
+				$(this).find('')
 			});
 
 			$('.dropdown_period').searchableSelect();

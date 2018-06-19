@@ -97,7 +97,7 @@ namespace Business.Helper
 
       public class Review
       {
-
+         public const string HAS_IN_REVIEW = "该任务已提交审核申请，无法重复提交申请";
       }
 
 

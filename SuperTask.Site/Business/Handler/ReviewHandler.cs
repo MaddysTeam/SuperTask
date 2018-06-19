@@ -13,11 +13,20 @@ namespace Business
 
    public class TaskReviewRequestHandler : IHandler<WorkTask, ReviewRequestOption>
    {
+      static APDBDef.ReviewTableDef rv = APDBDef.Review;
 
       public virtual void Handle(WorkTask ta, ReviewRequestOption v)
       {
          var user = v.User;
          var title = ReviewKeys.GetTypeKeyByValue(v.ReviewType);
+
+         var isInReview = v.db.ReviewDal.ConditionQueryCount(rv.TaskId == ta.TaskId & rv.ReviewType == v.ReviewType & rv.Result== ReviewKeys.ResultWait) > 0;
+         if (isInReview)
+         {
+            v.Result.Msg = Errors.Review.HAS_IN_REVIEW;
+            v.Result.IsSuccess = false;
+            return;
+         }
 
          var review = new Review
          {
