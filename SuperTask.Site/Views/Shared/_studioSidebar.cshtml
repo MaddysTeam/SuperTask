@@ -46,14 +46,13 @@
 				</ul>
 			</li>
 			}
-			<li>
+			@*<li>
 				<a href="@Url.Action("EvalResultReport", "EvalStatistic",new { targetId=Html.GetUserProfile().UserId})">
 					<i class="fa fa-pencil-square-o"></i>
 					<span class="text">我的成绩</span>
 				</a>
-			</li>
-			@if (isEvalManger || isLeader)
-			{
+			</li>*@
+		
 			<li>
 					<a href="#" class="js-sub-menu-toggle">
 						<i class="fa fa-pencil-square-o"></i>
@@ -94,6 +93,8 @@
 					</li>
 				</ul>
 			</li>
+			@if (isEvalManger && isLeader)
+			{
 			<li>
 				<a href="#" class="js-sub-menu-toggle">
 					<i class="fa fa-pencil-square-o"></i>

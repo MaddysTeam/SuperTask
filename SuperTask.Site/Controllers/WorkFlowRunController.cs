@@ -43,32 +43,47 @@ namespace TheSite.Controllers
          if (string.IsNullOrEmpty(flowType))
             throw new ApplicationException("流程类型不存在！");
 
-         if (parms.FlowType == "submit")
+         try
          {
-            result = service.FlowSend(parms);
 
-            foreach (var step in result.NextSteps)
+            if (parms.FlowType == "submit")
             {
-               var defaultMember = result.StepDefaultUsers[step.ID];//默认处理人员
+               result = service.FlowSend(parms);
 
-               steps.Add(new { id = step.ID, member = defaultMember });
+               foreach (var step in result.NextSteps)
+               {
+                  var defaultMember = result.StepDefaultUsers[step.ID];//默认处理人员
+
+                  steps.Add(new { id = step.ID, member = defaultMember });
+               }
+            }
+            else if (parms.FlowType == "back")
+            {
+               result = service.FlowBack(parms);
+
+               foreach (var step in result.PrevSteps)
+               {
+                  steps.Add(new { id = step.Key, member = string.Empty });
+               }
+            }
+
+            jsonParams = new { type = parms.FlowType, steps = steps };
+
+            parms.JsonParams = Newtonsoft.Json.JsonConvert.SerializeObject(jsonParams);
+
+            service.FlowExcute(parms);
+
+         }
+         catch
+         {
+            parms.RetryCount++;
+            if (parms.RetryCount <= Business.Config.ThisApp.reviewRetryCount)
+            {
+               // 利用重试机制试下
+               System.Threading.Thread.Sleep(3000);
+               return Execute(parms);
             }
          }
-         else if (parms.FlowType == "back")
-         {
-            result = service.FlowBack(parms);
-
-            foreach (var step in result.PrevSteps)
-            {
-               steps.Add(new { id = step.Key, member = string.Empty });
-            }
-         }
-
-         jsonParams = new { type = parms.FlowType, steps = steps };
-
-         parms.JsonParams = Newtonsoft.Json.JsonConvert.SerializeObject(jsonParams);
-
-         var excResult = service.FlowExcute(parms);
 
          //流程完成或者发起后，通过url触发自定义逻辑
 
@@ -82,7 +97,6 @@ namespace TheSite.Controllers
                var url = strategy[review.ReviewType];
                return Redirect(url + "?instanceId=" + parms.Instanceid);
             }
-
          }
 
          return RedirectToAction("Index", "Home");
@@ -93,8 +107,6 @@ namespace TheSite.Controllers
       {
          return View();
       }
-
-
    }
 
 }

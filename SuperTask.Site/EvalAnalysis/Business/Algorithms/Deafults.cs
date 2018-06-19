@@ -496,9 +496,18 @@ namespace TheSite.EvalAnalysis
             double score = 0;
             var period = EvalPeriod.PrimaryGet(paras.PeriodId);
             var evalIndication = paras.EvalIndication;
+            var allTasks = Util.GetAllTasksByJournal(paras);
             var tasks = Util.GetWorkTaskByWorkJournal(paras);
             var dics = DictionaryHelper.GetAll();
 
+            double averageScore = 0, maxScore = 0, average = 70;
+            if (allTasks != null && allTasks.Count > 0)
+            {
+               averageScore = allTasks.GroupBy(x => x.ManagerId).Average(x => x.Sum(y => y.SubValueScore)); //获取所有人计算出来的平均分
+               maxScore = allTasks.GroupBy(x => x.ManagerId).Max(x => x.Sum(y => y.SubValueScore)); //获取最高分
+            }
+
+            // 个人总分
             if (tasks.Count > 0)
             {
                tasks.ForEach(t =>
@@ -508,6 +517,12 @@ namespace TheSite.EvalAnalysis
                      score += Convert.ToDouble(dic.Code) * t.SubTypeValue;
                });
             }
+
+            // 压缩算法
+            if (score > averageScore & maxScore > averageScore)
+               score = average + Math.Abs(score - averageScore) * (100 - average) / (maxScore - averageScore);
+            else
+               score = average - Math.Abs(score - averageScore) * (100 - average) / (maxScore - averageScore);
 
             score = score >= 100 ? paras.EvalIndication.FullScore : (score / 100) * paras.EvalIndication.FullScore;
             score = score < 0 ? 0 : score;
@@ -649,6 +664,45 @@ namespace TheSite.EvalAnalysis
             .where(wti.TaskId.In(subQuery));
 
             return paras.db.ExecuteSizeOfSelect(query);
+         }
+
+         /// <summary>
+         /// 得到考核周期内所有任务的工时和工作数量
+         /// </summary>
+         /// <param name="paras">考核参数</param>
+         /// <returns>任务集合</returns>
+         internal static List<WorkTask> GetAllTasksByJournal(AutoEvalParams paras)
+         {
+            var wj = APDBDef.WorkJournal;
+            var t = APDBDef.WorkTask;
+            var d = APDBDef.Dictionary;
+
+            var period = EvalPeriod.PrimaryGet(paras.PeriodId);
+
+            var result = APQuery.select(wj.TaskId, t.ManagerId,
+                                         wj.TaskSubTypeValue.Sum().As("TotalWorkQuantity"), wj.TaskSubType, d.Code)
+                            .from(wj,
+                                  t.JoinInner(wj.TaskId == t.TaskId),
+                                  d.JoinInner(d.ID == t.SubTypeId)
+                                  )
+                            .where(wj.RecordDate >= period.BeginDate
+                            & wj.RecordDate <= period.EndDate
+                            & t.IsParent == false)
+                            .group_by(wj.TaskId, t.EstimateWorkHours, wj.TaskSubType, d.Code, t.ManagerId)
+                            .query(paras.db, r =>
+                            {
+                               var subValue = wj.TaskSubTypeValue.GetValue(r, "TotalWorkQuantity");
+                               return new WorkTask
+                               {
+                                  TaskId = wj.TaskId.GetValue(r),
+                                  SubTypeValue = subValue,
+                                  SubValueScore = subValue * double.Parse(d.Code.GetValue(r)),
+                                  SubTypeId = wj.TaskSubType.GetValue(r),
+                                  ManagerId = t.ManagerId.GetValue(r)
+                               };
+                            }).ToList();
+
+            return result;
          }
 
       }

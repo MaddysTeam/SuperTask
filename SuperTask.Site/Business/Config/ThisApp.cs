@@ -58,5 +58,8 @@ namespace Business.Config
       // 默认任务标准复杂度范围
       public static int[] DefaultTaskComplexities = { 1, 2, 3, 4, 5 };
 
+      //审核异常重试次数
+      public static int reviewRetryCount = 2;
+
    }
 }

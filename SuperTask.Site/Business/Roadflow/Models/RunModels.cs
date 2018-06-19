@@ -30,6 +30,9 @@ namespace Business.Roadflow
       public string ObjJson { get; set; }
       public string DetaultMember { get; set; }
       public string FlowType { get; set; }
+
+      //失败重新尝试
+      public double RetryCount { get; set; }
    }
 
 

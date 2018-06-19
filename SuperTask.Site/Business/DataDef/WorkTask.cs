@@ -91,6 +91,8 @@ namespace Business
          }
       }
 
+      public double SubValueScore { get; set; }
+
       /// <summary>
       /// 这个字段为了计算任务完成率,作为分子使用
       /// </summary>

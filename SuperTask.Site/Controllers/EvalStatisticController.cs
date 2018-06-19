@@ -9,6 +9,7 @@ using TheSite.Models;
 
 namespace TheSite.Controllers
 {
+
    /// <summary>
    /// 考核统计，所有报表逻辑先暂定使用dapper 用于简化
    /// </summary>
@@ -20,11 +21,13 @@ namespace TheSite.Controllers
 
       public ActionResult EvalResultReport(Guid? targetId)
       {
+         ViewBag.Periods = EvalPeriod.GetAll();
+
          return View();
       }
 
       [HttpPost]
-      public ActionResult EvalResultReport(Guid targetId,int current, int rowCount, AjaxOrder sort, string start, string end, string searchPhrase)
+      public ActionResult EvalResultReport(Guid targetId,Guid periodId,int current, int rowCount, AjaxOrder sort, string start, string end, string searchPhrase)
       {
          string sql = @"if exists (select * from tempdb.dbo.sysobjects where id = object_id(N'tempdb..#temp1') and type='U')
                         drop table #temp1
@@ -82,14 +85,15 @@ namespace TheSite.Controllers
                         t.targetRoleName as 'TargetRoleName',
 	                     round(sum(t.Score*(etgi.Propertion/100)),1) Score
 	                     from #temp2 t 
-	                     join [dbo].[EvalTableGroupItem] etgi
+	                     left join [dbo].[EvalTableGroupItem] etgi
 	                     on t.Tableid=etgi.TableId
-	                     join EvalTableGroup etg
+	                     left join EvalTableGroup etg
 	                     on  etgi.TableGroupId=etg.ID and etg.targetRoleId=t.targetRoleId
+                        where  t.periodId = @PeriodId
 	                     group by t.PeriodId,t.PeriodName, t.TargetId,t.TargetName,t.targetRoleId,t.targetRoleName";
 
 
-         var models = DapperHelper.QueryBySQL<EvalReportModel>(sql);
+         var models = DapperHelper.QueryBySQL<EvalReportModel>(sql,new { PeriodId= periodId });
          IEnumerable<EvalReportModel> filterModels=null;
          
          if (!targetId.IsEmpty() && models.Count>0)
@@ -252,7 +256,6 @@ namespace TheSite.Controllers
                       SUM(s.Score*(s.Propertion/100)) Score
                      from #temp s
                      group by s.IndicationName,s.IndicationId,s.TargetId,s.PeriodId,s.PeriodName,s.TargetRoleId,s.Description,s.TableId,s.FullScore";
-
    }
 
 }
