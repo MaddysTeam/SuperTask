@@ -1,37 +1,36 @@
-﻿@{
+﻿@{ 
 	var isLeader = Html.HasInRole(RoleKeys.ADMIN) || Html.HasInRole(RoleKeys.LEADER);
 	var isPM = Html.HasInRole(RoleKeys.HEADER) || Html.HasInRole(RoleKeys.PROGRAME_MANAGER);
 	var isEvalManger = Html.HasInRole(RoleKeys.EVAL_MANAGER);
 }
-<!-- left sidebar -->
+	<!-- left sidebar -->
 <div class="col-md-2 left-sidebar sidebar">
 	<!-- main-nav -->
 	<nav class="main-nav">
 		<ul class="main-menu">
-			@if (isLeader)
+			@if(isLeader)
 			{
-				<li>
-					<a href="@Url.Action("Search", "User")">
-						<i class="fa fa-user"></i>
-						<span class="text">人员管理</span>
-					</a>
-				</li>
-				<li>
-					<a href="@Url.Action("Search", "Role")">
-						<i class="fa fa-user-secret"></i>
-						<span class="text">角色管理</span>
-					</a>
-				</li>
-				<li>
-					<a href="@Url.Action("Search", "Apps")">
-						<i class="fa fa-battery-full"></i>
-						<span class="text">应用管理</span>
-					</a>
-				</li>
+			<li>
+				<a href="@Url.Action("Search", "User")">
+					<i class="fa fa-user"></i>
+					<span class="text">人员管理</span>
+				</a>
+			</li>
+			<li>
+				<a href="@Url.Action("Search", "Role")">
+					<i class="fa fa-user-secret"></i>
+					<span class="text">角色管理</span>
+				</a>
+			</li>
+			<li>
+				<a href="@Url.Action("Search", "Apps")">
+					<i class="fa fa-battery-full"></i>
+					<span class="text">应用管理</span>
+				</a>
+			</li>
 			}
 			@if (isPM || isLeader)
 			{
-<<<<<<< HEAD
 			<li>
 				<a href="#" class="js-sub-menu-toggle">
 					<i class="fa fa-tasks"></i>
@@ -55,55 +54,25 @@
 			</li>*@
 		
 			<li>
-=======
-				<li>
->>>>>>> 74e64e2bad7f46d1cacc3c7744eb889f38697370
 					<a href="#" class="js-sub-menu-toggle">
-						<i class="fa fa-tasks"></i>
-						<span class="text">任务管理</span>
+						<i class="fa fa-pencil-square-o"></i>
+						<span class="text">主观考管理</span>
 					</a>
 					<ul class="sub-menu">
 						<li>
-							<a href="@Url.Action("PlanTaskList", "Task")">
+							<a href="@Url.Action("EvalMemberList", "EvalManage")">
 								<i class="fa fa-gear fa-fw"></i>
-								<span class="text">计划任务管理</span>
+								<span class="text">执行考评</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("PeriodEvalMemberList", "EvalManage")">
+								<i class="fa fa-gear fa-fw"></i>
+								<span class="text">查看往期考评结果</span>
 							</a>
 						</li>
 					</ul>
 				</li>
-			}
-			<li>
-				<a href="@Url.Action("EvalResultReport", "EvalStatistic",new { targetId=Html.GetUserProfile().UserId})">
-					<i class="fa fa-pencil-square-o"></i>
-					<span class="text">我的成绩</span>
-				</a>
-			</li>
-<<<<<<< HEAD
-			@if (isEvalManger && isLeader)
-			{
-=======
-
->>>>>>> 74e64e2bad7f46d1cacc3c7744eb889f38697370
-			<li>
-				<a href="#" class="js-sub-menu-toggle">
-					<i class="fa fa-pencil-square-o"></i>
-					<span class="text">主观考管理</span>
-				</a>
-				<ul class="sub-menu">
-					<li>
-						<a href="@Url.Action("EvalMemberList", "EvalManage")">
-							<i class="fa fa-gear fa-fw"></i>
-							<span class="text">执行考评</span>
-						</a>
-					</li>
-					<li>
-						<a href="@Url.Action("PeriodEvalMemberList", "EvalManage")">
-							<i class="fa fa-gear fa-fw"></i>
-							<span class="text">查看往期考评结果</span>
-						</a>
-					</li>
-				</ul>
-			</li>
 			<li>
 				<a href="#" class="js-sub-menu-toggle">
 					<i class="fa fa-pencil-square-o"></i>
@@ -124,88 +93,88 @@
 					</li>
 				</ul>
 			</li>
-			@if (isEvalManger && isLeader )
+			@if (isEvalManger && isLeader)
 			{
-				<li>
-					<a href="#" class="js-sub-menu-toggle">
-						<i class="fa fa-pencil-square-o"></i>
-						<span class="text">考核创建&配置管理</span>
-					</a>
-					<ul class="sub-menu">
-						<li>
-							<a href="@Url.Action("IndicationList", "EvalBuild")">
-								<i class="fa fa-gear fa-fw"></i>
-								<span class="text">指标管理</span>
-							</a>
-						</li>
-						<li>
-							<a href="@Url.Action("EvalTableList", "EvalBuild")">
-								<i class="fa fa-gear fa-fw"></i>
-								<span class="text">量表管理</span>
-							</a>
-						</li>
-						<li>
-							<a href="@Url.Action("List", "EvalPeriod")">
-								<i class="fa fa-gear fa-fw"></i>
-								<span class="text">周期管理</span>
-							</a>
-						</li>
-						<li>
-							<a href="@Url.Action("Index", "EvalTableGroup", new { periodId = Guid.Empty })">
-								<i class="fa fa-gear fa-fw"></i>
-								<span class="text">考核表组管理</span>
-							</a>
-						</li>
-					</ul>
-				</li>
-				<li>
-					<a href="#" class="js-sub-menu-toggle">
-						<i class="fa fa-users"></i>
-						<span class="text">考核组管理</span>
-					</a>
-					<ul class="sub-menu">
-						<li>
-							<a href="@Url.Action("AccessorList", "EvalGroup", new { groupId = EvalGroupConfig.DefaultGroupId })">
-								<i class="fa fa-gear fa-fw"></i>
-								<span class="text">考评人管理</span>
-							</a>
-						</li>
-						<li>
-							<a href="@Url.Action("TargetMemberList", "EvalGroup", new { groupId = EvalGroupConfig.DefaultGroupId })">
-								<i class="fa fa-gear fa-fw"></i>
-								<span class="text">考评对象管理</span>
-							</a>
-						</li>
-					</ul>
-				</li>
+			<li>
+				<a href="#" class="js-sub-menu-toggle">
+					<i class="fa fa-pencil-square-o"></i>
+					<span class="text">考核创建&配置管理</span>
+				</a>
+				<ul class="sub-menu">
+					<li>
+						<a href="@Url.Action("IndicationList", "EvalBuild")">
+							<i class="fa fa-gear fa-fw"></i>
+							<span class="text">指标管理</span>
+						</a>
+					</li>
+					<li>
+						<a href="@Url.Action("EvalTableList", "EvalBuild")">
+							<i class="fa fa-gear fa-fw"></i>
+							<span class="text">量表管理</span>
+						</a>
+					</li>
+					<li>
+						<a href="@Url.Action("List", "EvalPeriod")">
+							<i class="fa fa-gear fa-fw"></i>
+							<span class="text">周期管理</span>
+						</a>
+					</li>
+					<li>
+						<a href="@Url.Action("Index", "EvalTableGroup", new { periodId = Guid.Empty })">
+							<i class="fa fa-gear fa-fw"></i>
+							<span class="text">考核表组管理</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="#" class="js-sub-menu-toggle">
+					<i class="fa fa-users"></i>
+					<span class="text">考核组管理</span>
+				</a>
+				<ul class="sub-menu">
+					<li>
+						<a href="@Url.Action("AccessorList", "EvalGroup", new { groupId = EvalGroupConfig.DefaultGroupId })">
+							<i class="fa fa-gear fa-fw"></i>
+							<span class="text">考评人管理</span>
+						</a>
+					</li>
+					<li>
+						<a href="@Url.Action("TargetMemberList", "EvalGroup", new { groupId = EvalGroupConfig.DefaultGroupId })">
+							<i class="fa fa-gear fa-fw"></i>
+							<span class="text">考评对象管理</span>
+						</a>
+					</li>
+				</ul>
+			</li>
 			}
 			@if (isLeader)
 			{
-				<li>
-					<a href="#" class="js-sub-menu-toggle">
-						<i class="fa fa-gears"></i>
-						<span class="text">统计分析</span>
-						<i class="toggle-icon fa fa-angle-left"></i>
-					</a>
-					<ul class="sub-menu">
-						<li>
-							<a href="@Url.Action("PersonalReport", "Statistic")">
-								<i class="fa fa-gear fa-fw"></i>
-								<span class="text">员工工时统计</span>
-							</a>
-							<a href="@Url.Action("PersonalScoreReport", "Statistic")">
-								<i class="fa fa-gear fa-fw"></i>
-								<span class="text">员工得分统计</span>
-							</a>
-							<a href="@Url.Action("EvalResultReport", "EvalStatistic",new { targetId=Guid.Empty})">
-								<i class="fa fa-gear fa-fw"></i>
-								<span class="text">考核统计</span>
-							</a>
+			<li>
+				<a href="#" class="js-sub-menu-toggle">
+					<i class="fa fa-gears"></i>
+					<span class="text">统计分析</span>
+					<i class="toggle-icon fa fa-angle-left"></i>
+				</a>
+				<ul class="sub-menu">
+					<li>
+						<a href="@Url.Action("PersonalReport", "Statistic")">
+							<i class="fa fa-gear fa-fw"></i>
+							<span class="text">员工工时统计</span>
+						</a>
+						<a href="@Url.Action("PersonalScoreReport", "Statistic")">
+							<i class="fa fa-gear fa-fw"></i>
+							<span class="text">员工得分统计</span>
+						</a>
+						<a href="@Url.Action("EvalResultReport", "EvalStatistic",new { targetId=Guid.Empty})">
+							<i class="fa fa-gear fa-fw"></i>
+							<span class="text">考核统计</span>
+						</a>
 
-						</li>
-					</ul>
-
-				</li>
+					</li>
+				</ul>
+				
+			</li>
 			}
 		</ul>
 	</nav>

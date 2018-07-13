@@ -20,7 +20,7 @@ namespace Business
          var user = v.User;
          var title = ReviewKeys.GetTypeKeyByValue(v.ReviewType);
 
-         var isInReview = v.db.ReviewDal.ConditionQueryCount(rv.TaskId == ta.TaskId & rv.ReviewType == v.ReviewType & rv.Result== ReviewKeys.ResultWait) > 0;
+         var isInReview = v.db.ReviewDal.ConditionQueryCount(rv.TaskId == ta.TaskId & rv.ReviewType == v.ReviewType & rv.Result == ReviewKeys.ResultWait) > 0;
          if (isInReview)
          {
             v.Result.Msg = Errors.Review.HAS_IN_REVIEW;
@@ -149,5 +149,6 @@ namespace Business
 
       public APDBDef db { get; set; }
    }
+
 
 }

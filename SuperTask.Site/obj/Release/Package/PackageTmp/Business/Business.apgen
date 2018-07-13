@@ -668,6 +668,8 @@
 					<add name="Score" type="double" display="得分"/>
 					<add name="EvalType" type="int" display="考核类型（主观考核，自动考核）"/>
 					<add name="TargetRoleId" type="Guid" display="考评对象角色" comment="考评对象角色ID"/>
+					<!-- add 2018-06-18 build-->
+					<add name="AdjustScore" type="double" display="调整分" comment="调整分ID"/>
 					
 				</columns>
 			</table>
@@ -685,7 +687,24 @@
 					
 				</columns>
 			</table>
-			
+
+			<!-- add 2018-06-20 add-->
+			<table name="EvalSubmitResult" comment="评价-最终-结果">
+				<columns>
+
+					<add name="SubmitResultId" columnName="ID" type="Guid" primaryKey="true"  display="评价结果ID"/>
+					<add name="PeriodId" type="Guid" display="周期ID"/>
+					<add name="UserId" type="Guid" display="对象ID"/>
+					<add name="RoleId" type="Guid" display="对象角色ID"/>
+					<add name="Score" type="double" display="得分"/>
+					<add name="AdjustScore" type="double" display="调整分" />
+					<!-- 冗余 temp-->
+					<add name="PeriodName" type="string" />
+					<add name="RoleName" type="string" />
+					<add name="UserName" type="string"/>
+
+				</columns>
+			</table>
 			<!-- Shared Folder -->
 			
 			<table name="Folder"  comment="文件夹">

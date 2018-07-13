@@ -281,6 +281,7 @@
     <Compile Include="Business\Handler\WorkJournalHandler.cs" />
     <Compile Include="Business\Helper\AppConfigHelper.cs" />
     <Compile Include="Business\Helper\Keys\AlertKeys.cs" />
+    <Compile Include="Business\Helper\Keys\AdviceKeys.cs" />
     <Compile Include="Business\Helper\Keys\AppKeys.cs" />
     <Compile Include="Business\Helper\Keys\JournalKeys.cs" />
     <Compile Include="Business\Helper\Keys\DictionaryKeys.cs" />
@@ -319,6 +320,7 @@
     <Compile Include="Business\System.Web.MVC\Attribute\ExceptionAttribute.cs" />
     <Compile Include="Business\System.Web.MVC\Attribute\PermissionAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdviceController.cs" />
     <Compile Include="Controllers\AppsController.cs" />
     <Compile Include="Controllers\AttachmentController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -1569,6 +1571,8 @@
     </None>
     <Content Include="Views\Statistic\PersonalScoreReport.cshtml" />
     <Content Include="Views\Statistic\PersonalScoreDetails.cshtml" />
+    <Content Include="Views\Advice\Edit.cshtml" />
+    <Content Include="Views\Advice\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

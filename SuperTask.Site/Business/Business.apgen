@@ -687,7 +687,24 @@
 					
 				</columns>
 			</table>
-			
+
+			<!-- add 2018-06-20 add-->
+			<table name="EvalSubmitResult" comment="评价-最终-结果">
+				<columns>
+
+					<add name="SubmitResultId" columnName="ID" type="Guid" primaryKey="true"  display="评价结果ID"/>
+					<add name="PeriodId" type="Guid" display="周期ID"/>
+					<add name="UserId" type="Guid" display="对象ID"/>
+					<add name="RoleId" type="Guid" display="对象角色ID"/>
+					<add name="Score" type="double" display="得分"/>
+					<add name="AdjustScore" type="double" display="调整分" />
+					<!-- 冗余 temp-->
+					<add name="PeriodName" type="string" />
+					<add name="RoleName" type="string" />
+					<add name="UserName" type="string"/>
+
+				</columns>
+			</table>
 			<!-- Shared Folder -->
 			
 			<table name="Folder"  comment="文件夹">
@@ -715,7 +732,23 @@
 
 				</columns>
 			</table>
-			
+
+			<table name="Advice" comment="建议和意见">
+				<columns>
+					
+					<add name="AdviceId	" columnName="ID" type="Guid" primaryKey="true" display="文件夹ID"></add>
+					<add name="Title" columnName="Title" type="string" display="意见标题"></add>
+					<add name="Content" columnName="Content" type="string" display="意见内容"></add>
+					<add name="IsAdopt" columnName="IsAdopt" type="bool" display="是否采纳"></add>
+					<add name="Reason"  columnName="Reason" type="string" display="未采纳原因"></add>
+					<add name="Status"  columnName="Status" type="Guid" display="当前状态"></add>
+					<add name="CreatorId" columnName="CreatorId" type="Guid" display="添加者" comment="添加者"></add>
+					<add name="CreateDate" columnName="CreateDate" type="DateTime"  isNullable="true"  display="创建时间" />
+					<add name="ModifierId" columnName="ModifierId" type="Guid" display="修改者" comment="修改者"></add>
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true" display="最近修改时间" />
+					
+				</columns>
+			</table>
 			
 		</tables>
 

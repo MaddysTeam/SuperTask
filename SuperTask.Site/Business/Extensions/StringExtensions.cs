@@ -24,7 +24,7 @@ namespace Business
       }
 
 
-      public static string Ellipsis(this string str,int length)
+      public static string Ellipsis(this string str,int length=20)
       {
          if (string.IsNullOrEmpty(str))
             return str;

@@ -27,8 +27,10 @@ namespace TheSite.Controllers
       }
 
       [HttpPost]
-      public ActionResult EvalResultReport(Guid targetId,Guid periodId,int current, int rowCount, AjaxOrder sort, string start, string end, string searchPhrase)
+      public ActionResult EvalResultReport(Guid periodId, int current, int rowCount, AjaxOrder sort, string start, string end, string searchPhrase)
       {
+         var esr = APDBDef.EvalSubmitResult;
+
          string sql = @"if exists (select * from tempdb.dbo.sysobjects where id = object_id(N'tempdb..#temp1') and type='U')
                         drop table #temp1
                      if exists (select * from tempdb.dbo.sysobjects where id = object_id(N'tempdb..#temp2') and type='U')
@@ -39,7 +41,6 @@ namespace TheSite.Controllers
 		                     er.targetroleId,
 		                     er.AccesserRoleId,
 		                     ep.id as periodId,
-                           er.adjustScore as adjustScore,
 		                     ep.name as periodName,
 		                     u.UserName as targetName, 
 		                     et.Name as tableName, 
@@ -72,11 +73,10 @@ namespace TheSite.Controllers
 	                     targetName 'targetName',
 	                     avg(score) as 'score',
 	                     targetRoleName as 'targetRoleName',
-	                     tableId as 'tableid',
-                        adjustScore
+	                     tableId as 'tableid'
 	                     into #temp2
 	                     from #temp1
-	                     group by AccesserRoleId,targetroleId,periodId,periodName,targetName,targetRoleName,targetId,eriId,tableId,adjustScore
+	                     group by AccesserRoleId,targetroleId,periodId,periodName,targetName,targetRoleName,targetId,eriId,tableId
 							   
 	                     select
 	                     t.PeriodId  as 'PeriodId',
@@ -85,59 +85,71 @@ namespace TheSite.Controllers
 	                     t.TargetName as 'TargetName',
 	                     t.targetRoleId as 'TargetRoleId',
                         t.targetRoleName as 'TargetRoleName',
-                        t.adjustScore as 'AdjustScore',
 	                     round(sum(t.Score*(etgi.Propertion/100)),1) Score
 	                     from #temp2 t 
 	                     left join [dbo].[EvalTableGroupItem] etgi
 	                     on t.Tableid=etgi.TableId
-	                     left join EvalTableGroup etg
-	                     on  etgi.TableGroupId=etg.ID and etg.targetRoleId=t.targetRoleId
-<<<<<<< HEAD
+	                     join EvalTableGroup etg
+	                     on  etgi.TableGroupId=etg.ID and etg.targetRoleId=t.targetRoleId and etg.PeriodId=@PeriodId
                         where  t.periodId = @PeriodId
 	                     group by t.PeriodId,t.PeriodName, t.TargetId,t.TargetName,t.targetRoleId,t.targetRoleName";
-=======
-	                     group by t.PeriodId,t.PeriodName, t.TargetId,t.TargetName,t.targetRoleId,t.targetRoleName,t.adjustScore";
->>>>>>> 74e64e2bad7f46d1cacc3c7744eb889f38697370
 
 
-         var models = DapperHelper.QueryBySQL<EvalReportModel>(sql,new { PeriodId= periodId });
-         IEnumerable<EvalReportModel> filterModels=null;
-         
-         if (!targetId.IsEmpty() && models.Count>0)
-            filterModels = models.Where(x => x.TargetId == targetId)
+         var models = DapperHelper.QueryBySQL<EvalReportModel>(sql, new { PeriodId = periodId });
+         var submitItems = new List<EvalSubmitResult>();
+         var newSubmitItems = new List<EvalSubmitResult>();
+
+         if (models.Count > 0)
+         {
+            // TODO:暂时更新EvalSubmitResult 表 需求太恶心了！将在7月改掉
+            submitItems = EvalSubmitResult.ConditionQuery(esr.PeriodId == periodId, null);
+          
+            foreach (var item in models)
+            {
+               EvalSubmitResult esri = submitItems.FirstOrDefault(x => x.UserId == item.TargetId && x.PeriodId == item.PeriodId && x.RoleId == item.TargetRoleId);
+               if (esri != null)
+                  esri.Score = item.Score;
+               else
+                  esri = new EvalSubmitResult {
+                     SubmitResultId = Guid.NewGuid(),
+                     PeriodId = item.PeriodId,
+                     UserId = item.TargetId,
+                     Score = item.Score,
+                     RoleId =item.TargetRoleId,
+                     UserName =item.TargetName,
+                     RoleName =item.TargetRoleName,
+                     PeriodName =item.PeriodName};
+
+               newSubmitItems.Add(esri);
+            }
+
+            db.BeginTrans();
+
+            try
+            {
+               db.EvalSubmitResultDal.ConditionDelete(esr.PeriodId == periodId);
+
+               foreach (var item in newSubmitItems)
+                  db.EvalSubmitResultDal.Insert(item);
+
+               db.Commit();
+            }
+            catch
+            {
+               db.Rollback();
+            }
+         }
+
+         var total = newSubmitItems.Count();
+
+         var results = newSubmitItems
             .Skip((rowCount * current) - rowCount)
             .Take(rowCount);
 
-         if (filterModels != null && filterModels.Count() > 0)
-         {
-            models = filterModels.ToList();
-            var modelsCount = models.Count;
-
-            return Json(new
-            {
-               rows = models,
-               current,
-               rowCount,
-               total = modelsCount
-            });
-         }
-
-         if(!targetId.IsEmpty()) return Json(new
-         {
-            rows = filterModels,
-            current,
-            rowCount,
-            total=0
-         });
-
-         var total = models.Count();
-         models = models.Skip((rowCount * current) - rowCount)
-            .Take(rowCount)
-            .ToList();
 
          return Json(new
          {
-            rows = models,
+            rows = results,
             current,
             rowCount,
             total
@@ -149,9 +161,9 @@ namespace TheSite.Controllers
 
       public ActionResult EvalResultDetails(EvalResultDetailsViewModel model)
       {
-         var models = DapperHelper.QueryBySQL<EvalResultDetailsViewModel>(_detailsSQL, new { TargetId=model.TargetId, TargetRoleId=model.TargetRoleId, PeriodId=model.PeriodId, });
+         var models = DapperHelper.QueryBySQL<EvalResultDetailsViewModel>(_detailsSQL, new { TargetId = model.TargetId, TargetRoleId = model.TargetRoleId, PeriodId = model.PeriodId, });
          if (models.Count <= 0) throw new ApplicationException();
-         var tableIds = models.Select(x=>x.TableId).Distinct();
+         var tableIds = models.Select(x => x.TableId).Distinct();
 
          var dic = new Dictionary<Guid, List<EvalResultItem>>();
          var periodTables = EvalPeriodTable.GetAllEvalPeriodTables(db).FindAll(x => x.PeriodId == model.PeriodId);
@@ -159,9 +171,9 @@ namespace TheSite.Controllers
 
          foreach (var item in tableIds)
          {
-            dic.Add(item,new List<EvalResultItem>());
-            var table = periodTables.Find(x=>x.TableId==item);
-            if (table!=null)
+            dic.Add(item, new List<EvalResultItem>());
+            var table = periodTables.Find(x => x.TableId == item);
+            if (table != null)
                resultTables.Add(table);
          }
 
@@ -169,16 +181,17 @@ namespace TheSite.Controllers
          {
             if (dic.ContainsKey(item.TableId))
             {
-               dic[item.TableId].Add(new EvalResultItem {
-                    ResultId=item.EvalResultId,
-                    TableId=item.TableId,
-                    EvalIndication=new EvalIndication { IndicationName=item.IndicationName, FullScore=item.FullScore, IndicationDescription=item.IndicationDescription  },
-                    Score=item.Score,
-                    PeriodId=item.PeriodId,
+               dic[item.TableId].Add(new EvalResultItem
+               {
+                  ResultId = item.EvalResultId,
+                  TableId = item.TableId,
+                  EvalIndication = new EvalIndication { IndicationName = item.IndicationName, FullScore = item.FullScore, IndicationDescription = item.IndicationDescription },
+                  Score = item.Score,
+                  PeriodId = item.PeriodId,
                });
 
                var table = resultTables.Find(x => x.TableId == item.TableId);
-               if(table!=null)
+               if (table != null)
                   table.Score += item.Score;
             }
 
@@ -188,7 +201,7 @@ namespace TheSite.Controllers
          model.TableResultItems = dic;
          model.PeriodTables = resultTables;
          model.IsShowOthersEvalResult = true;
-         
+
          return View(model);
       }
 
@@ -266,3 +279,4 @@ namespace TheSite.Controllers
    }
 
 }
+

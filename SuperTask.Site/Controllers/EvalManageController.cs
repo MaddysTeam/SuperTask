@@ -216,16 +216,19 @@ namespace TheSite.Controllers
          });
       }
 
-
       [HttpPost]
-      public ActionResult AdjustScore(Guid resultId,double adjustScore)
+      public ActionResult AdjustScore(Guid resultId, double adjustScore)
       {
-         var er = APDBDef.EvalResult;
+         var esr = APDBDef.EvalSubmitResult;
 
-         APQuery.update(er)
-            .set(er.AdjustScore, adjustScore)
-            .where(er.ResultId == resultId)
-            .execute(db);
+         var result = db.EvalSubmitResultDal.PrimaryGet(resultId);
+         if (result != null)
+         {
+            APQuery.update(esr)
+               .set(esr.AdjustScore, result.AdjustScore + adjustScore)
+               .where(esr.SubmitResultId == resultId)
+               .execute(db);
+         }
 
          return Json(new
          {
@@ -233,7 +236,6 @@ namespace TheSite.Controllers
             msg = Success.EvalResult.Adjust_SUCCESS
          });
       }
-
 
       //	POST-Ajax: EvalManage/AutoEval
 
@@ -351,5 +353,4 @@ namespace TheSite.Controllers
       }
 
    }
-
 }

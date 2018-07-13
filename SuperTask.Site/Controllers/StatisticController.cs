@@ -188,7 +188,7 @@ namespace TheSite.Controllers
                      on d.ID=t.SubTypeId
                      where TaskSubTypeValue > 0
                      and wj.RecordDate>@StartDate and RecordDate<@EndDate
-                     and t.IsParent=0 ";
+                     and t.IsParent=0 order by 1 ";
 
          var scores = DapperHelper.QueryBySQL<PersonalScore>(sql, new { StartDate = start, EndDate = end });
          var result = new List<PersonalScoreViewModel>();

@@ -135,6 +135,13 @@ namespace Business.Helper
          public const string PERMISSION_DENY = "没有权限访问";
       }
 
+      public class Advice
+      {
+         public const string NOT_ALLOWED_NULL = "建议实体不能为空！";
+         public const string NOT_ALLOWED_TITLE_NULL = "建议标题不能为空！";
+         public const string NOT_ALLOWED_CONTENT_NULL = "建议内容不能为空！";
+      }
+
    }
 
 
@@ -197,10 +204,17 @@ namespace Business.Helper
          public const string DELETE_SUCCESS = "文件删除成功！";
       }
 
+
       public class Folder
       {
          public const string EDIT_SUCCESS = "文件夹编辑成功！";
          public const string CONFIRM_DELETE = "确定要删除文件夹及其内部所有文件？";
+      }
+
+
+      public class Advice
+      {
+         public const string EDITSUCCESS = "编辑成功";
       }
 
    }
