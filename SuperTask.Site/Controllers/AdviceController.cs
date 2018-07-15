@@ -16,6 +16,8 @@ namespace TheSite.Controllers
    {
 
       APDBDef.AdviceTableDef a = APDBDef.Advice;
+      APDBDef.UserInfoTableDef u = APDBDef.UserInfo;
+      APDBDef.AdviceSupportTableDef asu = APDBDef.AdviceSupport;
 
       // GET: Advice/search
       // Post-ajax: Advice/search
@@ -26,12 +28,15 @@ namespace TheSite.Controllers
       }
 
       [HttpPost]
-      public ActionResult Search(int current,int rowCount, AjaxOrder sort, string searchPhrase)
+      public ActionResult Search(int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
          ThrowNotAjax();
 
-         var query = APQuery.select(a.Asterisk)
-            .from(a)
+         var query = APQuery.select(a.Asterisk, u.UserName,asu.SupportId.As("supportId"))
+            .from(a,
+                  u.JoinLeft(a.CreatorId == u.UserId),
+                  asu.JoinLeft(asu.AdviceId==a.AdviceId & asu.SupporterId==GetUserInfo().UserId)
+                  )
             .primary(a.AdviceId)
             .skip((current - 1) * rowCount)
             .take(rowCount)
@@ -44,8 +49,8 @@ namespace TheSite.Controllers
          searchPhrase = searchPhrase.Trim();
          if (searchPhrase != "")
          {
-            query.where_and(a.Title.Match(searchPhrase) 
-               | a.Content.Match(searchPhrase) 
+            query.where_and(a.Title.Match(searchPhrase)
+               | a.Content.Match(searchPhrase)
                | a.Reason.Match(searchPhrase));
          }
 
@@ -56,9 +61,9 @@ namespace TheSite.Controllers
          {
             switch (sort.ID)
             {
-                case "title": query.order_by(sort.OrderBy(a.Title)); break;
-                case "isAdobt": query.order_by(sort.OrderBy(a.IsAdopt)); break;
-                case "createDate": query.order_by(sort.OrderBy(a.CreateDate)); break;
+               case "title": query.order_by(sort.OrderBy(a.Title)); break;
+               case "isAdobt": query.order_by(sort.OrderBy(a.IsAdopt)); break;
+               case "createDate": query.order_by(sort.OrderBy(a.CreateDate)); break;
             }
          }
 
@@ -75,13 +80,17 @@ namespace TheSite.Controllers
             return new
             {
                id = a.AdviceId.GetValue(rd),
-               title=a.Title.GetValue(rd),
-               content=a.Content.GetValue(rd).Ellipsis(),
-               reason=a.Reason.GetValue(rd).Ellipsis(),
-               isAdobt= a.IsAdopt.GetValue(rd),
+               title = a.Title.GetValue(rd),
+               content = a.Content.GetValue(rd).Ellipsis(),
+               reason = a.Reason.GetValue(rd).Ellipsis(),
+               isAdobt = a.IsAdopt.GetValue(rd),
+               isSupport = asu.SupportId.GetValue(rd, "supportId") != Guid.Empty,
                status = AdviceKeys.GetStatusKeyByValue(a.Status.GetValue(rd)),
-               creatorId=a.CreatorId.GetValue(rd),
-               createDate=a.CreateDate.GetValue(rd),
+               supportCount=a.SupportCount.GetValue(rd),
+               creatorId = a.CreatorId.GetValue(rd),
+               createDate = a.CreateDate.GetValue(rd),
+               creator = u.UserName.GetValue(rd),
+               platform = "项目管理平台" //TODO: will use AdviceKeys.GetTypeKeyByValue(a.AdviceType.GetValue(rd))
             };
          });
 
@@ -109,14 +118,14 @@ namespace TheSite.Controllers
       {
          //ThrowNotAjax();
 
-         if(null == model)
+         if (null == model)
             return Json(new
             {
                result = AjaxResults.Error,
                msg = Errors.Advice.NOT_ALLOWED_NULL
             });
 
-         if(string.IsNullOrEmpty(model.Title))
+         if (string.IsNullOrEmpty(model.Title))
             return Json(new
             {
                result = AjaxResults.Error,
@@ -161,8 +170,8 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult Approve(Guid id)
       {
-         var model = db.AdviceDal.PrimaryGet(id);
-         if(null != model)
+         var model = GetAdviceById(id);
+         if (null != model)
          {
             model.IsAdopt = true;
             model.Reason = "";
@@ -170,7 +179,8 @@ namespace TheSite.Controllers
             Edit(model);
          }
 
-         return Json(new {
+         return Json(new
+         {
             result = AjaxResults.Success,
             msg = Success.Advice.EDITSUCCESS
          });
@@ -180,10 +190,10 @@ namespace TheSite.Controllers
 
       public ActionResult Deny(Guid id)
       {
-         var model =db.AdviceDal.PrimaryGet(id);
+         var model = GetAdviceById(id);
          model.IsAdopt = false;
 
-         ViewBag.isDeny = true; 
+         ViewBag.isDeny = true;
 
          return PartialView("Edit", model);
       }
@@ -192,13 +202,43 @@ namespace TheSite.Controllers
 
       public ActionResult Detial(Guid id)
       {
-         var model = db.AdviceDal.PrimaryGet(id);
+         var model = GetAdviceById(id);
          model.IsAdopt = false;
 
          ViewBag.isDeny = !model.IsAdopt;
          ViewBag.isDetail = true;
 
          return PartialView("Edit", model);
+      }
+
+      //	Post:	/Advice/Support
+
+      [HttpPost]
+      public ActionResult Support(Guid id)
+      {
+         var model = GetAdviceById(id);
+         var userId = GetUserInfo().UserId;
+         var isSupport = db.AdviceSupportDal.ConditionQueryCount(asu.AdviceId == id & asu.SupporterId == userId) > 0;
+         if (isSupport)
+            return Json(new { });
+
+
+         db.AdviceSupportDal.Insert(new AdviceSupport { SupportId = Guid.NewGuid(), AdviceId = id, SupporterId = userId });
+
+         model.SupportCount += 1;
+
+         return Edit(model);
+      }
+
+
+      private Advice GetAdviceById(Guid id)
+      {
+         if (id == Guid.Empty) throw new ArgumentException();
+
+         var model = db.AdviceDal.PrimaryGet(id);
+         if (null == model) throw new NullReferenceException();
+
+         return model;
       }
 
    }
