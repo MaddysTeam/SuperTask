@@ -241,6 +241,16 @@
 				</columns>
 			</table>
 
+			<table name="ProjectPay" comment="项目款项">
+				<columns>
+					<add name="PayId" columnName="PayId" type="Guid" primaryKey="true" comment="款项ID"/>
+					<add name="Projectid" columnName="Projectid" type="Guid" isNullable="true"  comment="项目ID" />
+					<add name="RateOfProgress" columnName="Progress" type="double" defaultValue="0"  display="付款进度"/>
+					<add name="InvoiceDate" columnName="InvoiceDate" type="DateTime"  display="开票时间"/>
+					<add name="PayDate" columnName="PayDate" type="DateTime"  display="到账时间"/>
+				</columns>
+			</table>
+
 			<!-- Task -->
 			
 			<table name="WorkTask"  comment="工作任务">
