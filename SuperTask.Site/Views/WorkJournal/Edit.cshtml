@@ -1,0 +1,189 @@
+﻿@model WorkJournal
+@{
+	Layout = null;
+	var yesterdayProgress = (double)ViewBag.YesterdayProgress;
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑日志</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+			<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
+			<form class="form-horizontal" action="@Url.Action("Edit", "WorkJournal")" role="form" data-after-success="afterDialogSuccess()">
+				<div class="row">
+
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(j => j.JournalId)
+						@Html.HiddenFor(j => j.TaskId)
+						@Html.HiddenFor(j => j.UserId)
+						@Html.HiddenFor(j => j.RecordDate)
+						@Html.HiddenFor(j => j.CreateDate)
+						@Html.HiddenFor(j => j.RecordType)
+						@Html.HiddenFor(j => j.TaskEstimateWorkHours)
+						@Html.HiddenFor(j => j.TaskType)
+						@Html.HiddenFor(j => j.TaskSubType)
+
+						@if (Model.Projectid != null)
+						{
+							<div class="form-group">
+
+								@Html.HiddenFor(j => j.Projectid)
+								@Html.LabelFor(j => j.ProjectName, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									<span class="form-control">@Model.ProjectName</span>
+								</div>
+							</div>
+						}
+						<div class="form-group">
+							@Html.LabelFor(j => j.TaskName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								<span class="form-control">@Model.TaskName</span>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(j => j.TaskEstimateWorkHours, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								<span class="form-control">@Model.TaskEstimateWorkHours</span>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(j => j.TaskWorkHours, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								<span class="form-control">@Model.TaskWorkHours</span>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(j => j.SubTaskScore, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								<span class="form-control">@Model.SubTaskScore</span>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(j => j.WorkHours, new { @class = "control-label col-md-3" }) <font color="red">* 必填项</font>
+							<div class="col-md-9">
+								@Html.TextBoxFor(j => j.WorkHours, new { @class = "form-control" })
+							</div>
+						</div>
+						@if (Model.TaskType == TaskKeys.ProjectTaskType || Model.TaskType == TaskKeys.TempTaskType)
+						{
+							<div class="form-group">
+								@Html.LabelFor(j => j.Progress, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.TextBoxFor(j => j.Progress, new { @class = "form-control" })
+								</div>
+							</div>
+						}
+						else
+						{
+							<div class="form-group">
+								@Html.LabelFor(j => j.SubTypeTitle,Model.SubTypeTitle, new { @class = "control-label col-md-3" }) <font color="red">* 必填项</font>
+								<div class="col-md-9">
+									@Html.TextBoxFor(j => j.TaskSubTypeValue, new { @class = "form-control" })
+								</div>
+							</div>
+						}
+						<div class="form-group">
+							@Html.HiddenFor(j => j.Attachment.RealName, new { @class = "fileName" })
+							@Html.HiddenFor(j => j.Attachment.Url, new { @class = "filePath" })
+							@Html.HiddenFor(j => j.Attachment.AttachmentId)
+							@Html.HiddenFor(j => j.AttachmentId)
+							<label class="col-md-3 control-label">上传文件</label>
+							<div class="col-md-9">
+								<input style="visibility:hidden;position:absolute;" />
+								<div class="input-group">
+									@if (Model.Attachment != null)
+									{
+										<label id="uploadName" class="form-control oversize">@Model.Attachment.RealName</label>
+									}
+									else
+									{
+										<label id="uploadName" class="form-control oversize"></label>
+									}
+									<span class="input-group-btn">
+										<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(j => j.Comment, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextAreaFor(j => j.Comment, new { @class = "form-control", @rows = 5 })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-9 col-lg-offset-3">
+								<button type="submit" class="btn btn-primary btn-block-half btn-submit"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('.modal-dialog form'));
+
+
+		//文件上传
+		$('.dropzone.file').dropzone({
+			addedContainer: '#flyArea',
+			dictResponseError: '上传出错',
+			uploadMultiple: false,
+			maxFilesize: 200,
+			init: function () {
+				this.on('success', function (file, data) {
+					$('.fileName').val(data.filename);
+					$('.filePath').val(data.url);
+					setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
+				});
+				this.on('error', function (file, message) {
+					popupMessage({ result: 'error', msg: message });
+				});
+			}
+		});
+
+
+		$('#btn-upload').on('click', function () {
+			$('.dropzone.file').trigger('click');
+		});
+
+		$('.btn-submit').on('click', function () {
+
+			var yesterdayProgress = '@yesterdayProgress';
+			var progress = parseInt($('#Progress').val());
+			var comment = $("#Comment").val();
+			if (progress <= yesterdayProgress
+				&& yesterdayProgress > 0
+				&& comment == '') {
+				popupMessage({ result: 'error', msg: "当前进度小于等于原进度，必须填写工时描述！" });
+				return false;
+			}
+
+		});
+
+	});
+
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('.isKeepCurrent').val('true');//设定刷新后显示当前页数据，避免刷新到首页数据
+		$('#bootgrid').bootgrid('reload');
+	}
+
+</script>

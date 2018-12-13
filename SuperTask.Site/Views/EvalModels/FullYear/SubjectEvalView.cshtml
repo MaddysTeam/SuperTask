@@ -1,0 +1,47 @@
+﻿@model List<EvalResultItem>
+@{
+	//var evalIndications = new List<EvalIndication>();
+}
+
+
+		<table class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th 	style="width:150px">考核指标</th>
+					<th style="width:150px">指标说明</th>
+					<th  style="width:50px">指标满分</th>
+					<th style="width:100px">打分</th>
+					<th  style="width:100px">得分</th>
+				</tr>
+			</thead>
+			<tbody>
+				@{
+					foreach (var item in Model)
+					{
+						<tr class="evalItem">
+							<td style="width:150px">
+								@item.EvalIndication.IndicationName
+								<input type="hidden" class="indicatioId" value="@item.EvalIndication.IndicationId" />
+								<input type="hidden" class="evalItemKey" name="evalItemKey" value="@item.EvalIndication.IndicationName" />
+								@*<input type="hidden" class="evalItemId" name="evalItemKey" value="@item.eval" />*@
+								<input type="hidden"  class="resultValue" name="resultValue" value="@item.ResultValue" />
+								<input type="hidden" class="realScore" name="realScore" value="@item.Score" />
+								<input type="hidden" class="resultId" name="realScore" value="@item.ResultId" />
+							</td>
+							<td style="width:150px">@item.EvalIndication.IndicationDescription</td>
+							<td style="width:50px"><input name="fullScore" class="form-control fullScore" value="@item.EvalIndication.FullScore" readonly/></td>
+							<td style="width:100px">
+								<div id="star2" class="star" data-score="@item.ResultValue"></div>
+								
+							</td>
+							<td style="width:100px"><input name="realScore" id="hint" type="text" class="form-control score" value="@item.Score.ToString("0.00")" readonly /></td>
+							
+						</tr>
+					}
+				}
+
+			</tbody>
+		</table>
+
+
+

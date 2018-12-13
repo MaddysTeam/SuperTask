@@ -1,0 +1,262 @@
+﻿@{
+	Layout = "~/Views/Shared/_StudioLayout.cshtml";
+	var pageTitle = ViewBag.Title = "计划任务列表";
+	var defaultItem = new SelectListItem { Text = "全部", Value = TaskKeys.SelectAll.ToString() };
+	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId", null, defaultItem);
+	var resourceSelectList = SelectListHelper.GetSelectItems(ViewBag.Resources as List<Account>, "UserName", "UserId", null, defaultItem);
+}
+@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+}
+
+<div class="content-wrapper col-md-10">
+
+	<div class="main-content">
+		<!-- widget -->
+		<div class="widget">
+			<div class="widget-header">
+				<h3>@pageTitle</h3>
+				<div class="btn-group widget-header-toolbar">
+					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+				</div>
+			</div>
+
+			<div class="widget-content">
+				<div class="row" style="margin-bottom:20px;">
+
+					<!-- 项目筛选下拉框 -->
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<div class="FormGroup">
+								<label class="col-md-4 control-label">项目名称</label>
+								<div class="col-md-7">
+									@Html.DropDownList("dpProjects", projectsSelectList, new { @class = "form-control dropdown-myProjects" })
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- 项目经理筛选下拉框 -->
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<div class="FormGroup">
+								<label class="col-md-4 control-label">任务负责人</label>
+								<div class="col-md-7">
+									@Html.DropDownList("dpResources", resourceSelectList, new { @class = "form-control dropdown-resources" })
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				
+				<div class="row">
+
+					<!-- 开始时间下拉框 -->
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<label class="col-md-4 control-label">开始时间</label>
+							<div class="col-md-7">
+
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBox("Start", DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd"), new { @class = "form-control startDate" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+
+					<!-- 结束时间下拉框 -->
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<label class="col-md-4 control-label">结束时间</label>
+							<div class="col-md-7">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBox("End", DateTime.Now.AddDays(30).ToString("yyyy-MM-dd"), new { @class = "form-control plan endDate" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Grid -->
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								<th data-column-id="task">计划任务名称</th>
+								<th data-column-id="project">所属项目</th>
+								<th data-column-id="manager">任务负责人</th>
+								<th data-column-id="reviewer">任务审核人</th>
+								<th data-column-id="start" data-formatter="DateOnly">预估开始时间</th>
+								<th data-column-id="end" data-formatter="DateOnly">预估结束时间</th>
+								<th data-column-id="realEnd" >实际结束时间</th>
+								<th data-column-id="status">任务状态</th>
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+			<!-- /widget content -->
+		</div>
+		<!-- /widget -->
+
+	</div>
+</div>
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+
+@section Scripts {
+	<script>
+		function getGlobalRequest() {
+			return {
+				projectId: $('.dropdown-myProjects').val(),
+				resourceId: $('.dropdown-resources').val(),
+				start: $('.startDate').val(),
+				end: $('.endDate').val(),
+			};
+		}
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: window.location.href,
+
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+				formatters: {
+					'commands': function (column, row) {
+						var id = row.id;
+						var isMe = row.isMe;
+						var reviewerIsMe = row.reviewerIsMe;
+						var buttons = '<div class="btn-group btn-group-xs pull-right" data-row-id="' + id + '">';
+
+						if (isMe && row.statusId == '@TaskKeys.PlanStatus') {
+							buttons += '<button class="btn btn-lg btn-danger btn-start">启动</button>';
+							buttons += '<button class="btn btn-lg btn-success btn-edit">编辑</button>';
+						}
+						else if (isMe && row.statusId == '@TaskKeys.TaskTempEditStatus') {
+							buttons += '<button class="btn btn-lg btn-success btn-edit">编辑</button>';
+						}
+						else if (isMe && row.statusId == '@TaskKeys.ProcessStatus') {
+							buttons += '<button class="btn btn-lg btn-info btn-editReq">修改申请</button>';
+							if (!row.isParent)
+								buttons += '<button class="btn btn-lg btn-info btn-submitReq">提交申请</button>';
+							else
+								buttons += '<button class="btn btn-lg" disable>父任务无需提交</button>';
+						}
+						else if (reviewerIsMe && row.statusId == '@TaskKeys.ProcessStatus') {
+							buttons += '<button class="btn btn-lg btn-info btn-deny">不合理退回</button>';
+						}
+						else if (reviewerIsMe && row.statusId == '@TaskKeys.ReviewStatus') {
+							buttons += '<button class="btn btn-lg btn-success btn-view">查看详细</button>';
+							buttons += '<button class="btn btn-lg btn-info btn-review">去审核</button>';
+						}
+						else if (!isMe) {
+							buttons += '<button class="btn btn-lg btn-success btn-view">查看详细</button>';
+						}
+
+						buttons += '</div>';
+
+						return buttons;
+					},
+				},
+			});
+		}
+
+
+		$(function () {
+
+			$('.dropdown-myProjects,.dropdown-resources,.startDate,.endDate').change(function () {
+				$('#bootgrid').bootgrid('reload');
+			});
+
+			var editUrl = '@Url.Action("PlanTaskEdit", "Task")';
+			var startUrl = '@Url.Action("PlanTaskStart", "Task")';
+			var reqeustUrl = '@Url.Action("ReviewRequest", "Task")';
+			var denyUrl = '@Url.Action("PlanTaskDeny", "Task")'
+			var reviewUrl = '@Url.Action("Search", "WorkFlowTask")';
+
+
+			var grid = $('#bootgrid');
+			grid.bootgrid(getGridOptions())
+			.on('loaded.rs.jquery.bootgrid', function () {
+
+				grid.find('.btn-edit,.btn-view').on('click', function (e) {
+					var rowId = $(this).parent().data('rowId');
+					$('#modelProxy')
+						   .data('url', editUrl + '?id=' + rowId)
+					      .trigger('click');
+				});
+
+				grid.find('.btn-start').on('click', function (e) {
+					if (confirm('@Confirm.Task.TASK_CONFIRM_START')) {
+						var rowId = $(this).parent().data('rowId');
+						$.post(startUrl, { taskId: rowId }, function (data) {
+							popupMessage(data, {
+								success: function () {
+									$('#bootgrid').bootgrid('reload');
+								}
+							});
+						});
+					}
+				});
+
+				grid.find('.btn-editReq').on('click', function (e) {
+					var rowId = $(this).parent().data('rowId');
+					var url = reqeustUrl + '?id=' + rowId + '&reviewType=@ReviewKeys.ReviewTypeForTkChanged';
+
+					if (confirm('@Confirm.Task.TASK_SUBMIT_EDIT')) {
+						window.open(url);
+					}
+					else
+						return false;
+				});
+
+				grid.find('.btn-submitReq').on('click', function (e) {
+					var rowId = $(this).parent().data('rowId');
+					var url = reqeustUrl + '?id=' + rowId + '&reviewType=@ReviewKeys.ReviewTypeForTkSubmit';
+
+					if (confirm('@Confirm.Task.TASK_SUBMIT_REQUEST')) {
+						window.open(url);
+					}
+					else
+						return false;
+				});
+
+				grid.find('.btn-review').on('click', function (e) {
+					var rowId = $(this).parent().data('rowId');
+					var url = reviewUrl + '?taskId=' + rowId;
+
+					window.open(url);
+				});
+
+				grid.find('.btn-deny').on('click', function (e) {
+					var rowId = $(this).parent().data('rowId');
+					var url = denyUrl + '?taskId=' + rowId;
+
+					$.post(url, { taskId: rowId }, function (data) {
+						popupMessage(data, {
+							success: function () {
+								$('#bootgrid').bootgrid('reload');
+							}
+						});
+					});
+				});
+
+			});
+
+		});
+	</script>
+}

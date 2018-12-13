@@ -1,0 +1,195 @@
+﻿@model EvalViewModel
+@{
+	ViewBag.Title = "主观考核";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Css{
+<link href="~/assets/plugins/raty/lib/jquery.raty.css" rel="stylesheet" />
+}
+<div class="content-wrapper">
+	<div class="main-content">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="widget">
+					<div class="widget-header">
+					
+					</div>
+					<div class="widget-content">
+						<table class="table table-condensed">
+							<tr>
+								<th>考核对象</th>
+								<td>@Model.TargetName</td>
+							</tr>
+							<tr>
+								<th>考评人</th>
+								<td>@Model.AccessorName</td>
+							</tr>
+							<tr>
+								<th>考评人角色</th>
+								<td>@Model.AccessorRole.RoleName</td>
+							</tr>
+							@foreach (var item in Model.PeriodTables)
+							{
+								<tr>
+									<th>@(item.TableName)得分：</th>
+									<td>@item.Score</td>
+								</tr>
+							}
+							<tr>
+								<th>操作</th>
+								<td>	<button type="submit" class="btn btn-info btn-save"><i class="fa fa-save"></i> <span>保存考评结果</span></button></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-9">
+				@foreach (var item in Model.PeriodTables)
+				{
+					var period = EvalPeriod.PrimaryGet(item.PeriodId);
+					var engine = EvalManager.Engines[period.AnalysisType].SubjectEvals[item.TableId];
+					var resultItems = EvalManager.GetEvalReultItems(
+						new SubjectEvalParams
+						{
+							AccessorId = Model.AccessorId,
+							AccessorRoleId = Model.AccessorRole.RoleId,
+							CurrentTableId = item.TableId,
+							PeriodId = item.PeriodId,
+							TargetId = Model.TargetId,
+							TargetRoleId=Model.TargetRoleId
+						});
+
+					<div class="evaltable">
+						<input type="hidden" class="periodId" value="@item.PeriodId" />
+						<input type="hidden" class="tableId" value="@item.TableId" />
+						<input type="hidden" class="targetRoleId" value="@item.CurrentTargetRoleId" />
+						@if (resultItems != null)
+						{
+						@Html.Partial(engine.ViewPath + engine.EvalView, resultItems)
+						}	
+
+					</div>
+				}
+
+				@Html.HiddenFor(x => x.AccessorId, new { @class = "AccessorId" })
+				@Html.HiddenFor(x => x.AccessorRole.RoleId,new {@class= "AccessorRoleId" })
+				@Html.HiddenFor(x => x.TargetId, new { @class = "TargetId" })
+				@Html.HiddenFor(x => x.TargetName)
+			</div>
+		</div>
+			
+
+	</div>
+
+</div>
+
+@section Plugins{
+<script src="~/assets/plugins/raty/lib/jquery.raty.js"></script>
+}
+
+@section Scripts{
+<script>
+	$(function () {
+		
+		var fullStarCount='@EvalConfig.DefaultStarCount';
+
+		$('.star').raty(
+			{	
+				path:"../../../assets/plugins/raty/demo/images/",
+				half: true,
+				starHalf: 'star-half.png',
+				round: { down: .1, full: .5, up: .76 },
+				number:fullStarCount,
+				score: function () {
+					return $(this).data('score');
+				},
+				hints: ['很差', '一般', '不错', '很好', '满意'],//自定义标题  
+				cancel: true,
+				cancelHint:'重新打分 ',
+				click: function (score, evt) {
+					if (score == null) score = 0;
+					var num = 0;
+					var ss = score + "";
+					var ss1 = parseInt(ss.substring(0, ss.indexOf('.')));
+					var ss2 = parseFloat('0.'+ ss.substring(ss.indexOf('.')+1, ss.length));
+					num = parseInt(ss1);
+					if (ss2	> 0 && ss2 < 0.6)
+						num += 0.5
+					else if (ss2 >= 0.6)
+						num += 1;
+
+					var fullScore =$(this).parent().parent().find('.fullScore').val();
+					var realScore = (fullScore / (fullStarCount)) * num;
+					realScore = realScore.toFixed(1);
+
+					var $parent=$(this).parent().parent();
+					$parent.find('.score').val(isNaN(realScore) ? 0 : realScore);
+					$parent.find('.realScore').val(isNaN(realScore) ? 0 : realScore);
+					$parent.find('.resultValue').val(isNaN(num)?0 :num);
+				}
+			});
+
+
+		var resultItems=function(id,resultId,value,score,key,indicationId){
+			this.id=id;
+			this.value=value;
+			this.score=score;
+			this.key=key;
+			this.resultId = resultId;
+			this.indicationId = indicationId;
+		}
+
+		var result=function(id,periodId,tableId,accessorId,accessorRoleId,targetId,items,targetRoleId){
+			this.id=id;
+			this.periodId=periodId;
+			this.tableId=tableId;
+			this.accessorId=accessorId;
+			this.accessorRoleId=accessorRoleId;
+			this.targetId=targetId;
+			this.items = items;
+			this.targetRoleId = targetRoleId;
+		}
+
+		var results=[];
+		
+
+		$('.btn-save').click(function(){
+			$('.evaltable').each(function(){
+				var items = [];
+				var $this = $(this);
+				$this.find('.evalItem').each(function () {
+					var $this=$(this);
+					var id = $this.find('.evalItemId').val(),
+						 value = $this.find('.resultValue').val(),
+						 score = $this.find('.realScore').val(),
+						 key = $this.find('.evalItemKey').val(),
+						 resultId = $this.find('.resultId').val(),
+						 indicationId = $this.find('.indicatioId').val();
+
+					items.push(new resultItems(id, resultId, value, score, key, indicationId));
+				});
+				
+				
+				var resultId=items[0].resultId;
+				var accessorId=$('.AccessorId').val();
+				var targetId = $('.TargetId').val();
+				var accessorRoleId = $('.AccessorRoleId').val();
+				var periodId = $this.find('.periodId').val();
+				var tableId = $this.find('.tableId').val();
+				var targetRoleId = $this.find('.targetRoleId').val();
+				results.push(new result(resultId, periodId, tableId, accessorId, accessorRoleId, targetId, items, targetRoleId));
+			});
+
+			$.post('@Url.Action("SubjectEval", "EvalManage")', { evalResults: results }, function (data) {
+				popupMessage(data, {
+					success: function () {
+						location.href = location.href;
+					}
+				});
+			});
+		});
+
+	});
+	
+</script>
+}

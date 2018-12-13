@@ -1,0 +1,131 @@
+﻿
+@{
+	var pageTitle = ViewBag.Title = "考核结果";
+	Layout = "~/Views/Shared/_StudioLayout.cshtml";
+
+	var periods = SelectListHelper.GetSelectItems(ViewBag.Periods as List<EvalPeriod>, "Name", "PeriodId");
+}
+@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+}
+
+<div class="content-wrapper col-md-10">
+
+	<div class="main-content">
+		<!-- widget -->
+		<div class="widget">
+			<div class="widget-header">
+				<h3>@pageTitle</h3>
+				<div class="btn-group widget-header-toolbar">
+
+				</div>
+			</div>
+
+			<div class="widget-content">
+				<div class="row">
+
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label class="col-md-4 control-label">选择考核周期</label>
+							<div class="col-md-4">
+								@Html.DropDownList("dropdown_owner", periods, new { @class = " dropdown_period" })
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<!-- Grid -->
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								@*<th data-column-id="PeriodName">考核周期</th>
+								<th data-column-id="TargetName">考核对象</th>
+								<th data-column-id="TargetRoleName">对象角色</th>*@
+			
+								<th data-column-id="PeriodName">考核周期</th>
+								<th data-column-id="UserName">考核对象</th>
+								<th data-column-id="RoleName">对象角色</th>
+								<th data-column-id="Score" data-formatter="adjustScore">得分</th>
+								<th data-column-id="AdjustScore" >调整得分</th>
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-Css-Class="width180">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+			<!-- /widget content -->
+		</div>
+
+		<!-- /widget -->
+	</div>
+</div>
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Scripts {
+	<script>
+		function getGlobalRequest() {
+			return {
+				periodId: $('.dropdown_period').val()
+			};
+		}
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: window.location.href,
+
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+				formatters: {
+					'commands': function (column, row) {
+						var id = row.id;
+						var url = '@Url.Action("EvalResultDetails", "EvalStatistic")?PeriodId=' + row.PeriodId + '&TargetId=' + row.UserId+'&TargetRoleId='+row.RoleId +'&TargetName='+row.UserName;
+						return '<div class="btn-group btn-group-xs pull-right">' +
+							'<a target="blank" href="' + url + '" class="btn btn-lg btn-success btn-details">详细信息</a></div>';
+					},
+					'adjustScore': function (column, row) {
+						var id = row.SubmitResultId;
+						console.log(row);
+						return '<div class="form-group"><label class="col-md-3">' + (row.Score + row.AdjustScore) + '</label><div class="col-md-6"><a class="plus"  data-id="' + id + '" href="javascript:void(0)">+</a> <a class="minus" data-id="' + id + '" href="javascript:void(0)">-</a></div></div>';
+					}
+				},
+			});
+		}
+
+		$(function () {
+
+			var userId = '@Html.GetUserProfile().UserId';
+			var grid = $('#bootgrid');
+			grid.bootgrid(getGridOptions())
+			.on('loaded.rs.jquery.bootgrid', function () {
+
+				grid.find('.plus').click(function () {
+					var resultId = $(this).data('id');
+					$.post('@Url.Action("AdjustScore", "EvalManage")', { resultId: resultId, adjustScore: 1 }, function (data) {
+						popupMessage(data, {
+							success: function () {
+								$('#bootgrid').bootgrid('reload');
+							}
+						});
+					});
+				});
+
+				grid.find('.minus').click(function () {
+					var resultId = $(this).data('id');
+					$.post('@Url.Action("AdjustScore", "EvalManage")', { resultId: resultId, adjustScore: -1 }, function (data) {
+						popupMessage(data, {
+							success: function () {
+								$('#bootgrid').bootgrid('reload');
+							}
+						});
+					});
+				});
+			});
+
+			$('.dropdown_period').searchableSelect();
+
+		});
+	</script>
+}

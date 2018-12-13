@@ -1,0 +1,147 @@
+﻿@model UserInfo
+
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑用户</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+			<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone header"></form>
+			@using (Html.BeginForm("Edit", "User", FormMethod.Post, new { id = "form", role = "form", @class = "form-horizontal" }))
+			{
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(m => m.UserId)
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(m => m.UserName)</label>
+							<div class="col-md-9">
+
+									@Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+									@Html.ValidationMessageFor(m => m.UserName)
+
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(m => m.RealName)</label>
+							<div class="col-md-9">
+								@Html.TextBoxFor(m => m.RealName, new { @class = "form-control" })
+								@Html.ValidationMessageFor(m => m.RealName)
+							</div>
+						</div>
+						@*<div class="form-group">
+							<label class="col-md-3">请选择角色</label>
+							<div class="col-md-9">
+								@Html.DropDownListFor(m => m.UserType, new SelectList(UserTypes.UserType), new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3">请选择权限</label>
+							<div class="col-md-9">
+								@Html.DropDownListFor(m => m.PermissionId, PermissionKeys.Permissions.Select(x => new SelectListItem { Text = x.Value, Value = x.Key.ToString() }), new { @class = "form-control" })
+							</div>
+						</div>*@
+						<div class="form-group">
+							<label class="col-md-3">邮箱</label>
+							<div class="col-md-9">
+								@Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+								@Html.ValidationMessageFor(m => m.Email)
+							</div>
+						</div>
+						@*<div class="form-group">
+							<label class="col-md-3">上传头像</label>
+							<div class="col-md-9">
+								@Html.HiddenFor(m => m.HeadImgUrl)
+								@Html.TextBoxFor(m => m.HeadImgUrl, new { @style = "visibility:hidden;position:absolute;" })
+								<div class="input-group">
+									<label id="CoverUrl" class="form-control oversize" style="overflow:hidden">
+										@if (Model.HeadImgUrl != null)
+										{
+											@Model.HeadImgUrl.Substring(@Model.HeadImgUrl.LastIndexOf("/") + 1)
+										}
+									</label>
+									<span class="input-group-btn">
+										<button class="btn btn-danger" type="button" id="btn-header">上传头像</button>
+									</span>
+								</div>
+								@Html.ValidationMessageFor(m => m.HeadImgUrl)
+							</div>
+						</div>*@
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9 ">
+								<button type="submit" id="submit" class="btn btn-primary btn-block"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			}
+		</div>
+
+	</div>
+	<!-- end widget -->
+
+</div>
+
+<script>
+
+	$(function () {
+
+		// ajax update form
+		var $form = $('.modal-dialog form');
+		$.validator.unobtrusive.parse($form);
+
+		$form.submit(function () {
+
+			var $form = $(this);
+
+			$form.valid() && $.post($form.attr('action'), $form.serialize(), function (data, status) {
+				popupMessage(data, {
+					success: function () { commitedNotice(); }
+				});
+			});
+
+			return false;
+		});
+
+		function commitedNotice() {
+			$('#firstModal').modal('hide');
+			$('#bootgrid').bootgrid('reload');
+		}
+
+		var host = '@Business.Config.ThisApp.FileServerPath';
+
+		$('.dropzone.header').dropzone({
+			addRemoveLinks: !0,
+			maxFiles: 100,
+			acceptedFiles: 'image/*',
+			dictResponseError: '上传出错',
+			uploadMultiple: false,
+
+			init: function () {
+
+				this.on('success', function (file, data) {
+					$('#HeadImgUrl').val(host + data.url);
+					$('#CoverUrl').html(data.url);
+					//setTimeout(function () { $('#showCover').html('<img class="cover-img" style="width:200px ;height:200px" src="' + data.url + '"/>'); }, 1000);
+				});
+
+				this.on('error', function (file, message) {
+					popupMessage({ result: 'error', msg: message });
+				});
+			}
+
+		});
+
+		$('#btn-header').on('click', function () {
+			$('.dropzone.header').trigger('click');
+		});
+
+
+	})
+
+</script>

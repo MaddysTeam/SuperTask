@@ -1,0 +1,145 @@
+﻿@model Business.Roadflow.FlowRunningResult
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	var query = ViewBag.query;
+	var bworkFlowButtons = new RoadFlow.Platform.WorkFlowButtons();
+
+}
+<div class="content-wrapper">
+	<div class="content">
+		<div class="main-header">
+		</div>
+	</div>
+
+	<div class="details">
+
+		<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
+		<form id="mainform" name="mainform" method="post" >
+			<div class="toolbar" style="margin-top:0; border-top:none 0; margin-left:auto; z-index:999; width:100%; margin-right:auto; height:26px;">
+				<div>
+					@if (Model.CurrentStep != null)
+					{
+						foreach (var button in Model.CurrentStep.Buttons)
+						{
+							Guid buttonID;
+							if (button.ID.IsGuid(out buttonID))
+							{
+								var button1 = bworkFlowButtons.Get(buttonID, true);
+								if (button1 == null)
+								{
+									continue;
+								}
+								var funName = string.Concat("fun_", button1.ID.ToString("N"), "()");
+								<button  class="btn  btn-warning" onclick="@funName;" title="@button1.Note.Replace("\"", "'")">
+									@button1.Title
+								</button>
+								<script type="text/javascript">
+									function @funName {@Html.Raw(button1.Script);return false;}
+								</script>
+							}
+							else if (string.Compare(button.ID, "other_splitline", true) == 0)//显示其它特定按钮如分隔线|
+							{
+								<span class="toolbarsplit">&nbsp;</span>
+							}
+						}
+					}
+				</div>
+			</div>
+
+			<input type="hidden" name="params" id="params" value="" />
+
+
+			<!--表单主体-->
+			<div id="form_body_div">
+				@{
+					string src = Model.CurrentLibrary == null ? "" : Model.CurrentLibrary.Address; //bappLibrary.GetFlowRunAddress(appLibrary, query);
+					if (!src.IsNullOrEmpty())
+					{
+						var extName = System.IO.Path.GetExtension(src).ToLower();
+						if (extName == ".cshtml")
+						{
+							@RenderPage(src)
+						}
+						else
+						{
+							System.Text.StringBuilder sb = new System.Text.StringBuilder();
+							System.IO.TextWriter tw = new System.IO.StringWriter(sb);
+							Server.Execute(src, tw);
+							@Html.Raw(sb.ToString().RemovePageTag())
+						}
+					}
+				}
+			</div>
+			<!--表单主体-->
+			<!--意见处理栏-->
+			@{
+				if (Model.IsSign) //&& "0" == display)
+				{
+					<div style="height:12px; margin:16px 8px 8px 8px; border-bottom:1px dashed #ccc;"></div>
+					<div style="height:30px; margin:15px auto 8px auto; text-align:left; width:96%;">
+						处理意见：<input type="text" class="mytext form-control" id="comment" name="comment" value="" style="width:70%; margin-right:6px;" />
+						@if (Model.SignatureType == 2)
+						{
+							<input type="hidden" value="" id="issign" name="issign" />
+							<input type="button" class="mybutton" id="signbutton" onclick="sign();" value="&nbsp;&nbsp;批&nbsp;&nbsp;准&nbsp;&nbsp;" />
+						}
+					</div>
+				}
+			}
+			<!--意见处理栏-->
+			<!--历史意见显示-->
+			<div id="form_commentlist_div">
+				@if (Model.CurrentStep != null && Model.CurrentStep.OpinionDisplay == 1)//如果步骤设置为要显示意见
+				{
+					@RenderPage("ShowComment.cshtml")
+				}
+			</div>
+			<!--历史意见显示-->
+			<!--归档内容-->
+			<textarea id="form_body_div_textarea" name="form_body_div_textarea" style="display:none;"></textarea>
+			<textarea id="form_commentlist_div_textarea" name="form_commentlist_div_textarea" style="display:none;"></textarea>
+			<!--归档内容-->
+		</form>
+
+	</div>
+</div>
+
+
+
+@section Scripts{
+	<script>
+
+		var query='@Html.Raw(query)';
+
+		function flowSend(){
+			flowSubmit('submit');
+		}
+
+		function flowBack(){
+			var currentReviewType=$('.reviewType').val();
+			if(currentReviewType=='@ReviewKeys.ReviewTypeForPjChanged')
+				$('.reviewType').val('@ReviewKeys.ProjectRequestFailed');
+			else
+				$('.reviewType').val('@ReviewKeys.TaskRequestFailed');
+
+
+			$('.reviewResult').val('@ReviewKeys.ResultFailed');
+
+			flowSubmit('completed');
+		}
+
+		function flowCompleted(){
+
+			$('.reviewResult').val('@ReviewKeys.ResultSuccess');
+
+			flowSubmit('completed');
+		}
+
+		function flowSubmit(action){
+			var f=document.forms["mainform"];
+			f.action="/WorkFlowRun/Execute?"+query+'&flowType='+action;
+			f.submit();
+		}
+
+	</script>
+}

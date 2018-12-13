@@ -1,0 +1,353 @@
+﻿@model Project
+@{
+	var resources = ViewBag.Resource as List<Resource>;
+	var me = resources.FirstOrDefault(r => r.UserId == Html.GetUserProfile().UserId);
+	var resourceSelectList = SelectListHelper.GetSelectItems(resources, "ResourceName", "UserId",null, SelectListHelper.Default);
+
+}
+<style>
+	input[disabled] {
+		background: #eee;
+	}
+
+	.projectInfo .form-control, .projectEstimateInfo .form-control {
+		background: #eee;
+	}
+</style>
+<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
+<form class="form-horizontal details" action="@Url.Action("Edit","Project")" role="form" data-after-success="afterDialogSuccess()">
+
+	<div class="widget">
+
+		<div class="widget-header">
+			<h3><i class="fa fa-info"></i>项目信息</h3>
+			<div class="btn-group widget-header-toolbar">
+				@if (Html.HasPermission(Model.ProjectId.ToString(), "P_10002"))
+				{
+				<button type="submit" class="btn btn-danger btn-sm btn-save">保存</button>
+				<button type="submit" class="btn btn-success btn-sm btn-start">启动</button>
+				<button type="submit" class="btn btn-info btn-sm btn-forceClose" title="注意：强制关闭后，项目所有任务都关闭，项目状态也为关闭状态"><i class="fa fa-question-circle"></i>强制关闭</button>
+				}
+				<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<div class="alert alert-success">
+				基本信息
+			</div>
+
+			<div class="row editProjectInfo">
+				<fieldset class="col-sm-6">
+					@Html.HiddenFor(p => p.ProjectId)
+					<div class="form-group">
+						@Html.LabelFor(p => p.ProjectName, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.TextBoxFor(p => p.ProjectName, new { @class = "form-control plan" })
+							@Html.ValidationMessageFor(p => p.ProjectName)
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(p => p.ProjectOwner, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.TextBoxFor(p => p.ProjectOwner, new { @class = "form-control plan" })
+							@Html.ValidationMessageFor(p => p.ProjectOwner)
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(p => p.ProjectExecutor, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.TextBoxFor(p => p.ProjectExecutor, new { @class = "form-control plan" })
+							@Html.ValidationMessageFor(p => p.ProjectExecutor)
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(p => p.OrgId, new { @class = "control-label col-md-3 plan" })
+						<div class="col-md-9">
+							@Html.DropDownListFor(p => p.OrgId,
+									DictionaryCache.Cached(OrgKeys.OrgKey)
+														.GetSelectListById(Model.OrgId),
+									new { @class = "form-control" })
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(p => p.Header, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.DropDownListFor(p => p.PMId,
+									resourceSelectList,
+									new { @class = "form-control dropdown-header" })
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(p => p.Manager, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.DropDownListFor(p => p.ManagerId,
+									resourceSelectList,
+									new { @class = "form-control dropdown-manager" })
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(p => p.Reviewer, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.DropDownListFor(p => p.ReviewerId,
+									resourceSelectList,
+									new { @class = "form-control dropdown-reviewer" })
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(p => p.Description, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.TextAreaFor(p => p.Description, new { @class = "form-control plan" })
+							@Html.ValidationMessageFor(p => p.Description)
+						</div>
+					</div>
+				</fieldset>
+				<fieldset class="col-sm-6">
+					<div class="form-group">
+						@Html.LabelFor(p => p.Code, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.TextBoxFor(p => p.Code, new { @class = "form-control plan" })
+							@Html.ValidationMessageFor(p => p.Code)
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(p => p.RealCode, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.TextBoxFor(p => p.RealCode, new { @class = "form-control plan" })
+							@Html.ValidationMessageFor(p => p.RealCode)
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.HiddenFor(p => p.CreateDate)
+						@Html.LabelFor(p => p.CreateDate, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<span class="form-control">@Model.CreateDate</span>
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.HiddenFor(p => p.CreatorId)
+						@Html.LabelFor(p => p.Creator, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<span class="form-control">@Model.Creator</span>
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(p => p.ProjectType, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.DropDownListFor(p => p.ProjectType,
+									DictionaryCache.Cached(ProjectKeys.ProjectTypeKeyGuid)
+														.GetSelectListById(Model.ProjectType),
+									new { @class = "form-control plan" })
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.HiddenFor(p => p.ProjectStatus)
+						@Html.LabelFor(p => p.ProjectStatus, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<span class="form-control">@Model.Status</span>
+						</div>
+					</div>
+					@if (!Model.IsCompleteStatus)
+					{
+					<div class="form-group">
+						@Html.HiddenFor(p => p.Attachment.RealName, new { @class = "fileName" })
+						@Html.HiddenFor(p => p.Attachment.Url, new { @class = "filePath" })
+						<label class="col-md-3 control-label">上传文件</label>
+						<div class="col-md-9">
+							<input style="visibility:hidden;position:absolute;" />
+							<div class="input-group">
+								<label id="uploadName" class="form-control oversize"></label>
+								<span class="input-group-btn">
+									<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
+								</span>
+							</div>
+						</div>
+					</div>
+					}
+				</fieldset>
+			</div>
+
+			<div class="alert alert-success projectEstimate">
+				<div class="row">
+					<div class="col-md-4">项目预估</div>
+					@*<div class="col-md-8 text-right">
+						<a class="btn btn-warning btn-sm right btn-modify" href="@Url.Action("ReviewRequest", "Project", new { id = Model.ProjectId })">修改申请</a>
+					</div>*@
+				</div>
+			</div>
+
+			<div class="row projectEstimateEdit">
+				<fieldset class="col-sm-6">
+					<div class="form-group">
+						@Html.LabelFor(p => p.StartDate, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+								@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
+								<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(p => p.EndDate, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+								@Html.TextBoxFor(p => p.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
+								<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-9 col-lg-offset-3">
+						</div>
+					</div>
+				</fieldset>
+				<fieldset class="col-sm-6"></fieldset>
+			</div>
+
+			<div class="alert alert-success projectProgress">
+				<div class="row">
+					<div class="col-md-4">项目进度</div>
+					@if (Model.RateOfProgress == 100 && Model.IsProcessStatus && me.IsLeader())
+					{
+						<div class="col-md-8 text-right">
+							<button type="submit" class="btn btn-success btn-sm btn-complete">标记完成</button>
+						</div>
+					}
+				</div>
+			</div>
+
+			<div class="row projectProgress">
+				<fieldset class="col-sm-6">
+					<div class="form-group">
+						@Html.LabelFor(p => p.RateOfProgress, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.HiddenFor(p => p.RateOfProgress)
+							<span class="form-control">@Model.RateOfProgress%</span>
+						</div>
+					</div>
+				</fieldset>
+
+				<fieldset class="col-sm-6">
+					<div class="form-group">
+						@Html.LabelFor(p => p.ProcessName, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.TextBoxFor(p=>p.ProcessName,new { @class= "form-control processName" })
+						</div>
+					</div>
+				</fieldset>
+			</div>
+
+		</div>
+
+	</div>
+</form>
+
+<script>
+	function whenProcess() {
+		$('.btn-modify,.projectProgress,.processName').show().removeAttr('disabled');
+		$('.btn-start').hide();
+		var startDate = $('.startDate'),
+		endDate = $('.endDate'),
+		hasStartDate = startDate.attr('hasValue') == 'True',
+		hasEndDate = startDate.attr('hasValue') == 'True';
+		if (!hasStartDate)
+			startDate.val(new Date().Format('yyyy-MM-dd'));
+		if (!hasEndDate)
+			endDate.val(new Date().Format('yyyy-MM-dd'));
+	}
+
+	function whenPlan() {
+		$('.btn-start').show().removeAttr('disabled');
+	}
+
+	function whenComplete() {
+		$('.details button').hide();
+	}
+
+	function whenEdit() {
+		$('.btn-modify,.btn-start').hide();
+		$('.btn-save').show();
+	}
+
+	function whenReview() {
+		whenComplete();
+	}
+
+	function afterDialogSuccess() {
+		var url = '@Url.Action("Details","Project",new {id= Model.ProjectId })';
+		loadDetail(url);
+	}
+
+	$(function () {
+
+		ajaxSubmitForm($('form'));
+
+		var isPlanStatus = '@Model.IsPlanStatus' == 'True';
+		var isProcessStatus = '@Model.IsProcessStatus' == 'True';
+		var isCompleteStatus = '@Model.IsCompleteStatus' == 'True';
+		var isEditStatus = '@Model.IsEditStatus' == 'True';
+		var isReviewStatus = '@Model.IsReviewStatus' == 'True';
+
+		if (isPlanStatus) whenPlan();
+		else if (isCompleteStatus) whenComplete();
+		else if (isProcessStatus) whenProcess();
+		else if (isEditStatus) whenEdit();
+		else if (isReviewStatus) whenReview();
+
+		$('.btn-start').on('click', function () {
+			if (confirm('@Confirm.Project.PROJECT_CONFIRM_START')) {
+				$('#ProjectStatus').val('@ProjectKeys.ProcessStatus');
+			}
+			else {
+				return false;
+			}
+		});
+
+		$('.btn-forceClose').on('click', function () {
+			if (confirm('@Confirm.Project.PROJECT_FORCE_CLOSE')) {
+				$('#ProjectStatus').val('@ProjectKeys.ForceCloseStatus');
+			}
+		});
+
+		$('.btn-save').on('click', function () {
+			var status = $('#ProjectStatus').val();
+			if (status == '@ProjectKeys.EditStatus') { // 如果是编辑状态，则保存后默认改为执行状态
+				$('#ProjectStatus').val('@ProjectKeys.ProcessStatus');
+			}
+		});
+
+		$('.btn-complete').on('click', function () {
+			if (confirm('@Confirm.Project.PROJECT_CONFIRM_COMPLETE')) {
+				$('#ProjectStatus').val('@ProjectKeys.CompleteStatus');
+			}
+			else
+				return false;
+		});
+
+		//文件上传
+		$('.dropzone.file').dropzone({
+			addedContainer: '#flyArea',
+			dictResponseError: '上传出错',
+			uploadMultiple: false,
+			maxFilesize: 200,
+			init: function () {
+				this.on('success', function (file, data) {
+					$('.fileName').val(data.filename);
+					$('.filePath').val(data.url);
+					setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
+				});
+				this.on('error', function (file, message) {
+					popupMessage({ result: 'error', msg: message });
+				});
+			}
+		});
+
+		// proxy click event to dropzone.
+		$('#btn-upload').on('click', function () {
+			$('.dropzone.file').trigger('click');
+		});
+
+	});
+
+
+</script>

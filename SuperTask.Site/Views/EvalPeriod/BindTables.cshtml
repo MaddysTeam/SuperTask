@@ -1,0 +1,71 @@
+﻿@model List<EvalTable>
+@{ 
+	var tableSelectItems = Model.Select(x=>new SelectListItem { Text=x.TableName, Value=x.TableId.ToString(), Selected=x.IsSelected });
+	var tableIds = string.Join(",", Model.Where(x=>x.IsSelected).Select(x => x.TableId).ToArray());
+}
+<div class="modal-dialog modal-lg">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 选择考核表</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("BindTables", "EvalPeriod")" method="post" role="form" data-after-success="afterDialogSuccess()">
+				<div class="row">
+					<fieldset class="col-sm-12">
+					
+						<div class="form-group">
+							@Html.Label("选择考核表", new { @class = "control-label col-md-3" })
+							<div class="col-md-6">
+								@Html.DropDownList("AccessorRoles",
+															tableSelectItems,
+															  new { @class = "form-control dropdown-Tables col-md-6", @multiple = "multiple" })
+							</div>
+							<div class="col-md-3">
+								<input type="submit" class="btn btn-primary" value="确定" />
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+			<input type="hidden" id="tableIds" value="@tableIds" />
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+
+<script>
+	$(function () {
+		$('.dropdown-Tables').multiselect({
+			selectAllText: "全部",
+			buttonWidth: "100%",
+		
+		}, 'select', $('#tableIds').val());
+
+		var $form = $('.modal-dialog form');
+		$.validator.unobtrusive.parse($form);
+
+		$form.submit(function (e) {
+			e.preventDefault();
+			var $form = $(this);
+			$form.valid() && $.post($form.attr('action'), { id: '@ViewBag.PeriodId', tableIds: ''+$('.dropdown-Tables').val() }, function (data, status) {
+				popupMessage(data, {
+					success: function () { commitedNotice(); }
+				});
+			});
+
+			return false;
+		});
+
+	})
+
+	function commitedNotice() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+</script>

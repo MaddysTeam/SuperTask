@@ -1,0 +1,83 @@
+﻿@model OrgUserViewModel
+@{ Layout = null;}
+<div class="modal-dialog">
+
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-paperclip"></i>部门人员</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless modalClose" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+
+
+		</div>
+		<div class="widget-content list userList">
+			<div class="row">
+				@foreach (var user in Model.Users)
+				{
+
+					<div class="alert alter-info col-md-3">
+						<a href="#" class="task" data-id="@user.UserId" data-name="@user.UserName">
+							@user.UserName
+						</a>
+					</div>
+					<div class="alert alter-info col-md-3">
+						<a href="#" class="task" data-id="@user.UserId" data-name="@user.UserName">
+							@user.UserName
+						</a>
+					</div>
+					<div class="alert alter-info col-md-3">
+						<a href="#" class="task" data-id="@user.UserId" data-name="@user.UserName">
+							@user.UserName
+						</a>
+					</div>
+					<div class="alert alter-info col-md-3">
+						<a href="#" class="task" data-id="@user.UserId" data-name="@user.UserName">
+							@user.UserName
+						</a>
+					</div>
+					<div class="alert alter-info col-md-3">
+						<a href="#" class="task" data-id="@user.UserId" data-name="@user.UserName">
+							@user.UserName
+						</a>
+					</div>
+					<div class="alert alter-info col-md-3">
+						<a href="#" class="task" data-id="@user.UserId" data-name="@user.UserName">
+							@user.UserName
+						</a>
+					</div>
+					<div class="alert alter-info col-md-3">
+						<a href="#" class="task" data-id="@user.UserId" data-name="@user.UserName">
+							@user.UserName
+						</a>
+					</div>
+					<div class="alert alter-info col-md-3">
+						<a href="#" class="task" data-id="@user.UserId" data-name="222">
+							@user.UserName
+						</a>
+					</div>
+				}
+			</div>
+		</div>
+
+	</div>
+
+</div>
+<script>
+	$(function () {
+
+		$('.task').on('click', function () {
+			var $this = $(this);
+			var method = $('.opener').data('afterLoad');
+			if (method) {
+				var id = $this.data('id'),
+					name = $this.data('name');
+				method = method + '(\"' + id + '\",\"' + name + '\")';
+				eval(method);
+				$('.modalClose').trigger('click');
+			}
+		});
+
+	});
+</script>
+

@@ -1,0 +1,50 @@
+﻿@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var pageTitle = "项目明细";
+	var projectId = Request["projectId"];
+	var resource = ViewBag.CurrentResource as Resource;
+	var isLeader = resource.IsLeader();
+
+	var submenu = MenuHelper.GetProjectMenuItems(projectId.ToGuid(Guid.Empty), Html.GetUserProfile().UserId, MenuHelper.ProjectMainPageCode);
+
+}
+@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+}
+
+<div class="content-wrapper">
+
+	@Html.Partial("_subMenu", submenu)
+
+	<div class="details">
+
+
+	</div>
+</div>
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Scripts{
+	<script>
+		function loadDetail(url, options, next) {
+			if (url) {
+				$.post(url, options, function (details) {
+					$('.details').empty();
+					$('.details').append(details);
+
+					if (typeof next == "function") {
+						next();
+					}
+				});
+			}
+		}
+
+		$(function () {
+
+			var url = '@Url.Action("Details","Project",new {id=projectId })';
+			loadDetail(url);
+
+		});
+	</script>
+}

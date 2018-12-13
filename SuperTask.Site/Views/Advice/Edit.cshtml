@@ -1,0 +1,153 @@
+﻿@model Advice
+@{
+	var isDeny = ViewBag.isDeny != null && (bool)ViewBag.isDeny;
+	var isDetail = ViewBag.isDetail != null && (bool)ViewBag.isDetail;
+}
+
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑项目</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("Edit", "Advice")" role="form" data-after-success="afterDialogSuccess()">
+				@Html.AntiForgeryToken()
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(a => a.AdviceId)
+						@Html.HiddenFor(a => a.CreatorId)
+						@Html.HiddenFor(a => a.Status)
+						@Html.HiddenFor(a => a.IsAdopt)
+						@Html.HiddenFor(a => a.CreateDate)
+					   @*查看详细*@
+						@if (isDetail)
+						{
+							@Html.HiddenFor(a => a.Title)
+							@Html.HiddenFor(a => a.AdviceType)
+							<div class="form-group">
+								@Html.LabelFor(a => a.TypeName, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.Label("", Model.TypeName, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								@Html.LabelFor(a => a.Title, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.Label("", Model.Title, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								@Html.LabelFor(a => a.Content, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.TextAreaFor(p=>p.Content,10,1, new { @class = "form-control", @readonly = "readonly" })
+								</div>
+							</div>
+							if (isDeny)
+							{
+								<div class="form-group">
+									@Html.LabelFor(a => a.Reason, new { @class = "control-label col-md-3" })
+									<div class="col-md-9">
+										@Html.TextAreaFor(p=>p.Reason, 10, 1, new { @class = "form-control", @readonly = "readonly" })
+									</div>
+								</div>
+							}
+						}
+						@*修改*@
+						else if (!isDeny)
+						{
+							<div class="form-group">
+								@Html.LabelFor(a => a.AdviceType, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.DropDownListFor(p => p.AdviceType,
+									DictionaryCache.Cached(AdviceKeys.AdviceTypeId)
+														.GetSelectListById(Guid.Empty),
+									new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								@Html.LabelFor(a => a.Title, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.TextBoxFor(p => p.Title, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								@Html.LabelFor(a => a.Content, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.TextAreaFor(a => a.Content, 10, 1, new { @class = "form-control", @rows = "8" })
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="col-sm-9 col-lg-offset-3">
+									<button type="submit" class="btn btn-primary btn-lg  btn-save"> 保存</button>
+									<button type="submit" class="btn btn-info btn-lg btn-submit"><i class="fa fa-check-circle"></i>提交</button>
+									<button type="button" class="btn btn-default btn-lg" data-dismiss="modal">取消</button>
+								</div>
+							</div>
+						}
+						@*不采纳则填写原因*@
+						else
+						{
+							@Html.HiddenFor(a => a.Title)
+							@Html.HiddenFor(a => a.AdviceType)
+							<div class="form-group">
+								@Html.LabelFor(a => a.Title, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.Label("", Model.Title, new { @class = "form-control" })
+								</div>
+							</div>
+							<div class="form-group">
+								@Html.LabelFor(a => a.Content, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.TextAreaFor(a=>a.Content, 10, 1, new { @class = "form-control", @readonly = "readonly" })
+								</div>
+							</div>
+							<div class="form-group">
+								@Html.LabelFor(a => a.Reason, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.TextAreaFor(a => a.Reason, 10, 1, new { @class = "form-control", @rows = "8" })
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="col-sm-9 col-lg-offset-3">
+									<button type="submit" class="btn btn-primary btn-lg">确定</button>
+								</div>
+							</div>
+						}
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('.modal-dialog form'));
+
+		$('.btn-submit').click(function () {
+			$('#Status').val('@AdviceKeys.AdviceSubmitGuid');
+		});
+
+		$('.btn-save').click(function () {
+			$('#Status').val('@AdviceKeys.AdviceSaveGuid');
+		});
+
+	})
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+</script>

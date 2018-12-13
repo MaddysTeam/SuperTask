@@ -1,0 +1,173 @@
+﻿@{
+	string FlowID = Request.QueryString["flowid"];
+	string StepID = Request.QueryString["stepid"];
+	string GroupID = Request.QueryString["groupid"];
+	string TaskID = Request.QueryString["taskid"];
+	string InstanceID = Request.QueryString["instanceid"];
+	string DisplayModel = Request.QueryString["display"] ?? "0";
+	string DBConnID = "06075250-30dc-4d32-bf97-e922cb30fac8";
+	string DBTable = "Review";
+	string DBTablePK = "ID";
+	string DBTableTitle = "Title";
+	RoadFlow.Platform.Dictionary BDictionary = new RoadFlow.Platform.Dictionary();
+	RoadFlow.Platform.WorkFlow BWorkFlow = new RoadFlow.Platform.WorkFlow();
+	RoadFlow.Platform.WorkFlowTask BWorkFlowTask = new RoadFlow.Platform.WorkFlowTask();
+	string fieldStatus = BWorkFlow.GetFieldStatus(FlowID, StepID);
+	LitJson.JsonData initData = BWorkFlow.GetFormData(DBConnID, DBTable, DBTablePK, InstanceID, fieldStatus);
+	string TaskTitle = BWorkFlow.GetFromFieldData(initData, DBTable, DBTableTitle);
+
+	var review = Newtonsoft.Json.JsonConvert.DeserializeObject<Review>(ViewBag.objStr);
+	review.Title = string.IsNullOrEmpty(TaskTitle) ? review.Title : TaskTitle;
+
+	var isEditable = DisplayModel == "1";
+	var isReviwer = Html.GetUserProfile().UserId == review.ReceiverID;
+	var reviewDate = review.ReviewDate==DateTime.MinValue? DateTime.Now.ToString("yyyy-MM-dd"): review.ReviewDate;
+}
+
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<script src="~/assets/plugins/dropzone-4.3.0/js/dropzone.min.js"></script>
+<input type="hidden" id="Form_ValidateAlertType" name="Form_ValidateAlertType" value="1" />
+<input type="hidden" id="Form_TitleField" name="Form_TitleField" value="Review.Title" />
+<input type="hidden" id="Form_DBConnID" name="Form_DBConnID" value="06075250-30dc-4d32-bf97-e922cb30fac8" />
+<input type="hidden" id="Form_DBTable" name="Form_DBTable" value="Review" />
+<input type="hidden" id="Form_DBTablePk" name="Form_DBTablePk" value="ID" />
+<input type="hidden" id="Form_DBTableTitle" name="Form_DBTableTitle" value="Title" />
+<input type="hidden" id="Form_AutoSaveData" name="Form_AutoSaveData" value="1" />
+<script type="text/javascript">
+	var initData = @Html.Raw(BWorkFlow.GetFormDataJsonString(initData));
+	var fieldStatus = @Html.Raw(fieldStatus);
+	var isEditable = '@DisplayModel'=="1";
+</script>
+
+<input type="hidden" id="Review.SenderId" name="Review.SenderId" type1="flow_hidden" value="@review.SenderID" /><br />
+<input type="hidden" id="Review.ReceiverId" name="Review.ReceiverId" type1="flow_hidden" value="@review.ReceiverID" />
+<input type="hidden" id="Review.TaskId" name="Review.TaskId" type1="flow_hidden" value="@review.TaskId" />
+<input type="hidden" id="Review.ProjectId" name="Review.ProjectId" type1="flow_hidden" value="@review.ProjectId" />
+<input type="hidden" id="Review.Type" name="Review.Type" type1="flow_hidden" value="@review.ReviewType" class="reviewType"/>
+<input type="hidden" id="Review.Result" name="Review.Result" type1="flow_hidden" value="@review.Result"  class="reviewResult" />
+<input type="hidden" id="Review.SendDate" name="Review.SendDate" type1="flow_hidden" value="@review.SendDate" />
+
+<input type="hidden" class="attachmentUrl" id="Review.AttachmentId" name="Review.AttachmentId" type1="flow_hidden" value="@review.AttachmentUrl" />
+<input type="hidden" id="Review.Title" name="Review.Title" type1="flow_hidden" value="@review.Title" />
+
+<div class="center-block text-center"><h3 ><i class="fa fa-tasks"></i> @review.Title</h3></div>
+<p></p>
+<div class="widget">
+	<div class="widget-header"></div>
+	<div class="widget-content">
+		<div class="row">
+			<fieldset class="col-sm-12" style="margin-bottom:0px;">
+				<div class="form-group">
+					<div class="col-md-2 text-left">标题：</div>
+					<div class="col-md-9">
+						<h4>@review.Title</h4>
+					</div>
+				</div>
+				@if (review.ProjectId!=Guid.Empty)
+				{
+				<div class="form-group">
+					<div class="col-md-2 text-left">项目名称：</div>
+					<div class="col-md-9">
+						<h4>@review.ProjectName</h4>
+					</div>
+				</div>
+				}
+				@if (review.ReviewType == ReviewKeys.ReviewTypeForTkChanged || review.ReviewType == ReviewKeys.ReviewTypeForTkSubmit)
+				{
+				<div class="form-group">
+					<div class="col-md-2 text-left">任务名称：</div>
+					<div class="col-md-9">
+						<h4>@review.TaskName</h4>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-2 text-left">预估工时：</div>
+					<div class="col-md-9">
+						<h4>@review.TaskEsHours</h4>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-2 text-left">实际工时：</div>
+					<div class="col-md-9">
+						<h4>@review.TaskHours</h4>
+					</div>
+				</div>
+				}
+				<div class="form-group">
+					<div class="col-md-2 text-left">时间范围：</div>
+					<div class="col-md-9">
+						<h4>@review.DateRange</h4>
+					</div>
+				</div>
+			
+				@if (isEditable)
+				{
+				<div class="form-group">
+					<div class="col-md-2 text-left">输入原因或批注(200字以内)：</div>
+					<div class="col-md-10">
+						<textarea isflow="1" placeholder="格式：申请者按照【原因】+内容' 的方式填写，审核者按照'【批注】+内容'的方式,【批注】和【原因】可以用逗号分开或者换行" type1="flow_textarea" id="Review.Comment" name="Review.Comment" class="mytext" style="width:80%; height:200px;">@review.Comment</textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-2 text-left">上传文件：</div>
+					<div class="col-md-5">
+						<input style="visibility:hidden;position:absolute;" />
+						<div class="input-group">
+							<label id="uploadName" class="form-control"></label>
+							<span class="input-group-btn">
+								<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
+							</span>
+						</div>
+					</div>
+					
+				</div>
+				}
+				else {
+					<div class="form-group">
+						<div class="col-md-2 text-left"><font color="red">*</font>输入原因(或批注)：</div>
+						<div class="col-md-10">
+							<textarea isflow="1" type1="flow_textarea" placeholder="格式：申请者按照【原因】+内容' 的方式填写，审核者按照'【批注】+内容'的方式,【批注】和【原因】可以用逗号分开或者换行" id="Review.Comment" name="Review.Comment" class="mytext" style="width:80%; height:200px;">@Html.Raw(review.Comment)</textarea>
+						</div>
+					</div>
+				}
+
+				@if (isReviwer && !isEditable)
+				{
+				<div class="form-group">
+					<div class="col-md-2 text-left">审核时间：</div>
+					<div class="col-md-3">
+						<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+							<input id="Review.ReviewDate" name="Review.ReviewDate" type1="flow_hidden" class="form-control" value="@reviewDate" />
+							<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+						</div>
+					</div>	
+				</div>
+				}
+
+			</fieldset>
+		</div>
+	</div>
+</div>
+<script>
+	$('.dropzone.file').dropzone({
+		addedContainer: '#flyArea',
+		dictResponseError: '上传出错',
+		uploadMultiple: false,
+		maxFilesize: 200,
+		init: function () {
+						this.on('success', function (file, data) {
+				$('.attachmentUrl').val(data.url);
+							setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
+						});
+						this.on('error', function (file, message) {
+							popupMessage({ result: 'error', msg: message });
+						});
+					}
+				});
+
+	// proxy click event to dropzone.
+	$('#btn-upload').on('click', function () {
+		$('.dropzone.file').trigger('click');
+	});
+
+</script>

@@ -1,0 +1,82 @@
+﻿@model EvalGroupAccessor
+<div class="modal-dialog modal-lg">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑考评人</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("AccessorEdit", "EvalGroup")" role="form" data-after-success="afterDialogSuccess()">
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(a => a.GroupAccessorId)
+						@Html.HiddenFor(a => a.IsLeader)
+						@Html.HiddenFor(a => a.GroupId)
+						@Html.HiddenFor(a => a.TableIds)
+						<div class="form-group">
+							@Html.LabelFor(a => a.AccessorId, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(a => a.AccessorId, ViewBag.Users as List<SelectListItem>, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(a => a.TableIds, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownList("EvalTables",
+															ViewBag.EvalTables as List<SelectListItem>,
+															  new { @class = "form-control dropdown-EvalTables", @multiple = "multiple" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-9 col-lg-offset-3">
+								<button type="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+<script>
+
+	$(function () {
+
+		var $form = $('.modal-dialog form');
+		$.validator.unobtrusive.parse($form);
+
+		$form.submit(function () {
+			$('#TableIds').val($('.dropdown-EvalTables').val());
+
+			var $form = $(this);
+
+			$form.valid() && $.post($form.attr('action'), $form.serialize(), function (data, status) {
+				popupMessage(data, {
+					success: function () { commitedNotice(); }
+				});
+			});
+
+			return false;
+		});
+
+
+		var evalTables = '@Model.TableIds'.split(',');
+		$('.dropdown-EvalTables').multiselect('select', evalTables);
+
+	})
+
+	function commitedNotice() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+</script>

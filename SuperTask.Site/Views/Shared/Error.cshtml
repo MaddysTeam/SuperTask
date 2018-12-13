@@ -1,0 +1,47 @@
+﻿@model HandleErrorInfo
+@{
+	var pageTitle = ViewBag.Title = "异常";
+}
+<div class="col-md-10 content-wrapper">
+	<div class="row">
+		<div class="col-lg-4 ">
+			<ul class="breadcrumb">
+				<li class="active"><i class="fa fa-home"></i>首页</li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- main -->
+	<div class="content">
+		<div class="main-header">
+			<h2><i class="fa fa-chain-broken"></i> @pageTitle</h2>
+			<em>有一个 <b>@Model.Exception.GetType().Name</b> 在访问 <b>@Model.ControllerName</b> 的 <b>@Model.ActionName</b> 时发生。</em>
+		</div>
+
+		<div class="main-content">
+
+			<div class="alert alert-error">
+				@*<h4>
+						异常:
+					</h4>
+					<br />
+					<p>
+						There was a <b>@Model.Exception.GetType().Name</b> while rendering <b>@Model.ControllerName</b>'s <b>@Model.ActionName</b> action.
+					</p>*@
+				<p>
+					@Model.Exception.Message
+				</p>
+			</div>
+			@*<div class="alert">
+					<h4>
+						Stack trace:
+					</h4>
+					<br />
+					<pre>@Model.Exception.StackTrace</pre>
+				</div>*@
+		</div>
+
+		<!-- /main-content -->
+	</div>
+	<!-- /main -->
+</div>

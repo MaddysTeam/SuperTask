@@ -1,0 +1,70 @@
+﻿@{ 
+	var allSelectItems = (ViewBag.AllUsers as List<EvalGroupTarget>).Select(x=>new SelectListItem { Text=x.TargetName, Value=x.MemberId.ToString()}).ToList();
+	var selectTargets = ViewBag.SelectUsers as List<EvalGroupTarget>;
+	var selectTargetIds = selectTargets!=null && selectTargets.Count > 0 ? string.Join(",", selectTargets.Select(x => x.MemberId).ToArray()) : string.Empty;
+	var accessorId = Request["accessorId"].ToGuid(Guid.Empty);
+}
+<div class="modal-dialog modal-lg">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 选择考核对象</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("BindTargets", "EvalGroup")" method="post" role="form" data-after-success="afterDialogSuccess()">
+				<div class="row">
+					<fieldset class="col-sm-12">
+					
+						<div class="form-group">
+							@Html.Label("选择考核对象", new { @class = "control-label col-md-3" })
+							<div class="col-md-6">
+								@Html.DropDownList("AccessorRoles",
+															allSelectItems,
+															  new { @class = "form-control dropdown-Targets col-md-6", @multiple = "multiple" })
+							</div>
+							<div class="col-md-3">
+								<input type="submit" class="btn btn-primary" value="确定" />
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+			@*<input type="hidden" id="targetIds" value="@selectTargetIds" />*@
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+
+<script>
+	$(function () {
+
+		var ids = '@selectTargetIds'.split(',');
+		$('.dropdown-Targets').multiselect('select', ids);
+
+		var $form = $('.modal-dialog form');
+		$.validator.unobtrusive.parse($form);
+
+		$form.submit(function (e) {
+			e.preventDefault();
+			var $form = $(this);
+			$form.valid() && $.post($form.attr('action'), { accessorId: '@accessorId', targetIds: '' + $('.dropdown-Targets').val() }, function (data, status) {
+				popupMessage(data, {
+					success: function () { commitedNotice(); }
+				});
+			});
+
+			return false;
+		});
+
+	})
+
+	function commitedNotice() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+</script>

@@ -1,0 +1,504 @@
+﻿
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Css{
+	<link href="~/assets/plugins/jstree-3.2.1/themes/default/style.min.css" rel="stylesheet" />
+}
+<style>
+	.btn06 {
+		width: 100%;
+		overflow: hidden;
+		position: relative;
+		-webkit-box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.3);
+		-moz-box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.3);
+		box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.3);
+		cursor:pointer;
+	}
+
+	.explorer {
+		min-height: 600px;
+	}
+
+	.explore-header {
+		padding: 2px;
+		height: 100px;
+	}
+
+		.explore-header ul {
+			margin: 0px;
+			padding: 0px;
+			list-style: none;
+		}
+
+			.explore-header ul li {
+				display: inline-block;
+				float: left;
+				margin-left: 10px;
+			}
+
+				.explore-header ul li a {
+					font-size: 20px;
+				}
+
+		.explore-header .folder_path {
+			width: 100%;
+			display: block;
+			height: 30px;
+			padding: 0px;
+		}
+
+		.explore-header .search {
+			width: 100%;
+			display: block;
+			height: 30px;
+			padding: 0px;
+		}
+
+	.item {
+		margin-bottom: 20px;
+	}
+
+	.btn06 img {
+		position: relative;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	.btn06 .name{
+		overflow:hidden;
+		text-overflow:ellipsis;
+		-o-text-overflow:ellipsis;
+		-webkit-text-overflow:ellipsis;
+		-moz-text-overflow:ellipsis;
+		white-space:nowrap;
+	}
+
+	.btn06 .ovrly {
+		background: rgba(0, 0, 0, 0.5);
+		height: 100%;
+		left: 0;
+		position: absolute;
+		top: 0;
+		width: 100%;
+		opacity: 0;
+		-webkit-transition: all 1s;
+		-moz-transition: all 0.3s;
+		-o-transition: all 0.3s;
+		transition: all 0.3s;
+	}
+
+	.btn06 .buttons {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		-webkit-transform: translate(-50%, -50%);
+		-moz-transform: translate(-50%, -50%);
+		-ms-transform: translate(-50%, -50%);
+		-o-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+	}
+
+		.btn06 .buttons .fa {
+			background: rgb(256, 256, 256);
+			-webkit-box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+			-moz-box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+			box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+			-webkit-border-radius: 50%;
+			-moz-border-radius: 50%;
+			border-radius: 50%;
+			display: inline-block;
+			line-height: 30px;
+			font-size: 14px;
+			text-align: center;
+			text-decoration: none;
+			width: 30px;
+			height: 30px;
+			opacity: 0;
+			position: relative;
+			-webkit-transition: all 0.3s, color 0.1s 0.3s;
+			-moz-transition: all 0.3s, color 0.1s 0.3s;
+			-o-transition: all 0.3s, color 0.1s 0.3s;
+			transition: all 0.3s, color 0.1s 0.3s;
+			color: transparent;
+		}
+
+		.btn06 .buttons .fa-link {
+			left: 22px;
+		}
+
+		.btn06 .buttons .fa-search {
+			left: -22px;
+		}
+
+	.btn06:hover .buttons .fa {
+		opacity: 1;
+		left: 0;
+		color: rgba(50, 50, 50, 0.9);
+	}
+
+	.btn06:hover .ovrly {
+		opacity: 1;
+	}
+
+	.jstree-themeicon-custom {
+		font-size: 22px;
+	}
+</style>
+
+<div class="content-wrapper">
+	<div class="header"></div>
+	<!-- main -->
+	<div class="content">
+		<div class="row">
+			<!-- explorer nav -->
+			<div class="col-md-3">
+				<div class="widget">
+
+					<div class="widget-header"></div>
+					<div class="widget-content">
+						<div class="explorer-nav">
+							
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+			<!-- /explorer nav -->
+			<!-- explorer content -->
+			<div class="col-md-9">
+				<div class="widget explorer">
+
+					<div class="widget-header">
+						<div class="explore-header">
+							<ul>
+								<li>
+									<a class="btn_up" href="#">
+										<i class="fa fa-arrow-circle-up"></i>
+									</a>
+								</li>
+								<li>
+
+									<input type="text" class="folder_path form-control" readonly value="中小学事业部" />
+								</li>
+								<li>
+									<a href="#" class="btn_refresh">
+										<i class="fa fa-refresh"></i>
+									</a>
+								</li>
+								<li>
+									<input type="text" class="search form-control" placeholder="相关搜索" />
+								</li>
+								<li>
+									<a class="btn_search" href="#">
+										<i class="fa fa-search"></i>
+									</a>
+								</li>
+								<li>
+									<button class="btn btn-sm btn-info btn-add-folder">添加文件夹</button>
+								</li>
+								<li>
+									<button class="btn btn-sm btn-danger btn-add-file">添加文件</button>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="widget-content row">
+						<div class="explore col-xs-12">
+							<div class="center-block"><i class="fa fa-folder-open"></i></div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<!-- /explorer content -->
+		</div>
+	</div>
+	<!-- /main -->
+
+</div>
+
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal"></button>
+	<div class="modal fade" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+}
+
+@section Scripts{
+	<script src="~/assets/js/popup.js"></script>
+	<script src="~/assets/js/jstree.min.js"></script>
+	<script src="~/assets/plugins/pdf.object/pdfobject.min.js"></script>
+	<script>
+		$(function () {
+
+			bindExplorButtons();
+
+			//get ajax data
+			loadData(function () {
+				bindLeftNav();
+				showFolderFiles();
+			});
+
+		});
+
+		var currentFolderId;
+		var folders = [], files = [];
+		var folderOptions = {
+			items: [
+			  { text: '打开', onclick: function (e) { openFolder(e.data['folderId']); } },
+			  { text: '删除', onclick: function (e) { delFolder(e.data['folderId']); } },
+			  { text: '重命名', onclick: function (e) { editFolder(e.data['folderId']); } },
+			  { divider: true },
+			  { text: '设置权限', onclick: function (e) { alert('功能还在研发中'); } }
+			]
+		};
+		var fileOptions = {
+			items: [
+			  { text: '预览', onclick: function (e) { preview(e.data['fileId']); } },
+			  { text: '重命名', onclick: function (e) { editFile(e.data['fileId']); } },
+			  { text: '下载', onclick: function (e) { download(e.data['filePath']); } },
+			  { text: '删除', onclick: function (e) { delFile(e.data['fileId']) } },
+			  { divider: true },
+			  { text: '设置权限', function (e) { alert('功能还在研发中'); } }
+			]
+		};
+		var emptyMessageStr = '<div class="text-center">该文件夹为空</div>';
+		var folderStr = function (folder) {
+			var folderClassName = folder.isMyFolder ? 'myFolder' : 'folder';
+			return '<div class="item col-lg-2 col-sm-2 col-xs-4">' +
+							 '<div class="btn06 ' + folderClassName + '" data-id="' + folder.id + '" data-path="' + folder.path + '" data-folder-id="' + folder.id + '">' +
+								'<img src="' + folder.coverPath + '" />' +
+								 '<div class="ovrly"></div>' +
+								 '<div class="buttons">' +
+									'<a href="#" title="进入" class="fa fa-search"></a>' +
+								  '</div><div class="text-center name">' + folder.name + '</div>' +
+					 '</div>' +
+				 '</div>'
+		};
+		var fileStr = function (file) {
+			var fileClassName = file.isMyFile ? 'myFile' : 'file';
+			return '<div class="item col-lg-2 col-sm-2 col-xs-4" title="' + file.name + '">' +
+									'<div class="btn06 ' + fileClassName + '" data-file-id="' + file.id + '" data-file-path="' + file.path + '" data-attachment-id="' + file.attachmentId + '">' +
+									  '<img src="' + file.coverPath + '" />' +
+										'<div class="ovrly"></div>' +
+										'<div class="buttons">' +
+											'<a href="' + file.path + '" title="下载" class="fa fa-download"></a>' +
+											'<a data-url="@Url.Action("FilePreview", "ShareFolder")?id='+file.id+'" title="预览" class="fa fa-eye preview"></a>' +
+								'</div><div class="text-center name">' + file.name + '</div>' +
+							'</div>' +
+						'</div>'
+		};
+
+		//folder operation
+		function openFolder(folderId) {
+			var folder = findFolderById(folderId);
+			setExplorePath(folder.path);
+			showFolderFiles(folderId);
+		}
+
+		function delFolder(folderId) {
+			if (confirm("@Success.Folder.CONFIRM_DELETE")) {
+				$.post('@Url.Action("Delete", "ShareFolder")', { id: folderId }, function () {
+					loadData(function () {
+						bindLeftNav();
+						showFolderFiles(currentFolderId);
+						//bindUpClick();
+					});
+				});
+			}
+		}
+
+		function editFolder(folderId) {
+			$('#modelProxy')
+				.data('url', '@Url.Action("Edit","ShareFolder")?id=' + folderId)
+				.trigger('click');
+		}
+
+		function bindFolderClick() {
+			$('.folder,.myFolder').click(function () {
+				openFolder($(this).data('id'))
+			});
+			$('.folder,.myFolder').find('.fa-search').click(function (e) {
+				e.stopPropagation();
+			});
+		};
+
+		function findFolderById(folderId) {
+			for (var f in folders) {
+				if (folders[f].id == folderId) {
+					return folders[f];
+				}
+			}
+			return { id: '@ThisApp.DefaultId' }; //rootfolder;
+		}
+
+		function findParentFolder(folderId) {
+			var folder = findFolderById(folderId);
+			var parent = findFolderById(folder.parentId);
+			if (!parent)
+				parent = { id: '@ThisApp.DefaultId' };
+			return parent;
+		}
+
+		//files operation
+		function delFile(fileId) {
+			if (confirm("@Success.File.CONFIRM_DELETE")) {
+				$.post('@Url.Action("DelFile", "ShareFolder")', { id: fileId ,folderId:currentFolderId}, function (data) {
+					loadData(function () {
+						showFolderFiles(currentFolderId);
+					});
+				});
+			}
+		}
+
+		function showFolderFiles(folderId) {
+			var itemStr = '';
+			if (!folderId)
+				folderId = '@ThisApp.DefaultId';
+			for (var f in folders) {
+				if (folders[f].parentId == folderId) {
+					itemStr += folderStr(folders[f]);
+				}
+			}
+			for (var i in files) {
+				if (files[i].folderId == folderId) {
+					itemStr += fileStr(files[i]);
+				}
+			}
+			$('.explore').html('').append(itemStr == '' ? emptyMessageStr : itemStr);
+			bindFolderClick();
+			bindPopup();
+			bindPreview();
+			currentFolderId = folderId;
+		}
+
+		function download(path) {
+			window.open(path);
+		}
+
+		function preview(fileId) {
+			$('#modelProxy')
+						.data('url', '@Url.Action("FilePreview", "ShareFolder")?id=' + fileId)
+						.trigger('click');
+		}
+
+		function editFile(fileId) {
+			$('#modelProxy')
+				.data('url', '@Url.Action("FileEdit", "ShareFolder")?id=' + fileId)
+				.trigger('click');
+		}
+
+		function bindPreview() {
+			$('.file,.myFile').find('.preview').click(function () {
+				var url = $(this).data('url');
+				$('#modelProxy')
+						.data('url', url)
+						.trigger('click');
+			});
+		}
+
+		//explorer operation
+		function bindPopup() {
+			$('.myFolder').contextify(folderOptions);
+			$('.myFile').contextify(fileOptions);
+		}
+
+		function bindUpClick() {
+			
+		}
+
+		function setExplorePath(path) {
+			$('.folder_path').val(path);
+		}
+
+		function bindLeftNav() {
+			var root = { id: '@ThisApp.DefaultId', parent: '#', text: '中小学事业部' };
+			var data = [root];
+			if (!folders) return;
+			$(folders).each(function () {
+				var folder=this;
+				data.push({
+					"id": folder.id,
+					"parent": folder.parentId,
+					"text": folder.name,
+				});
+			});
+			var $treeviewApp = $('.explorer-nav');
+			$treeviewApp.jstree("destroy");
+			$treeviewApp.jstree({
+				'core': {
+					'data': data,
+					'check_callback': true,
+				},
+				'plugins': ['types', 'search'],
+				'types': {
+					'root': {
+						'icon': 'fa fa-star yellow-font'
+					},
+					'default': {
+						'icon': 'fa fa-folder yellow-font'
+					},
+				}
+			}).on('loaded.jstree', function () {
+			}).on('changed.jstree', function (e, data) {
+				openFolder(data.node["id"]);
+			}).on('ready.jstree', function () {
+				$treeviewApp.jstree('open_all');
+			});
+
+		}
+
+		function bindExplorButtons() {
+			$('.btn-add-folder').click(function () {
+				$('#modelProxy')
+						.data('url', '@Url.Action("Edit","ShareFolder")?parentId=' + currentFolderId)
+						.trigger('click');
+			});
+			$('.btn-add-file').click(function () {
+				$('#modelProxy')
+						.data('url', '@Url.Action("FileEdit","ShareFolder")?fileId='+11111111+'&folderId=' + currentFolderId)
+						.trigger('click');
+			});
+			$('.btn_search').click(function () {
+				loadData(function () {
+					var itemStr = '';
+					for (var i = 0; i < files.length; i++) {
+						itemStr += fileStr(files[i]);
+					}
+					$('.explore').html('').append(itemStr);
+					bindPopup();
+					bindPreview();
+					setExplorePath("搜索结果");
+				}, { phrase: $('.search').val() });
+			});
+			$('.btn_up').click(function () {
+				if (!currentFolderId) return;
+				var currentFolder = findFolderById(currentFolderId);
+				if (currentFolder) {
+					showFolderFiles(currentFolder.parentId);
+					setExplorePath(currentFolder.path);
+				}
+			});
+		}
+
+		//http operation
+		function loadData(callback,para) {
+			$.post('@Url.Action("Search", "ShareFolder")', para, function (data) {
+				folders = [];
+				files = [];
+				$(data.rows.folders).each(function () {
+					folders.push(this);
+				});
+				$(data.rows.files).each(function () {
+					files.push(this);
+				});
+				if (callback) {
+					callback(data);
+				}
+			});
+		}
+	</script>
+}

@@ -1,0 +1,153 @@
+﻿@model List<EvalPeriod>
+@{ 
+	var pageTitle = ViewBag.Title = "考核表组管理";
+	Layout = "~/Views/Shared/_StudioLayout.cshtml";
+	var periodId = Request["periodId"].ToGuid(Guid.Empty);
+	var periodList = (ViewBag.Periods as List<EvalPeriod>).Select(x=>new SelectListItem { Text=x.Name, Value=x.PeriodId.ToString() });
+}
+<div class="col-md-10 content-wrapper">
+
+	<!-- main -->
+	<div class="content">
+		<div class="main-header">
+			<h4><i class="fa fa-gear"></i> @pageTitle</h4>
+			<em></em>
+		</div>
+
+		<div class="main-content">
+			<div class="row">
+
+				@*<div class="col-sm-6">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-md-3 control-label">选择周期</label>
+							<div class="col-md-6">
+								@Html.DropDownList("dropdown_owner", periodList, new { @class = "dropdown_periods form-control" })
+							</div>
+						</div>
+					</div>
+				</div>*@
+				
+
+			</div>
+
+			<!-- top action buttons -->
+			<div class="gallery-buttons bottom-30px">
+				
+			</div>
+			<!-- /top action buttons -->
+
+			<!-- widget -->
+			<div class="widget">
+				<div class="widget-header">
+					<h3><i class="fa fa-paperclip"></i> @pageTitle</h3>
+					<div class="btn-group widget-header-toolbar">
+						<button class="btn btn-sm btn-custom-primary" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "EvalTableGroup")?periodId=@periodId" data-target="#firstModal"><i class="fa fa-plus-square"></i> <span>新增</span></button>
+					</div>
+				</div>
+				<div class="widget-content">
+
+					<!-- Grid -->
+					<div class="table-responsive">
+						<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+							<thead>
+								<tr>
+									<th data-column-id="groupName">考核表组</th>
+									<th data-column-id="tableCount">考核表数量</th>
+									<th data-column-id="periodName">所属周期</th>
+									<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+					<!-- end Grid-->
+
+				</div>
+				<!-- /widget content -->
+			</div>
+			<!-- /widget -->
+
+		</div>
+		<!-- /main-content -->
+	</div>
+	<!-- /main -->
+</div>
+@section Modals{
+<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+@section scripts{
+	<script>
+
+		function getGlobalRequest() {
+			return {
+				periodId: $('.dropdown_periods').val(),
+			};
+		}
+
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+				url: window.location.href,
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+				formatters: {
+					'commands': function (column, row) {
+						var id = row.id;
+						return '<div class="btn-group btn-group-xs pull-right" data-row-id="' + row.id + '" data-row-active="' + row.actived + '" data-period-id="' + row.periodId + '">' +
+												 '<button class="btn btn-success btn-edit">编辑</button>' +
+												 '<button class="btn btn-info btn-propertion">设置权重</button>' +
+												 '<button class="btn btn-danger btn-remove">删除</button>' +
+						'</div>';
+					},
+				},
+
+			});
+		}
+
+		$(function () {
+
+			$('#bootgrid').bootgrid(getGridOptions()).on('loaded.rs.jquery.bootgrid', function () {
+
+				$(this).find('.btn-propertion').on('click', function (e) {
+					var id = $(this).parent().data('rowId');
+					$('#modelProxy')
+						.data('url', '@Url.Action("EditTablePropertion", "EvalTableGroup")?groupId=' + id)
+						.trigger('click');
+				});
+
+				$(this).find('.btn-edit').on('click', function (e) {
+					var id = $(this).parent().data('rowId');
+					var periodId = $(this).parent().data('periodId');
+					$('#modelProxy')
+						.data('url', '@Url.Action("Edit", "EvalTableGroup")?id=' + id + '&periodId=' + periodId)
+						.trigger('click');
+				});
+
+				$(this).find('.btn-remove').on('click', function (e) {
+					if (confirm('删除该考核表组可能会影响考核对象分数，确实要删除？')) {
+						var id = $(this).parent().data('rowId');
+						$.post('@Url.Action("Remove", "EvalTableGroup")', { id: id }, function (data) {
+							popupMessage(data, {
+								success: function () {
+									$('#bootgrid').bootgrid('reload');
+								}
+							});
+						});
+					}
+					else
+					 return false;
+				});
+			});
+
+			$('.dropdown_periods').change(function () {
+				$('.periodId').val($(this).val());
+				$('#bootgrid').bootgrid('reload');
+			});
+
+		});
+
+	</script>	
+}

@@ -1,0 +1,188 @@
+﻿@using Business.Config
+@{
+	var isLeader = Html.HasInRole(RoleKeys.ADMIN) || Html.HasInRole(RoleKeys.LEADER);
+}
+@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+}
+
+<div class="content-wrapper">
+
+	<div class="main-content">
+		
+		<button class="btn btn-lg btn-custom-primary" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Advice",new { id=Guid.Empty})" data-target="#firstModal" style="margin-bottom:20px;"><i class="fa fa-plus-square"></i> <span>添加建议</span></button>
+		<p>
+			<b>*注意 建议【保存】状态无法共享给其他用户，点击【提交】按钮可以【提交】建议并且分享</b>
+		</p>
+		<!-- widget -->
+		<div class="widget">
+			<div class="widget-header">
+				<h3>建议列表</h3>
+				<div class="btn-group widget-header-toolbar">
+					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+				</div>
+			</div>
+
+			<div class="widget-content">
+				<div class="row">
+
+					@*<div class="col-sm-4">
+						<div class="form-group">
+							<label class="col-md-4 control-label">项目甲方</label>
+							<div class="col-md-4">
+								@Html.DropDownList("dropdown_owner", owners, new { @class = "dropdown_owner" })
+							</div>
+						</div>
+					</div>
+
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label class="col-md-4 control-label">项目乙方</label>
+							<div class="col-md-4">
+								@Html.DropDownList("dropdown_executor", executors, new { @class = "dropdown_executor" })
+							</div>
+						</div>
+					</div>*@	
+
+				</div>
+				<!-- Grid -->
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								<th data-column-id="type">建议类型</th>
+								<th data-column-id="title">建议标题</th>
+								<th data-column-id="content">建议内容</th>
+								<th data-column-id="isAdobt" data-formatter="isAdobt">是否采纳</th>
+								<th data-column-id="reason">未采纳原因</th>
+								<th data-column-id="status">当前状态</th>
+								<th data-column-id="supportCount">支持数</th>
+								@if (isLeader)
+								{
+								  <th data-column-id="creator" >建议者</th>
+								}
+								<th data-column-id="createDate" data-formatter="DateOnly">建议时间</th>
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width120" data-header-Css-Class="width130">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+			<!-- /widget content -->
+		</div>
+		<!-- /widget -->
+		@*<input type="hidden" id="Owner" value="@ThisApp.SelectAll" />
+		<input type="hidden" id="Executor" value="@ThisApp.SelectAll" />*@
+	</div>
+</div>
+
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Scripts {
+	<script>
+		function getGlobalRequest() {
+			return {
+				//searchType: $('#SearchType').val(),
+				owner: $('#Owner').val(),
+				executor: $('#Executor').val(),
+			};
+		}
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: window.location.href,
+
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+				formatters: {
+					'isAdobt':function(column,row){
+						var isAdobt = row.isAdobt;
+						return isAdobt ? '<b><font color="green">已采纳</font></b>' : '<b><font color="red">未采纳</font></b>';
+					},
+					'commands': function (column, row) {
+						var id = row.id;
+						var isSelf = row.creatorId == '@Html.GetUserProfile().UserId';
+						var isLeader = '@isLeader';
+						var isSupport = row.isSupport;
+						var buttonsStr = '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">';
+						buttonsStr += '<button class="btn btn-lg btn-primary detail">查看详细</button> ';
+						if (!isSupport) {
+							buttonsStr += '<button class="btn btn-lg btn-secondary support">支持</button>';
+						}
+						if (isSelf) {
+							buttonsStr += '<button class="btn btn-lg btn-success modify">修改</button> ';
+						}
+						if (isLeader=='True') {
+							buttonsStr += '<button class="btn btn-lg btn-info approve">采纳</button> ' +
+								           '<button class="btn btn-lg btn-info btn-danger deny">不予采纳</button> '
+						}
+						buttonsStr+='</div>'
+						return buttonsStr;
+					},
+				},
+			});
+		}
+
+		$(function () {
+			
+			var editUrl = '@Url.Action("Edit","Advice")';
+			var approveUrl = '@Url.Action("Approve","Advice")';
+			var denyUrl = '@Url.Action("Deny","Advice")';
+			var detailUrl = '@Url.Action("Detial", "Advice")';
+			var supportUrl = '@Url.Action("Support", "Advice")';
+			var userId = '@Html.GetUserProfile().UserId';
+			var grid = $('#bootgrid');
+			grid.bootgrid(getGridOptions())
+			.on('loaded.rs.jquery.bootgrid', function () {
+
+				grid.find('.modify').on('click', function () {
+					var id = $(this).parent().data('rowId');
+					$('#modelProxy').data('url', editUrl+'?id=' + id).trigger('click');
+				});
+
+				grid.find('.approve').on('click', function () {
+					var id = $(this).parent().data('rowId');
+					$.post(approveUrl, { id: id }, function (data) {
+						popupMessage(data, {
+							success: function () {
+								grid.bootgrid('reload');
+							}
+						});
+					});
+				});
+
+				grid.find('.deny').on('click', function () {
+					var id = $(this).parent().data('rowId');
+					$('#modelProxy').data('url', denyUrl + '?id=' + id).trigger('click');
+				});
+
+				grid.find('.detail').on('click', function () {
+					var id = $(this).parent().data('rowId');
+					$('#modelProxy').data('url', detailUrl + '?id=' + id).trigger('click');
+				});
+
+				grid.find('.support').on('click', function () {
+					var id = $(this).parent().data('rowId');
+					$.post(supportUrl, { id: id }, function (data) {
+						popupMessage(data, {
+							success: function () {
+								grid.bootgrid('reload');
+							}
+						});
+					});
+				});
+
+			});
+
+		});
+	</script>
+}

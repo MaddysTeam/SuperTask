@@ -1,0 +1,80 @@
+﻿@model List<RoleAppViewModel>
+@{ 
+	var roleId = Request["roleId"];
+	var appIds = ViewBag.AppIds as string;
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 绑定角色应用</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+			@foreach (var item in Model)
+			{
+				<div class="row">
+					<fieldset class="col-sm-12">
+
+						<div class="form-group">
+							<div class="col-md-2">
+								<input name="app" class="form-control cb_app" value="@item.AppId" type="checkbox" id="a" @(Html.Raw(item.IsChecked? "checked=\"checked\"" : ""))>
+							</div>
+							<div class="col-md-10">
+								<span class="form-control">
+									@item.AppName
+								</span>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			}
+			<div class="form-group">
+				<div class="col-sm-9 col-lg-offset-3">
+					<button type="button" class="btn btn-primary btn-block-half btn-save"><i class="fa fa-check-circle"></i> 保存</button>
+					<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- end widget -->
+	<input type="hidden" id="appValues" value="@appIds" />
+</div>
+
+<script>
+
+	$(function () {
+
+		var roleId = '@roleId';
+		var $appValues = $('#appValues');
+		var $checkbox = $('.cb_app');
+
+		// 选择应用的字符串用逗号分开
+		var tempStr = '';
+
+		getValuesByCheckboxList($checkbox, function (str) {
+			$appValues.val(str);
+		})
+
+
+		$('.btn-save').on('click', function () {
+			$.post('@Url.Action("RoleAppEdit", "Role")', { roleId: roleId, appIds: $appValues.val() }, function (data) {
+				popupMessage(data, {
+					success: function () { commitedNotice(); }
+				});
+			});
+
+		});
+
+		function commitedNotice() {
+			$('#firstModal').modal('hide');
+			$('#bootgrid').bootgrid('reload');
+		}
+
+	})
+
+</script>

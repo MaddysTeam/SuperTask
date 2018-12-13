@@ -1,0 +1,284 @@
+﻿@model TaskSearchOption
+@{
+	var pageTitle = ViewBag.Title = "项目进度";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var submenu = ViewBag.SubMenu as List<MenuItem>;
+	var levels = new List<SelectListItem> {
+		new SelectListItem { Text="全部", Value="-1" },
+		new SelectListItem { Text = "1层", Value = "1" },
+		new SelectListItem { Text = "2层", Value = "2" },
+		new SelectListItem { Text = "3层", Value = "3" },
+		new SelectListItem { Text = "4层", Value = "4" },
+		new SelectListItem { Text = "5层", Value = "5" },
+		new SelectListItem { Text = "6层", Value = "6" },
+		new SelectListItem { Text = "7层", Value = "7" },
+		new SelectListItem { Text = "8层", Value = "8" },
+		new SelectListItem { Text = "9层", Value = "9" },
+		};
+	Model.StartDate = Model.StartDate.IsEmpty() ? DateTime.Now.TodayStart().AddMonths(-5): Model.StartDate;
+	Model.EndDate = Model.EndDate.IsEmpty() ? DateTime.Now.TodayStart(): Model.EndDate;
+	}
+	@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+}
+
+<div class="content-wrapper">
+
+	<!-- main -->
+	<div class="content">
+
+	   @if (submenu != null)
+		{
+		@Html.Partial("_subMenu", submenu)
+		}
+
+		@if (Model.SearchType == TaskKeys.SearchByProject)
+		{
+		<div class="row"  style="margin-bottom:20px; margin-top:10px;">
+
+			<div class="col-sm-4">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						<label class="col-md-4 control-label">任务层级</label>
+						<div class="col-md-6	">
+							@Html.DropDownList("dpTypes", levels, new { @class = "form-control dropdown-taskLayers" })
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						<label class="col-md-3 control-label">日志填写时间范围</label>
+						<div class="col-md-4" >
+							<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true" >
+								@Html.TextBox("Start", Model.StartDate.ToString("yyyy-MM-dd"), new { @class = "form-control plan start" })
+								<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+								@Html.TextBox("End", Model.EndDate.ToString("yyyy-MM-dd"), new { @class = "form-control plan end" })
+								<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /任务搜索框 -->
+			<div class="col-sm-4">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						<label class="col-md-4 control-label">任务名称</label>
+						<div class="col-md-6" style="margin-top:5px;">
+							<input type="text" placeholder="输入任务名称" class="form-control taskName " id="TaskName" />
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		}
+
+		<div class="row">
+				<div class="col-md-3">
+					<div class="widget">
+						<div class="widget-header">
+							<h3><i class="fa fa-paperclip"></i>任务列表</h3>
+							<div class="btn-group widget-header-toolbar">
+								<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+							</div>
+						</div>
+
+						<div class="widget-content taskList" style="overflow:auto; width: auto; height:600px;">
+
+						</div>
+
+						<input type="hidden" id="TaskId" />
+					</div>
+				</div>
+				<div class="row col-md-9">
+					<div class="col-md-12 details">
+
+						<!-- Journal List -->
+						<div class="widget">
+							<div class="widget-header">
+								<h3><i class="fa fa-paperclip"></i> @pageTitle</h3>
+							</div>
+							<div class="widget-content">
+
+								<!-- Grid -->
+								<div class="table-responsive">
+									<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+										<thead>
+											<tr>
+												<th data-column-id="recordDate" data-formatter="DateOnly">记录日期</th>
+												<th data-column-id="progress">任务进度</th>
+												<th data-column-id="workhours" data-formatter="withSubTypeValue">所用工时/(工作数)</th>
+												<th data-column-id="comment">日志描述</th>
+												<th data-column-id="recordType">日志记录方式</th>
+												<th data-column-id="commands"  data-formatter="commands">操作</th>
+											</tr>
+										</thead>
+									</table>
+								</div>
+
+							</div>
+							<!-- /widget content -->
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+	</div>
+	<!-- /main -->
+
+	@Html.HiddenFor(s => s.TaskNamePhrase)
+	@Html.HiddenFor(s => s.Level)
+	@Html.HiddenFor(s=>s.StartDate)
+	@Html.HiddenFor(s=>s.EndDate)
+</div>
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Scripts{
+	<script>
+
+		function loadList(next) {
+
+			var $list = $('.taskList');
+			$list.empty();
+
+			var listOptions =
+				{
+					SearchType: '@Model.SearchType',
+					ProjectId: '@Model.ProjectId',
+					TaskId: '@Model.TaskId',
+					UserId: '@Model.UserId',
+					Status: '@Model.Status',
+					IsShowParent: '@Model.IsShowParent',
+					StartDate: $('#StartDate').val(),
+					EndDate: $('#EndDate').val(),
+					Level: $('#Level').val(),
+					TaskNamePhrase: $('#TaskNamePhrase').val(),
+					Type:'@Model.Type'
+				};
+
+			$.post('@Url.Action("List","Task")', listOptions, function (html) {
+				$list.append(html);
+				if (typeof next == "function") {
+					next();
+				}
+			});
+		}
+
+		function bindTaskClickEvent() {
+			$('.task').on('click', function (e) {
+				var $this = $(this);
+
+				$(".taskList").find('.task').removeClass('highlight');
+				$this.addClass('highlight');
+
+				$('#TaskId').val($this.data("id"))
+
+				gridRefresh();
+			});
+		}
+
+		function getGlobalRequest() {
+			return {
+				start: $('#StartDate').val(),
+				end: $('#EndDate').val(),
+				taskId: $('#TaskId').val(),
+				searchType: '@Model.SearchType',
+			};
+		}
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: window.location.href,
+
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+				formatters: {
+					'withSubTypeValue': function (column, row) {
+						return row.workhours + ' / ' + row.subTypeValue;
+					},
+					'commands': function (column, row) {
+						var id = row.id;
+						var str = '<div class="btn-group btn-group-xs pull-right" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">';
+						if (row.hasAttachment)
+							str += '<a href="' + row.attachmentUrl + '" class="btn btn-lg btn-warning btn-save btn-download">附件下载</a> ';
+
+						str += '</div>';
+						return str;
+					},
+				},
+			});
+		}
+
+		function gridLoad() {
+			var grid = $('#bootgrid');
+			grid.bootgrid(getGridOptions())
+				 .on('loaded.rs.jquery.bootgrid');
+		}
+
+		function gridRefresh() {
+			$('#bootgrid').bootgrid('reload');
+		}
+
+		$(function () {
+
+			var door = false;
+
+			$('.dropdown-taskLayers').searchableSelect({
+				afterSelectItem: function (v) {
+					$('#Level').val(v);
+					if (door) {
+						loadList(afterLoadList);
+					}
+
+				}
+			});
+
+			$('.taskName').on('blur', function () {
+				$('#TaskNamePhrase').val($(this).val());
+				if (door) {
+					loadList(afterLoadList);
+				}
+			}).on('keydown', function (e) {
+				if (e.keyCode == 13) {
+					$(this).blur();
+				}
+			});
+
+			$('.start').on('change', function () {
+				$('#StartDate').val($(this).val());
+				if (door) {
+					loadList(afterLoadList);
+				}
+			});
+
+			$('.end').on('change', function () {
+				$('#EndDate').val($(this).val());
+				if (door) {
+					loadList(afterLoadList);
+				}
+			});
+
+
+			loadList(afterLoadList);
+
+			function afterLoadList() {
+				door = true;
+				bindTaskClickEvent();
+				gridLoad();
+				$('.task:first').trigger('click');
+			}
+
+		});
+	</script>
+}

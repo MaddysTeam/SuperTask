@@ -1,0 +1,107 @@
+﻿@model WorkTaskIssue
+@{
+	var issueList = SelectListHelper.GetSelectItems(ViewBag.IssueList as List<IssueItem>, "ItemName", "ItemId");
+	var projectList = SelectListHelper.GetSelectItems(ViewBag.MyProjects as List<Project>, "ProjectName", "ProjectId");
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 编辑任务问题</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("TaskIssueEdit", "TaskManage")" role="form" data-after-success="afterDialogSuccess()">
+				@Html.AntiForgeryToken()
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(wti => wti.TaskIssueId)
+						@Html.HiddenFor(wti => wti.TaskId)
+						@Html.HiddenFor(wti => wti.ModifyDate)
+						@Html.HiddenFor(wti => wti.CreateDate)
+
+
+						<div class="form-group">
+							@Html.LabelFor(wti => wti.ProjectName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(wti => wti.ProjectId, projectList, new { @class = "form-control dp_project" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(wti => wti.TaskName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(wti => wti.TaskId, new List<SelectListItem>(), new { @class = "form-control dp_task" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(wti => wti.IssueId, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(wti => wti.IssueId, issueList, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(wti => wti.Description, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextAreaFor(wti => wti.Description, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9 ">
+								<button type="submit" id="submit" class="btn btn-primary btn-block"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('.modal-dialog form'));
+
+		$('.dp_project').searchableSelect({
+			afterSelectItem: function (v) {
+				bindTasksDropDown(v);
+			}
+		});
+
+	});
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+
+	function bindTasksDropDown(pid) {
+		var $tasks = $('.dp_task');
+
+		$.post('@Url.Action("GetProjectTasks", "TaskManage")', { projectId: pid }, function (data) {
+			$tasks.empty();
+
+			$(data.tasks).each(function (i) {
+				$tasks.append('<option value="' + this.parentId + '">' + this.parentName + '</option>');
+			});
+
+			$tasks.parent().find('.searchable-select').remove();
+			$tasks.searchableSelect({
+				afterSelectItem: function (v) {
+					$('#TaskId').val(v);
+				}
+			});
+		});
+	}
+
+</script>

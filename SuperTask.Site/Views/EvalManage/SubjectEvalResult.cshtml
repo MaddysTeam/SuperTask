@@ -1,0 +1,80 @@
+﻿@model EvalViewModel
+@{
+	ViewBag.Title = "";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Css{
+<link href="~/assets/plugins/raty/lib/jquery.raty.css" rel="stylesheet" />
+}
+<div class="content-wrapper">
+	<div class="main-content">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="widget">
+					<div class="widget-header">
+					
+					</div>
+					<div class="widget-content">
+						<table class="table table-condensed">
+							<tr>
+								<th>考核对象</th>
+								<td>@Model.TargetName</td>
+							</tr>
+							<tr>
+								<th>考评人</th>
+								<td>@Model.AccessorName</td>
+							</tr>
+							<tr>
+								<th>考评人角色</th>
+								<td></td>
+							</tr>
+							@foreach (var item in Model.PeriodTables)
+							{
+								<tr>
+									<th>@(item.TableName)得分：</th>
+									<td>@item.Score</td>
+								</tr>
+							}
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-9">
+				@foreach (var item in Model.PeriodTables)
+				{
+
+					var period = EvalPeriod.PrimaryGet(item.PeriodId);
+					var engine = EvalManager.Engines[period.AnalysisType].SubjectEvals[item.TableId];
+					var resultItems = engine.GetEvalResultItems(
+						new SubjectEvalParams
+						{
+							AccessorId = Model.AccessorId,
+							AccessorRoleId = Model.AccessorRole.RoleId,
+							CurrentTableId = item.TableId,
+							PeriodId = item.PeriodId,
+							TargetId = Model.TargetId,
+							TargetRoleId=Model.TargetRoleId
+						});
+
+					<div class="evaltable">
+						<input type="hidden" class="periodId" value="@item.PeriodId" />
+						<input type="hidden" class="tableId" value="@item.TableId" />
+						@if (resultItems != null)
+						{
+						@Html.Partial(engine.ViewPath + engine.ResultView, resultItems)
+						}	
+
+					</div>
+				}
+
+			</div>
+		</div>
+			
+
+	</div>
+
+</div>
+
+
+@section Scripts{
+}

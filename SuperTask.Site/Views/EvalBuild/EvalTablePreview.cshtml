@@ -1,0 +1,95 @@
+﻿@model PreviewViewModel
+@{ 
+	var assessorRoleSelectList = Model.AccessorRoles
+		.Select(x => new SelectListItem { Text = x.RoleName, Value = x.RoleId.ToString(), Selected = x == Model.CurrentAccessorRole });
+}
+
+<div class="widget">
+	<div class="widget-header">
+	</div>
+	<div class="widget-content">
+
+		<div class="row" style="margin-bottom:20px; margin-top:10px;">
+
+			<div class="col-sm-4">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						<label class="col-md-4 control-label">考评表</label>
+						<div class="col-md-8">
+							<h4>@Model.EvalTable.TableName</h4>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 考核表执行角色筛选下拉框 -->
+			<div class="col-sm-4">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						<label class="col-md-4 control-label">考评者角色</label>
+						<div class="col-md-8">
+							@Html.DropDownList("assessorRoles", assessorRoleSelectList, new { @class = "form-control accessorRoleId" })
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<table class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th class="table-col-10p">考核指标</th>
+					<th class="table-col-30p">执行角色</th>
+					<th class="table-col-30p">指标说明</th>
+					<th class="table-col-30p">指标满分</th>
+					<th class="table-col-30p">角色占比</th>
+					<th>指标项</th>
+					<th class="table-col-10p">设计分值</th>
+				</tr>
+			</thead>
+			<tbody>
+				@{
+					foreach (var item in Model.EvalIndications)
+					{
+						var index = 0;
+						foreach (var sub in item.Items.OrderByDescending(x=>x.ItemScore))
+						{
+							<tr>
+								@if (index == 0)
+								{
+								<td rowspan="@item.Items.Count">@item.IndicationName</td>
+								<td rowspan="@item.Items.Count">@Model.CurrentAccessorRole.RoleName</td>
+								<td rowspan="@item.Items.Count">@item.IndicationDescription</td>
+								<td rowspan="@item.Items.Count">@item.FullScore</td>
+								<td rowspan="@item.Items.Count">@(item.Propertion)%</td>
+								}
+								<td>@sub.ItemName</td>
+								<td>@(sub.ItemScore)分</td>
+							</tr>
+							index++;
+						}
+					}
+				}
+				
+			</tbody>
+		</table>
+
+	</div>
+	@Html.HiddenFor(x=>x.EvalTable.TableId,new {@class="tableId"});
+</div>
+@section Scripts{
+<script>
+
+	$(function () {
+
+		$('.accessorRoleId').change(function () {
+			location.href = '@Url.Action("EvalTablePreview","Evalbuild")' + '?id=' + $('.tableId').val() + '&roleId=' + $(this).val();
+		});
+
+	});
+
+</script>
+	
+}

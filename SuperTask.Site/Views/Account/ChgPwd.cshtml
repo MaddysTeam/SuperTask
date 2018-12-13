@@ -1,0 +1,102 @@
+﻿@model ChgPwdViewModel
+@{
+	var pageTitle = ViewBag.Title = "修改密码";
+}
+<div class="col-md-10 content-wrapper">
+	<div class="row">
+		<div class="col-lg-4 ">
+			<ul class="breadcrumb">
+				<li class="active"><i class="fa fa-home"></i><a href="@Url.Action("Index", "Home")">首页</a></li>
+				<li class="active">@pageTitle</li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- main -->
+	<div class="content">
+		<div class="main-header">
+			<h2><i class="fa fa-lock"></i> @pageTitle</h2>
+		</div>
+
+		<div class="main-content">
+
+			<!-- widget -->
+			<div class="widget">
+
+				<div class="widget-header">
+					<h3><i class="fa fa-paperclip"></i> @pageTitle</h3>
+					<div class="btn-group widget-header-toolbar">
+						<a href="#" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+					</div>
+				</div>
+
+				<div class="widget-content">
+
+					<form action="@Url.Action()" class="form-horizontal form-group-sm" role="form">
+
+						@Html.AntiForgeryToken()
+						<div class="row">
+							<fieldset class="col-md-6">
+								<div class="form-group">
+									@Html.LabelFor(m => m.OldPassword, new { @class = "col-md-3 control-label" })
+									<div class="col-md-9">
+										@Html.PasswordFor(m => m.OldPassword, new { @class = "form-control required" })
+										@Html.ValidationMessageFor(m => m.OldPassword)
+									</div>
+								</div>
+								<div class="form-group">
+									@Html.LabelFor(m => m.NewPassword, new { @class = "col-md-3 control-label" })
+									<div class="col-md-9">
+										@Html.PasswordFor(m => m.NewPassword, new { @class = "form-control required" })
+										@Html.ValidationMessageFor(m => m.NewPassword)
+									</div>
+								</div>
+								<div class="form-group">
+									@Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-3 control-label" })
+									<div class="col-md-9">
+										@Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control required" })
+										@Html.ValidationMessageFor(m => m.ConfirmPassword)
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-md-9 col-lg-offset-3">
+										<button type="submit" class="btn btn-default">保存</button>
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</form>
+
+				</div>
+				<!-- /widget content -->
+			</div>
+			<!-- /widget -->
+
+		</div>
+		<!-- /main-content -->
+	</div>
+	<!-- /main -->
+</div>
+
+@section scripts{
+	<script>
+
+	$(function () {
+
+		// ajax update form
+		$('form').submit(function () {
+			var $form = $(this);
+
+			$form.valid() && $.post($form.attr('action'), $form.serialize(), function (data, status) {
+
+				popupMessage(data);
+
+			});
+
+			return false;
+		});
+
+	})
+
+	</script>
+}
