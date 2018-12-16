@@ -251,6 +251,10 @@
 				</columns>
 			</table>
 
+			<!--<table name="" comment="外包">
+				
+			</table>-->
+
 			<!-- Task -->
 			
 			<table name="WorkTask"  comment="工作任务">
