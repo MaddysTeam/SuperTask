@@ -46,6 +46,10 @@ namespace Business {
         
         private static ProjectPayTableDef _projectPay;
         
+        private static MileStoneTableDef _mileStone;
+        
+        private static ProjectMileStoneTableDef _projectMileStone;
+        
         private static WorkTaskTableDef _workTask;
         
         private static WorkTaskLogTableDef _workTaskLog;
@@ -133,6 +137,10 @@ namespace Business {
         private APDalDef.ResourceDal _resourceDal;
         
         private APDalDef.ProjectPayDal _projectPayDal;
+        
+        private APDalDef.MileStoneDal _mileStoneDal;
+        
+        private APDalDef.ProjectMileStoneDal _projectMileStoneDal;
         
         private APDalDef.WorkTaskDal _workTaskDal;
         
@@ -345,6 +353,30 @@ namespace Business {
                     _projectPay = new ProjectPayTableDef("ProjectPay");
                 }
                 return _projectPay;
+            }
+        }
+        
+        /// <summary>
+        ///  TableDef
+        /// </summary>
+        public static MileStoneTableDef MileStone {
+            get {
+                if ((_mileStone == null)) {
+                    _mileStone = new MileStoneTableDef("MileStone");
+                }
+                return _mileStone;
+            }
+        }
+        
+        /// <summary>
+        ///  TableDef
+        /// </summary>
+        public static ProjectMileStoneTableDef ProjectMileStone {
+            get {
+                if ((_projectMileStone == null)) {
+                    _projectMileStone = new ProjectMileStoneTableDef("ProjectMileStone");
+                }
+                return _projectMileStone;
             }
         }
         
@@ -865,6 +897,30 @@ namespace Business {
         }
         
         /// <summary>
+        ///  Dal
+        /// </summary>
+        public virtual APDalDef.MileStoneDal MileStoneDal {
+            get {
+                if ((_mileStoneDal == null)) {
+                    _mileStoneDal = new APDalDef.MileStoneDal(this);
+                }
+                return _mileStoneDal;
+            }
+        }
+        
+        /// <summary>
+        ///  Dal
+        /// </summary>
+        public virtual APDalDef.ProjectMileStoneDal ProjectMileStoneDal {
+            get {
+                if ((_projectMileStoneDal == null)) {
+                    _projectMileStoneDal = new APDalDef.ProjectMileStoneDal(this);
+                }
+                return _projectMileStoneDal;
+            }
+        }
+        
+        /// <summary>
         /// 工作任务 Dal
         /// </summary>
         public virtual APDalDef.WorkTaskDal WorkTaskDal {
@@ -1263,6 +1319,8 @@ namespace Business {
                 db.ProjectRoleDal.InitData(db);
                 db.ResourceDal.InitData(db);
                 db.ProjectPayDal.InitData(db);
+                db.MileStoneDal.InitData(db);
+                db.ProjectMileStoneDal.InitData(db);
                 db.WorkTaskDal.InitData(db);
                 db.WorkTaskLogDal.InitData(db);
                 db.WorkTaskComplextiyDal.InitData(db);
@@ -2715,6 +2773,8 @@ namespace Business {
             
             private StringAPColumnDef _processName;
             
+            private DateTimeAPColumnDef _checkDate;
+            
             public ProjectTableDef(string tableName) : 
                     base(tableName) {
             }
@@ -3011,6 +3071,19 @@ namespace Business {
             }
             
             /// <summary>
+            /// CheckDate ColumnDef
+            /// </summary>
+            public virtual DateTimeAPColumnDef CheckDate {
+                get {
+                    if (Object.ReferenceEquals(_checkDate, null)) {
+                        _checkDate = new DateTimeAPColumnDef(this, "CheckDate", true);
+                        _checkDate.Display = "验收时间";
+                    }
+                    return _checkDate;
+                }
+            }
+            
+            /// <summary>
             /// Default Index
             /// </summary>
             public virtual APSqlOrderPhrase DefaultOrder {
@@ -3052,6 +3125,7 @@ namespace Business {
                 data.ProjectExecutor = ProjectExecutor.GetValue<string>(reader, throwIfValidColumnName);
                 data.ManagerId = ManagerId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.ProcessName = ProcessName.GetValue<string>(reader, throwIfValidColumnName);
+                data.CheckDate = CheckDate.GetValue<System.DateTime>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -3909,11 +3983,17 @@ namespace Business {
             
             private GuidAPColumnDef _projectid;
             
+            private DoubleAPColumnDef _money;
+            
             private DoubleAPColumnDef _rateOfProgress;
             
             private DateTimeAPColumnDef _invoiceDate;
             
             private DateTimeAPColumnDef _payDate;
+            
+            private GuidAPColumnDef _payType;
+            
+            private GuidAPColumnDef _resourceId;
             
             public ProjectPayTableDef(string tableName) : 
                     base(tableName) {
@@ -3929,8 +4009,8 @@ namespace Business {
             public virtual GuidAPColumnDef PayId {
                 get {
                     if (Object.ReferenceEquals(_payId, null)) {
-                        _payId = new GuidAPColumnDef(this, "PayId", false);
-                        _payId.Display = "PayId";
+                        _payId = new GuidAPColumnDef(this, "ID", false);
+                        _payId.Display = "ID";
                     }
                     return _payId;
                 }
@@ -3946,6 +4026,19 @@ namespace Business {
                         _projectid.Display = "Projectid";
                     }
                     return _projectid;
+                }
+            }
+            
+            /// <summary>
+            /// Money ColumnDef
+            /// </summary>
+            public virtual DoubleAPColumnDef Money {
+                get {
+                    if (Object.ReferenceEquals(_money, null)) {
+                        _money = new DoubleAPColumnDef(this, "Money", false);
+                        _money.Display = "总金额";
+                    }
+                    return _money;
                 }
             }
             
@@ -3982,9 +4075,35 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_payDate, null)) {
                         _payDate = new DateTimeAPColumnDef(this, "PayDate", false);
-                        _payDate.Display = "到账时间";
+                        _payDate.Display = "付款时间";
                     }
                     return _payDate;
+                }
+            }
+            
+            /// <summary>
+            /// PayType ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef PayType {
+                get {
+                    if (Object.ReferenceEquals(_payType, null)) {
+                        _payType = new GuidAPColumnDef(this, "PayType", false);
+                        _payType.Display = "付款类型";
+                    }
+                    return _payType;
+                }
+            }
+            
+            /// <summary>
+            /// ResourceId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef ResourceId {
+                get {
+                    if (Object.ReferenceEquals(_resourceId, null)) {
+                        _resourceId = new GuidAPColumnDef(this, "ResourceId", false);
+                        _resourceId.Display = "ResourceId";
+                    }
+                    return _resourceId;
                 }
             }
             
@@ -4010,9 +4129,12 @@ namespace Business {
             public virtual void Fullup(IDataReader reader, ProjectPay data, bool throwIfValidColumnName) {
                 data.PayId = PayId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.Projectid = Projectid.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.Money = Money.GetValue<double>(reader, throwIfValidColumnName, 0);
                 data.RateOfProgress = RateOfProgress.GetValue<double>(reader, throwIfValidColumnName, 0);
                 data.InvoiceDate = InvoiceDate.GetValue<System.DateTime>(reader, throwIfValidColumnName);
                 data.PayDate = PayDate.GetValue<System.DateTime>(reader, throwIfValidColumnName);
+                data.PayType = PayType.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.ResourceId = ResourceId.GetValue<System.Guid>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -4054,6 +4176,286 @@ namespace Business {
             /// </summary>
             public virtual List<ProjectPay> TolerantMapList(IDataReader reader) {
                 List<ProjectPay> list = new List<ProjectPay>();
+                try {
+                    for (; reader.Read(); ) {
+                        list.Add(TolerantMap(reader));
+                    }
+                }
+                finally {
+                    reader.Close();
+                }
+                return list;
+            }
+        }
+        
+        [Serializable()]
+        public partial class MileStoneTableDef : APTableDef {
+            
+            private GuidAPColumnDef _stoneId;
+            
+            private StringAPColumnDef _stoneName;
+            
+            private GuidAPColumnDef _stoneStatus;
+            
+            public MileStoneTableDef(string tableName) : 
+                    base(tableName) {
+            }
+            
+            protected MileStoneTableDef(string tableName, string alias) : 
+                    base(tableName, alias) {
+            }
+            
+            /// <summary>
+            /// StoneId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef StoneId {
+                get {
+                    if (Object.ReferenceEquals(_stoneId, null)) {
+                        _stoneId = new GuidAPColumnDef(this, "ID", false);
+                        _stoneId.Display = "ID";
+                    }
+                    return _stoneId;
+                }
+            }
+            
+            /// <summary>
+            /// StoneName ColumnDef
+            /// </summary>
+            public virtual StringAPColumnDef StoneName {
+                get {
+                    if (Object.ReferenceEquals(_stoneName, null)) {
+                        _stoneName = new StringAPColumnDef(this, "Name", false, 100);
+                        _stoneName.Display = "里程碑名称";
+                    }
+                    return _stoneName;
+                }
+            }
+            
+            /// <summary>
+            /// StoneStatus ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef StoneStatus {
+                get {
+                    if (Object.ReferenceEquals(_stoneStatus, null)) {
+                        _stoneStatus = new GuidAPColumnDef(this, "Status", false);
+                        _stoneStatus.Display = "里程碑状态";
+                    }
+                    return _stoneStatus;
+                }
+            }
+            
+            /// <summary>
+            /// Default Index
+            /// </summary>
+            public virtual APSqlOrderPhrase DefaultOrder {
+                get {
+                    return null;
+                }
+            }
+            
+            /// <summary>
+            /// Create a alias table
+            /// </summary>
+            public virtual MileStoneTableDef As(string name) {
+                return new MileStoneTableDef("MileStone", name);
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual void Fullup(IDataReader reader, MileStone data, bool throwIfValidColumnName) {
+                data.StoneId = StoneId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.StoneName = StoneName.GetValue<string>(reader, throwIfValidColumnName);
+                data.StoneStatus = StoneStatus.GetValue<System.Guid>(reader, throwIfValidColumnName);
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual MileStone Map(IDataReader reader) {
+                MileStone data = new MileStone();
+                Fullup(reader, data, true);
+                return data;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual MileStone TolerantMap(IDataReader reader) {
+                MileStone data = new MileStone();
+                Fullup(reader, data, false);
+                return data;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual List<MileStone> MapList(IDataReader reader) {
+                List<MileStone> list = new List<MileStone>();
+                try {
+                    for (; reader.Read(); ) {
+                        list.Add(Map(reader));
+                    }
+                }
+                finally {
+                    reader.Close();
+                }
+                return list;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual List<MileStone> TolerantMapList(IDataReader reader) {
+                List<MileStone> list = new List<MileStone>();
+                try {
+                    for (; reader.Read(); ) {
+                        list.Add(TolerantMap(reader));
+                    }
+                }
+                finally {
+                    reader.Close();
+                }
+                return list;
+            }
+        }
+        
+        [Serializable()]
+        public partial class ProjectMileStoneTableDef : APTableDef {
+            
+            private GuidAPColumnDef _id;
+            
+            private GuidAPColumnDef _stoneId;
+            
+            private GuidAPColumnDef _projectid;
+            
+            private GuidAPColumnDef _folderId;
+            
+            public ProjectMileStoneTableDef(string tableName) : 
+                    base(tableName) {
+            }
+            
+            protected ProjectMileStoneTableDef(string tableName, string alias) : 
+                    base(tableName, alias) {
+            }
+            
+            /// <summary>
+            /// Id ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef Id {
+                get {
+                    if (Object.ReferenceEquals(_id, null)) {
+                        _id = new GuidAPColumnDef(this, "ID", false);
+                        _id.Display = "ID";
+                    }
+                    return _id;
+                }
+            }
+            
+            /// <summary>
+            /// StoneId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef StoneId {
+                get {
+                    if (Object.ReferenceEquals(_stoneId, null)) {
+                        _stoneId = new GuidAPColumnDef(this, "StoneId", false);
+                        _stoneId.Display = "程碑ID";
+                    }
+                    return _stoneId;
+                }
+            }
+            
+            /// <summary>
+            /// Projectid ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef Projectid {
+                get {
+                    if (Object.ReferenceEquals(_projectid, null)) {
+                        _projectid = new GuidAPColumnDef(this, "Projectid", true);
+                        _projectid.Display = "Projectid";
+                    }
+                    return _projectid;
+                }
+            }
+            
+            /// <summary>
+            /// FolderId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef FolderId {
+                get {
+                    if (Object.ReferenceEquals(_folderId, null)) {
+                        _folderId = new GuidAPColumnDef(this, "FolderId", false);
+                        _folderId.Display = "FolderId";
+                    }
+                    return _folderId;
+                }
+            }
+            
+            /// <summary>
+            /// Default Index
+            /// </summary>
+            public virtual APSqlOrderPhrase DefaultOrder {
+                get {
+                    return null;
+                }
+            }
+            
+            /// <summary>
+            /// Create a alias table
+            /// </summary>
+            public virtual ProjectMileStoneTableDef As(string name) {
+                return new ProjectMileStoneTableDef("ProjectMileStone", name);
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual void Fullup(IDataReader reader, ProjectMileStone data, bool throwIfValidColumnName) {
+                data.Id = Id.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.StoneId = StoneId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.Projectid = Projectid.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.FolderId = FolderId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual ProjectMileStone Map(IDataReader reader) {
+                ProjectMileStone data = new ProjectMileStone();
+                Fullup(reader, data, true);
+                return data;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual ProjectMileStone TolerantMap(IDataReader reader) {
+                ProjectMileStone data = new ProjectMileStone();
+                Fullup(reader, data, false);
+                return data;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual List<ProjectMileStone> MapList(IDataReader reader) {
+                List<ProjectMileStone> list = new List<ProjectMileStone>();
+                try {
+                    for (; reader.Read(); ) {
+                        list.Add(Map(reader));
+                    }
+                }
+                finally {
+                    reader.Close();
+                }
+                return list;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual List<ProjectMileStone> TolerantMapList(IDataReader reader) {
+                List<ProjectMileStone> list = new List<ProjectMileStone>();
                 try {
                     for (; reader.Read(); ) {
                         list.Add(TolerantMap(reader));
@@ -12000,7 +12402,7 @@ namespace Business {
             /// Insert Data.
             /// </summary>
             public virtual void Insert(Project data) {
-                var query = APQuery.insert(APDBDef.Project).values(APDBDef.Project.ProjectId.SetValue(data.ProjectId), APDBDef.Project.ProjectName.SetValue(data.ProjectName), APDBDef.Project.Description.SetValue(data.Description), APDBDef.Project.ProjectStatus.SetValue(data.ProjectStatus), APDBDef.Project.ProjectType.SetValue(data.ProjectType), APDBDef.Project.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.Project.PMId.SetValue(data.PMId), APDBDef.Project.CreatorId.SetValue(data.CreatorId), APDBDef.Project.StartDate.SetValue(data.StartDate), APDBDef.Project.EndDate.SetValue(data.EndDate), APDBDef.Project.RealStartDate.SetValue(data.RealStartDate), APDBDef.Project.RealEndDate.SetValue(data.RealEndDate), APDBDef.Project.ProjectOwner.SetValue(data.ProjectOwner), APDBDef.Project.CreateDate.SetValue(data.CreateDate), APDBDef.Project.ModifyDate.SetValue(data.ModifyDate), APDBDef.Project.OrgId.SetValue(data.OrgId), APDBDef.Project.Code.SetValue(data.Code), APDBDef.Project.RealCode.SetValue(data.RealCode), APDBDef.Project.ReviewerId.SetValue(data.ReviewerId), APDBDef.Project.ProjectExecutor.SetValue(data.ProjectExecutor), APDBDef.Project.ManagerId.SetValue(data.ManagerId), APDBDef.Project.ProcessName.SetValue(data.ProcessName));
+                var query = APQuery.insert(APDBDef.Project).values(APDBDef.Project.ProjectId.SetValue(data.ProjectId), APDBDef.Project.ProjectName.SetValue(data.ProjectName), APDBDef.Project.Description.SetValue(data.Description), APDBDef.Project.ProjectStatus.SetValue(data.ProjectStatus), APDBDef.Project.ProjectType.SetValue(data.ProjectType), APDBDef.Project.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.Project.PMId.SetValue(data.PMId), APDBDef.Project.CreatorId.SetValue(data.CreatorId), APDBDef.Project.StartDate.SetValue(data.StartDate), APDBDef.Project.EndDate.SetValue(data.EndDate), APDBDef.Project.RealStartDate.SetValue(data.RealStartDate), APDBDef.Project.RealEndDate.SetValue(data.RealEndDate), APDBDef.Project.ProjectOwner.SetValue(data.ProjectOwner), APDBDef.Project.CreateDate.SetValue(data.CreateDate), APDBDef.Project.ModifyDate.SetValue(data.ModifyDate), APDBDef.Project.OrgId.SetValue(data.OrgId), APDBDef.Project.Code.SetValue(data.Code), APDBDef.Project.RealCode.SetValue(data.RealCode), APDBDef.Project.ReviewerId.SetValue(data.ReviewerId), APDBDef.Project.ProjectExecutor.SetValue(data.ProjectExecutor), APDBDef.Project.ManagerId.SetValue(data.ManagerId), APDBDef.Project.ProcessName.SetValue(data.ProcessName), APDBDef.Project.CheckDate.SetValue(data.CheckDate));
                 ExecuteNonQuery(query);
             }
             
@@ -12008,7 +12410,7 @@ namespace Business {
             /// Update Data.
             /// </summary>
             public virtual void Update(Project data) {
-                var query = APQuery.update(APDBDef.Project).values(APDBDef.Project.ProjectName.SetValue(data.ProjectName), APDBDef.Project.Description.SetValue(data.Description), APDBDef.Project.ProjectStatus.SetValue(data.ProjectStatus), APDBDef.Project.ProjectType.SetValue(data.ProjectType), APDBDef.Project.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.Project.PMId.SetValue(data.PMId), APDBDef.Project.CreatorId.SetValue(data.CreatorId), APDBDef.Project.StartDate.SetValue(data.StartDate), APDBDef.Project.EndDate.SetValue(data.EndDate), APDBDef.Project.RealStartDate.SetValue(data.RealStartDate), APDBDef.Project.RealEndDate.SetValue(data.RealEndDate), APDBDef.Project.ProjectOwner.SetValue(data.ProjectOwner), APDBDef.Project.CreateDate.SetValue(data.CreateDate), APDBDef.Project.ModifyDate.SetValue(data.ModifyDate), APDBDef.Project.OrgId.SetValue(data.OrgId), APDBDef.Project.Code.SetValue(data.Code), APDBDef.Project.RealCode.SetValue(data.RealCode), APDBDef.Project.ReviewerId.SetValue(data.ReviewerId), APDBDef.Project.ProjectExecutor.SetValue(data.ProjectExecutor), APDBDef.Project.ManagerId.SetValue(data.ManagerId), APDBDef.Project.ProcessName.SetValue(data.ProcessName)).where((APDBDef.Project.ProjectId == data.ProjectId));
+                var query = APQuery.update(APDBDef.Project).values(APDBDef.Project.ProjectName.SetValue(data.ProjectName), APDBDef.Project.Description.SetValue(data.Description), APDBDef.Project.ProjectStatus.SetValue(data.ProjectStatus), APDBDef.Project.ProjectType.SetValue(data.ProjectType), APDBDef.Project.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.Project.PMId.SetValue(data.PMId), APDBDef.Project.CreatorId.SetValue(data.CreatorId), APDBDef.Project.StartDate.SetValue(data.StartDate), APDBDef.Project.EndDate.SetValue(data.EndDate), APDBDef.Project.RealStartDate.SetValue(data.RealStartDate), APDBDef.Project.RealEndDate.SetValue(data.RealEndDate), APDBDef.Project.ProjectOwner.SetValue(data.ProjectOwner), APDBDef.Project.CreateDate.SetValue(data.CreateDate), APDBDef.Project.ModifyDate.SetValue(data.ModifyDate), APDBDef.Project.OrgId.SetValue(data.OrgId), APDBDef.Project.Code.SetValue(data.Code), APDBDef.Project.RealCode.SetValue(data.RealCode), APDBDef.Project.ReviewerId.SetValue(data.ReviewerId), APDBDef.Project.ProjectExecutor.SetValue(data.ProjectExecutor), APDBDef.Project.ManagerId.SetValue(data.ManagerId), APDBDef.Project.ProcessName.SetValue(data.ProcessName), APDBDef.Project.CheckDate.SetValue(data.CheckDate)).where((APDBDef.Project.ProjectId == data.ProjectId));
                 ExecuteNonQuery(query);
             }
             
@@ -12532,7 +12934,7 @@ namespace Business {
             /// Insert Data.
             /// </summary>
             public virtual void Insert(ProjectPay data) {
-                var query = APQuery.insert(APDBDef.ProjectPay).values(APDBDef.ProjectPay.PayId.SetValue(data.PayId), APDBDef.ProjectPay.Projectid.SetValue(data.Projectid), APDBDef.ProjectPay.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.ProjectPay.InvoiceDate.SetValue(data.InvoiceDate), APDBDef.ProjectPay.PayDate.SetValue(data.PayDate));
+                var query = APQuery.insert(APDBDef.ProjectPay).values(APDBDef.ProjectPay.PayId.SetValue(data.PayId), APDBDef.ProjectPay.Projectid.SetValue(data.Projectid), APDBDef.ProjectPay.Money.SetValue(data.Money), APDBDef.ProjectPay.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.ProjectPay.InvoiceDate.SetValue(data.InvoiceDate), APDBDef.ProjectPay.PayDate.SetValue(data.PayDate), APDBDef.ProjectPay.PayType.SetValue(data.PayType), APDBDef.ProjectPay.ResourceId.SetValue(data.ResourceId));
                 ExecuteNonQuery(query);
             }
             
@@ -12540,7 +12942,7 @@ namespace Business {
             /// Update Data.
             /// </summary>
             public virtual void Update(ProjectPay data) {
-                var query = APQuery.update(APDBDef.ProjectPay).values(APDBDef.ProjectPay.Projectid.SetValue(data.Projectid), APDBDef.ProjectPay.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.ProjectPay.InvoiceDate.SetValue(data.InvoiceDate), APDBDef.ProjectPay.PayDate.SetValue(data.PayDate)).where((APDBDef.ProjectPay.PayId == data.PayId));
+                var query = APQuery.update(APDBDef.ProjectPay).values(APDBDef.ProjectPay.Projectid.SetValue(data.Projectid), APDBDef.ProjectPay.Money.SetValue(data.Money), APDBDef.ProjectPay.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.ProjectPay.InvoiceDate.SetValue(data.InvoiceDate), APDBDef.ProjectPay.PayDate.SetValue(data.PayDate), APDBDef.ProjectPay.PayType.SetValue(data.PayType), APDBDef.ProjectPay.ResourceId.SetValue(data.ResourceId)).where((APDBDef.ProjectPay.PayId == data.PayId));
                 ExecuteNonQuery(query);
             }
             
@@ -12645,6 +13047,272 @@ namespace Business {
             }
             
             public ProjectPayDal(APDatabase db) : 
+                    base(db) {
+            }
+        }
+        
+        /// <summary>
+        ///  DalBase
+        /// </summary>
+        public partial class MileStoneDalBase : APDal {
+            
+            public MileStoneDalBase() {
+            }
+            
+            public MileStoneDalBase(APDatabase db) : 
+                    base(db) {
+            }
+            
+            /// <summary>
+            /// Insert Data.
+            /// </summary>
+            public virtual void Insert(MileStone data) {
+                var query = APQuery.insert(APDBDef.MileStone).values(APDBDef.MileStone.StoneId.SetValue(data.StoneId), APDBDef.MileStone.StoneName.SetValue(data.StoneName), APDBDef.MileStone.StoneStatus.SetValue(data.StoneStatus));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public virtual void Update(MileStone data) {
+                var query = APQuery.update(APDBDef.MileStone).values(APDBDef.MileStone.StoneName.SetValue(data.StoneName), APDBDef.MileStone.StoneStatus.SetValue(data.StoneStatus)).where((APDBDef.MileStone.StoneId == data.StoneId));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public virtual void UpdatePartial(System.Guid stoneId, Object metadata) {
+                var query = APQuery.update(APDBDef.MileStone).values(APSqlSetPhraseSelector.Select(APDBDef.MileStone, metadata)).where((APDBDef.MileStone.StoneId == stoneId));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Delete data by primary key.
+            /// </summary>
+            public virtual void PrimaryDelete(System.Guid stoneId) {
+                var query = APQuery.delete(APDBDef.MileStone).where((APDBDef.MileStone.StoneId == stoneId));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Delete data by condition.
+            /// </summary>
+            public virtual void ConditionDelete(APSqlWherePhrase condition) {
+                var query = APQuery.delete(APDBDef.MileStone).where(condition);
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Query count by condition.
+            /// </summary>
+            public virtual int ConditionQueryCount(APSqlWherePhrase condition) {
+                var query = APQuery.select(APDBDef.MileStone.Asterisk.Count()).from(APDBDef.MileStone).where(condition);
+                return ExecuteCount(query);
+            }
+            
+            /// <summary>
+            /// Get data by PK.
+            /// </summary>
+            public virtual MileStone PrimaryGet(System.Guid stoneId) {
+                var query = APQuery.select(APDBDef.MileStone.Asterisk).from(APDBDef.MileStone).where((APDBDef.MileStone.StoneId == stoneId));
+                IDataReader reader = ExecuteReader(query);
+                try {
+                    if (reader.Read()) {
+                        return APDBDef.MileStone.Map(reader);
+                    }
+                    return null;
+                }
+                finally {
+                    reader.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public virtual List<MileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+                var query = APQuery.select(APDBDef.MileStone.Asterisk).from(APDBDef.MileStone);
+                if ((condition != null)) {
+                    query.where(condition);
+                }
+                if ((orderBy != null)) {
+                    query.order_by(orderBy);
+                }
+                if ((take != null)) {
+                    query.take(take);
+                }
+                if ((skip != null)) {
+                    query.skip(skip);
+                }
+                query.primary(APDBDef.MileStone.StoneId);
+                IDataReader reader = ExecuteReader(query);
+                return APDBDef.MileStone.MapList(reader);
+            }
+            
+            /// <summary>
+            /// Get the initial data of the table.
+            /// </summary>
+            public virtual List<MileStone> GetInitData() {
+                return new List<MileStone>();
+            }
+            
+            /// <summary>
+            /// Initialize data.
+            /// </summary>
+            public virtual void InitData(APDBDef db) {
+                List<MileStone> list = GetInitData();
+                for (int i = 0; (i < list.Count); i = (i + 1)) {
+                    MileStone data = list[i];
+                    if ((PrimaryGet(data.StoneId) == null)) {
+                        Insert(data);
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        ///  Dal
+        /// </summary>
+        public partial class MileStoneDal : MileStoneDalBase {
+            
+            public MileStoneDal() {
+            }
+            
+            public MileStoneDal(APDatabase db) : 
+                    base(db) {
+            }
+        }
+        
+        /// <summary>
+        ///  DalBase
+        /// </summary>
+        public partial class ProjectMileStoneDalBase : APDal {
+            
+            public ProjectMileStoneDalBase() {
+            }
+            
+            public ProjectMileStoneDalBase(APDatabase db) : 
+                    base(db) {
+            }
+            
+            /// <summary>
+            /// Insert Data.
+            /// </summary>
+            public virtual void Insert(ProjectMileStone data) {
+                var query = APQuery.insert(APDBDef.ProjectMileStone).values(APDBDef.ProjectMileStone.Id.SetValue(data.Id), APDBDef.ProjectMileStone.StoneId.SetValue(data.StoneId), APDBDef.ProjectMileStone.Projectid.SetValue(data.Projectid), APDBDef.ProjectMileStone.FolderId.SetValue(data.FolderId));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public virtual void Update(ProjectMileStone data) {
+                var query = APQuery.update(APDBDef.ProjectMileStone).values(APDBDef.ProjectMileStone.StoneId.SetValue(data.StoneId), APDBDef.ProjectMileStone.Projectid.SetValue(data.Projectid), APDBDef.ProjectMileStone.FolderId.SetValue(data.FolderId)).where((APDBDef.ProjectMileStone.Id == data.Id));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public virtual void UpdatePartial(System.Guid id, Object metadata) {
+                var query = APQuery.update(APDBDef.ProjectMileStone).values(APSqlSetPhraseSelector.Select(APDBDef.ProjectMileStone, metadata)).where((APDBDef.ProjectMileStone.Id == id));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Delete data by primary key.
+            /// </summary>
+            public virtual void PrimaryDelete(System.Guid id) {
+                var query = APQuery.delete(APDBDef.ProjectMileStone).where((APDBDef.ProjectMileStone.Id == id));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Delete data by condition.
+            /// </summary>
+            public virtual void ConditionDelete(APSqlWherePhrase condition) {
+                var query = APQuery.delete(APDBDef.ProjectMileStone).where(condition);
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Query count by condition.
+            /// </summary>
+            public virtual int ConditionQueryCount(APSqlWherePhrase condition) {
+                var query = APQuery.select(APDBDef.ProjectMileStone.Asterisk.Count()).from(APDBDef.ProjectMileStone).where(condition);
+                return ExecuteCount(query);
+            }
+            
+            /// <summary>
+            /// Get data by PK.
+            /// </summary>
+            public virtual ProjectMileStone PrimaryGet(System.Guid id) {
+                var query = APQuery.select(APDBDef.ProjectMileStone.Asterisk).from(APDBDef.ProjectMileStone).where((APDBDef.ProjectMileStone.Id == id));
+                IDataReader reader = ExecuteReader(query);
+                try {
+                    if (reader.Read()) {
+                        return APDBDef.ProjectMileStone.Map(reader);
+                    }
+                    return null;
+                }
+                finally {
+                    reader.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public virtual List<ProjectMileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+                var query = APQuery.select(APDBDef.ProjectMileStone.Asterisk).from(APDBDef.ProjectMileStone);
+                if ((condition != null)) {
+                    query.where(condition);
+                }
+                if ((orderBy != null)) {
+                    query.order_by(orderBy);
+                }
+                if ((take != null)) {
+                    query.take(take);
+                }
+                if ((skip != null)) {
+                    query.skip(skip);
+                }
+                query.primary(APDBDef.ProjectMileStone.Id);
+                IDataReader reader = ExecuteReader(query);
+                return APDBDef.ProjectMileStone.MapList(reader);
+            }
+            
+            /// <summary>
+            /// Get the initial data of the table.
+            /// </summary>
+            public virtual List<ProjectMileStone> GetInitData() {
+                return new List<ProjectMileStone>();
+            }
+            
+            /// <summary>
+            /// Initialize data.
+            /// </summary>
+            public virtual void InitData(APDBDef db) {
+                List<ProjectMileStone> list = GetInitData();
+                for (int i = 0; (i < list.Count); i = (i + 1)) {
+                    ProjectMileStone data = list[i];
+                    if ((PrimaryGet(data.Id) == null)) {
+                        Insert(data);
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        ///  Dal
+        /// </summary>
+        public partial class ProjectMileStoneDal : ProjectMileStoneDalBase {
+            
+            public ProjectMileStoneDal() {
+            }
+            
+            public ProjectMileStoneDal(APDatabase db) : 
                     base(db) {
             }
         }
@@ -18564,6 +19232,304 @@ namespace Business {
         /// 项目款项 Dal
         /// </summary>
         public partial class ProjectPayBpl : ProjectPayBplBase {
+        }
+        
+        /// <summary>
+        ///  BplBase
+        /// </summary>
+        public partial class MileStoneBplBase {
+            
+            /// <summary>
+            /// Insert Data.
+            /// </summary>
+            public static void Insert(MileStone data) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.MileStoneDal.Insert(data);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public static void Update(MileStone data) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.MileStoneDal.Update(data);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public static void UpdatePartial(System.Guid stoneId, Object metadata) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.MileStoneDal.UpdatePartial(stoneId, metadata);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Delete data by primary key.
+            /// </summary>
+            public static void PrimaryDelete(System.Guid stoneId) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.MileStoneDal.PrimaryDelete(stoneId);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Delete data by condition.
+            /// </summary>
+            public static void ConditionDelete(APSqlWherePhrase condition) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.MileStoneDal.ConditionDelete(condition);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query count by condition.
+            /// </summary>
+            public static int ConditionQueryCount(APSqlWherePhrase condition) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.MileStoneDal.ConditionQueryCount(condition);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Get data by PK.
+            /// </summary>
+            public static MileStone PrimaryGet(System.Guid stoneId) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.MileStoneDal.PrimaryGet(stoneId);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<MileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.MileStoneDal.ConditionQuery(condition, orderBy, take, skip);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<MileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.MileStoneDal.ConditionQuery(condition, orderBy, take, null);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<MileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.MileStoneDal.ConditionQuery(condition, orderBy, null, null);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Get all data.
+            /// </summary>
+            public static List<MileStone> GetAll() {
+                return ConditionQuery(null, null);
+            }
+        }
+        
+        /// <summary>
+        ///  Dal
+        /// </summary>
+        public partial class MileStoneBpl : MileStoneBplBase {
+        }
+        
+        /// <summary>
+        ///  BplBase
+        /// </summary>
+        public partial class ProjectMileStoneBplBase {
+            
+            /// <summary>
+            /// Insert Data.
+            /// </summary>
+            public static void Insert(ProjectMileStone data) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.ProjectMileStoneDal.Insert(data);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public static void Update(ProjectMileStone data) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.ProjectMileStoneDal.Update(data);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public static void UpdatePartial(System.Guid id, Object metadata) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.ProjectMileStoneDal.UpdatePartial(id, metadata);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Delete data by primary key.
+            /// </summary>
+            public static void PrimaryDelete(System.Guid id) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.ProjectMileStoneDal.PrimaryDelete(id);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Delete data by condition.
+            /// </summary>
+            public static void ConditionDelete(APSqlWherePhrase condition) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.ProjectMileStoneDal.ConditionDelete(condition);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query count by condition.
+            /// </summary>
+            public static int ConditionQueryCount(APSqlWherePhrase condition) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.ProjectMileStoneDal.ConditionQueryCount(condition);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Get data by PK.
+            /// </summary>
+            public static ProjectMileStone PrimaryGet(System.Guid id) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.ProjectMileStoneDal.PrimaryGet(id);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<ProjectMileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.ProjectMileStoneDal.ConditionQuery(condition, orderBy, take, skip);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<ProjectMileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.ProjectMileStoneDal.ConditionQuery(condition, orderBy, take, null);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<ProjectMileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.ProjectMileStoneDal.ConditionQuery(condition, orderBy, null, null);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Get all data.
+            /// </summary>
+            public static List<ProjectMileStone> GetAll() {
+                return ConditionQuery(null, null);
+            }
+        }
+        
+        /// <summary>
+        ///  Dal
+        /// </summary>
+        public partial class ProjectMileStoneBpl : ProjectMileStoneBplBase {
         }
         
         /// <summary>
@@ -25889,6 +26855,11 @@ namespace Business {
         private string _processName;
         
         /// <summary>
+        /// CheckDate
+        /// </summary>
+        private System.DateTime _checkDate;
+        
+        /// <summary>
         /// Default constructor.
         /// </summary>
         public ProjectBase() {
@@ -25919,7 +26890,8 @@ namespace Business {
                     System.Guid reviewerId, 
                     string projectExecutor, 
                     System.Guid managerId, 
-                    string processName) {
+                    string processName, 
+                    System.DateTime checkDate) {
             _projectId = projectId;
             _projectName = projectName;
             _description = description;
@@ -25942,6 +26914,7 @@ namespace Business {
             _projectExecutor = projectExecutor;
             _managerId = managerId;
             _processName = processName;
+            _checkDate = checkDate;
         }
         
         /// <summary>
@@ -26437,6 +27410,28 @@ namespace Business {
         }
         
         /// <summary>
+        /// CheckDate
+        /// </summary>
+        [Display(Name="验收时间")]
+        public virtual System.DateTime CheckDate {
+            get {
+                return _checkDate;
+            }
+            set {
+                _checkDate = value;
+            }
+        }
+        
+        /// <summary>
+        /// CheckDate APColumnDef
+        /// </summary>
+        public static DateTimeAPColumnDef CheckDateDef {
+            get {
+                return APDBDef.Project.CheckDate;
+            }
+        }
+        
+        /// <summary>
         /// ProjectTableDef APTableDef
         /// </summary>
         public static APDBDef.ProjectTableDef TableDef {
@@ -26480,6 +27475,7 @@ namespace Business {
             ProjectExecutor = data.ProjectExecutor;
             ManagerId = data.ManagerId;
             ProcessName = data.ProcessName;
+            CheckDate = data.CheckDate;
         }
         
         /// <summary>
@@ -26550,6 +27546,9 @@ namespace Business {
                 return false;
             }
             if ((ProcessName != data.ProcessName)) {
+                return false;
+            }
+            if ((CheckDate != data.CheckDate)) {
                 return false;
             }
             return true;
@@ -26670,8 +27669,9 @@ namespace Business {
                     System.Guid reviewerId, 
                     string projectExecutor, 
                     System.Guid managerId, 
-                    string processName) : 
-                base(projectId, projectName, description, projectStatus, projectType, rateOfProgress, pMId, creatorId, startDate, endDate, realStartDate, realEndDate, projectOwner, createDate, modifyDate, orgId, code, realCode, reviewerId, projectExecutor, managerId, processName) {
+                    string processName, 
+                    System.DateTime checkDate) : 
+                base(projectId, projectName, description, projectStatus, projectType, rateOfProgress, pMId, creatorId, startDate, endDate, realStartDate, realEndDate, projectOwner, createDate, modifyDate, orgId, code, realCode, reviewerId, projectExecutor, managerId, processName, checkDate) {
         }
     }
     
@@ -28262,6 +29262,11 @@ namespace Business {
         private System.Guid _projectid;
         
         /// <summary>
+        /// Money
+        /// </summary>
+        private double _money = 0;
+        
+        /// <summary>
         /// RateOfProgress
         /// </summary>
         private double _rateOfProgress = 0;
@@ -28277,6 +29282,16 @@ namespace Business {
         private System.DateTime _payDate;
         
         /// <summary>
+        /// PayType
+        /// </summary>
+        private System.Guid _payType;
+        
+        /// <summary>
+        /// ResourceId
+        /// </summary>
+        private System.Guid _resourceId;
+        
+        /// <summary>
         /// Default constructor.
         /// </summary>
         public ProjectPayBase() {
@@ -28285,12 +29300,15 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public ProjectPayBase(System.Guid payId, System.Guid projectid, double rateOfProgress, System.DateTime invoiceDate, System.DateTime payDate) {
+        public ProjectPayBase(System.Guid payId, System.Guid projectid, double money, double rateOfProgress, System.DateTime invoiceDate, System.DateTime payDate, System.Guid payType, System.Guid resourceId) {
             _payId = payId;
             _projectid = projectid;
+            _money = money;
             _rateOfProgress = rateOfProgress;
             _invoiceDate = invoiceDate;
             _payDate = payDate;
+            _payType = payType;
+            _resourceId = resourceId;
         }
         
         /// <summary>
@@ -28332,6 +29350,28 @@ namespace Business {
         public static GuidAPColumnDef ProjectidDef {
             get {
                 return APDBDef.ProjectPay.Projectid;
+            }
+        }
+        
+        /// <summary>
+        /// Money
+        /// </summary>
+        [Display(Name="总金额")]
+        public virtual double Money {
+            get {
+                return _money;
+            }
+            set {
+                _money = value;
+            }
+        }
+        
+        /// <summary>
+        /// Money APColumnDef
+        /// </summary>
+        public static DoubleAPColumnDef MoneyDef {
+            get {
+                return APDBDef.ProjectPay.Money;
             }
         }
         
@@ -28382,7 +29422,7 @@ namespace Business {
         /// <summary>
         /// PayDate
         /// </summary>
-        [Display(Name="到账时间")]
+        [Display(Name="付款时间")]
         public virtual System.DateTime PayDate {
             get {
                 return _payDate;
@@ -28398,6 +29438,49 @@ namespace Business {
         public static DateTimeAPColumnDef PayDateDef {
             get {
                 return APDBDef.ProjectPay.PayDate;
+            }
+        }
+        
+        /// <summary>
+        /// PayType
+        /// </summary>
+        [Display(Name="付款类型")]
+        public virtual System.Guid PayType {
+            get {
+                return _payType;
+            }
+            set {
+                _payType = value;
+            }
+        }
+        
+        /// <summary>
+        /// PayType APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef PayTypeDef {
+            get {
+                return APDBDef.ProjectPay.PayType;
+            }
+        }
+        
+        /// <summary>
+        /// ResourceId
+        /// </summary>
+        public virtual System.Guid ResourceId {
+            get {
+                return _resourceId;
+            }
+            set {
+                _resourceId = value;
+            }
+        }
+        
+        /// <summary>
+        /// ResourceId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef ResourceIdDef {
+            get {
+                return APDBDef.ProjectPay.ResourceId;
             }
         }
         
@@ -28425,9 +29508,12 @@ namespace Business {
         public virtual void Assignment(ProjectPay data) {
             PayId = data.PayId;
             Projectid = data.Projectid;
+            Money = data.Money;
             RateOfProgress = data.RateOfProgress;
             InvoiceDate = data.InvoiceDate;
             PayDate = data.PayDate;
+            PayType = data.PayType;
+            ResourceId = data.ResourceId;
         }
         
         /// <summary>
@@ -28440,6 +29526,9 @@ namespace Business {
             if ((Projectid != data.Projectid)) {
                 return false;
             }
+            if ((Money != data.Money)) {
+                return false;
+            }
             if ((RateOfProgress != data.RateOfProgress)) {
                 return false;
             }
@@ -28447,6 +29536,12 @@ namespace Business {
                 return false;
             }
             if ((PayDate != data.PayDate)) {
+                return false;
+            }
+            if ((PayType != data.PayType)) {
+                return false;
+            }
+            if ((ResourceId != data.ResourceId)) {
                 return false;
             }
             return true;
@@ -28545,8 +29640,523 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public ProjectPay(System.Guid payId, System.Guid projectid, double rateOfProgress, System.DateTime invoiceDate, System.DateTime payDate) : 
-                base(payId, projectid, rateOfProgress, invoiceDate, payDate) {
+        public ProjectPay(System.Guid payId, System.Guid projectid, double money, double rateOfProgress, System.DateTime invoiceDate, System.DateTime payDate, System.Guid payType, System.Guid resourceId) : 
+                base(payId, projectid, money, rateOfProgress, invoiceDate, payDate, payType, resourceId) {
+        }
+    }
+    
+    /// <summary>
+    ///  Base
+    /// </summary>
+    [Serializable()]
+    public abstract partial class MileStoneBase {
+        
+        /// <summary>
+        /// 里程碑ID
+        /// </summary>
+        private System.Guid _stoneId;
+        
+        /// <summary>
+        /// StoneName
+        /// </summary>
+        private string _stoneName = string.Empty;
+        
+        /// <summary>
+        /// StoneStatus
+        /// </summary>
+        private System.Guid _stoneStatus;
+        
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public MileStoneBase() {
+        }
+        
+        /// <summary>
+        /// Constructor with all field values.
+        /// </summary>
+        public MileStoneBase(System.Guid stoneId, string stoneName, System.Guid stoneStatus) {
+            _stoneId = stoneId;
+            _stoneName = stoneName;
+            _stoneStatus = stoneStatus;
+        }
+        
+        /// <summary>
+        /// 里程碑ID
+        /// </summary>
+        public virtual System.Guid StoneId {
+            get {
+                return _stoneId;
+            }
+            set {
+                _stoneId = value;
+            }
+        }
+        
+        /// <summary>
+        /// 里程碑ID APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef StoneIdDef {
+            get {
+                return APDBDef.MileStone.StoneId;
+            }
+        }
+        
+        /// <summary>
+        /// StoneName
+        /// </summary>
+        [Display(Name="里程碑名称")]
+        [StringLength(100)]
+        public virtual string StoneName {
+            get {
+                return _stoneName;
+            }
+            set {
+                _stoneName = value;
+            }
+        }
+        
+        /// <summary>
+        /// StoneName APColumnDef
+        /// </summary>
+        public static StringAPColumnDef StoneNameDef {
+            get {
+                return APDBDef.MileStone.StoneName;
+            }
+        }
+        
+        /// <summary>
+        /// StoneStatus
+        /// </summary>
+        [Display(Name="里程碑状态")]
+        public virtual System.Guid StoneStatus {
+            get {
+                return _stoneStatus;
+            }
+            set {
+                _stoneStatus = value;
+            }
+        }
+        
+        /// <summary>
+        /// StoneStatus APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef StoneStatusDef {
+            get {
+                return APDBDef.MileStone.StoneStatus;
+            }
+        }
+        
+        /// <summary>
+        /// MileStoneTableDef APTableDef
+        /// </summary>
+        public static APDBDef.MileStoneTableDef TableDef {
+            get {
+                return APDBDef.MileStone;
+            }
+        }
+        
+        /// <summary>
+        /// MileStoneTableDef APSqlAsteriskExpr
+        /// </summary>
+        public static APSqlAsteriskExpr Asterisk {
+            get {
+                return APDBDef.MileStone.Asterisk;
+            }
+        }
+        
+        /// <summary>
+        /// Assignment.
+        /// </summary>
+        public virtual void Assignment(MileStone data) {
+            StoneId = data.StoneId;
+            StoneName = data.StoneName;
+            StoneStatus = data.StoneStatus;
+        }
+        
+        /// <summary>
+        /// Compare equals.
+        /// </summary>
+        public virtual bool CompareEquals(MileStone data) {
+            if ((StoneId != data.StoneId)) {
+                return false;
+            }
+            if ((StoneName != data.StoneName)) {
+                return false;
+            }
+            if ((StoneStatus != data.StoneStatus)) {
+                return false;
+            }
+            return true;
+        }
+        
+        /// <summary>
+        /// Insert Data.
+        /// </summary>
+        public virtual void Insert() {
+            APBplDef.MileStoneBpl.Insert(((MileStone)(this)));
+        }
+        
+        /// <summary>
+        /// Update Data.
+        /// </summary>
+        public virtual void Update() {
+            APBplDef.MileStoneBpl.Update(((MileStone)(this)));
+        }
+        
+        /// <summary>
+        /// Update Data.
+        /// </summary>
+        public static void UpdatePartial(System.Guid stoneId, Object metadata) {
+            APBplDef.MileStoneBpl.UpdatePartial(stoneId, metadata);
+        }
+        
+        /// <summary>
+        /// Delete data by primary key.
+        /// </summary>
+        public static void PrimaryDelete(System.Guid stoneId) {
+            APBplDef.MileStoneBpl.PrimaryDelete(stoneId);
+        }
+        
+        /// <summary>
+        /// Delete data by condition.
+        /// </summary>
+        public static void ConditionDelete(APSqlWherePhrase condition) {
+            APBplDef.MileStoneBpl.ConditionDelete(condition);
+        }
+        
+        /// <summary>
+        /// Query count by condition.
+        /// </summary>
+        public static int ConditionQueryCount(APSqlWherePhrase condition) {
+            return APBplDef.MileStoneBpl.ConditionQueryCount(condition);
+        }
+        
+        /// <summary>
+        /// Get data by PK.
+        /// </summary>
+        public static MileStone PrimaryGet(System.Guid stoneId) {
+            return APBplDef.MileStoneBpl.PrimaryGet(stoneId);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<MileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take, int skip) {
+            return APBplDef.MileStoneBpl.ConditionQuery(condition, orderBy, take, skip);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<MileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take) {
+            return APBplDef.MileStoneBpl.ConditionQuery(condition, orderBy, take);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<MileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+            return APBplDef.MileStoneBpl.ConditionQuery(condition, orderBy);
+        }
+        
+        /// <summary>
+        /// Get all data.
+        /// </summary>
+        public static List<MileStone> GetAll() {
+            return APBplDef.MileStoneBpl.GetAll();
+        }
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    [Serializable()]
+    public partial class MileStone : MileStoneBase {
+        
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public MileStone() {
+        }
+        
+        /// <summary>
+        /// Constructor with all field values.
+        /// </summary>
+        public MileStone(System.Guid stoneId, string stoneName, System.Guid stoneStatus) : 
+                base(stoneId, stoneName, stoneStatus) {
+        }
+    }
+    
+    /// <summary>
+    ///  Base
+    /// </summary>
+    [Serializable()]
+    public abstract partial class ProjectMileStoneBase {
+        
+        /// <summary>
+        /// 项目里程碑ID
+        /// </summary>
+        private System.Guid _id;
+        
+        /// <summary>
+        /// StoneId
+        /// </summary>
+        private System.Guid _stoneId;
+        
+        /// <summary>
+        /// 项目ID
+        /// </summary>
+        private System.Guid _projectid;
+        
+        /// <summary>
+        /// FolderId
+        /// </summary>
+        private System.Guid _folderId;
+        
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public ProjectMileStoneBase() {
+        }
+        
+        /// <summary>
+        /// Constructor with all field values.
+        /// </summary>
+        public ProjectMileStoneBase(System.Guid id, System.Guid stoneId, System.Guid projectid, System.Guid folderId) {
+            _id = id;
+            _stoneId = stoneId;
+            _projectid = projectid;
+            _folderId = folderId;
+        }
+        
+        /// <summary>
+        /// 项目里程碑ID
+        /// </summary>
+        public virtual System.Guid Id {
+            get {
+                return _id;
+            }
+            set {
+                _id = value;
+            }
+        }
+        
+        /// <summary>
+        /// 项目里程碑ID APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef IdDef {
+            get {
+                return APDBDef.ProjectMileStone.Id;
+            }
+        }
+        
+        /// <summary>
+        /// StoneId
+        /// </summary>
+        [Display(Name="程碑ID")]
+        public virtual System.Guid StoneId {
+            get {
+                return _stoneId;
+            }
+            set {
+                _stoneId = value;
+            }
+        }
+        
+        /// <summary>
+        /// StoneId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef StoneIdDef {
+            get {
+                return APDBDef.ProjectMileStone.StoneId;
+            }
+        }
+        
+        /// <summary>
+        /// 项目ID
+        /// </summary>
+        public virtual System.Guid Projectid {
+            get {
+                return _projectid;
+            }
+            set {
+                _projectid = value;
+            }
+        }
+        
+        /// <summary>
+        /// 项目ID APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef ProjectidDef {
+            get {
+                return APDBDef.ProjectMileStone.Projectid;
+            }
+        }
+        
+        /// <summary>
+        /// FolderId
+        /// </summary>
+        public virtual System.Guid FolderId {
+            get {
+                return _folderId;
+            }
+            set {
+                _folderId = value;
+            }
+        }
+        
+        /// <summary>
+        /// FolderId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef FolderIdDef {
+            get {
+                return APDBDef.ProjectMileStone.FolderId;
+            }
+        }
+        
+        /// <summary>
+        /// ProjectMileStoneTableDef APTableDef
+        /// </summary>
+        public static APDBDef.ProjectMileStoneTableDef TableDef {
+            get {
+                return APDBDef.ProjectMileStone;
+            }
+        }
+        
+        /// <summary>
+        /// ProjectMileStoneTableDef APSqlAsteriskExpr
+        /// </summary>
+        public static APSqlAsteriskExpr Asterisk {
+            get {
+                return APDBDef.ProjectMileStone.Asterisk;
+            }
+        }
+        
+        /// <summary>
+        /// Assignment.
+        /// </summary>
+        public virtual void Assignment(ProjectMileStone data) {
+            Id = data.Id;
+            StoneId = data.StoneId;
+            Projectid = data.Projectid;
+            FolderId = data.FolderId;
+        }
+        
+        /// <summary>
+        /// Compare equals.
+        /// </summary>
+        public virtual bool CompareEquals(ProjectMileStone data) {
+            if ((Id != data.Id)) {
+                return false;
+            }
+            if ((StoneId != data.StoneId)) {
+                return false;
+            }
+            if ((Projectid != data.Projectid)) {
+                return false;
+            }
+            if ((FolderId != data.FolderId)) {
+                return false;
+            }
+            return true;
+        }
+        
+        /// <summary>
+        /// Insert Data.
+        /// </summary>
+        public virtual void Insert() {
+            APBplDef.ProjectMileStoneBpl.Insert(((ProjectMileStone)(this)));
+        }
+        
+        /// <summary>
+        /// Update Data.
+        /// </summary>
+        public virtual void Update() {
+            APBplDef.ProjectMileStoneBpl.Update(((ProjectMileStone)(this)));
+        }
+        
+        /// <summary>
+        /// Update Data.
+        /// </summary>
+        public static void UpdatePartial(System.Guid id, Object metadata) {
+            APBplDef.ProjectMileStoneBpl.UpdatePartial(id, metadata);
+        }
+        
+        /// <summary>
+        /// Delete data by primary key.
+        /// </summary>
+        public static void PrimaryDelete(System.Guid id) {
+            APBplDef.ProjectMileStoneBpl.PrimaryDelete(id);
+        }
+        
+        /// <summary>
+        /// Delete data by condition.
+        /// </summary>
+        public static void ConditionDelete(APSqlWherePhrase condition) {
+            APBplDef.ProjectMileStoneBpl.ConditionDelete(condition);
+        }
+        
+        /// <summary>
+        /// Query count by condition.
+        /// </summary>
+        public static int ConditionQueryCount(APSqlWherePhrase condition) {
+            return APBplDef.ProjectMileStoneBpl.ConditionQueryCount(condition);
+        }
+        
+        /// <summary>
+        /// Get data by PK.
+        /// </summary>
+        public static ProjectMileStone PrimaryGet(System.Guid id) {
+            return APBplDef.ProjectMileStoneBpl.PrimaryGet(id);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<ProjectMileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take, int skip) {
+            return APBplDef.ProjectMileStoneBpl.ConditionQuery(condition, orderBy, take, skip);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<ProjectMileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take) {
+            return APBplDef.ProjectMileStoneBpl.ConditionQuery(condition, orderBy, take);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<ProjectMileStone> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+            return APBplDef.ProjectMileStoneBpl.ConditionQuery(condition, orderBy);
+        }
+        
+        /// <summary>
+        /// Get all data.
+        /// </summary>
+        public static List<ProjectMileStone> GetAll() {
+            return APBplDef.ProjectMileStoneBpl.GetAll();
+        }
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    [Serializable()]
+    public partial class ProjectMileStone : ProjectMileStoneBase {
+        
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public ProjectMileStone() {
+        }
+        
+        /// <summary>
+        /// Constructor with all field values.
+        /// </summary>
+        public ProjectMileStone(System.Guid id, System.Guid stoneId, System.Guid projectid, System.Guid folderId) : 
+                base(id, stoneId, projectid, folderId) {
         }
     }
     
