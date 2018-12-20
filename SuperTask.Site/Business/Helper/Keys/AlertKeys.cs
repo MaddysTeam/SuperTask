@@ -22,6 +22,7 @@ namespace Business.Helper
          public const string START_FAIL = "项目启动失败";
          public const string PLAN_FAIL = "项目计划编辑失败";
          public const string NOT_IN_PROCESS = "该项目未处于运行状态";
+         public const string IN_PROCESS = "该项目处于运行状态";
          public const string EARLER_THAN_CHILD_TASK_COMPLETED = "项目结束日期不能早于任务结束日期 或者 项目开始日期不能晚于任务开始日期";
          public const string NOT_ALLOWED_OPERATOR_NULL = "当前操作者不能为空";
          public const string NOT_ALLOWED_ORIGNAL_NULL = "项目不存在";
@@ -152,7 +153,7 @@ namespace Business.Helper
       {
 
          public const string EDIT_SUCCESS = "项目编辑成功！";
-
+         public const string ADD_MILESTONE_SUCCESS = "里程碑绑定成功";
       }
 
 

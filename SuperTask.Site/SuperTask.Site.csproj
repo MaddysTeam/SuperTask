@@ -333,6 +333,7 @@
     <Compile Include="Controllers\EvalTableGroupController.cs" />
     <Compile Include="Controllers\EvalPeriodController.cs" />
     <Compile Include="Controllers\JsonController.cs" />
+    <Compile Include="Controllers\MileStoneController.cs" />
     <Compile Include="Controllers\ProjectManageController.cs" />
     <Compile Include="Controllers\ResourceController.cs" />
     <Compile Include="Controllers\ShareFolderController.cs" />
@@ -1574,6 +1575,8 @@
     <Content Include="Views\Statistic\PersonalScoreDetails.cshtml" />
     <Content Include="Views\Advice\Edit.cshtml" />
     <Content Include="Views\Advice\Search.cshtml" />
+    <Content Include="Views\MileStone\Search.cshtml" />
+    <Content Include="Views\MileStone\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

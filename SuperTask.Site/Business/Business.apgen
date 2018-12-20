@@ -62,10 +62,10 @@
 
 					<add name="AppId" columnName="ID" type="Guid" primaryKey="true" ></add>
 					<add name="Title"  columnName="Title" type="string" dataLength="255" display="标题"></add>
-					<add name="Address" columnName="Address" type="string" dataLength="20000" display="应用地址"></add>
+					<add name="Address" columnName="Address" dataLength="255" type="string"  display="应用地址"></add>
 					<add name="AppType" columnName="Type" type="Guid"></add>
 					<add name="Code"  columnName="Code" type="string" dataLength="200" isNullable="true"></add>
-					<add name="Note"  columnName="Note" type="string" dataLength="20000" isNullable="true" display="应用描述"></add>
+					<add name="Note"  columnName="Note" type="string" dataLength="200" isNullable="true" display="应用描述"></add>
 
 				</columns>
 			</table>
@@ -173,10 +173,9 @@
 					<add name="ReviewerId" columnName="ReviewerId" type="Guid"  isNullable="true" display="审核人ID" />
 					<add name="ProjectExecutor" columnName="Executor"  type="string" dataLength="100"  isNullable="true" display="项目乙方"></add>
 					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true" display="项目经理"/>
-					<add name="ProcessName" type="string"  dataLength="100"   isNullable="true" display="项目进展" ></add>
+					<add name="ProcessName" type="string"  dataLength="100"   isNullable="true" display="项目进展" />
 
-					<add name="CheckDate"  columnName="CheckDate" type="DateTime"  isNullable="true" display="验收时间" />
-					<add name="RealEndDate"  columnName="RealEndDate" type="DateTime"  isNullable="true" display="实际结束时间" />
+					<add name="FolderId" columnName="FolderId" type="Guid" isNullable="true" display="项目文件夹ID"   />
 
 				</columns>
 			</table>
@@ -228,7 +227,7 @@
 					<add name="TaskId" columnName="TaskId" type="Guid"  isNullable="true"  comment="任务ID"/>
 					<add name="ResourceName"  columnName="Name" type="string" dataLength="100"  display="资源名称" ></add>
 					<add name="ResourceTypes"  columnName="Types" type="string" dataLength="200" isNullable="true"  display="资源类型" comment="资源角色用逗号分开"></add>
-					<add name="Description" columnName="Description" type="string" dataLength="40000" isNullable="true"  display="资源描述" />
+					<add name="Description" columnName="Description" type="string" dataLength="1000" isNullable="true"  display="资源描述" />
 					<add name="CreateDate" columnName="CreateDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now"  display="创建时间" />
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" isNullable="true" display="修改时间" />
 					<add name="Status" columnName="Status" type="Guid"  isNullable="true"  display="资源状态" ></add>
@@ -280,7 +279,7 @@
 					<add name="TaskId" columnName="ID" type="Guid"  primaryKey="true" display="任务ID" />
 					<add name="Projectid" columnName="ProjectId" type="Guid" display="项目ID" />
 					<add name="TaskName" columnName="Name" type="string"  dataLength="200" required="true" display="任务名称"/>
-					<add name="Description" columnName="Description" type="string" dataLength="40000"  isNullable="true" display="任务描述"/>
+					<add name="Description" columnName="Description" type="string" dataLength="1000"  isNullable="true" display="任务描述"/>
 					<add name="TaskType"  columnName="Type" type="Guid"  isNullable="true"   display="任务类型" />
 					<add name="TaskLevel"  columnName="Level" type="int"  isNullable="true"  defaultValue="1" display="任务级别" />
 					<add name="TaskStatus"  columnName="Status" type="Guid"  isNullable="true"  display="任务状态" />
@@ -362,7 +361,7 @@
 					<add name="TaskIssueId" columnName="ID" type="Guid"  primaryKey="true" display="任务质量ID" />
 					<add name="TaskId" columnName="TaskId" type="Guid" display="任务ID" />
 					<add name="IssueId" columnName="IssueId" type="Guid" display="问题类型" ></add>
-					<add name="Description" columnName="Description" type="string" dataLength="10000" display="任务质量描述" />
+					<add name="Description" columnName="Description" type="string" dataLength="1000" display="任务质量描述" />
 					<add name="CreateDate" columnName="CreateDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now"  display="创建时间" />
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
 
@@ -385,7 +384,7 @@
 
 					<add name="ItemId" columnName="ID" type="Guid"  primaryKey="true" display="标准项ID" />
 					<add name="ItemName" columnName="Name" type="string" dataLength="100" display="标准项名称" />
-					<add name="ItemDescription" columnName="Description" type="string" dataLength="10000" display="标准项描述" />
+					<add name="ItemDescription" columnName="Description" type="string" dataLength="1000" display="标准项描述" />
 					<add name="StandardComplextiy" columnName="Complextiy" type="int" isNullable="true" display="标准复杂度" comment="标准复杂度"></add>
 					<add name="StandardWorkhours" columnName="WorkHours" type="double" isNullable="true" display="标准工时" comment="标准工时"></add>
 					<add name="SortId"  columnName="SortId" type="int"  isNullable="true"  display="排序字段" />
@@ -399,7 +398,7 @@
 					<add name="ItemId" columnName="ID" type="Guid"  primaryKey="true" display="问题项ID" />
 					<add name="ItemName" columnName="Name" type="string" dataLength="100" display="问题项名称" />
 					<add name="Issuelevel" columnName="Level" type="int" defaultValue="0" display="问题级别"></add>
-					<add name="IssueDescription" columnName="Description" type="string" dataLength="10000" display="问题项描述" />
+					<add name="IssueDescription" columnName="Description" type="string" dataLength="1000" display="问题项描述" />
 
 				</columns>
 			</table>
@@ -419,7 +418,7 @@
 					<add name="RecordDate" columnName="RecordDate" type="DateTime" isNullable="true" display="记录时间"/>
 					<add name="CreateDate" columnName="CreateDate" type="DateTime" isNullable="true"  display="创建时间" />
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" isNullable="true" display="最近修改时间" />
-					<add name="Comment" columnName="Comment" type="string" isNullable="true" dataLength="40000" display="日志描述"/>
+					<add name="Comment" columnName="Comment" type="string" isNullable="true" dataLength="1000" display="日志描述"/>
 					<add name="Status" columnName="Status" type="Guid" isNullable="true"  display="日志状态（已记录，未记录）"/>
 					<add name="AttachmentId" columnName="AttachmentId" type="Guid" isNullable="true"></add>
 					<add name="RecordType" columnName="RecordType" type="Guid" isNullable="true"  display="日志记录方式（自动，手动）"/>
@@ -460,11 +459,11 @@
 
 					<add name="ID" columnName="ID" type="Guid"  primaryKey="true"></add>
 					<add name="ParentID" columnName="ParentID" isNullable="true" type="Guid"></add>
-					<add name="Title"  type="string" isNullable="true"  dataLength="20000"></add>
-					<add name="Code" type="string" isNullable="true"  dataLength="500"/>
-					<add name="Value" type="string" isNullable="true"   dataLength="20000"  />
-					<add name="Note" type="string" isNullable="true"  dataLength="20000"/>
-					<add name="Other" type="string" isNullable="true"  dataLength="20000"  />
+					<add name="Title"  type="string" isNullable="true"  dataLength="100"></add>
+					<add name="Code" type="string" isNullable="true"  dataLength="100"/>
+					<add name="Value" type="string" isNullable="true"   dataLength="100"  />
+					<add name="Note" type="string" isNullable="true"  dataLength="100"/>
+					<add name="Other" type="string" isNullable="true"  dataLength="100"  />
 					<add name="Sort" type="int" isNullable="true"  dataLength="3"  />
 
 				</columns>
@@ -484,8 +483,8 @@
 					<add name="Result" columnName="Result" type="Guid"></add>
 					<add name="SendDate" columnName="SendDate" type="DateTime" defaultValue="DateTime.Now"></add>
 					<add name="ReviewDate" columnName="ReviewDate" type="DateTime"  isNullable="true" defaultValue="DateTime.Now"></add>
-					<add name="AttachmentUrl" columnName="AttachmentId" type="string" dataLength="10000" isNullable="true"></add>
-					<add name="Comment"  columnName="Comment" type="string" dataLength="20000"></add>
+					<add name="AttachmentUrl" columnName="AttachmentUrl" type="string" dataLength="1000" isNullable="true"></add>
+					<add name="Comment"  columnName="Comment" type="string" dataLength="1000"></add>
 					<add name="Title"  columnName="Title" type="string" dataLength="50" isNullable="true"></add>
 
 				</columns>
@@ -503,17 +502,17 @@
 					<add name="InstanceID" columnName="InstanceID"  type="string" dataLength="50"></add>
 					<add name="GroupID" columnName="GroupID" type="Guid" ></add>
 					<add name="Type" columnName="Type" type="int" ></add>
-					<add name="Title"  type="string" isNullable="true"  dataLength="20000"></add>
+					<add name="Title"  type="string" isNullable="true"  dataLength="200"></add>
 					<add name="SenderID" columnName="SenderID" type="Guid" ></add>
 					<add name="ReceiveID" columnName="ReceiveID" type="Guid" ></add>
 					<add name="SenderTime" columnName="SenderTime" type="DateTime" ></add>
 					<add name="ReceiveTime" columnName="ReceiveTime" type="DateTime" ></add>
 					<add name="CompletedTime" columnName="CompletedTime" type="DateTime" isNullable="true"></add>
 					<add name="CompletedTime1" columnName="CompletedTime1" type="DateTime" isNullable="true"></add>
-					<add name="Comment"  columnName="Comment" type="string" dataLength="20000"	 isNullable="true"></add>
+					<add name="Comment"  columnName="Comment" type="string" dataLength="1000"	 isNullable="true"></add>
 					<add name="IsSign" columnName="IsSign" type="int" isNullable="true" ></add>
 					<add name="Status" columnName="Status" type="int"></add>
-					<add name="Note"  columnName="Note" type="string" dataLength="20000"	  isNullable="true"></add>
+					<add name="Note"  columnName="Note" type="string" dataLength="1000"	  isNullable="true"></add>
 					<add name="Sort" columnName="Sort" type="int" ></add>
 
 				</columns>
@@ -526,7 +525,7 @@
 
 					<add name="IndicationId" columnName="ID" type="Guid" primaryKey="true" ></add>
 					<add name="IndicationName" columnName="Name" type="string"  dataLength="200" required="true" display="指标名称"/>
-					<add name="Description" columnName="Description" type="string" dataLength="40000"  isNullable="true" display="指标描述"/>
+					<add name="Description" columnName="Description" type="string" dataLength="1000"  isNullable="true" display="指标描述"/>
 					<add name="CreaterId" columnName="CreaterId" type="Guid" ></add>
 					<add name="IndicationType" columnName="Type" type="int"></add>
 					<add name="IndicationStatus" columnName="Status" type="int"></add>
@@ -576,8 +575,8 @@
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
 					<add name="ModifierId" columnName="ModifierId" type="Guid"  display="修改人"></add>
 					<add name="UseCount" columnName="UseCount" type="int" display="使用次数"></add>
-					<add name="AccessorRoleIds" columnName="AccessorRoleIds" type="string" display="考核者角色" comment="用逗号分开(需要手动改成nvarcharMax)"></add>
-					<add name="MemberRoleIds" columnName="MemberRoleIds" type="string" display="被考核者角色" comment="用逗号分开(需要手动改成nvarcharMax)"></add>
+					<add name="AccessorRoleIds" columnName="AccessorRoleIds" type="string" dataLength="1000" display="考核者角色" comment="用逗号分开(需要手动改成nvarcharMax)"></add>
+					<add name="MemberRoleIds" columnName="MemberRoleIds" type="string" dataLength="1000" display="被考核者角色" comment="用逗号分开(需要手动改成nvarcharMax)"></add>
 					<add name="PerviouslyTableStatus" columnName="PerviouslyTableStatus" type="int" isNullable="true" display="考核表先前状态" comment="用于状态还原"></add>
 
 				</columns>
@@ -643,7 +642,7 @@
 					<add name="GroupTargetId" columnName="ID" type="Guid" primaryKey="true" display="考核对象成员ID" />
 					<add name="GroupId" type="Guid" display="考核组ID" />
 					<add name="MemberId" type="Guid" display="考核对象ID" />
-					<add name="TableIds" columnName="TableIds" type="string" display="考核表" comment="考核表id,评审对象可能对应不同的考核表"></add>
+					<add name="TableIds" columnName="TableIds" type="string" dataLength="1000"  display="考核表" comment="考核表id,评审对象可能对应不同的考核表"></add>
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  display="修改时间" />
 
 				</columns>
@@ -655,7 +654,7 @@
 					<add name="GroupAccessorId" columnName="ID" type="Guid"  primaryKey="true" display="评审人组成员ID" />
 					<add name="GroupId" type="Guid" display="考核组ID" comment="考核组ID"/>
 					<add name="AccessorId" type="Guid" display="评审人" comment="评审人ID"/>
-					<add name="TableIds" columnName="TableIds" type="string" display="选择考核表" comment="考核表id,评审人可能评审不同的考核表"></add>
+					<add name="TableIds" columnName="TableIds" type="string" dataLength="1000"  display="选择考核表" comment="考核表id,评审人可能评审不同的考核表"></add>
 					<add name="IsLeader" columnName="IsLeader" type="bool" display="是否是组长"></add>
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  display="修改时间" />
 
@@ -730,9 +729,9 @@
 					<add name="Score" type="double" display="得分"/>
 					<add name="AdjustScore" type="double" display="调整分" />
 					<!-- 冗余 temp-->
-					<add name="PeriodName" type="string" />
-					<add name="RoleName" type="string" />
-					<add name="UserName" type="string"/>
+					<add name="PeriodName" type="string" dataLength="100" />
+					<add name="RoleName" type="string" dataLength="100"/>
+					<add name="UserName" type="string" dataLength="100"/>
 
 				</columns>
 			</table>
@@ -741,15 +740,15 @@
 			<table name="Folder"  comment="文件夹">
 				<columns>
 
-					<add name="FolderId" columnName="ID" type="Guid" primaryKey="true" display="文件夹ID"></add>
-					<add name="ParentId" columnName="ParentId" type="Guid" isNullable="false"></add>
-					<add name="SortId" columnName="SortId" type="int"></add>
-					<add name="FolderName" columnName="Name" type="string" dataLength="100" isNullable="false" display="文件夹名称"></add>
-					<add name="FolderType" columnName="Type" type="int" ></add>
-					<add name="FolderPath" columnName="Path" type="string" dataLength="1000" isNullable="false"></add>
-					<add name="FileCount" columnName="FileCount" type="int"></add>
-					<add name="FolderCount" columnName="FolderCount" type="int"></add>
-					<add name="OperatorId" columnName="OperatorId" type="Guid"></add>
+					<add name="FolderId" columnName="ID" type="Guid" primaryKey="true" display="文件夹ID" />
+					<add name="ParentId"   type="Guid" />
+					<add name="SortId"     type="int" />
+					<add name="FolderName" type="string"  dataLength="200"  display="文件夹名称" />
+					<add name="FolderType" type="int" />
+					<add name="FolderPath" type="string" dataLength="1000"  />
+					<add name="FileCount"  type="int" />
+					<add name="FolderCount" type="int" />
+					<add name="OperatorId" type="Guid"/>
 
 				</columns>
 			</table>
@@ -770,15 +769,15 @@
 
 					<add name="AdviceId" columnName="ID" type="Guid" primaryKey="true" display="文件夹ID"></add>
 					<add name="AdviceType" columnName="Type" type="Guid" display="建议类别"></add>
-					<add name="Title" columnName="Title" type="string" display="建议标题"></add>
-					<add name="Content" columnName="Content" type="string" display="建议内容"></add>
+					<add name="Title" columnName="Title" type="string" dataLength="200" display="建议标题"></add>
+					<add name="Content" columnName="Content" type="string" dataLength="1000" display="建议内容"></add>
 					<add name="IsAdopt" columnName="IsAdopt" type="bool" display="是否采纳"></add>
-					<add name="Reason"  columnName="Reason" type="string" display="未采纳原因"></add>
+					<add name="Reason"  columnName="Reason" type="string" dataLength="200" display="未采纳原因"></add>
 					<add name="Status"  columnName="Status" type="Guid" display="建议状态"></add>
 					<add name="SupportCount"  columnName="SupportCount" type="int" display="支持数"></add>
-					<add name="CreatorId" columnName="CreatorId" type="Guid" display="添加者" comment="添加者"></add>
+					<add name="CreatorId" columnName="CreatorId" type="Guid" display="添加者" comment="添加者" ></add>
 					<add name="CreateDate" columnName="CreateDate" type="DateTime"  isNullable="true"  display="创建时间" />
-					<add name="ModifierId" columnName="ModifierId" type="Guid" display="修改者" comment="修改者"></add>
+					<add name="ModifierId" columnName="ModifierId" type="Guid" display="修改者" comment="修改者" ></add>
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true" display="最近修改时间" />
 
 				</columns>

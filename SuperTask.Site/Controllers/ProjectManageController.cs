@@ -272,9 +272,9 @@ namespace TheSite.Controllers
          var userId = this.GetUserInfo().UserId;
 
 
-         var query = APQuery.select(wj.JournalId, wj.Comment, wj.RecordDate, wj.Progress, wj.WorkHours, wj.RecordType,wj.TaskSubTypeValue,
+         var query = APQuery.select(wj.JournalId, wj.Comment, wj.RecordDate, wj.Progress, wj.WorkHours, wj.RecordType, wj.TaskSubTypeValue,
             wj.ServiceCount, p.ProjectId.As("ProjectId"), p.ProjectName.As("ProjectName"),
-            t.TaskId.As("TaskId"), t.TaskName.As("TaskName"), 
+            t.TaskId.As("TaskId"), t.TaskName.As("TaskName"),
             t.RateOfProgress, t.WorkHours, t.StartDate, t.EndDate, t.TaskType,
             at.Url, at.AttachmentId.As("AttachmentId"))
             .from(t,
@@ -351,7 +351,7 @@ namespace TheSite.Controllers
                hasAttachment = !at.AttachmentId.GetValue(rd, "AttachmentId").IsEmpty(),
                recordType = wj.RecordType.GetValue(rd) == JournalKeys.ManuRecordType ? "人工输入" : "父节点自动计算",
                taskType = t.TaskType.GetValue(rd),
-               subTypeValue=wj.TaskSubTypeValue.GetValue(rd) // 任务子类型的工作数量
+               subTypeValue = wj.TaskSubTypeValue.GetValue(rd) // 任务子类型的工作数量
             };
          }).ToList();
 
@@ -362,6 +362,130 @@ namespace TheSite.Controllers
             current,
             rowCount,
             total
+         });
+      }
+
+
+      // GET: ProjectManage/AddMileStone
+      // Post-Ajax: ProjectManage/AddMileStone
+      // Post-Ajax: ProjectManage/RemoveMileStone
+
+      public ActionResult AddMileStone()
+      {
+         return PartialView();
+      }
+
+      [HttpPost]
+      public ActionResult AddMileStone(Guid projectId, Guid mileStoneId)
+      {
+         var f = APDBDef.Folder;
+         var pm = APDBDef.ProjectMileStone;
+
+         var currentUserId = GetUserInfo().UserId;
+         var mileStone = MileStone.PrimaryGet(mileStoneId);
+         var project = Project.PrimaryGet(projectId);
+         if (project.IsProcessStatus)
+         {
+            return Json(new
+            {
+               result = AjaxResults.Error,
+               msg = Errors.Project.IN_PROCESS
+            });
+         }
+         else
+         {
+            if (Folder.PrimaryGet(project.FolderId) == null)
+               APBplDef.FolderBpl.Insert(new Folder { });
+
+            var isExists = ProjectMileStone.ConditionQueryCount(pm.Projectid == projectId & pm.StoneId == mileStoneId) > 0;
+            if (!isExists)
+            {
+               // step1 if folder is not exists, then add folder
+               var mileStonFolder = new Folder { };
+               APBplDef.FolderBpl.Insert(mileStonFolder);
+
+               // step2 add milestone
+               db.ProjectMileStoneDal.Insert(
+                  new ProjectMileStone(
+                     Guid.NewGuid(),
+                     mileStoneId,
+                     projectId,
+                     mileStonFolder.FolderId
+                  ));
+
+               //step3 create planTask template
+               var tasks = TaskHelper.GetProjectTasks(projectId);
+               var rootTask = tasks.Find(t => t.IsRoot);
+               var planTask = WorkTask.Create(currentUserId, projectId, mileStone.StoneName, project.StartDate, project.EndDate, TaskKeys.PlanStatus, TaskKeys.PlanTaskTaskType, 1, tasks.Count, true, rootTask.TaskId);
+
+               db.WorkTaskDal.Insert(planTask);
+            }
+         }
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.Project.ADD_MILESTONE_SUCCESS
+         });
+      }
+
+      [HttpPost]
+      public ActionResult RemoveMileStone(Guid projectId, Guid mileStoneId)
+      {
+         var pm = APDBDef.ProjectMileStone;
+         // remove milestone in project
+
+         var isExists = ProjectMileStone.ConditionQueryCount(pm.Projectid == projectId & pm.StoneId == mileStoneId) > 0;
+         if (isExists)
+         {
+            ProjectMileStone.ConditionDelete(pm.Projectid == projectId & pm.StoneId == mileStoneId);
+         }
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = ""
+
+         });
+      }
+
+
+      // Post-Ajax: ProjectManage/PaymentList
+
+      public ActionResult PaymentList(Guid projectId)
+      {
+         return Json(new { });
+      }
+
+
+      // Post-Ajax: ProjectManage/EditPayments
+
+      [HttpPost]
+      public ActionResult EditPayments(List<ProjectPay> pay)
+      {
+         return Json(new
+         {
+
+         });
+      }
+
+
+      // Post-Ajax: ProjectManage/PaymentList
+
+      public ActionResult VenderList(Guid projectId)
+      {
+         return Json(new { });
+      }
+
+
+      // Post-Ajax: ProjectManage/EditPayments
+
+      [HttpPost]
+      public ActionResult EditVenders()
+      {
+         return Json(new
+         {
+
          });
       }
 

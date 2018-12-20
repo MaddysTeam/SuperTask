@@ -1894,7 +1894,7 @@ namespace Business {
             public virtual StringAPColumnDef Address {
                 get {
                     if (Object.ReferenceEquals(_address, null)) {
-                        _address = new StringAPColumnDef(this, "Address", false, 20000);
+                        _address = new StringAPColumnDef(this, "Address", false, 255);
                         _address.Display = "应用地址";
                     }
                     return _address;
@@ -1933,7 +1933,7 @@ namespace Business {
             public virtual StringAPColumnDef Note {
                 get {
                     if (Object.ReferenceEquals(_note, null)) {
-                        _note = new StringAPColumnDef(this, "Note", true, 20000);
+                        _note = new StringAPColumnDef(this, "Note", true, 200);
                         _note.Display = "应用描述";
                     }
                     return _note;
@@ -2773,7 +2773,7 @@ namespace Business {
             
             private StringAPColumnDef _processName;
             
-            private DateTimeAPColumnDef _checkDate;
+            private GuidAPColumnDef _folderId;
             
             public ProjectTableDef(string tableName) : 
                     base(tableName) {
@@ -3071,15 +3071,15 @@ namespace Business {
             }
             
             /// <summary>
-            /// CheckDate ColumnDef
+            /// FolderId ColumnDef
             /// </summary>
-            public virtual DateTimeAPColumnDef CheckDate {
+            public virtual GuidAPColumnDef FolderId {
                 get {
-                    if (Object.ReferenceEquals(_checkDate, null)) {
-                        _checkDate = new DateTimeAPColumnDef(this, "CheckDate", true);
-                        _checkDate.Display = "验收时间";
+                    if (Object.ReferenceEquals(_folderId, null)) {
+                        _folderId = new GuidAPColumnDef(this, "FolderId", true);
+                        _folderId.Display = "项目文件夹ID";
                     }
-                    return _checkDate;
+                    return _folderId;
                 }
             }
             
@@ -3125,7 +3125,7 @@ namespace Business {
                 data.ProjectExecutor = ProjectExecutor.GetValue<string>(reader, throwIfValidColumnName);
                 data.ManagerId = ManagerId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.ProcessName = ProcessName.GetValue<string>(reader, throwIfValidColumnName);
-                data.CheckDate = CheckDate.GetValue<System.DateTime>(reader, throwIfValidColumnName);
+                data.FolderId = FolderId.GetValue<System.Guid>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -3847,7 +3847,7 @@ namespace Business {
             public virtual StringAPColumnDef Description {
                 get {
                     if (Object.ReferenceEquals(_description, null)) {
-                        _description = new StringAPColumnDef(this, "Description", true, 40000);
+                        _description = new StringAPColumnDef(this, "Description", true, 1000);
                         _description.Display = "资源描述";
                     }
                     return _description;
@@ -4579,7 +4579,7 @@ namespace Business {
             public virtual StringAPColumnDef Description {
                 get {
                     if (Object.ReferenceEquals(_description, null)) {
-                        _description = new StringAPColumnDef(this, "Description", true, 40000);
+                        _description = new StringAPColumnDef(this, "Description", true, 1000);
                         _description.Display = "任务描述";
                     }
                     return _description;
@@ -5605,7 +5605,7 @@ namespace Business {
             public virtual StringAPColumnDef Description {
                 get {
                     if (Object.ReferenceEquals(_description, null)) {
-                        _description = new StringAPColumnDef(this, "Description", false, 10000);
+                        _description = new StringAPColumnDef(this, "Description", false, 1000);
                         _description.Display = "任务质量描述";
                     }
                     return _description;
@@ -5920,7 +5920,7 @@ namespace Business {
             public virtual StringAPColumnDef ItemDescription {
                 get {
                     if (Object.ReferenceEquals(_itemDescription, null)) {
-                        _itemDescription = new StringAPColumnDef(this, "Description", false, 10000);
+                        _itemDescription = new StringAPColumnDef(this, "Description", false, 1000);
                         _itemDescription.Display = "标准项描述";
                     }
                     return _itemDescription;
@@ -6109,7 +6109,7 @@ namespace Business {
             public virtual StringAPColumnDef IssueDescription {
                 get {
                     if (Object.ReferenceEquals(_issueDescription, null)) {
-                        _issueDescription = new StringAPColumnDef(this, "Description", false, 10000);
+                        _issueDescription = new StringAPColumnDef(this, "Description", false, 1000);
                         _issueDescription.Display = "问题项描述";
                     }
                     return _issueDescription;
@@ -6366,7 +6366,7 @@ namespace Business {
             public virtual StringAPColumnDef Comment {
                 get {
                     if (Object.ReferenceEquals(_comment, null)) {
-                        _comment = new StringAPColumnDef(this, "Comment", true, 40000);
+                        _comment = new StringAPColumnDef(this, "Comment", true, 1000);
                         _comment.Display = "日志描述";
                     }
                     return _comment;
@@ -6872,7 +6872,7 @@ namespace Business {
             public virtual StringAPColumnDef Title {
                 get {
                     if (Object.ReferenceEquals(_title, null)) {
-                        _title = new StringAPColumnDef(this, "Title", true, 20000);
+                        _title = new StringAPColumnDef(this, "Title", true, 100);
                         _title.Display = "Title";
                     }
                     return _title;
@@ -6885,7 +6885,7 @@ namespace Business {
             public virtual StringAPColumnDef Code {
                 get {
                     if (Object.ReferenceEquals(_code, null)) {
-                        _code = new StringAPColumnDef(this, "Code", true, 500);
+                        _code = new StringAPColumnDef(this, "Code", true, 100);
                         _code.Display = "Code";
                     }
                     return _code;
@@ -6898,7 +6898,7 @@ namespace Business {
             public virtual StringAPColumnDef Value {
                 get {
                     if (Object.ReferenceEquals(_value, null)) {
-                        _value = new StringAPColumnDef(this, "Value", true, 20000);
+                        _value = new StringAPColumnDef(this, "Value", true, 100);
                         _value.Display = "Value";
                     }
                     return _value;
@@ -6911,7 +6911,7 @@ namespace Business {
             public virtual StringAPColumnDef Note {
                 get {
                     if (Object.ReferenceEquals(_note, null)) {
-                        _note = new StringAPColumnDef(this, "Note", true, 20000);
+                        _note = new StringAPColumnDef(this, "Note", true, 100);
                         _note.Display = "Note";
                     }
                     return _note;
@@ -6924,7 +6924,7 @@ namespace Business {
             public virtual StringAPColumnDef Other {
                 get {
                     if (Object.ReferenceEquals(_other, null)) {
-                        _other = new StringAPColumnDef(this, "Other", true, 20000);
+                        _other = new StringAPColumnDef(this, "Other", true, 100);
                         _other.Display = "Other";
                     }
                     return _other;
@@ -7183,8 +7183,8 @@ namespace Business {
             public virtual StringAPColumnDef AttachmentUrl {
                 get {
                     if (Object.ReferenceEquals(_attachmentUrl, null)) {
-                        _attachmentUrl = new StringAPColumnDef(this, "AttachmentId", true, 10000);
-                        _attachmentUrl.Display = "AttachmentId";
+                        _attachmentUrl = new StringAPColumnDef(this, "AttachmentUrl", true, 1000);
+                        _attachmentUrl.Display = "AttachmentUrl";
                     }
                     return _attachmentUrl;
                 }
@@ -7196,7 +7196,7 @@ namespace Business {
             public virtual StringAPColumnDef Comment {
                 get {
                     if (Object.ReferenceEquals(_comment, null)) {
-                        _comment = new StringAPColumnDef(this, "Comment", false, 20000);
+                        _comment = new StringAPColumnDef(this, "Comment", false, 1000);
                         _comment.Display = "Comment";
                     }
                     return _comment;
@@ -7477,7 +7477,7 @@ namespace Business {
             public virtual StringAPColumnDef Title {
                 get {
                     if (Object.ReferenceEquals(_title, null)) {
-                        _title = new StringAPColumnDef(this, "Title", true, 20000);
+                        _title = new StringAPColumnDef(this, "Title", true, 200);
                         _title.Display = "Title";
                     }
                     return _title;
@@ -7568,7 +7568,7 @@ namespace Business {
             public virtual StringAPColumnDef Comment {
                 get {
                     if (Object.ReferenceEquals(_comment, null)) {
-                        _comment = new StringAPColumnDef(this, "Comment", true, 20000);
+                        _comment = new StringAPColumnDef(this, "Comment", true, 1000);
                         _comment.Display = "Comment";
                     }
                     return _comment;
@@ -7607,7 +7607,7 @@ namespace Business {
             public virtual StringAPColumnDef Note {
                 get {
                     if (Object.ReferenceEquals(_note, null)) {
-                        _note = new StringAPColumnDef(this, "Note", true, 20000);
+                        _note = new StringAPColumnDef(this, "Note", true, 1000);
                         _note.Display = "Note";
                     }
                     return _note;
@@ -7781,7 +7781,7 @@ namespace Business {
             public virtual StringAPColumnDef Description {
                 get {
                     if (Object.ReferenceEquals(_description, null)) {
-                        _description = new StringAPColumnDef(this, "Description", true, 40000);
+                        _description = new StringAPColumnDef(this, "Description", true, 1000);
                         _description.Display = "指标描述";
                     }
                     return _description;
@@ -8485,7 +8485,7 @@ namespace Business {
             public virtual StringAPColumnDef AccessorRoleIds {
                 get {
                     if (Object.ReferenceEquals(_accessorRoleIds, null)) {
-                        _accessorRoleIds = new StringAPColumnDef(this, "AccessorRoleIds", false, 0);
+                        _accessorRoleIds = new StringAPColumnDef(this, "AccessorRoleIds", false, 1000);
                         _accessorRoleIds.Display = "考核者角色";
                     }
                     return _accessorRoleIds;
@@ -8498,7 +8498,7 @@ namespace Business {
             public virtual StringAPColumnDef MemberRoleIds {
                 get {
                     if (Object.ReferenceEquals(_memberRoleIds, null)) {
-                        _memberRoleIds = new StringAPColumnDef(this, "MemberRoleIds", false, 0);
+                        _memberRoleIds = new StringAPColumnDef(this, "MemberRoleIds", false, 1000);
                         _memberRoleIds.Display = "被考核者角色";
                     }
                     return _memberRoleIds;
@@ -9391,7 +9391,7 @@ namespace Business {
             public virtual StringAPColumnDef TableIds {
                 get {
                     if (Object.ReferenceEquals(_tableIds, null)) {
-                        _tableIds = new StringAPColumnDef(this, "TableIds", false, 0);
+                        _tableIds = new StringAPColumnDef(this, "TableIds", false, 1000);
                         _tableIds.Display = "考核表";
                     }
                     return _tableIds;
@@ -9557,7 +9557,7 @@ namespace Business {
             public virtual StringAPColumnDef TableIds {
                 get {
                     if (Object.ReferenceEquals(_tableIds, null)) {
-                        _tableIds = new StringAPColumnDef(this, "TableIds", false, 0);
+                        _tableIds = new StringAPColumnDef(this, "TableIds", false, 1000);
                         _tableIds.Display = "选择考核表";
                     }
                     return _tableIds;
@@ -10566,7 +10566,7 @@ namespace Business {
             public virtual StringAPColumnDef PeriodName {
                 get {
                     if (Object.ReferenceEquals(_periodName, null)) {
-                        _periodName = new StringAPColumnDef(this, "PeriodName", false, 0);
+                        _periodName = new StringAPColumnDef(this, "PeriodName", false, 100);
                         _periodName.Display = "PeriodName";
                     }
                     return _periodName;
@@ -10579,7 +10579,7 @@ namespace Business {
             public virtual StringAPColumnDef RoleName {
                 get {
                     if (Object.ReferenceEquals(_roleName, null)) {
-                        _roleName = new StringAPColumnDef(this, "RoleName", false, 0);
+                        _roleName = new StringAPColumnDef(this, "RoleName", false, 100);
                         _roleName.Display = "RoleName";
                     }
                     return _roleName;
@@ -10592,7 +10592,7 @@ namespace Business {
             public virtual StringAPColumnDef UserName {
                 get {
                     if (Object.ReferenceEquals(_userName, null)) {
-                        _userName = new StringAPColumnDef(this, "UserName", false, 0);
+                        _userName = new StringAPColumnDef(this, "UserName", false, 100);
                         _userName.Display = "UserName";
                     }
                     return _userName;
@@ -10755,7 +10755,7 @@ namespace Business {
             public virtual StringAPColumnDef FolderName {
                 get {
                     if (Object.ReferenceEquals(_folderName, null)) {
-                        _folderName = new StringAPColumnDef(this, "Name", false, 100);
+                        _folderName = new StringAPColumnDef(this, "FolderName", false, 200);
                         _folderName.Display = "文件夹名称";
                     }
                     return _folderName;
@@ -10768,8 +10768,8 @@ namespace Business {
             public virtual Int32APColumnDef FolderType {
                 get {
                     if (Object.ReferenceEquals(_folderType, null)) {
-                        _folderType = new Int32APColumnDef(this, "Type", false);
-                        _folderType.Display = "Type";
+                        _folderType = new Int32APColumnDef(this, "FolderType", false);
+                        _folderType.Display = "FolderType";
                     }
                     return _folderType;
                 }
@@ -10781,8 +10781,8 @@ namespace Business {
             public virtual StringAPColumnDef FolderPath {
                 get {
                     if (Object.ReferenceEquals(_folderPath, null)) {
-                        _folderPath = new StringAPColumnDef(this, "Path", false, 1000);
-                        _folderPath.Display = "Path";
+                        _folderPath = new StringAPColumnDef(this, "FolderPath", false, 1000);
+                        _folderPath.Display = "FolderPath";
                     }
                     return _folderPath;
                 }
@@ -11108,7 +11108,7 @@ namespace Business {
             public virtual StringAPColumnDef Title {
                 get {
                     if (Object.ReferenceEquals(_title, null)) {
-                        _title = new StringAPColumnDef(this, "Title", false, 0);
+                        _title = new StringAPColumnDef(this, "Title", false, 200);
                         _title.Display = "建议标题";
                     }
                     return _title;
@@ -11121,7 +11121,7 @@ namespace Business {
             public virtual StringAPColumnDef Content {
                 get {
                     if (Object.ReferenceEquals(_content, null)) {
-                        _content = new StringAPColumnDef(this, "Content", false, 0);
+                        _content = new StringAPColumnDef(this, "Content", false, 1000);
                         _content.Display = "建议内容";
                     }
                     return _content;
@@ -11147,7 +11147,7 @@ namespace Business {
             public virtual StringAPColumnDef Reason {
                 get {
                     if (Object.ReferenceEquals(_reason, null)) {
-                        _reason = new StringAPColumnDef(this, "Reason", false, 0);
+                        _reason = new StringAPColumnDef(this, "Reason", false, 200);
                         _reason.Display = "未采纳原因";
                     }
                     return _reason;
@@ -12402,7 +12402,7 @@ namespace Business {
             /// Insert Data.
             /// </summary>
             public virtual void Insert(Project data) {
-                var query = APQuery.insert(APDBDef.Project).values(APDBDef.Project.ProjectId.SetValue(data.ProjectId), APDBDef.Project.ProjectName.SetValue(data.ProjectName), APDBDef.Project.Description.SetValue(data.Description), APDBDef.Project.ProjectStatus.SetValue(data.ProjectStatus), APDBDef.Project.ProjectType.SetValue(data.ProjectType), APDBDef.Project.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.Project.PMId.SetValue(data.PMId), APDBDef.Project.CreatorId.SetValue(data.CreatorId), APDBDef.Project.StartDate.SetValue(data.StartDate), APDBDef.Project.EndDate.SetValue(data.EndDate), APDBDef.Project.RealStartDate.SetValue(data.RealStartDate), APDBDef.Project.RealEndDate.SetValue(data.RealEndDate), APDBDef.Project.ProjectOwner.SetValue(data.ProjectOwner), APDBDef.Project.CreateDate.SetValue(data.CreateDate), APDBDef.Project.ModifyDate.SetValue(data.ModifyDate), APDBDef.Project.OrgId.SetValue(data.OrgId), APDBDef.Project.Code.SetValue(data.Code), APDBDef.Project.RealCode.SetValue(data.RealCode), APDBDef.Project.ReviewerId.SetValue(data.ReviewerId), APDBDef.Project.ProjectExecutor.SetValue(data.ProjectExecutor), APDBDef.Project.ManagerId.SetValue(data.ManagerId), APDBDef.Project.ProcessName.SetValue(data.ProcessName), APDBDef.Project.CheckDate.SetValue(data.CheckDate));
+                var query = APQuery.insert(APDBDef.Project).values(APDBDef.Project.ProjectId.SetValue(data.ProjectId), APDBDef.Project.ProjectName.SetValue(data.ProjectName), APDBDef.Project.Description.SetValue(data.Description), APDBDef.Project.ProjectStatus.SetValue(data.ProjectStatus), APDBDef.Project.ProjectType.SetValue(data.ProjectType), APDBDef.Project.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.Project.PMId.SetValue(data.PMId), APDBDef.Project.CreatorId.SetValue(data.CreatorId), APDBDef.Project.StartDate.SetValue(data.StartDate), APDBDef.Project.EndDate.SetValue(data.EndDate), APDBDef.Project.RealStartDate.SetValue(data.RealStartDate), APDBDef.Project.RealEndDate.SetValue(data.RealEndDate), APDBDef.Project.ProjectOwner.SetValue(data.ProjectOwner), APDBDef.Project.CreateDate.SetValue(data.CreateDate), APDBDef.Project.ModifyDate.SetValue(data.ModifyDate), APDBDef.Project.OrgId.SetValue(data.OrgId), APDBDef.Project.Code.SetValue(data.Code), APDBDef.Project.RealCode.SetValue(data.RealCode), APDBDef.Project.ReviewerId.SetValue(data.ReviewerId), APDBDef.Project.ProjectExecutor.SetValue(data.ProjectExecutor), APDBDef.Project.ManagerId.SetValue(data.ManagerId), APDBDef.Project.ProcessName.SetValue(data.ProcessName), APDBDef.Project.FolderId.SetValue(data.FolderId));
                 ExecuteNonQuery(query);
             }
             
@@ -12410,7 +12410,7 @@ namespace Business {
             /// Update Data.
             /// </summary>
             public virtual void Update(Project data) {
-                var query = APQuery.update(APDBDef.Project).values(APDBDef.Project.ProjectName.SetValue(data.ProjectName), APDBDef.Project.Description.SetValue(data.Description), APDBDef.Project.ProjectStatus.SetValue(data.ProjectStatus), APDBDef.Project.ProjectType.SetValue(data.ProjectType), APDBDef.Project.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.Project.PMId.SetValue(data.PMId), APDBDef.Project.CreatorId.SetValue(data.CreatorId), APDBDef.Project.StartDate.SetValue(data.StartDate), APDBDef.Project.EndDate.SetValue(data.EndDate), APDBDef.Project.RealStartDate.SetValue(data.RealStartDate), APDBDef.Project.RealEndDate.SetValue(data.RealEndDate), APDBDef.Project.ProjectOwner.SetValue(data.ProjectOwner), APDBDef.Project.CreateDate.SetValue(data.CreateDate), APDBDef.Project.ModifyDate.SetValue(data.ModifyDate), APDBDef.Project.OrgId.SetValue(data.OrgId), APDBDef.Project.Code.SetValue(data.Code), APDBDef.Project.RealCode.SetValue(data.RealCode), APDBDef.Project.ReviewerId.SetValue(data.ReviewerId), APDBDef.Project.ProjectExecutor.SetValue(data.ProjectExecutor), APDBDef.Project.ManagerId.SetValue(data.ManagerId), APDBDef.Project.ProcessName.SetValue(data.ProcessName), APDBDef.Project.CheckDate.SetValue(data.CheckDate)).where((APDBDef.Project.ProjectId == data.ProjectId));
+                var query = APQuery.update(APDBDef.Project).values(APDBDef.Project.ProjectName.SetValue(data.ProjectName), APDBDef.Project.Description.SetValue(data.Description), APDBDef.Project.ProjectStatus.SetValue(data.ProjectStatus), APDBDef.Project.ProjectType.SetValue(data.ProjectType), APDBDef.Project.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.Project.PMId.SetValue(data.PMId), APDBDef.Project.CreatorId.SetValue(data.CreatorId), APDBDef.Project.StartDate.SetValue(data.StartDate), APDBDef.Project.EndDate.SetValue(data.EndDate), APDBDef.Project.RealStartDate.SetValue(data.RealStartDate), APDBDef.Project.RealEndDate.SetValue(data.RealEndDate), APDBDef.Project.ProjectOwner.SetValue(data.ProjectOwner), APDBDef.Project.CreateDate.SetValue(data.CreateDate), APDBDef.Project.ModifyDate.SetValue(data.ModifyDate), APDBDef.Project.OrgId.SetValue(data.OrgId), APDBDef.Project.Code.SetValue(data.Code), APDBDef.Project.RealCode.SetValue(data.RealCode), APDBDef.Project.ReviewerId.SetValue(data.ReviewerId), APDBDef.Project.ProjectExecutor.SetValue(data.ProjectExecutor), APDBDef.Project.ManagerId.SetValue(data.ManagerId), APDBDef.Project.ProcessName.SetValue(data.ProcessName), APDBDef.Project.FolderId.SetValue(data.FolderId)).where((APDBDef.Project.ProjectId == data.ProjectId));
                 ExecuteNonQuery(query);
             }
             
@@ -25171,7 +25171,7 @@ namespace Business {
         /// Address
         /// </summary>
         [Display(Name="应用地址")]
-        [StringLength(20000)]
+        [StringLength(255)]
         public virtual string Address {
             get {
                 return _address;
@@ -25237,7 +25237,7 @@ namespace Business {
         /// Note
         /// </summary>
         [Display(Name="应用描述")]
-        [StringLength(20000)]
+        [StringLength(200)]
         public virtual string Note {
             get {
                 return _note;
@@ -26855,9 +26855,9 @@ namespace Business {
         private string _processName;
         
         /// <summary>
-        /// CheckDate
+        /// FolderId
         /// </summary>
-        private System.DateTime _checkDate;
+        private System.Guid _folderId;
         
         /// <summary>
         /// Default constructor.
@@ -26891,7 +26891,7 @@ namespace Business {
                     string projectExecutor, 
                     System.Guid managerId, 
                     string processName, 
-                    System.DateTime checkDate) {
+                    System.Guid folderId) {
             _projectId = projectId;
             _projectName = projectName;
             _description = description;
@@ -26914,7 +26914,7 @@ namespace Business {
             _projectExecutor = projectExecutor;
             _managerId = managerId;
             _processName = processName;
-            _checkDate = checkDate;
+            _folderId = folderId;
         }
         
         /// <summary>
@@ -27410,24 +27410,24 @@ namespace Business {
         }
         
         /// <summary>
-        /// CheckDate
+        /// FolderId
         /// </summary>
-        [Display(Name="验收时间")]
-        public virtual System.DateTime CheckDate {
+        [Display(Name="项目文件夹ID")]
+        public virtual System.Guid FolderId {
             get {
-                return _checkDate;
+                return _folderId;
             }
             set {
-                _checkDate = value;
+                _folderId = value;
             }
         }
         
         /// <summary>
-        /// CheckDate APColumnDef
+        /// FolderId APColumnDef
         /// </summary>
-        public static DateTimeAPColumnDef CheckDateDef {
+        public static GuidAPColumnDef FolderIdDef {
             get {
-                return APDBDef.Project.CheckDate;
+                return APDBDef.Project.FolderId;
             }
         }
         
@@ -27475,7 +27475,7 @@ namespace Business {
             ProjectExecutor = data.ProjectExecutor;
             ManagerId = data.ManagerId;
             ProcessName = data.ProcessName;
-            CheckDate = data.CheckDate;
+            FolderId = data.FolderId;
         }
         
         /// <summary>
@@ -27548,7 +27548,7 @@ namespace Business {
             if ((ProcessName != data.ProcessName)) {
                 return false;
             }
-            if ((CheckDate != data.CheckDate)) {
+            if ((FolderId != data.FolderId)) {
                 return false;
             }
             return true;
@@ -27670,8 +27670,8 @@ namespace Business {
                     string projectExecutor, 
                     System.Guid managerId, 
                     string processName, 
-                    System.DateTime checkDate) : 
-                base(projectId, projectName, description, projectStatus, projectType, rateOfProgress, pMId, creatorId, startDate, endDate, realStartDate, realEndDate, projectOwner, createDate, modifyDate, orgId, code, realCode, reviewerId, projectExecutor, managerId, processName, checkDate) {
+                    System.Guid folderId) : 
+                base(projectId, projectName, description, projectStatus, projectType, rateOfProgress, pMId, creatorId, startDate, endDate, realStartDate, realEndDate, projectOwner, createDate, modifyDate, orgId, code, realCode, reviewerId, projectExecutor, managerId, processName, folderId) {
         }
     }
     
@@ -28991,7 +28991,7 @@ namespace Business {
         /// Description
         /// </summary>
         [Display(Name="资源描述")]
-        [StringLength(40000)]
+        [StringLength(1000)]
         public virtual string Description {
             get {
                 return _description;
@@ -30439,7 +30439,7 @@ namespace Business {
         /// Description
         /// </summary>
         [Display(Name="任务描述")]
-        [StringLength(40000)]
+        [StringLength(1000)]
         public virtual string Description {
             get {
                 return _description;
@@ -32447,7 +32447,7 @@ namespace Business {
         /// Description
         /// </summary>
         [Display(Name="任务质量描述")]
-        [StringLength(10000)]
+        [StringLength(1000)]
         public virtual string Description {
             get {
                 return _description;
@@ -33039,7 +33039,7 @@ namespace Business {
         /// ItemDescription
         /// </summary>
         [Display(Name="标准项描述")]
-        [StringLength(10000)]
+        [StringLength(1000)]
         public virtual string ItemDescription {
             get {
                 return _itemDescription;
@@ -33390,7 +33390,7 @@ namespace Business {
         /// IssueDescription
         /// </summary>
         [Display(Name="问题项描述")]
-        [StringLength(10000)]
+        [StringLength(1000)]
         public virtual string IssueDescription {
             get {
                 return _issueDescription;
@@ -33904,7 +33904,7 @@ namespace Business {
         /// Comment
         /// </summary>
         [Display(Name="日志描述")]
-        [StringLength(40000)]
+        [StringLength(1000)]
         public virtual string Comment {
             get {
                 return _comment;
@@ -34891,7 +34891,7 @@ namespace Business {
         /// <summary>
         /// Title
         /// </summary>
-        [StringLength(20000)]
+        [StringLength(100)]
         public virtual string Title {
             get {
                 return _title;
@@ -34913,7 +34913,7 @@ namespace Business {
         /// <summary>
         /// Code
         /// </summary>
-        [StringLength(500)]
+        [StringLength(100)]
         public virtual string Code {
             get {
                 return _code;
@@ -34935,7 +34935,7 @@ namespace Business {
         /// <summary>
         /// Value
         /// </summary>
-        [StringLength(20000)]
+        [StringLength(100)]
         public virtual string Value {
             get {
                 return _value;
@@ -34957,7 +34957,7 @@ namespace Business {
         /// <summary>
         /// Note
         /// </summary>
-        [StringLength(20000)]
+        [StringLength(100)]
         public virtual string Note {
             get {
                 return _note;
@@ -34979,7 +34979,7 @@ namespace Business {
         /// <summary>
         /// Other
         /// </summary>
-        [StringLength(20000)]
+        [StringLength(100)]
         public virtual string Other {
             get {
                 return _other;
@@ -35462,7 +35462,7 @@ namespace Business {
         /// <summary>
         /// AttachmentUrl
         /// </summary>
-        [StringLength(10000)]
+        [StringLength(1000)]
         public virtual string AttachmentUrl {
             get {
                 return _attachmentUrl;
@@ -35484,7 +35484,7 @@ namespace Business {
         /// <summary>
         /// Comment
         /// </summary>
-        [StringLength(20000)]
+        [StringLength(1000)]
         public virtual string Comment {
             get {
                 return _comment;
@@ -36063,7 +36063,7 @@ namespace Business {
         /// <summary>
         /// Title
         /// </summary>
-        [StringLength(20000)]
+        [StringLength(200)]
         public virtual string Title {
             get {
                 return _title;
@@ -36211,7 +36211,7 @@ namespace Business {
         /// <summary>
         /// Comment
         /// </summary>
-        [StringLength(20000)]
+        [StringLength(1000)]
         public virtual string Comment {
             get {
                 return _comment;
@@ -36275,7 +36275,7 @@ namespace Business {
         /// <summary>
         /// Note
         /// </summary>
-        [StringLength(20000)]
+        [StringLength(1000)]
         public virtual string Note {
             get {
                 return _note;
@@ -36664,7 +36664,7 @@ namespace Business {
         /// Description
         /// </summary>
         [Display(Name="指标描述")]
-        [StringLength(40000)]
+        [StringLength(1000)]
         public virtual string Description {
             get {
                 return _description;
@@ -37977,7 +37977,7 @@ namespace Business {
         /// 用逗号分开(需要手动改成nvarcharMax)
         /// </summary>
         [Display(Name="考核者角色")]
-        [StringLength(0)]
+        [StringLength(1000)]
         public virtual string AccessorRoleIds {
             get {
                 return _accessorRoleIds;
@@ -38000,7 +38000,7 @@ namespace Business {
         /// 用逗号分开(需要手动改成nvarcharMax)
         /// </summary>
         [Display(Name="被考核者角色")]
-        [StringLength(0)]
+        [StringLength(1000)]
         public virtual string MemberRoleIds {
             get {
                 return _memberRoleIds;
@@ -39701,7 +39701,7 @@ namespace Business {
         /// 考核表id,评审对象可能对应不同的考核表
         /// </summary>
         [Display(Name="考核表")]
-        [StringLength(0)]
+        [StringLength(1000)]
         public virtual string TableIds {
             get {
                 return _tableIds;
@@ -40015,7 +40015,7 @@ namespace Business {
         /// 考核表id,评审人可能评审不同的考核表
         /// </summary>
         [Display(Name="选择考核表")]
-        [StringLength(0)]
+        [StringLength(1000)]
         public virtual string TableIds {
             get {
                 return _tableIds;
@@ -41920,7 +41920,7 @@ namespace Business {
         /// <summary>
         /// PeriodName
         /// </summary>
-        [StringLength(0)]
+        [StringLength(100)]
         public virtual string PeriodName {
             get {
                 return _periodName;
@@ -41942,7 +41942,7 @@ namespace Business {
         /// <summary>
         /// RoleName
         /// </summary>
-        [StringLength(0)]
+        [StringLength(100)]
         public virtual string RoleName {
             get {
                 return _roleName;
@@ -41964,7 +41964,7 @@ namespace Business {
         /// <summary>
         /// UserName
         /// </summary>
-        [StringLength(0)]
+        [StringLength(100)]
         public virtual string UserName {
             get {
                 return _userName;
@@ -42288,7 +42288,7 @@ namespace Business {
         /// FolderName
         /// </summary>
         [Display(Name="文件夹名称")]
-        [StringLength(100)]
+        [StringLength(200)]
         public virtual string FolderName {
             get {
                 return _folderName;
@@ -42956,7 +42956,7 @@ namespace Business {
         /// Title
         /// </summary>
         [Display(Name="建议标题")]
-        [StringLength(0)]
+        [StringLength(200)]
         public virtual string Title {
             get {
                 return _title;
@@ -42979,7 +42979,7 @@ namespace Business {
         /// Content
         /// </summary>
         [Display(Name="建议内容")]
-        [StringLength(0)]
+        [StringLength(1000)]
         public virtual string Content {
             get {
                 return _content;
@@ -43024,7 +43024,7 @@ namespace Business {
         /// Reason
         /// </summary>
         [Display(Name="未采纳原因")]
-        [StringLength(0)]
+        [StringLength(200)]
         public virtual string Reason {
             get {
                 return _reason;
