@@ -41,7 +41,22 @@ namespace Business.Helper
       public const string ProjectCodePrefix = "LX_";
 
       public const int DefaultDateRange = 10;
-   
+
+      // 项目里程碑状态（TODO:暂时固定为5个阶段，未开始，开始阶段，执行中，即将结束，已结束）
+      public static Guid ProejctMilestoneReadyStatus => Guid.Parse("82bd3c82-3041-46a2-a3aa-dabba89bbf58");
+      public static Guid ProejctMilestoneStartStatus => Guid.Parse("be4e03bb-cfdc-4d97-8d1b-18936f52cbe7");
+      public static Guid ProejctMilestonProcessStatus => Guid.Parse("4267a68c-2678-49cb-9d6b-cec1e1c9dc9c");
+      public static Guid ProejctMilestonNearlyDoneStatus => Guid.Parse("2a578d7c-9eaa-4784-b3a3-23057b324ab5");
+      public static Guid ProejctMilestonCompleteStatus => Guid.Parse("9d48d041-e2ca-4303-aa53-76a50453d490");
+
+      public static Dictionary<string, Guid> MileStoneStatusList => new Dictionary<string, Guid>()
+      {
+         {"未开始",ProejctMilestoneReadyStatus},
+         //{"未开始",ProejctMilestoneReadyStatus},
+         //{"未开始",ProejctMilestoneReadyStatus},
+         //{"未开始",ProejctMilestoneReadyStatus},
+         //{"未开始",ProejctMilestoneReadyStatus},
+      };
 
 
       /// <summary>
@@ -49,7 +64,7 @@ namespace Business.Helper
       /// </summary>
       /// <param name="val">状态值</param>
       /// <returns>数据字典</returns>
-      public static string GetStatusKeyById(Guid statusId) => DictionaryHelper.GetDicById(ProjectStatusKeyGuid,statusId).Title;
+      public static string GetStatusKeyById(Guid statusId) => DictionaryHelper.GetDicById(ProjectStatusKeyGuid, statusId).Title;
 
 
       /// <summary>
@@ -57,47 +72,8 @@ namespace Business.Helper
       /// </summary>
       /// <param name="val">状态值</param>
       /// <returns>数据字典</returns>
-      public static string GetTypeKeyById(Guid typeId) => DictionaryHelper.GetDicByValue(ProjectTypeKeyGuid,typeId).Title;
+      public static string GetTypeKeyById(Guid typeId) => DictionaryHelper.GetDicByValue(ProjectTypeKeyGuid, typeId).Title;
 
    }
 
-
-   //public enum ProjectSearchType
-   //{
-   //   SearchByUser = 1,
-   //   SearchByLeader = 2,
-   //}
-
-
-   //public enum ProjectEditType
-   //{
-   //   Plan = 1,
-   //   Start = 2,
-   //   Complete = 3,
-   //   Edit = 4,//审核通过后的修改状态
-   //   Review =5//审核状态
-   //}
-
-   //public enum ProjectType
-   //{
-   //   Default=1
-   //}
-
 }
-
-
-//ID ParentID Title Code  Value Note  Other Sort
-//DF2ADD5A-A45C-4D47-9CCF-C2D3C5C9DD2D DF2ACD4F-A45D-4C36-9CAF-C2E3D5C9DD2C 执行中      2			3
-//DF2ADD4A-A45C-4D57-9CCF-C2D3C5C9DD3D DF2ACD4F-A45D-4C36-9CAF-C2E3D5C9DD2C 已删除      0			3
-//DF2ADC6A-A35C-4A47-9CBF-C2D4C5C9DB6C DF2ACD4F-A45D-4C36-9CAF-C2E3D5C9DD2C 审核中      5			3
-//DF2ACC5A-A35C-4D46-9CBF-C2D4C5C9DC4C DF2ACD4F-A45D-4C36-9CAF-C2E3D5C9DD2C 计划中      1			3
-//DF2ADC6A-A35C-4A47-9CBF-C2D4C5C9DC5C DF2ACD4F-A45D-4C36-9CAF-C2E3D5C9DD2C 已完成      3			3
-//DF2ADC6A-A35C-4A47-9CBF-C2D4C5C9DC6C DF2ACD4F-A45D-4C36-9CAF-C2E3D5C9DD2C 临时修改     4			3
-
-
-//ID ParentID Title Code  Value Note  Other Sort
-//DD6ADC5F-A65D-4C46-9CAF-C2E3D5C8DC1C DD3ADC5F-A45D-4C36-9CAF-C2E3D5C9DD3C 营销集成类    4			2
-//DD6ADC5F-A65D-4C46-9CAF-C2E3D5C8DC2C DD3ADC5F-A45D-4C36-9CAF-C2E3D5C9DD3C 资源建设类    5			2
-//DD6ADC5F-A65D-4C46-9CAF-C2E3D5C8DD6C DD3ADC5F-A45D-4C36-9CAF-C2E3D5C9DD3C 维护服务类    3			2
-//DD4ADC5F-A45D-4C36-9CAF-C2E3D5C9DD4C DD3ADC5F-A45D-4C36-9CAF-C2E3D5C9DD3C 软件开发类    1			2
-//DD5ADC5F-A55D-4C46-9CAF-C2E3D5C9DD5C DD3ADC5F-A45D-4C36-9CAF-C2E3D5C9DD3C 公司日常类    2			2

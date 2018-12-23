@@ -251,8 +251,9 @@
 			<table name="MileStone">
 				<columns>
 					<add name="StoneId" columnName="ID" type="Guid" primaryKey="true" comment="里程碑ID"/>
-					<add name="StoneName"  columnName="Name" type="string" dataLength="100"  display="里程碑名称" ></add>
-					<add name="StoneStatus" columnName="Status" type="Guid"   display="里程碑状态"/>
+					<add name="StoneName"  type="string" dataLength="100"  display="里程碑名称" ></add>
+					<add name="StoneStatus"  type="Guid"   display="里程碑状态"/>
+					<add name="StoneType"  type="Guid"   display="里程碑类型"/>
 				</columns>
 
 				<!--<add name="FolderId" columnName="FolderId" type="Guid"></add>-->
@@ -264,6 +265,7 @@
 					<add name="StoneId"  columnName="StoneId" type="Guid"   display="程碑ID" ></add>
 					<add name="Projectid" columnName="Projectid" type="Guid" isNullable="true"  comment="项目ID" />
 					<add name="FolderId" columnName="FolderId" type="Guid"></add>
+					<add name="Status"  type="Guid"   display="当前项目里程碑状态"/>
 				</columns>
 			</table>
 

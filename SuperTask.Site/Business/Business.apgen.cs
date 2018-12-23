@@ -4197,6 +4197,8 @@ namespace Business {
             
             private GuidAPColumnDef _stoneStatus;
             
+            private GuidAPColumnDef _stoneType;
+            
             public MileStoneTableDef(string tableName) : 
                     base(tableName) {
             }
@@ -4224,7 +4226,7 @@ namespace Business {
             public virtual StringAPColumnDef StoneName {
                 get {
                     if (Object.ReferenceEquals(_stoneName, null)) {
-                        _stoneName = new StringAPColumnDef(this, "Name", false, 100);
+                        _stoneName = new StringAPColumnDef(this, "StoneName", false, 100);
                         _stoneName.Display = "里程碑名称";
                     }
                     return _stoneName;
@@ -4237,10 +4239,23 @@ namespace Business {
             public virtual GuidAPColumnDef StoneStatus {
                 get {
                     if (Object.ReferenceEquals(_stoneStatus, null)) {
-                        _stoneStatus = new GuidAPColumnDef(this, "Status", false);
+                        _stoneStatus = new GuidAPColumnDef(this, "StoneStatus", false);
                         _stoneStatus.Display = "里程碑状态";
                     }
                     return _stoneStatus;
+                }
+            }
+            
+            /// <summary>
+            /// StoneType ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef StoneType {
+                get {
+                    if (Object.ReferenceEquals(_stoneType, null)) {
+                        _stoneType = new GuidAPColumnDef(this, "StoneType", false);
+                        _stoneType.Display = "里程碑类型";
+                    }
+                    return _stoneType;
                 }
             }
             
@@ -4267,6 +4282,7 @@ namespace Business {
                 data.StoneId = StoneId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.StoneName = StoneName.GetValue<string>(reader, throwIfValidColumnName);
                 data.StoneStatus = StoneStatus.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.StoneType = StoneType.GetValue<System.Guid>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -13067,7 +13083,7 @@ namespace Business {
             /// Insert Data.
             /// </summary>
             public virtual void Insert(MileStone data) {
-                var query = APQuery.insert(APDBDef.MileStone).values(APDBDef.MileStone.StoneId.SetValue(data.StoneId), APDBDef.MileStone.StoneName.SetValue(data.StoneName), APDBDef.MileStone.StoneStatus.SetValue(data.StoneStatus));
+                var query = APQuery.insert(APDBDef.MileStone).values(APDBDef.MileStone.StoneId.SetValue(data.StoneId), APDBDef.MileStone.StoneName.SetValue(data.StoneName), APDBDef.MileStone.StoneStatus.SetValue(data.StoneStatus), APDBDef.MileStone.StoneType.SetValue(data.StoneType));
                 ExecuteNonQuery(query);
             }
             
@@ -13075,7 +13091,7 @@ namespace Business {
             /// Update Data.
             /// </summary>
             public virtual void Update(MileStone data) {
-                var query = APQuery.update(APDBDef.MileStone).values(APDBDef.MileStone.StoneName.SetValue(data.StoneName), APDBDef.MileStone.StoneStatus.SetValue(data.StoneStatus)).where((APDBDef.MileStone.StoneId == data.StoneId));
+                var query = APQuery.update(APDBDef.MileStone).values(APDBDef.MileStone.StoneName.SetValue(data.StoneName), APDBDef.MileStone.StoneStatus.SetValue(data.StoneStatus), APDBDef.MileStone.StoneType.SetValue(data.StoneType)).where((APDBDef.MileStone.StoneId == data.StoneId));
                 ExecuteNonQuery(query);
             }
             
@@ -29667,6 +29683,11 @@ namespace Business {
         private System.Guid _stoneStatus;
         
         /// <summary>
+        /// StoneType
+        /// </summary>
+        private System.Guid _stoneType;
+        
+        /// <summary>
         /// Default constructor.
         /// </summary>
         public MileStoneBase() {
@@ -29675,10 +29696,11 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public MileStoneBase(System.Guid stoneId, string stoneName, System.Guid stoneStatus) {
+        public MileStoneBase(System.Guid stoneId, string stoneName, System.Guid stoneStatus, System.Guid stoneType) {
             _stoneId = stoneId;
             _stoneName = stoneName;
             _stoneStatus = stoneStatus;
+            _stoneType = stoneType;
         }
         
         /// <summary>
@@ -29748,6 +29770,28 @@ namespace Business {
         }
         
         /// <summary>
+        /// StoneType
+        /// </summary>
+        [Display(Name="里程碑类型")]
+        public virtual System.Guid StoneType {
+            get {
+                return _stoneType;
+            }
+            set {
+                _stoneType = value;
+            }
+        }
+        
+        /// <summary>
+        /// StoneType APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef StoneTypeDef {
+            get {
+                return APDBDef.MileStone.StoneType;
+            }
+        }
+        
+        /// <summary>
         /// MileStoneTableDef APTableDef
         /// </summary>
         public static APDBDef.MileStoneTableDef TableDef {
@@ -29772,6 +29816,7 @@ namespace Business {
             StoneId = data.StoneId;
             StoneName = data.StoneName;
             StoneStatus = data.StoneStatus;
+            StoneType = data.StoneType;
         }
         
         /// <summary>
@@ -29785,6 +29830,9 @@ namespace Business {
                 return false;
             }
             if ((StoneStatus != data.StoneStatus)) {
+                return false;
+            }
+            if ((StoneType != data.StoneType)) {
                 return false;
             }
             return true;
@@ -29883,8 +29931,8 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public MileStone(System.Guid stoneId, string stoneName, System.Guid stoneStatus) : 
-                base(stoneId, stoneName, stoneStatus) {
+        public MileStone(System.Guid stoneId, string stoneName, System.Guid stoneStatus, System.Guid stoneType) : 
+                base(stoneId, stoneName, stoneStatus, stoneType) {
         }
     }
     

@@ -272,6 +272,7 @@
     <Compile Include="Business\Extensions\HtmlExtensions.cs" />
     <Compile Include="Business\Extensions\HttpContextBaseExtensions.cs" />
     <Compile Include="Business\Extensions\PicklistAPRptColumnExtensions.cs" />
+    <Compile Include="Business\Extensions\DictionaryExtension.cs" />
     <Compile Include="Business\Extensions\StringExtensions.cs" />
     <Compile Include="Business\Handler\ProjectHandler.cs" />
     <Compile Include="Business\Handler\ResourceHandler.cs" />
@@ -288,6 +289,7 @@
     <Compile Include="Business\Helper\Keys\DictionaryKeys.cs" />
     <Compile Include="Business\Helper\Keys\AttachmentKeys.cs" />
     <Compile Include="Business\Helper\Keys\OrgKeys.cs" />
+    <Compile Include="Business\Helper\Keys\MilestoneKeys.cs" />
     <Compile Include="Business\Helper\Keys\ProjectKeys.cs" />
     <Compile Include="Business\Helper\Keys\ResourceKeys.cs" />
     <Compile Include="Business\Helper\Keys\ReviewKeys.cs" />

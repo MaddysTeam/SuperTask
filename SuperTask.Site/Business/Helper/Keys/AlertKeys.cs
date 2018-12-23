@@ -218,6 +218,12 @@ namespace Business.Helper
          public const string EDITSUCCESS = "编辑成功";
       }
 
+      public class MileStone
+      {
+         public const string EDITSUCCESS = "编辑成功";
+      }
+
+
    }
 
 

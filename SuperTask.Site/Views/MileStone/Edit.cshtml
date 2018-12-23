@@ -1,1 +1,84 @@
-﻿
+﻿@model MileStone
+@{
+	var pageTitle = ViewBag.Title = "编辑里程碑";
+	var types= DictionaryHelper
+		.GetSubTypeDics(Model.StoneType)
+		.ToSelectList();
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> @pageTitle</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+			@using (Html.BeginForm("Edit", "Role", FormMethod.Post, new { id = "form", role = "form", @class = "form-horizontal" }))
+			{
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(m => m.StoneId)
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(m => m.StoneName)</label>
+							<div class="col-md-9">
+
+								@Html.TextBoxFor(m => m.StoneName, new { @class = "form-control" })
+								@Html.ValidationMessageFor(m => m.StoneName)
+
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3">@Html.LabelFor(m => m.StoneType)</label>
+							<div class="col-md-9">
+								@Html.DropDownListFor(m=>m.StoneType, types, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9 ">
+								<button type="submit" id="submit" class="btn btn-primary btn-block"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			}
+		</div>
+
+	</div>
+	<!-- end widget -->
+
+</div>
+
+<script>
+
+	$(function () {
+
+		// ajax update form
+		var $form = $('.modal-dialog form');
+		$.validator.unobtrusive.parse($form);
+
+		$form.submit(function () {
+
+			var $form = $(this);
+
+			$form.valid() && $.post($form.attr('action'), $form.serialize(), function (data, status) {
+				popupMessage(data, {
+					success: function () { commitedNotice(); }
+				});
+			});
+
+			return false;
+		});
+
+		function commitedNotice() {
+			$('#firstModal').modal('hide');
+			$('#bootgrid').bootgrid('reload');
+		}
+
+	})
+
+</script>
