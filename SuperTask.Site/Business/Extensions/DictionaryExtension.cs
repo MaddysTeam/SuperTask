@@ -13,7 +13,13 @@ namespace Business
 
       public static List<SelectListItem> ToSelectList(this List<Dictionary> dictionary)
       {
-         return new List<SelectListItem>();
+         var list = new List<SelectListItem>();
+         foreach (var dic in dictionary.OrderBy(x => x.Sort))
+         {
+            list.Add(new SelectListItem { Text = dic.Title, Value = dic.Value });
+         }
+
+         return list;
       }
 
    }

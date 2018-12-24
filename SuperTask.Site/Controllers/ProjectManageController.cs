@@ -20,18 +20,18 @@ namespace TheSite.Controllers
 
       // GET: ProjectManage/Index
       //[Permission] TODO: 以后加上
-      public ActionResult Index(Guid projectId)
-      {
-         var me = db.ResourceDal
-            .ConditionQuery(r.Projectid == projectId & r.UserId == GetUserInfo().UserId, null, null, null).FirstOrDefault();
+      //public ActionResult Index(Guid projectId)
+      //{
+      //   var me = db.ResourceDal
+      //      .ConditionQuery(r.Projectid == projectId & r.UserId == GetUserInfo().UserId, null, null, null).FirstOrDefault();
 
-         if (me == null) throw new ApplicationException();
+      //   if (me == null) throw new ApplicationException();
 
-         ViewBag.CurrentResource = me;
+      //   ViewBag.CurrentResource = me;
 
 
-         return View();
-      }
+      //   return View();
+      //}
 
 
       public ActionResult Resource(Guid projectId)

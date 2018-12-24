@@ -1579,6 +1579,7 @@
     <Content Include="Views\Advice\Search.cshtml" />
     <Content Include="Views\MileStone\Search.cshtml" />
     <Content Include="Views\MileStone\Edit.cshtml" />
+    <Content Include="Views\Project\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

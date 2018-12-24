@@ -1,8 +1,10 @@
 ﻿@model MileStone
 @{
 	var pageTitle = ViewBag.Title = "编辑里程碑";
-	var types= DictionaryHelper
-		.GetSubTypeDics(Model.StoneType)
+
+	var types =
+		DictionaryHelper
+		.GetSubTypeDics(MilestoneKeys.MileStoneTypeKeyGuid)
 		.ToSelectList();
 }
 <div class="modal-dialog">
@@ -16,7 +18,7 @@
 			</div>
 		</div>
 		<div class="widget-content">
-			@using (Html.BeginForm("Edit", "Role", FormMethod.Post, new { id = "form", role = "form", @class = "form-horizontal" }))
+			@using (Html.BeginForm("Edit", "MileStone", FormMethod.Post, new { id = "form", role = "form", @class = "form-horizontal" }))
 			{
 				<div class="row">
 					<fieldset class="col-sm-12">

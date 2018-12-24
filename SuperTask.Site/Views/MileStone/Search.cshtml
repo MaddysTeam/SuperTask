@@ -14,12 +14,7 @@
 			<div class="widget-header">
 				<h3>项目列表</h3>
 				<div class="btn-group widget-header-toolbar">
-					@*@if (isLeader)
-					{
-						<button class="btn btn-sm btn-custom-primary" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Project",new { id=Guid.Empty})" data-target="#firstModal"><i class="fa fa-plus-square"></i> <span>新增</span></button>
-
-						<button class="btn btn-sm btn-info btn-template"><i class="fa fa-file-text"></i> <span>开发类模板（试用）</span></button>
-					}*@
+					<button class="btn btn-sm btn-custom-primary" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "MileStone",new { id=Guid.Empty})" data-target="#firstModal"><i class="fa fa-plus-square"></i> <span>新增</span></button>
 					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
 				</div>
 			</div>
@@ -94,7 +89,8 @@
 			grid.bootgrid(getGridOptions())
 			.on('loaded.rs.jquery.bootgrid', function () {
 				grid.find('.btn-edit').on('click', function (e) {
-				
+					var id = $(this).parent().data('rowId');
+					$('#modelProxy').data('url', '@Url.Action("Edit","MileStone")?id='+id).trigger('click');
 				});
 
 			});

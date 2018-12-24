@@ -13,9 +13,9 @@ namespace Business.Helper
       // 里程碑类型
       public static Guid MileStoneTypeKeyGuid = Guid.Parse("06f9c37f-aa87-44ab-8c8a-3572fe2231f9");
       public static Guid DefaultType = Guid.Parse("ac18dd29-e5c2-4715-ba91-fdf2c6d70e38");
-      public static Guid BusinessType = Guid.Parse("ac18dd29-e5c2-4715-ba91-fdf2c6d70e38");
-      public static Guid DevelopType = Guid.Parse("ac18dd29-e5c2-4715-ba91-fdf2c6d70e38");
-      public static Guid MaintainceType = Guid.Parse("ac18dd29-e5c2-4715-ba91-fdf2c6d70e38");
+      public static Guid BusinessType = Guid.Parse("d8a25e1d-13e2-4ced-8a52-fc90e2272155");
+      public static Guid DevelopType = Guid.Parse("fd732f82-b77c-4377-9f9d-14f2c14eb8a1");
+      public static Guid MaintainceType = Guid.Parse("acfd0142-63d3-41e4-ab39-b0f089baf347");
 
       // 里程碑状态
       public static Guid MileStoneStatusKeyGuid = Guid.Parse("8a923d41-d253-4cb2-90f9-e308499dcb97");

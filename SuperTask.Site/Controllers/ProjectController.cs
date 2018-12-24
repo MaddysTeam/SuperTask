@@ -181,7 +181,8 @@ namespace TheSite.Controllers
          });
       }
 
-      [HttpPost]
+
+      [HttpGet]
       public ActionResult Details(Guid id)
       {
          if (id.IsEmpty())
@@ -222,7 +223,7 @@ namespace TheSite.Controllers
          ViewBag.Resource = db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
 
 
-         return PartialView("_details", project);
+         return View(project);
       }
 
 

@@ -129,11 +129,11 @@
 			grid.bootgrid(getGridOptions())
 			.on('loaded.rs.jquery.bootgrid', function () {
 
-				var manUrl = '@Url.Action("Index", "ProjectManage")';
+				var manUrl = '@Url.Action("Details", "Project")';
 				grid.find('.btn-details').on('click', function (e) {
 					var id = $(this).parent().data('rowId');
-					var name = $(this).parent().data('name');
-					location.href = manUrl + '?projectId=' + id + '&userId=' + userId + '&projectName=' + name;
+					//var name = $(this).parent().data('name');
+					location.href = manUrl + '?id=' + id ;
 				});
 
 				var tasksUrl = '@Url.Action("TaskArrangement", "ProjectManage")'
