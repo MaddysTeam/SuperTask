@@ -1,9 +1,6 @@
 ﻿@model Project
 @{
-
-	var resources = ViewBag.Resource as List<Resource>;
-	var me = resources.FirstOrDefault(r => r.UserId == Html.GetUserProfile().UserId);
-	var resourceSelectList = SelectListHelper.GetSelectItems(resources, "ResourceName", "UserId", null, SelectListHelper.Default);
+	var resourceSelectList = SelectListHelper.GetSelectItems(Model.Resources, "ResourceName", "UserId", null, SelectListHelper.Default);
 }
 <style>
 	input[disabled] {
@@ -247,13 +244,25 @@
 		<h3><i class="fa fa-get-pocket"></i>项目里程碑</h3>
 		<div class="btn-group widget-header-toolbar">
 			<button type="submit" class="btn btn-info btn-sm btn-save">选择里程碑</button>
-			<button type="submit" class="btn btn-danger btn-sm btn-save">保存</button>
+			@*<button type="submit" class="btn btn-danger btn-sm btn-save">保存</button>*@
 		</div>
 	</div>
 
 	<div class="widget-content">
 
-		<div class="row form-group">
+		@foreach (var item in Model.MileStones)
+		{
+			<div class="row form-group">
+				<div class="col-md-1">@item.StoneName:</div>
+				<div class="col-md-3">@Html.DropDownList("plan",
+										                    DictionaryCache.Cached(MilestoneKeys.MileStoneStatusKeyGuid).GetSelectListById(item.Status)
+																  , new { @class = "form-control" })</div>
+				<div class="col-md-1">内容:</div>
+				<div class="col-md-3">@Html.TextArea("StoneContent", item.Content,new { @class = "form-control plan" })</div>
+				<div class="col-md-4"><a class="btn btn-success">里程碑文件夹</a></div>
+			</div>
+		}
+		@*<div class="row form-group">
 			<div class="col-md-1">项目规划:</div>
 			<div class="col-md-3">@Html.DropDownList("plan",new List<SelectListItem>(),new { @class = "form-control" })</div>
 			<div class="col-md-1">内容:</div>
@@ -287,7 +296,8 @@
 			<div class="col-md-1">内容:</div>
 			<div class="col-md-3">@Html.TextAreaFor(p => p.Description, new { @class = "form-control plan" })</div>
 			<div class="col-md-4"><a class="btn btn-success">里程碑文件管理</a></div>
-		</div>
+		</div>*@
+
 	</div>
 
 </div>
