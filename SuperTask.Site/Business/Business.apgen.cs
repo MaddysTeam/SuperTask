@@ -4339,13 +4339,17 @@ namespace Business {
         [Serializable()]
         public partial class ProjectMileStoneTableDef : APTableDef {
             
-            private GuidAPColumnDef _id;
+            private GuidAPColumnDef _pmsId;
             
             private GuidAPColumnDef _stoneId;
             
             private GuidAPColumnDef _projectid;
             
             private GuidAPColumnDef _folderId;
+            
+            private GuidAPColumnDef _status;
+            
+            private StringAPColumnDef _content;
             
             public ProjectMileStoneTableDef(string tableName) : 
                     base(tableName) {
@@ -4356,15 +4360,15 @@ namespace Business {
             }
             
             /// <summary>
-            /// Id ColumnDef
+            /// PmsId ColumnDef
             /// </summary>
-            public virtual GuidAPColumnDef Id {
+            public virtual GuidAPColumnDef PmsId {
                 get {
-                    if (Object.ReferenceEquals(_id, null)) {
-                        _id = new GuidAPColumnDef(this, "ID", false);
-                        _id.Display = "ID";
+                    if (Object.ReferenceEquals(_pmsId, null)) {
+                        _pmsId = new GuidAPColumnDef(this, "ID", false);
+                        _pmsId.Display = "ID";
                     }
-                    return _id;
+                    return _pmsId;
                 }
             }
             
@@ -4408,6 +4412,32 @@ namespace Business {
             }
             
             /// <summary>
+            /// Status ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef Status {
+                get {
+                    if (Object.ReferenceEquals(_status, null)) {
+                        _status = new GuidAPColumnDef(this, "Status", false);
+                        _status.Display = "当前项目里程碑状态";
+                    }
+                    return _status;
+                }
+            }
+            
+            /// <summary>
+            /// Content ColumnDef
+            /// </summary>
+            public virtual StringAPColumnDef Content {
+                get {
+                    if (Object.ReferenceEquals(_content, null)) {
+                        _content = new StringAPColumnDef(this, "Description", true, 2000);
+                        _content.Display = "内容";
+                    }
+                    return _content;
+                }
+            }
+            
+            /// <summary>
             /// Default Index
             /// </summary>
             public virtual APSqlOrderPhrase DefaultOrder {
@@ -4427,10 +4457,12 @@ namespace Business {
             /// Fill the data.
             /// </summary>
             public virtual void Fullup(IDataReader reader, ProjectMileStone data, bool throwIfValidColumnName) {
-                data.Id = Id.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.PmsId = PmsId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.StoneId = StoneId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.Projectid = Projectid.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.FolderId = FolderId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.Status = Status.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.Content = Content.GetValue<string>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -13216,7 +13248,7 @@ namespace Business {
             /// Insert Data.
             /// </summary>
             public virtual void Insert(ProjectMileStone data) {
-                var query = APQuery.insert(APDBDef.ProjectMileStone).values(APDBDef.ProjectMileStone.Id.SetValue(data.Id), APDBDef.ProjectMileStone.StoneId.SetValue(data.StoneId), APDBDef.ProjectMileStone.Projectid.SetValue(data.Projectid), APDBDef.ProjectMileStone.FolderId.SetValue(data.FolderId));
+                var query = APQuery.insert(APDBDef.ProjectMileStone).values(APDBDef.ProjectMileStone.PmsId.SetValue(data.PmsId), APDBDef.ProjectMileStone.StoneId.SetValue(data.StoneId), APDBDef.ProjectMileStone.Projectid.SetValue(data.Projectid), APDBDef.ProjectMileStone.FolderId.SetValue(data.FolderId), APDBDef.ProjectMileStone.Status.SetValue(data.Status), APDBDef.ProjectMileStone.Content.SetValue(data.Content));
                 ExecuteNonQuery(query);
             }
             
@@ -13224,23 +13256,23 @@ namespace Business {
             /// Update Data.
             /// </summary>
             public virtual void Update(ProjectMileStone data) {
-                var query = APQuery.update(APDBDef.ProjectMileStone).values(APDBDef.ProjectMileStone.StoneId.SetValue(data.StoneId), APDBDef.ProjectMileStone.Projectid.SetValue(data.Projectid), APDBDef.ProjectMileStone.FolderId.SetValue(data.FolderId)).where((APDBDef.ProjectMileStone.Id == data.Id));
+                var query = APQuery.update(APDBDef.ProjectMileStone).values(APDBDef.ProjectMileStone.StoneId.SetValue(data.StoneId), APDBDef.ProjectMileStone.Projectid.SetValue(data.Projectid), APDBDef.ProjectMileStone.FolderId.SetValue(data.FolderId), APDBDef.ProjectMileStone.Status.SetValue(data.Status), APDBDef.ProjectMileStone.Content.SetValue(data.Content)).where((APDBDef.ProjectMileStone.PmsId == data.PmsId));
                 ExecuteNonQuery(query);
             }
             
             /// <summary>
             /// Update Data.
             /// </summary>
-            public virtual void UpdatePartial(System.Guid id, Object metadata) {
-                var query = APQuery.update(APDBDef.ProjectMileStone).values(APSqlSetPhraseSelector.Select(APDBDef.ProjectMileStone, metadata)).where((APDBDef.ProjectMileStone.Id == id));
+            public virtual void UpdatePartial(System.Guid pmsId, Object metadata) {
+                var query = APQuery.update(APDBDef.ProjectMileStone).values(APSqlSetPhraseSelector.Select(APDBDef.ProjectMileStone, metadata)).where((APDBDef.ProjectMileStone.PmsId == pmsId));
                 ExecuteNonQuery(query);
             }
             
             /// <summary>
             /// Delete data by primary key.
             /// </summary>
-            public virtual void PrimaryDelete(System.Guid id) {
-                var query = APQuery.delete(APDBDef.ProjectMileStone).where((APDBDef.ProjectMileStone.Id == id));
+            public virtual void PrimaryDelete(System.Guid pmsId) {
+                var query = APQuery.delete(APDBDef.ProjectMileStone).where((APDBDef.ProjectMileStone.PmsId == pmsId));
                 ExecuteNonQuery(query);
             }
             
@@ -13263,8 +13295,8 @@ namespace Business {
             /// <summary>
             /// Get data by PK.
             /// </summary>
-            public virtual ProjectMileStone PrimaryGet(System.Guid id) {
-                var query = APQuery.select(APDBDef.ProjectMileStone.Asterisk).from(APDBDef.ProjectMileStone).where((APDBDef.ProjectMileStone.Id == id));
+            public virtual ProjectMileStone PrimaryGet(System.Guid pmsId) {
+                var query = APQuery.select(APDBDef.ProjectMileStone.Asterisk).from(APDBDef.ProjectMileStone).where((APDBDef.ProjectMileStone.PmsId == pmsId));
                 IDataReader reader = ExecuteReader(query);
                 try {
                     if (reader.Read()) {
@@ -13294,7 +13326,7 @@ namespace Business {
                 if ((skip != null)) {
                     query.skip(skip);
                 }
-                query.primary(APDBDef.ProjectMileStone.Id);
+                query.primary(APDBDef.ProjectMileStone.PmsId);
                 IDataReader reader = ExecuteReader(query);
                 return APDBDef.ProjectMileStone.MapList(reader);
             }
@@ -13313,7 +13345,7 @@ namespace Business {
                 List<ProjectMileStone> list = GetInitData();
                 for (int i = 0; (i < list.Count); i = (i + 1)) {
                     ProjectMileStone data = list[i];
-                    if ((PrimaryGet(data.Id) == null)) {
+                    if ((PrimaryGet(data.PmsId) == null)) {
                         Insert(data);
                     }
                 }
@@ -19433,10 +19465,10 @@ namespace Business {
             /// <summary>
             /// Update Data.
             /// </summary>
-            public static void UpdatePartial(System.Guid id, Object metadata) {
+            public static void UpdatePartial(System.Guid pmsId, Object metadata) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.ProjectMileStoneDal.UpdatePartial(id, metadata);
+                    db.ProjectMileStoneDal.UpdatePartial(pmsId, metadata);
                 }
                 finally {
                     db.Close();
@@ -19446,10 +19478,10 @@ namespace Business {
             /// <summary>
             /// Delete data by primary key.
             /// </summary>
-            public static void PrimaryDelete(System.Guid id) {
+            public static void PrimaryDelete(System.Guid pmsId) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.ProjectMileStoneDal.PrimaryDelete(id);
+                    db.ProjectMileStoneDal.PrimaryDelete(pmsId);
                 }
                 finally {
                     db.Close();
@@ -19485,10 +19517,10 @@ namespace Business {
             /// <summary>
             /// Get data by PK.
             /// </summary>
-            public static ProjectMileStone PrimaryGet(System.Guid id) {
+            public static ProjectMileStone PrimaryGet(System.Guid pmsId) {
                 APDBDef db = new APDBDef();
                 try {
-                    return db.ProjectMileStoneDal.PrimaryGet(id);
+                    return db.ProjectMileStoneDal.PrimaryGet(pmsId);
                 }
                 finally {
                     db.Close();
@@ -29945,7 +29977,7 @@ namespace Business {
         /// <summary>
         /// 项目里程碑ID
         /// </summary>
-        private System.Guid _id;
+        private System.Guid _pmsId;
         
         /// <summary>
         /// StoneId
@@ -29963,6 +29995,16 @@ namespace Business {
         private System.Guid _folderId;
         
         /// <summary>
+        /// Status
+        /// </summary>
+        private System.Guid _status;
+        
+        /// <summary>
+        /// Content
+        /// </summary>
+        private string _content;
+        
+        /// <summary>
         /// Default constructor.
         /// </summary>
         public ProjectMileStoneBase() {
@@ -29971,31 +30013,33 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public ProjectMileStoneBase(System.Guid id, System.Guid stoneId, System.Guid projectid, System.Guid folderId) {
-            _id = id;
+        public ProjectMileStoneBase(System.Guid pmsId, System.Guid stoneId, System.Guid projectid, System.Guid folderId, System.Guid status, string content) {
+            _pmsId = pmsId;
             _stoneId = stoneId;
             _projectid = projectid;
             _folderId = folderId;
+            _status = status;
+            _content = content;
         }
         
         /// <summary>
         /// 项目里程碑ID
         /// </summary>
-        public virtual System.Guid Id {
+        public virtual System.Guid PmsId {
             get {
-                return _id;
+                return _pmsId;
             }
             set {
-                _id = value;
+                _pmsId = value;
             }
         }
         
         /// <summary>
         /// 项目里程碑ID APColumnDef
         /// </summary>
-        public static GuidAPColumnDef IdDef {
+        public static GuidAPColumnDef PmsIdDef {
             get {
-                return APDBDef.ProjectMileStone.Id;
+                return APDBDef.ProjectMileStone.PmsId;
             }
         }
         
@@ -30064,6 +30108,51 @@ namespace Business {
         }
         
         /// <summary>
+        /// Status
+        /// </summary>
+        [Display(Name="当前项目里程碑状态")]
+        public virtual System.Guid Status {
+            get {
+                return _status;
+            }
+            set {
+                _status = value;
+            }
+        }
+        
+        /// <summary>
+        /// Status APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef StatusDef {
+            get {
+                return APDBDef.ProjectMileStone.Status;
+            }
+        }
+        
+        /// <summary>
+        /// Content
+        /// </summary>
+        [Display(Name="内容")]
+        [StringLength(2000)]
+        public virtual string Content {
+            get {
+                return _content;
+            }
+            set {
+                _content = value;
+            }
+        }
+        
+        /// <summary>
+        /// Content APColumnDef
+        /// </summary>
+        public static StringAPColumnDef ContentDef {
+            get {
+                return APDBDef.ProjectMileStone.Content;
+            }
+        }
+        
+        /// <summary>
         /// ProjectMileStoneTableDef APTableDef
         /// </summary>
         public static APDBDef.ProjectMileStoneTableDef TableDef {
@@ -30085,17 +30174,19 @@ namespace Business {
         /// Assignment.
         /// </summary>
         public virtual void Assignment(ProjectMileStone data) {
-            Id = data.Id;
+            PmsId = data.PmsId;
             StoneId = data.StoneId;
             Projectid = data.Projectid;
             FolderId = data.FolderId;
+            Status = data.Status;
+            Content = data.Content;
         }
         
         /// <summary>
         /// Compare equals.
         /// </summary>
         public virtual bool CompareEquals(ProjectMileStone data) {
-            if ((Id != data.Id)) {
+            if ((PmsId != data.PmsId)) {
                 return false;
             }
             if ((StoneId != data.StoneId)) {
@@ -30105,6 +30196,12 @@ namespace Business {
                 return false;
             }
             if ((FolderId != data.FolderId)) {
+                return false;
+            }
+            if ((Status != data.Status)) {
+                return false;
+            }
+            if ((Content != data.Content)) {
                 return false;
             }
             return true;
@@ -30127,15 +30224,15 @@ namespace Business {
         /// <summary>
         /// Update Data.
         /// </summary>
-        public static void UpdatePartial(System.Guid id, Object metadata) {
-            APBplDef.ProjectMileStoneBpl.UpdatePartial(id, metadata);
+        public static void UpdatePartial(System.Guid pmsId, Object metadata) {
+            APBplDef.ProjectMileStoneBpl.UpdatePartial(pmsId, metadata);
         }
         
         /// <summary>
         /// Delete data by primary key.
         /// </summary>
-        public static void PrimaryDelete(System.Guid id) {
-            APBplDef.ProjectMileStoneBpl.PrimaryDelete(id);
+        public static void PrimaryDelete(System.Guid pmsId) {
+            APBplDef.ProjectMileStoneBpl.PrimaryDelete(pmsId);
         }
         
         /// <summary>
@@ -30155,8 +30252,8 @@ namespace Business {
         /// <summary>
         /// Get data by PK.
         /// </summary>
-        public static ProjectMileStone PrimaryGet(System.Guid id) {
-            return APBplDef.ProjectMileStoneBpl.PrimaryGet(id);
+        public static ProjectMileStone PrimaryGet(System.Guid pmsId) {
+            return APBplDef.ProjectMileStoneBpl.PrimaryGet(pmsId);
         }
         
         /// <summary>
@@ -30203,8 +30300,8 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public ProjectMileStone(System.Guid id, System.Guid stoneId, System.Guid projectid, System.Guid folderId) : 
-                base(id, stoneId, projectid, folderId) {
+        public ProjectMileStone(System.Guid pmsId, System.Guid stoneId, System.Guid projectid, System.Guid folderId, System.Guid status, string content) : 
+                base(pmsId, stoneId, projectid, folderId, status, content) {
         }
     }
     

@@ -378,50 +378,7 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult AddMileStone(Guid projectId, Guid mileStoneId)
       {
-         var f = APDBDef.Folder;
-         var pm = APDBDef.ProjectMileStone;
-
-         var currentUserId = GetUserInfo().UserId;
-         var mileStone = MileStone.PrimaryGet(mileStoneId);
-         var project = Project.PrimaryGet(projectId);
-         if (project.IsProcessStatus)
-         {
-            return Json(new
-            {
-               result = AjaxResults.Error,
-               msg = Errors.Project.IN_PROCESS
-            });
-         }
-         else
-         {
-            if (Folder.PrimaryGet(project.FolderId) == null)
-               APBplDef.FolderBpl.Insert(new Folder { });
-
-            var isExists = ProjectMileStone.ConditionQueryCount(pm.Projectid == projectId & pm.StoneId == mileStoneId) > 0;
-            if (!isExists)
-            {
-               // step1 if folder is not exists, then add folder
-               var mileStonFolder = new Folder { };
-               APBplDef.FolderBpl.Insert(mileStonFolder);
-
-               // step2 add milestone
-               db.ProjectMileStoneDal.Insert(
-                  new ProjectMileStone(
-                     Guid.NewGuid(),
-                     mileStoneId,
-                     projectId,
-                     mileStonFolder.FolderId
-                  ));
-
-               //step3 create planTask template
-               var tasks = TaskHelper.GetProjectTasks(projectId);
-               var rootTask = tasks.Find(t => t.IsRoot);
-               var planTask = WorkTask.Create(currentUserId, projectId, mileStone.StoneName, project.StartDate, project.EndDate, TaskKeys.PlanStatus, TaskKeys.PlanTaskTaskType, 1, tasks.Count, true, rootTask.TaskId);
-
-               db.WorkTaskDal.Insert(planTask);
-            }
-         }
-
+        
          return Json(new
          {
             result = AjaxResults.Success,

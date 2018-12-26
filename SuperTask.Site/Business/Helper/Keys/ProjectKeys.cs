@@ -42,22 +42,6 @@ namespace Business.Helper
 
       public const int DefaultDateRange = 10;
 
-      // 项目里程碑状态（TODO:暂时固定为5个阶段，未开始，开始阶段，执行中，即将结束，已结束）
-      public static Guid ProejctMilestoneReadyStatus => Guid.Parse("82bd3c82-3041-46a2-a3aa-dabba89bbf58");
-      public static Guid ProejctMilestoneStartStatus => Guid.Parse("be4e03bb-cfdc-4d97-8d1b-18936f52cbe7");
-      public static Guid ProejctMilestonProcessStatus => Guid.Parse("4267a68c-2678-49cb-9d6b-cec1e1c9dc9c");
-      public static Guid ProejctMilestonNearlyDoneStatus => Guid.Parse("2a578d7c-9eaa-4784-b3a3-23057b324ab5");
-      public static Guid ProejctMilestonCompleteStatus => Guid.Parse("9d48d041-e2ca-4303-aa53-76a50453d490");
-
-      public static Dictionary<string, Guid> MileStoneStatusList => new Dictionary<string, Guid>()
-      {
-         {"未开始",ProejctMilestoneReadyStatus},
-         //{"未开始",ProejctMilestoneReadyStatus},
-         //{"未开始",ProejctMilestoneReadyStatus},
-         //{"未开始",ProejctMilestoneReadyStatus},
-         //{"未开始",ProejctMilestoneReadyStatus},
-      };
-
 
       /// <summary>
       /// 获取项目状态名称

@@ -1,7 +1,7 @@
-﻿using Business;
-using Business.Helper;
+﻿using Business.Helper;
 using Business.Security;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using TheSite.Models;
 
@@ -46,7 +46,9 @@ namespace Business
 
       public bool IsReviewStatus => ProjectStatus == ProjectKeys.ReviewStatus;
 
-     // public ProjectEditType EditType { get; set; }
+      public List<ProjectMileStone> MileStones { get; set; }
+
+      public List<Resource> Resources { get; set; }
 
 
       public void SetStatus(Guid status)

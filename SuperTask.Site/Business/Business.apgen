@@ -261,11 +261,12 @@
 
 			<table name="ProjectMileStone">
 				<columns>
-					<add name="Id" columnName="ID" type="Guid" primaryKey="true" comment="项目里程碑ID"/>
+					<add name="PmsId" columnName="ID" type="Guid" primaryKey="true" comment="项目里程碑ID"/>
 					<add name="StoneId"  columnName="StoneId" type="Guid"   display="程碑ID" ></add>
 					<add name="Projectid" columnName="Projectid" type="Guid" isNullable="true"  comment="项目ID" />
 					<add name="FolderId" columnName="FolderId" type="Guid"></add>
 					<add name="Status"  type="Guid"   display="当前项目里程碑状态"/>
+					<add name="Content" columnName="Description" type="string" dataLength="2000"  isNullable="true" display="内容"/>
 				</columns>
 			</table>
 

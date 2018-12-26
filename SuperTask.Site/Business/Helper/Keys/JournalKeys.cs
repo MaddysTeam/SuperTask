@@ -35,38 +35,6 @@ namespace Business.Helper
 
    }
 
-
-   //public enum JournalSearchType
-   //{
-   //   Today=1,
-   //   DateRange=2
-   //}
-
-   //public enum DateSelectType
-   //{
-   //   startDate=1,
-   //   endDate=2,
-   //   week=3,
-   //   month=4
-   //}
-
-
-   //public enum JournalStatus
-   //{
-   //   Save=1,
-   //   Recorded=2,
-   //   UnRecord=3,
-   //   Forbidden=0
-   //}
-
-
-   //public enum JournalReocrdType
-   //{
-   //	Manual=1,
-   //	Auto=2
-   //}
-
-
    public enum JournalQuality
    {
       Good = 1,

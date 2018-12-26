@@ -19,7 +19,9 @@ namespace TheSite.Controllers
       public ActionResult InitialDictionary()
       {
          // InitialTaskType();
-         InitialEval();
+         //InitialEval();
+
+         InitialProjectMileStone();
 
          return View();
       }
@@ -434,6 +436,11 @@ namespace TheSite.Controllers
 
 
          // 填了value,不让其成为父任务，不让其修改子类型
+      }
+
+      public void InitialProjectMileStone()
+      {
+         ProjectrHelper.AddMileStone(Guid.Parse("D0ADE72B-C831-4619-9A48-CF457F357BC1"), Guid.Parse("F11DB3FC-0954-4C76-A2F7-D04F1BCCD4A9"), Guid.Parse("336BE3BF-4DCF-4DCB-8C4E-2BE48A1BD03D"), db);
       }
 
       // private List<Guid> ProjectRoles => RoleMapping.Select(x => x.Value.ToGuid(Guid.Empty)).ToList();

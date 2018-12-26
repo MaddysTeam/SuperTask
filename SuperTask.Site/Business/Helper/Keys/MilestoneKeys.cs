@@ -19,8 +19,14 @@ namespace Business.Helper
 
       // 里程碑状态
       public static Guid MileStoneStatusKeyGuid = Guid.Parse("8a923d41-d253-4cb2-90f9-e308499dcb97");
-      public static Guid EnableStatus = Guid.Parse("2447a71f-5922-432f-a343-59dbcf7ad282");
-      public static Guid DisableStatus = Guid.Parse("8a19003e-0dfe-4825-a34b-c7434e81798f");
+      //public static Guid EnableStatus = Guid.Parse("2447a71f-5922-432f-a343-59dbcf7ad282");
+      //public static Guid DisableStatus = Guid.Parse("8a19003e-0dfe-4825-a34b-c7434e81798f");
+
+      public static Guid ReadyStatus => Guid.Parse("82bd3c82-3041-46a2-a3aa-dabba89bbf58");
+      public static Guid StartStatus => Guid.Parse("be4e03bb-cfdc-4d97-8d1b-18936f52cbe7");
+      public static Guid ProcessStatus => Guid.Parse("4267a68c-2678-49cb-9d6b-cec1e1c9dc9c");
+      public static Guid NearlyDoneStatus => Guid.Parse("2a578d7c-9eaa-4784-b3a3-23057b324ab5");
+      public static Guid CompleteStatus => Guid.Parse("9d48d041-e2ca-4303-aa53-76a50453d490");
 
 
       /// <summary>

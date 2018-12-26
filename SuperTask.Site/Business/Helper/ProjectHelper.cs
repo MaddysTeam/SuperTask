@@ -30,8 +30,14 @@ namespace Business.Helper
          return projects;
       }
 
-
-      public static Project GetCurrentProject(Guid projectid, APDBDef db=null,bool isforceClear=false)
+      /// <summary>
+      /// 通过项目id获取当前的项目数据
+      /// </summary>
+      /// <param name="projectid"></param>
+      /// <param name="db"></param>
+      /// <param name="isforceClear"></param>
+      /// <returns></returns>
+      public static Project GetCurrentProject(Guid projectid, APDBDef db = null, bool isforceClear = false)
       {
          if (_currentProject != null && _currentProject.ProjectId == projectid && !isforceClear)
             return _currentProject;
@@ -40,6 +46,73 @@ namespace Business.Helper
          _currentProject = db.ProjectDal.PrimaryGet(projectid);
 
          return _currentProject;
+      }
+
+
+      public static List<ProjectMileStone> GetProjectMileStones(Guid projectId, APDBDef db)
+      {
+         var ms = APDBDef.MileStone;
+         var pms = APDBDef.ProjectMileStone;
+
+         var query = APQuery.select(ms.StoneId, ms.StoneName,
+                                    pms.Status, pms.PmsId, pms.FolderId, pms.FolderId, pms.Content)
+                             .from(ms, pms.JoinLeft(ms.StoneId == pms.StoneId & pms.Projectid == projectId));
+
+         var result = query.query(db, r => new ProjectMileStone
+         {
+            PmsId = pms.PmsId.GetValue(r),
+            FolderId = pms.FolderId.GetValue(r),
+            Projectid = projectId,
+            Content = pms.Content.GetValue(r),
+            Status = pms.Status.GetValue(r),
+            StoneId = ms.StoneId.GetValue(r),
+            StoneName = ms.StoneName.GetValue(r)
+         }).ToList();
+
+         return result;
+      }
+
+
+      public static void AddMileStone(Guid userId, Guid projectId, Guid mileStoneId, APDBDef db)
+      {
+         var f = APDBDef.Folder;
+         var pm = APDBDef.ProjectMileStone;
+
+         var mileStone = MileStone.PrimaryGet(mileStoneId);
+         var project = Project.PrimaryGet(projectId);
+         var isExists = ProjectMileStone.ConditionQueryCount(pm.Projectid == projectId & pm.StoneId == mileStoneId) > 0;
+         if (!isExists)
+         {
+            // step1 if folder is not exists, then add folder
+            var mileStonFolder = new Folder
+            {
+               FolderId = Guid.NewGuid(),
+               FolderName = mileStone.StoneName,
+               ParentId = project.FolderId,
+               OperatorId = userId,
+            };
+            APBplDef.FolderBpl.Insert(mileStonFolder);
+
+            // step2 add milestone
+            db.ProjectMileStoneDal.Insert(
+               new ProjectMileStone(
+                  Guid.NewGuid(),
+                  mileStoneId,
+                  projectId,
+                  mileStonFolder.FolderId,
+                  MilestoneKeys.ReadyStatus,
+                  string.Empty
+               ));
+
+            //step3 create planTask template
+            var tasks = TaskHelper.GetProjectTasks(projectId);
+            var rootTask = tasks.Find(t => t.IsRoot);
+            var planTask = WorkTask.Create(userId, projectId, mileStone.StoneName, project.StartDate, project.EndDate, TaskKeys.PlanStatus, TaskKeys.PlanTaskTaskType, 1, tasks.Count+1, true, rootTask.TaskId);
+
+            db.WorkTaskDal.Insert(planTask);
+
+         }
+
       }
 
    }
@@ -60,23 +133,23 @@ namespace Business.Helper
             EndDate = proj.EndDate,
             Progress = proj.RateOfProgress,
             ProjectStatus = proj.ProjectStatus,
-            ProjectType=proj.ProjectType,
+            ProjectType = proj.ProjectType,
             ProjectId = proj.ProjectId,
             RateOfProgress = proj.RateOfProgress,
-            PMId=proj.PMId,
-            ManagerId=proj.ManagerId,
+            PMId = proj.PMId,
+            ManagerId = proj.ManagerId,
             ReviewerId = proj.ReviewerId,
             OperatorId = operatorId,
             ProjectExecutor = proj.ProjectExecutor,
-            ProjectOwner=proj.ProjectOwner,
-            RealCode=proj.RealCode,
-            Code=proj.Code,
-            ProjectName=proj.ProjectName,
-            ProcessName=proj.ProcessName
+            ProjectOwner = proj.ProjectOwner,
+            RealCode = proj.RealCode,
+            Code = proj.Code,
+            ProjectName = proj.ProjectName,
+            ProcessName = proj.ProcessName
          });
       }
 
-      public static void CreateRecord(Project proj,Project orignal, Guid operatorId, APDBDef db)
+      public static void CreateRecord(Project proj, Project orignal, Guid operatorId, APDBDef db)
       {
          if (!proj.Equals(orignal))
             CreateRecord(proj, operatorId, db);

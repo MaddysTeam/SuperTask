@@ -255,6 +255,7 @@
     <Compile Include="Business\Config\ThisApp.cs" />
     <Compile Include="Business\DataDef\DictionaryCache.cs" />
     <Compile Include="Business\DataDef\Project.cs" />
+    <Compile Include="Business\DataDef\ProjectMileStone.cs" />
     <Compile Include="Business\DataDef\ProjectRole.cs" />
     <Compile Include="Business\DataDef\Resource.cs" />
     <Compile Include="Business\DataDef\Review.cs" />
@@ -288,6 +289,7 @@
     <Compile Include="Business\Helper\Keys\JournalKeys.cs" />
     <Compile Include="Business\Helper\Keys\DictionaryKeys.cs" />
     <Compile Include="Business\Helper\Keys\AttachmentKeys.cs" />
+    <Compile Include="Business\Helper\Keys\FolderKeys.cs" />
     <Compile Include="Business\Helper\Keys\OrgKeys.cs" />
     <Compile Include="Business\Helper\Keys\MilestoneKeys.cs" />
     <Compile Include="Business\Helper\Keys\ProjectKeys.cs" />
@@ -1485,7 +1487,6 @@
     <Content Include="Views\Project\Search.cshtml" />
     <Content Include="Views\Organize\Edit.cshtml" />
     <Content Include="Views\Project\Edit.cshtml" />
-    <Content Include="Views\ProjectManage\Index.cshtml" />
     <Content Include="Views\Shared\_subMenu.cshtml" />
     <Content Include="Views\ProjectManage\TaskArrangement.cshtml" />
     <Content Include="Views\Task\Edit.cshtml" />
