@@ -1,0 +1,75 @@
+﻿@model List<MileStone>
+@{ 
+}
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 选择里程碑</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+			@foreach (var item in Model)
+			{
+				<div class="row">
+					<fieldset class="col-sm-12">
+
+						<div class="form-group">
+							<div class="col-md-2">
+								<input class="form-control cb_stone" value="@item.StoneId" type="checkbox">
+							</div>
+							<div class="col-md-10">
+								<span class="form-control">
+									@item.StoneName
+								</span>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			}
+			<div class="form-group">
+				<div class="col-sm-9 col-lg-offset-3">
+					<button type="button" class="btn btn-primary btn-block-half btn-select"><i class="fa fa-check-circle"></i> 选择</button>
+					<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- end widget -->
+	<input type="hidden" id="stoneValues" />
+</div>
+
+<script>
+
+	$(function () {
+
+		var $stoneValues = $('#stoneValues');
+		var $checkbox = $('.cb_stone');
+
+		// 选择应用的字符串用逗号分开
+		var tempStr = '';
+
+		getValuesByCheckboxList($checkbox, function (str) {
+			$stoneValues.val(str);
+		})
+
+
+		$('.btn-select').on('click', function () {
+			@*$.post('@Url.Action("RoleAppEdit", "Resource")', { resourceRoleId: rrid, appIds: $appValues.val() }, function (data) {
+				popupMessage(data, {
+					success: function () { commitedNotice(); }
+				});
+			});*@
+		});
+
+		function commitedNotice() {
+			$('#firstModal').modal('hide');
+		}
+
+	})
+
+</script>

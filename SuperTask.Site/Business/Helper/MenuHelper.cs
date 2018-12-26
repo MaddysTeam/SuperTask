@@ -25,7 +25,7 @@ namespace Business.Helper
 
          var subMenu= new List<MenuItem>()
          {
-            new MenuItem { Id = ProjectMainPageCode, FullTitle=$"首页({currentProject.ProjectName})", Title = $"首页({currentProject.ProjectName})".Ellipsis(10), IsVisible = true, Url = string.Format("/ProjectManage/{0}?projectId={1}", "Index", projectId) },
+            new MenuItem { Id = ProjectMainPageCode, FullTitle=$"首页({currentProject.ProjectName})", Title = $"首页({currentProject.ProjectName})".Ellipsis(10), IsVisible = true, Url = string.Format("/project/{0}?id={1}", "details", projectId) },
             new MenuItem { Id = ProjectResourcePageCode,FullTitle = "项目资源", Title = "项目资源", IsVisible = true , Url = string.Format("/ProjectManage/{0}?projectId={1}", "Resource", projectId) },
             new MenuItem { Id = ProjectTaskPageCode, FullTitle = "任务分配",Title = "任务分配", IsVisible = true, Url = string.Format("/ProjectManage/{0}?projectId={1}", "TaskArrangement", projectId)},
             new MenuItem { Id = ProjectProcessPageCode, FullTitle = "任务进度", Title = "任务进度", IsVisible = ResourceHelper.HasPermission(userId, projectId, "P_10005", new APDBDef()), Url = string.Format("/ProjectManage/{0}?projectId={1}", "ProcessInfo", projectId)} ,

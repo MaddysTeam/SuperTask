@@ -240,6 +240,8 @@
 			loadData(function () {
 				bindLeftNav();
 				showFolderFiles();
+
+				openFolder('a647df69-d2a5-439d-b14d-40bce40dcf58');
 			});
 
 		});
@@ -442,7 +444,9 @@
 						'icon': 'fa fa-folder yellow-font'
 					},
 				}
-			}).on('loaded.jstree', function () {
+			}).on('loaded.jstree', function (e, data) {
+				console.log(data);
+				console.log(e);
 			}).on('changed.jstree', function (e, data) {
 				openFolder(data.node["id"]);
 			}).on('ready.jstree', function () {

@@ -220,7 +220,7 @@ namespace TheSite.Controllers
             }).FirstOrDefault();
 
          project.Resources= db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
-         project.MileStones = ProjectrHelper.GetProjectMileStones(id, db);
+         project.MileStones = MilestoneHelper.GetProjectMileStones(id, db);
 
          return View(project);
       }

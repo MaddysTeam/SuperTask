@@ -96,8 +96,15 @@ namespace Business
          //创建项目下的第一个默认任务   
          TaskHelper.CreateAndSaveRootTaskInDB(user, project, db);
 
+         //创建项目文件夹
+         var folder=ShareFolderHelper.CreateFolder(project.ProjectName, ShareFolderKeys.RootProjectFolderId, user.UserId, db);
+         project.FolderId = folder.FolderId;
+
+         //创建默认里程碑
+         MilestoneHelper.AddDefaultMileStones(project, db);
+
          //创建项目记录
-         ProjectRecordHelper.CreateRecord(project, user.UserId, db);
+         //ProjectRecordHelper.CreateRecord(project, user.UserId, db);
       }
 
       protected virtual Result Validate(Project project, ProjectEditOption option)

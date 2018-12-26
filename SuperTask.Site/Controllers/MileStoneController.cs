@@ -76,6 +76,16 @@ namespace TheSite.Controllers
       }
 
 
+      // GET: MileStone/ChooseExceptDefault
+
+      public ActionResult ChooseExceptDefault()
+      {
+         var milestones = db.MileStoneDal.ConditionQuery(m.StoneType!= MilestoneKeys.DefaultType, null, null, null);
+
+         return PartialView("_milestones", milestones);
+      }
+
+
       // GET: MileStone/Edit
       // Post-ajax: MileStone/Edit
       // Post-ajax: Project/Details

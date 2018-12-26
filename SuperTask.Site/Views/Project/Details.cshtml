@@ -22,94 +22,106 @@
 
 	</div>
 </div>
+
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
 @section Plugins{
 	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
 }
 @section Scripts{
-<script>
-	function whenProcess() {
-		$('.btn-modify,.projectProgress,.processName').show().removeAttr('disabled');
-		$('.btn-start').hide();
-		var startDate = $('.startDate'),
-		endDate = $('.endDate'),
-		hasStartDate = startDate.attr('hasValue') == 'True',
-		hasEndDate = startDate.attr('hasValue') == 'True';
-		if (!hasStartDate)
-			startDate.val(new Date().Format('yyyy-MM-dd'));
-		if (!hasEndDate)
-			endDate.val(new Date().Format('yyyy-MM-dd'));
-	}
+	<script>
+		function whenProcess() {
+			$('.btn-modify,.projectProgress,.processName').show().removeAttr('disabled');
+			$('.btn-start').hide();
+			var startDate = $('.startDate'),
+			endDate = $('.endDate'),
+			hasStartDate = startDate.attr('hasValue') == 'True',
+			hasEndDate = startDate.attr('hasValue') == 'True';
+			if (!hasStartDate)
+				startDate.val(new Date().Format('yyyy-MM-dd'));
+			if (!hasEndDate)
+				endDate.val(new Date().Format('yyyy-MM-dd'));
+		}
 
-	function whenPlan() {
-		$('.btn-start').show().removeAttr('disabled');
-	}
+		function whenPlan() {
+			$('.btn-start').show().removeAttr('disabled');
+		}
 
-	function whenComplete() {
-		$('.details button').hide();
-	}
+		function whenComplete() {
+			$('.details button').hide();
+		}
 
-	function whenEdit() {
-		$('.btn-modify,.btn-start').hide();
-		$('.btn-save').show();
-	}
+		function whenEdit() {
+			$('.btn-modify,.btn-start').hide();
+			$('.btn-save').show();
+		}
 
-	function whenReview() {
-		whenComplete();
-	}
+		function whenReview() {
+			whenComplete();
+		}
 
-	function afterDialogSuccess() {
-		var url = '@Url.Action("Details","Project",new {id= Model.ProjectId })';
-		loadDetail(url);
-	}
+		function afterDialogSuccess() {
+			var url = '@Url.Action("Details","Project",new {id= Model.ProjectId })';
+			loadDetail(url);
+		}
 
-	$(function () {
+		$(function () {
 
-		ajaxSubmitForm($('form'));
+			ajaxSubmitForm($('form'));
 
-		var isPlanStatus = '@Model.IsPlanStatus' == 'True';
-		var isProcessStatus = '@Model.IsProcessStatus' == 'True';
-		var isCompleteStatus = '@Model.IsCompleteStatus' == 'True';
-		var isEditStatus = '@Model.IsEditStatus' == 'True';
-		var isReviewStatus = '@Model.IsReviewStatus' == 'True';
+			var isPlanStatus = '@Model.IsPlanStatus' == 'True';
+			var isProcessStatus = '@Model.IsProcessStatus' == 'True';
+			var isCompleteStatus = '@Model.IsCompleteStatus' == 'True';
+			var isEditStatus = '@Model.IsEditStatus' == 'True';
+			var isReviewStatus = '@Model.IsReviewStatus' == 'True';
 
-		if (isPlanStatus) whenPlan();
-		else if (isCompleteStatus) whenComplete();
-		else if (isProcessStatus) whenProcess();
-		else if (isEditStatus) whenEdit();
-		else if (isReviewStatus) whenReview();
+			if (isPlanStatus) whenPlan();
+			else if (isCompleteStatus) whenComplete();
+			else if (isProcessStatus) whenProcess();
+			else if (isEditStatus) whenEdit();
+			else if (isReviewStatus) whenReview();
 
-		$('.btn-start').on('click', function () {
-			if (confirm('@Confirm.Project.PROJECT_CONFIRM_START')) {
-				$('#ProjectStatus').val('@ProjectKeys.ProcessStatus');
-			}
-			else {
-				return false;
-			}
+			$('.btn-start').on('click', function () {
+				if (confirm('@Confirm.Project.PROJECT_CONFIRM_START')) {
+					$('#ProjectStatus').val('@ProjectKeys.ProcessStatus');
+				}
+				else {
+					return false;
+				}
+			});
+
+			$('.btn-forceClose').on('click', function () {
+				if (confirm('@Confirm.Project.PROJECT_FORCE_CLOSE')) {
+					$('#ProjectStatus').val('@ProjectKeys.ForceCloseStatus');
+				}
+			});
+
+			$('.btn-save').on('click', function () {
+				var status = $('#ProjectStatus').val();
+				if (status == '@ProjectKeys.EditStatus') { // 如果是编辑状态，则保存后默认改为执行状态
+					$('#ProjectStatus').val('@ProjectKeys.ProcessStatus');
+				}
+			});
+
+			$('.btn-complete').on('click', function () {
+				if (confirm('@Confirm.Project.PROJECT_CONFIRM_COMPLETE')) {
+					$('#ProjectStatus').val('@ProjectKeys.CompleteStatus');
+				}
+				else
+					return false;
+			});
+
+			//$('.btn-milestone').on('click', function () {
+			//	$('')
+			//});
+
 		});
 
-		$('.btn-forceClose').on('click', function () {
-			if (confirm('@Confirm.Project.PROJECT_FORCE_CLOSE')) {
-				$('#ProjectStatus').val('@ProjectKeys.ForceCloseStatus');
-			}
-		});
 
-		$('.btn-save').on('click', function () {
-			var status = $('#ProjectStatus').val();
-			if (status == '@ProjectKeys.EditStatus') { // 如果是编辑状态，则保存后默认改为执行状态
-				$('#ProjectStatus').val('@ProjectKeys.ProcessStatus');
-			}
-		});
-
-		$('.btn-complete').on('click', function () {
-			if (confirm('@Confirm.Project.PROJECT_CONFIRM_COMPLETE')) {
-				$('#ProjectStatus').val('@ProjectKeys.CompleteStatus');
-			}
-			else
-				return false;
-		});
-
-	});
-
-
-</script>
+	</script>
 }

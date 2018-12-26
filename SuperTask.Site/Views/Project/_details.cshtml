@@ -243,8 +243,7 @@
 	<div class="widget-header">
 		<h3><i class="fa fa-get-pocket"></i>项目里程碑</h3>
 		<div class="btn-group widget-header-toolbar">
-			<button type="submit" class="btn btn-info btn-sm btn-save">选择里程碑</button>
-			@*<button type="submit" class="btn btn-danger btn-sm btn-save">保存</button>*@
+			<button class="btn btn-info btn-sm btn-milestone" id="milestones" data-toggle="ajax-modal" data-url="@Url.Action("ChooseExceptDefault", "MileStone")" data-target="#firstModal">选择里程碑</button>
 		</div>
 	</div>
 
@@ -259,44 +258,9 @@
 																  , new { @class = "form-control" })</div>
 				<div class="col-md-1">内容:</div>
 				<div class="col-md-3">@Html.TextArea("StoneContent", item.Content,new { @class = "form-control plan" })</div>
-				<div class="col-md-4"><a class="btn btn-success">里程碑文件夹</a></div>
+				<div class="col-md-4"><a class="btn btn-success">进入文件夹</a><a class="btn btn-info" title="保存"><i class="fa fa-save"></i></a><a class="btn btn-warning"><i class="fa fa-remove"></i></a></div>
 			</div>
 		}
-		@*<div class="row form-group">
-			<div class="col-md-1">项目规划:</div>
-			<div class="col-md-3">@Html.DropDownList("plan",new List<SelectListItem>(),new { @class = "form-control" })</div>
-			<div class="col-md-1">内容:</div>
-			<div class="col-md-3">@Html.TextAreaFor(p => p.Description, new { @class = "form-control plan" })</div>
-			<div class="col-md-4"><a class="btn btn-success">里程碑文件夹</a></div>
-		</div>
-		<div class="row form-group">
-			<div class="col-md-1">项目规划:</div>
-			<div class="col-md-3">@Html.DropDownList("plan", new List<SelectListItem>(), new { @class = "form-control" })</div>
-			<div class="col-md-1">内容:</div>
-			<div class="col-md-3">@Html.TextAreaFor(p => p.Description, new { @class = "form-control plan" })</div>
-			<div class="col-md-4"><a class="btn btn-success">里程碑文件管理</a></div>
-		</div>
-		<div class="row form-group">
-			<div class="col-md-1">项目规划:</div>
-			<div class="col-md-3">@Html.DropDownList("plan", new List<SelectListItem>(), new { @class = "form-control" })</div>
-			<div class="col-md-1">内容:</div>
-			<div class="col-md-3">@Html.TextAreaFor(p => p.Description, new { @class = "form-control plan" })</div>
-			<div class="col-md-4"><a class="btn btn-success">里程碑文件管理</a></div>
-		</div>
-		<div class="row form-group">
-			<div class="col-md-1">项目规划:</div>
-			<div class="col-md-3">@Html.DropDownList("plan", new List<SelectListItem>(), new { @class = "form-control" })</div>
-			<div class="col-md-1">内容:</div>
-			<div class="col-md-3">@Html.TextAreaFor(p => p.Description, new { @class = "form-control plan" })</div>
-			<div class="col-md-4"><a class="btn btn-success">里程碑文件管理</a></div>
-		</div>
-		<div class="row form-group">
-			<div class="col-md-1">项目规划:</div>
-			<div class="col-md-3">@Html.DropDownList("plan", new List<SelectListItem>(), new { @class = "form-control" })</div>
-			<div class="col-md-1">内容:</div>
-			<div class="col-md-3">@Html.TextAreaFor(p => p.Description, new { @class = "form-control plan" })</div>
-			<div class="col-md-4"><a class="btn btn-success">里程碑文件管理</a></div>
-		</div>*@
 
 	</div>
 
