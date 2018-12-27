@@ -418,6 +418,7 @@
     <Content Include="assets\css\font-awesome.min.css" />
     <Content Include="assets\css\main.css" />
     <Content Include="assets\css\main.min.css" />
+    <Content Include="assets\css\plugins.css" />
     <Content Include="assets\css\style-switcher.css" />
     <Content Include="assets\fonts\fontawesome-webfont.svg" />
     <Content Include="assets\fonts\glyphicons-halflings-regular.svg" />

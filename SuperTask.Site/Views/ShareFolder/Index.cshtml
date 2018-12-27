@@ -1,10 +1,11 @@
 ﻿
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	var projectId = Request["proejctId"];
+	var projectId = string.IsNullOrEmpty(Request["projectId"])? Guid.Empty: Request["projectId"].ToGuid(Guid.Empty);
 }
 @section Css{
 	<link href="~/assets/plugins/jstree-3.2.1/themes/default/style.min.css" rel="stylesheet" />
+   <link href="~/assets/css/plugins.css" rel="stylesheet" />
 }
 <style>
 	.jstree-themeicon-custom {
@@ -26,7 +27,7 @@
 					<div class="widget-header"></div>
 					<div class="widget-content">
 						<div class="explorer-nav">
-							
+
 						</div>
 					</div>
 
@@ -34,7 +35,6 @@
 
 			</div>
 			<!-- /explorer nav -->
-
 			<!-- explorer content -->
 			<div class="col-md-9">
 				<div class="widget explorer">
@@ -104,22 +104,13 @@
 
 			bindExplorButtons();
 
-			@*var projectId='@projectId';
-			var isSearchByProject= projectId!='@Guid.Empty';
-			if (isSearchByProject) {
-				loadData(function () {
-					bindLeftNav();
-					showFolderFiles();
-				}, { projectId: projectId });
-			}
-			else {
-				
-			}*@
+			var para = { projectId: '@projectId', phrase: '' };
+
 			loadData(function () {
 				bindLeftNav();
 				showFolderFiles();
 				//openFolder('a647df69-d2a5-439d-b14d-40bce40dcf58');
-			});
+			}, para);
 
 		});
 
@@ -165,10 +156,10 @@
 										'<div class="ovrly"></div>' +
 										'<div class="buttons">' +
 											'<a href="' + file.path + '" title="下载" class="fa fa-download"></a>' +
-											'<a data-url="@Url.Action("FilePreview", "ShareFolder")?id='+file.id+'" title="预览" class="fa fa-eye preview"></a>' +
+											'<a data-url="@Url.Action("FilePreview", "ShareFolder")?id=' + file.id + '" title="预览" class="fa fa-eye preview"></a>' +
 								'</div><div class="text-center name">' + file.name + '</div>' +
 							'</div>' +
-						'</div>'
+						'</div>';
 		};
 
 		//folder operation
@@ -225,7 +216,7 @@
 		//files operation
 		function delFile(fileId) {
 			if (confirm("@Success.File.CONFIRM_DELETE")) {
-				$.post('@Url.Action("DelFile", "ShareFolder")', { id: fileId ,folderId:currentFolderId}, function (data) {
+				$.post('@Url.Action("DelFile", "ShareFolder")', { id: fileId, folderId: currentFolderId }, function (data) {
 					loadData(function () {
 						showFolderFiles(currentFolderId);
 					});
@@ -298,7 +289,7 @@
 			var data = [root];
 			if (!folders) return;
 			$(folders).each(function () {
-				var folder=this;
+				var folder = this;
 				data.push({
 					"id": folder.id,
 					"parent": folder.parentId,
@@ -340,7 +331,7 @@
 			});
 			$('.btn-add-file').click(function () {
 				$('#modelProxy')
-						.data('url', '@Url.Action("FileEdit","ShareFolder")?fileId='+11111111+'&folderId=' + currentFolderId)
+						.data('url', '@Url.Action("FileEdit","ShareFolder")?fileId=' + 11111111 + '&folderId=' + currentFolderId)
 						.trigger('click');
 			});
 			$('.btn_search').click(function () {
@@ -367,10 +358,6 @@
 
 		//http operation
 		function loadData(callback, para) {
-			@*var projectId = '@projectId';
-			var isSearchByProject = projectId != '@Guid.Empty';
-			var url = isSearchByProject ? '' : '';*@
-
 			$.post('@Url.Action("Search", "ShareFolder")', para, function (data) {
 				folders = [];
 				files = [];

@@ -20,7 +20,7 @@ namespace TheSite.Controllers
 
       // GET: ShareFolder/Index
 
-      public ActionResult Index(Guid? proejctId)
+      public ActionResult Index(Guid? projectId)
       {
          return View();
       }
@@ -28,17 +28,17 @@ namespace TheSite.Controllers
       // POST-AJAX: ShareFolder/Search
       // POST-AJAX: ShareFolder/SearchProjectFolders
 
-      [HttpPost]
-      public ActionResult Search(string phrase)
-      {
-         var folders = GetAllFolders();
-         var files = GetFiles(phrase);
+      //[HttpPost]
+      //public ActionResult Search(string phrase)
+      //{
+      //   var folders = GetAllFolders();
+      //   var files = GetFiles(phrase);
 
-         return Json(new
-         {
-            rows = new { folders = folders, files = files },
-         });
-      }
+      //   return Json(new
+      //   {
+      //      rows = new { folders = folders, files = files },
+      //   });
+      //}
 
       [HttpPost]
       public ActionResult Search(Guid projectId, string phrase)
@@ -48,9 +48,16 @@ namespace TheSite.Controllers
          var project = db.ProjectDal.PrimaryGet(projectId);
          if (project != null)
          {
-            folders = GetAllFolders().FindAll(f => f.id == project.FolderId);
-            files = GetFiles(phrase);
+            var parents = GetAllFolders().FindAll(f => f.id == project.FolderId || f.id == Guid.Parse("64206816-B1C7-403E-B4CF-D797E32FD322"));
+            var children = FindChildFolders(project.FolderId, GetAllFolders(), new List<FolderViewModel>());
+            folders.AddRange(parents.Concat(children));
          }
+         else
+         {
+            folders = GetAllFolders();
+         }
+
+         files = GetFiles(phrase);
 
          return Json(new
          {
@@ -105,7 +112,7 @@ namespace TheSite.Controllers
       // GET: ShareFolder/FileEdit
       // Post-ajax: ShareFolder/FileEdit 
 
-      public ActionResult FileEdit(Guid? id,Guid? folderId)
+      public ActionResult FileEdit(Guid? id, Guid? folderId)
       {
          FileViewModel model = new FileViewModel();
          if (id != null)
@@ -279,7 +286,7 @@ namespace TheSite.Controllers
 
       private List<FileViewModel> GetFiles(string phrase = null)
       {
-         var query =APQuery.select(ff.FolderId, ff.FolderFileId.As("folderFileId"), at.Asterisk)
+         var query = APQuery.select(ff.FolderId, ff.FolderFileId.As("folderFileId"), at.Asterisk)
                         .from(ff, at.JoinLeft(at.AttachmentId == ff.AttachmentId)
                         ).order_by(at.RealName.Asc);
 
