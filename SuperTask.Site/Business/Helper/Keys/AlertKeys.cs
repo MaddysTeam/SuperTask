@@ -154,6 +154,7 @@ namespace Business.Helper
 
          public const string EDIT_SUCCESS = "项目编辑成功！";
          public const string ADD_MILESTONE_SUCCESS = "里程碑绑定成功";
+         public const string Edit_MILESTONE_SUCCESS = "项目里程碑编辑成功";
       }
 
 

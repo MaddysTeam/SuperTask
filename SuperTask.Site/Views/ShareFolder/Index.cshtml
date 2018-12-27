@@ -1,148 +1,12 @@
 ﻿
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
+	var projectId = Request["proejctId"];
 }
 @section Css{
 	<link href="~/assets/plugins/jstree-3.2.1/themes/default/style.min.css" rel="stylesheet" />
 }
 <style>
-	.btn06 {
-		width: 100%;
-		overflow: hidden;
-		position: relative;
-		-webkit-box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.3);
-		-moz-box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.3);
-		box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.3);
-		cursor:pointer;
-	}
-
-	.explorer {
-		min-height: 600px;
-	}
-
-	.explore-header {
-		padding: 2px;
-		height: 100px;
-	}
-
-		.explore-header ul {
-			margin: 0px;
-			padding: 0px;
-			list-style: none;
-		}
-
-			.explore-header ul li {
-				display: inline-block;
-				float: left;
-				margin-left: 10px;
-			}
-
-				.explore-header ul li a {
-					font-size: 20px;
-				}
-
-		.explore-header .folder_path {
-			width: 100%;
-			display: block;
-			height: 30px;
-			padding: 0px;
-		}
-
-		.explore-header .search {
-			width: 100%;
-			display: block;
-			height: 30px;
-			padding: 0px;
-		}
-
-	.item {
-		margin-bottom: 20px;
-	}
-
-	.btn06 img {
-		position: relative;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
-
-	.btn06 .name{
-		overflow:hidden;
-		text-overflow:ellipsis;
-		-o-text-overflow:ellipsis;
-		-webkit-text-overflow:ellipsis;
-		-moz-text-overflow:ellipsis;
-		white-space:nowrap;
-	}
-
-	.btn06 .ovrly {
-		background: rgba(0, 0, 0, 0.5);
-		height: 100%;
-		left: 0;
-		position: absolute;
-		top: 0;
-		width: 100%;
-		opacity: 0;
-		-webkit-transition: all 1s;
-		-moz-transition: all 0.3s;
-		-o-transition: all 0.3s;
-		transition: all 0.3s;
-	}
-
-	.btn06 .buttons {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		-webkit-transform: translate(-50%, -50%);
-		-moz-transform: translate(-50%, -50%);
-		-ms-transform: translate(-50%, -50%);
-		-o-transform: translate(-50%, -50%);
-		transform: translate(-50%, -50%);
-	}
-
-		.btn06 .buttons .fa {
-			background: rgb(256, 256, 256);
-			-webkit-box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
-			-moz-box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
-			box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
-			-webkit-border-radius: 50%;
-			-moz-border-radius: 50%;
-			border-radius: 50%;
-			display: inline-block;
-			line-height: 30px;
-			font-size: 14px;
-			text-align: center;
-			text-decoration: none;
-			width: 30px;
-			height: 30px;
-			opacity: 0;
-			position: relative;
-			-webkit-transition: all 0.3s, color 0.1s 0.3s;
-			-moz-transition: all 0.3s, color 0.1s 0.3s;
-			-o-transition: all 0.3s, color 0.1s 0.3s;
-			transition: all 0.3s, color 0.1s 0.3s;
-			color: transparent;
-		}
-
-		.btn06 .buttons .fa-link {
-			left: 22px;
-		}
-
-		.btn06 .buttons .fa-search {
-			left: -22px;
-		}
-
-	.btn06:hover .buttons .fa {
-		opacity: 1;
-		left: 0;
-		color: rgba(50, 50, 50, 0.9);
-	}
-
-	.btn06:hover .ovrly {
-		opacity: 1;
-	}
-
 	.jstree-themeicon-custom {
 		font-size: 22px;
 	}
@@ -150,9 +14,11 @@
 
 <div class="content-wrapper">
 	<div class="header"></div>
+
 	<!-- main -->
 	<div class="content">
 		<div class="row">
+
 			<!-- explorer nav -->
 			<div class="col-md-3">
 				<div class="widget">
@@ -168,6 +34,7 @@
 
 			</div>
 			<!-- /explorer nav -->
+
 			<!-- explorer content -->
 			<div class="col-md-9">
 				<div class="widget explorer">
@@ -215,6 +82,7 @@
 				</div>
 			</div>
 			<!-- /explorer content -->
+
 		</div>
 	</div>
 	<!-- /main -->
@@ -236,12 +104,21 @@
 
 			bindExplorButtons();
 
-			//get ajax data
+			@*var projectId='@projectId';
+			var isSearchByProject= projectId!='@Guid.Empty';
+			if (isSearchByProject) {
+				loadData(function () {
+					bindLeftNav();
+					showFolderFiles();
+				}, { projectId: projectId });
+			}
+			else {
+				
+			}*@
 			loadData(function () {
 				bindLeftNav();
 				showFolderFiles();
-
-				openFolder('a647df69-d2a5-439d-b14d-40bce40dcf58');
+				//openFolder('a647df69-d2a5-439d-b14d-40bce40dcf58');
 			});
 
 		});
@@ -409,7 +286,7 @@
 		}
 
 		function bindUpClick() {
-			
+
 		}
 
 		function setExplorePath(path) {
@@ -489,7 +366,11 @@
 		}
 
 		//http operation
-		function loadData(callback,para) {
+		function loadData(callback, para) {
+			@*var projectId = '@projectId';
+			var isSearchByProject = projectId != '@Guid.Empty';
+			var url = isSearchByProject ? '' : '';*@
+
 			$.post('@Url.Action("Search", "ShareFolder")', para, function (data) {
 				folders = [];
 				files = [];

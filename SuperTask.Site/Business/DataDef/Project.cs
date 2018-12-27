@@ -120,6 +120,7 @@ namespace Business
          prj.EndDate = prj.StartDate.AddDays(ProjectKeys.DefaultDateRange)
                             .GetNextMondayIfIsWeekend();
          prj.Code = prj.GenerateCode();
+         prj.FolderId = Guid.NewGuid();
       }
 
 

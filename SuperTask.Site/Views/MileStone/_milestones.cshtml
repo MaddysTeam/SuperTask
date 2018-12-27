@@ -1,5 +1,6 @@
 ﻿@model List<MileStone>
 @{ 
+	var projectId = Request["projectId"];
 }
 <div class="modal-dialog">
 
@@ -46,7 +47,8 @@
 <script>
 
 	$(function () {
-
+		
+		var projectId = '@projectId';
 		var $stoneValues = $('#stoneValues');
 		var $checkbox = $('.cb_stone');
 
@@ -57,18 +59,16 @@
 			$stoneValues.val(str);
 		})
 
-
 		$('.btn-select').on('click', function () {
-			@*$.post('@Url.Action("RoleAppEdit", "Resource")', { resourceRoleId: rrid, appIds: $appValues.val() }, function (data) {
+			$.post('@Url.Action("AddMileStones", "ProjectManage")', { projectId: projectId, mileStoneIds: $stoneValues.val() }, function (data) {
 				popupMessage(data, {
-					success: function () { commitedNotice(); }
+					success: function () {
+						$('#firstModal').modal('hide');
+						location.href = location.href;
+					}
 				});
-			});*@
+			});
 		});
-
-		function commitedNotice() {
-			$('#firstModal').modal('hide');
-		}
 
 	})
 

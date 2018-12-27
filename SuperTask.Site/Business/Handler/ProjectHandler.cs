@@ -46,9 +46,6 @@ namespace Business
 
                option.ProjectTasks = option.ProjectTasks ?? TaskHelper.GetProjectTasks(project.ProjectId, option.db);
 
-               //上传文件记录
-               UploadFileRecord(project, option);
-
                //更改资源角色中的负责人和项目经理
                ResourceHelper.ReplaceLeader(project.ProjectId, project.ManagerId, project.PMId, db);
 
@@ -65,7 +62,7 @@ namespace Business
 
             db.Commit();
          }
-         catch
+         catch(Exception e)
          {
             db.Rollback();
          }
@@ -97,8 +94,7 @@ namespace Business
          TaskHelper.CreateAndSaveRootTaskInDB(user, project, db);
 
          //创建项目文件夹
-         var folder=ShareFolderHelper.CreateFolder(project.ProjectName, ShareFolderKeys.RootProjectFolderId, user.UserId, db);
-         project.FolderId = folder.FolderId;
+         var folder=ShareFolderHelper.CreateFolder(project.FolderId, project.ProjectName, ShareFolderKeys.RootProjectFolderId, user.UserId, db);
 
          //创建默认里程碑
          MilestoneHelper.AddDefaultMileStones(project, db);
@@ -130,19 +126,6 @@ namespace Business
          }
 
          return result;
-      }
-
-      protected virtual void UploadFileRecord(Project project, ProjectEditOption option)
-      {
-         if (project.HasUploadFile())
-         {
-            project.Attachment.AttachmentId = Guid.NewGuid();
-            project.Attachment.Projectid = project.ProjectId;
-            project.Attachment.PublishUserId = option.CurrentUser.UserId;
-            project.Attachment.UploadDate = DateTime.Now;
-
-            option.db.AttachmentDal.Insert(project.Attachment);
-         }
       }
 
       protected virtual void WhenPlan(EditContext ctx)

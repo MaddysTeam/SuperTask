@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Business;
+using Business.Helper;
+using Symber.Web.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Business.Helper;
 using TheSite.Models;
-using Business;
-using Symber.Web.Data;
-//using System.Web.MVC;
 
 namespace TheSite.Controllers
 {
@@ -17,22 +15,6 @@ namespace TheSite.Controllers
 
       static APDBDef.ProjectTableDef p = APDBDef.Project;
       static APDBDef.ResourceTableDef r = APDBDef.Resource;
-
-      // GET: ProjectManage/Index
-      //[Permission] TODO: 以后加上
-      //public ActionResult Index(Guid projectId)
-      //{
-      //   var me = db.ResourceDal
-      //      .ConditionQuery(r.Projectid == projectId & r.UserId == GetUserInfo().UserId, null, null, null).FirstOrDefault();
-
-      //   if (me == null) throw new ApplicationException();
-
-      //   ViewBag.CurrentResource = me;
-
-
-      //   return View();
-      //}
-
 
       public ActionResult Resource(Guid projectId)
       {
@@ -366,19 +348,26 @@ namespace TheSite.Controllers
       }
 
 
-      // GET: ProjectManage/AddMileStone
-      // Post-Ajax: ProjectManage/AddMileStone
+      // Post-Ajax: ProjectManage/AddMileStones
       // Post-Ajax: ProjectManage/RemoveMileStone
-
-      public ActionResult AddMileStone()
-      {
-         return PartialView();
-      }
+      // Post-Ajax: ProjectManage/EditStone
 
       [HttpPost]
-      public ActionResult AddMileStone(Guid projectId, Guid mileStoneId)
+      public ActionResult AddMileStones(Guid projectId, string mileStoneIds)
       {
-        
+         var project = db.ProjectDal.PrimaryGet(projectId);
+         var milestones = MileStone.GetAll();
+         var ids = mileStoneIds.Split(',');
+
+         foreach (var item in ids)
+         {
+            var stone = milestones.FirstOrDefault(ms => ms.StoneId == item.ToGuid(Guid.Empty));
+            if (stone != null)
+            {
+               MilestoneHelper.AddProjectMileStone(project, stone, db); 
+            }
+         }
+
          return Json(new
          {
             result = AjaxResults.Success,
@@ -401,8 +390,26 @@ namespace TheSite.Controllers
          return Json(new
          {
             result = AjaxResults.Success,
-            msg = ""
+            msg = Success.Project.Edit_MILESTONE_SUCCESS
+         });
+      }
 
+      [HttpPost]
+      public ActionResult EditMileStone(ProjectMileStone projectMileStone)
+      {
+         if (projectMileStone.PmsId.IsEmpty())
+         {
+            projectMileStone.PmsId = Guid.NewGuid();
+            db.ProjectMileStoneDal.Insert(projectMileStone);
+         }
+         else
+         {
+            db.ProjectMileStoneDal.Update(projectMileStone);
+         }
+
+         return Json(new {
+            result = AjaxResults.Success,
+            msg = Success.Project.Edit_MILESTONE_SUCCESS
          });
       }
 

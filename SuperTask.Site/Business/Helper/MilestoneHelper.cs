@@ -21,8 +21,7 @@ namespace Business.Helper
          var ms = APDBDef.MileStone;
          var pms = APDBDef.ProjectMileStone;
 
-         var query = APQuery.select(ms.StoneId, ms.StoneName,
-                                    pms.Status, pms.PmsId, pms.FolderId, pms.FolderId, pms.Content)
+         var query = APQuery.select(pms.Status, pms.PmsId, pms.FolderId, pms.StoneId, pms.Content, ms.StoneName)
                              .from(ms, pms.JoinInner(ms.StoneId == pms.StoneId & pms.Projectid == projectId));
 
          var result = query.query(db, r => new ProjectMileStone
@@ -32,7 +31,7 @@ namespace Business.Helper
             Projectid = projectId,
             Content = pms.Content.GetValue(r),
             Status = pms.Status.GetValue(r),
-            StoneId = ms.StoneId.GetValue(r),
+            StoneId = pms.StoneId.GetValue(r),
             StoneName = ms.StoneName.GetValue(r)
          }).ToList();
 
@@ -56,7 +55,7 @@ namespace Business.Helper
          if (!isExists)
          {
             // step1 if folder is not exists, then add folder
-            var folder = ShareFolderHelper.CreateFolder(mileStone.StoneName, project.FolderId, addUserId, db);
+            var folder = ShareFolderHelper.CreateFolder(Guid.NewGuid(), mileStone.StoneName, project.FolderId, addUserId, db);
 
             // step2 add milestone
             db.ProjectMileStoneDal.Insert(
@@ -70,9 +69,12 @@ namespace Business.Helper
                ));
 
             //step3 create planTask template
-            var tasks = TaskHelper.GetProjectTasks(projectId,db);
+            var tasks = TaskHelper.GetProjectTasks(projectId, db);
             var rootTask = tasks.Find(t => t.IsRoot);
-            var planTask = WorkTask.Create(addUserId, projectId, mileStone.StoneName, project.StartDate, project.EndDate, TaskKeys.PlanStatus, TaskKeys.PlanTaskTaskType, 2, tasks.Count+1, true, rootTask.TaskId);
+            var planTask = WorkTask.Create(
+               addUserId, projectId, mileStone.StoneName, project.StartDate,
+               project.EndDate, TaskKeys.PlanStatus, TaskKeys.PlanTaskTaskType,
+               2, tasks.Count + 1, false, rootTask.TaskId);
 
             db.WorkTaskDal.Insert(planTask);
          }
@@ -82,7 +84,7 @@ namespace Business.Helper
       /// 为每个项目创建基本的里程碑
       /// </summary>
       public static void AddDefaultMileStones(Project project, APDBDef db)
-      {  
+      {
          var m = APDBDef.MileStone;
 
          var defaultStones = db.MileStoneDal.ConditionQuery(m.StoneType == MilestoneKeys.DefaultType, null, null, null);

@@ -66,8 +66,7 @@
 		}
 
 		function afterDialogSuccess() {
-			var url = '@Url.Action("Details","Project",new {id= Model.ProjectId })';
-			loadDetail(url);
+
 		}
 
 		$(function () {
@@ -116,9 +115,40 @@
 					return false;
 			});
 
-			//$('.btn-milestone').on('click', function () {
-			//	$('')
-			//});
+			$('.btn-removeStone').on('click', function () {
+				var $this = $(this);
+				var $stoneContainer = $this.parents('.form-group');
+				var projectId = $stoneContainer.find('.projectId').val();
+				var stoneId = $stoneContainer.find('.stoneId').val();
+				$.post('@Url.Action("RemoveMileStone", "ProjectManage")', { projectId: projectId, mileStoneId: stoneId }, function () {
+					alert('remove success');
+					$this.parent().parent().remove();
+				});
+			});
+
+			$('.btn-editStone').on('click', function () {
+				var $this = $(this);
+				var $stoneContainer = $this.parents('.form-group');
+				var projectId = $stoneContainer.find('.projectId').val();
+				var stoneId = $stoneContainer.find('.stoneId').val();
+				var pmsId = $stoneContainer.find('.pmsId').val();
+				var folderId = $stoneContainer.find('.folderId').val();
+				var status = $stoneContainer.find('.stoneStatus').val();
+				var content = $stoneContainer.find('.stoneContent').val();
+
+				var projectMileStone = {
+					PmsId: pmsId,
+					StoneId: stoneId,
+					Projectid: projectId,
+					FolderId: folderId,
+					Status: status,
+					Content: content
+				}
+
+				$.post('@Url.Action("EditMileStone", "ProjectManage")', { projectMileStone: projectMileStone }, function (data) {
+					popupMessage(data);
+				});
+			});
 
 		});
 

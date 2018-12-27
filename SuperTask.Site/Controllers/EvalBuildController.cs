@@ -559,7 +559,6 @@ namespace TheSite.Controllers
 
          table.BuildAccessorRoles(roles);
 
-
          roleId = roleId.IsEmpty() ? table.AccessorRoleIds.Split(',').First().ToGuid(Guid.Empty) : roleId;
 
          var result = APQuery
