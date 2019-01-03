@@ -247,7 +247,6 @@ namespace TheSite.Controllers
          });
       }
 
-
       private List<FolderViewModel> FindChildFolders(Guid parentId, List<FolderViewModel> folders, List<FolderViewModel> result)
       {
          FolderViewModel folder = null;

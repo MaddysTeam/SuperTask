@@ -5,15 +5,29 @@
 	@Html.HiddenFor(s => s.FolderId, new { @class = "folderId" })
 	@Html.HiddenFor(s => s.StoneId, new { @class = "stoneId" })
 	<div class="col-md-1">@Html.Label(Model.StoneName, new { @class = "control-label" })</div>
-	<div class="col-md-3">
+	@*<div class="col-md-3">
 		@Html.DropDownListFor(s=>s.Status,
 																  DictionaryCache.Cached(MilestoneKeys.MileStoneStatusKeyGuid).GetSelectListById(Model.Status)
 																  , new { @class = "form-control stoneStatus" })
+	</div>*@
+	<div class="col-md-2">
+		@Html.LabelFor(s => s.StartDate, new { @class = "control-label" })
+		<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+			@Html.TextBoxFor(s => s.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control invoiceDate", @hasValue = Model.StartDate != DateTime.MinValue })
+			<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+		</div>
 	</div>
-	<div class="col-md-1">内容:</div>
-	<div class="col-md-3">@Html.TextAreaFor(s=>s.Content, new { @class = "form-control stoneContent" })</div>
-	<div class="col-md-4">
-		<a class="btn btn-upload" title="上传文件"><i class="fa fa-upload"></i></a><a class="btn btn-editStone" title="保存"><i class="fa fa-save"></i></a>
+	<div class="col-md-2">
+		@Html.LabelFor(s => s.EndDate, new { @class = "control-label" })
+		<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+			@Html.TextBoxFor(s => s.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control invoiceDate", @hasValue = Model.EndDate != DateTime.MinValue })
+			<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+		</div>
+	</div>
+	<div class="col-md-3">内容:@Html.TextAreaFor(s => s.Content, new { @class = "form-control stoneContent" })</div>
+	<div class="col-md-2">
+		操作：<a class="btn btn-editStone" title="保存"><i class="fa fa-save"></i></a>
+		@*<a class="btn btn-upload" title="上传文件"><i class="fa fa-upload"></i></a><a class="btn btn-editStone" title="保存"><i class="fa fa-save"></i></a>*@
 		@if (!Model.IsDefaultType)
 		{<a class="btn btn-removeStone"><i class="fa fa-remove"></i></a>}
 	</div>

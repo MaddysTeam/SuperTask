@@ -41,7 +41,7 @@ namespace Business.Helper
 
 
       /// <summary>
-      /// 添加项目里程碑
+      /// 添加项目里程碑节点
       /// </summary>
       public static void AddProjectMileStone(Project project, MileStone mileStone, APDBDef db)
       {
@@ -57,32 +57,27 @@ namespace Business.Helper
          {
             // step1 if folder is not exists, then add folder
             var folder = ShareFolderHelper.CreateFolder(Guid.NewGuid(), mileStone.StoneName, project.FolderId, addUserId, db);
-
-            // step2 add milestone
-            db.ProjectMileStoneDal.Insert(
-               new ProjectMileStone(
+            var projectStone = new ProjectMileStone(
                   Guid.NewGuid(),
                   stoneId,
                   projectId,
                   folder.FolderId,
-                  MilestoneKeys.ReadyStatus,
-                  string.Empty
-               ));
+                  string.Empty,
+                  project.StartDate,
+                  project.EndDate,
+                  MilestoneKeys.ReadyStatus
+               );
 
-            //step3 create planTask template
-            var tasks = TaskHelper.GetProjectTasks(projectId, db);
-            var rootTask = tasks.Find(t => t.IsRoot);
-            var planTask = WorkTask.Create(
-               addUserId, projectId, mileStone.StoneName, project.StartDate,
-               project.EndDate, TaskKeys.PlanStatus, TaskKeys.PlanTaskTaskType,
-               2, tasks.Count + 1, false, rootTask.TaskId);
+            // step2 add milestone
+            db.ProjectMileStoneDal.Insert(projectStone);
 
-            db.WorkTaskDal.Insert(planTask);
+            //step3 create stoneTask template
+            db.ProjectStoneTaskDal.Insert(new ProjectStoneTask(Guid.NewGuid(), projectStone.PmsId,mileStone.StoneName, project.StartDate,project.EndDate, DateTime.MinValue, DateTime.MinValue, TaskKeys.PlanStatus));
          }
       }
 
       /// <summary>
-      /// 为每个项目创建基本的里程碑
+      /// 为每个项目创建基本的里程碑节点
       /// </summary>
       public static void AddDefaultMileStones(Project project, APDBDef db)
       {

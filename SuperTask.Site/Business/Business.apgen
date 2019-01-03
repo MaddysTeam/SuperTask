@@ -234,18 +234,7 @@
 
 				</columns>
 			</table>
-
-			<table name="MileStone">
-				<columns>
-					<add name="StoneId" columnName="ID" type="Guid" primaryKey="true" comment="里程碑ID"/>
-					<add name="StoneName"  type="string" dataLength="100"  display="里程碑名称" ></add>
-					<add name="StoneStatus"  type="Guid"   display="里程碑状态"/>
-					<add name="StoneType"  type="Guid"   display="里程碑类型"/>
-				</columns>
-
-				<!--<add name="FolderId" columnName="FolderId" type="Guid"></add>-->
-			</table>
-
+			
 			<table name="Payments" comment="款项">
 				<columns>
 					<add name="PayId" columnName="ID" type="Guid" primaryKey="true" comment="款项ID"/>
@@ -260,14 +249,38 @@
 				</columns>
 			</table>
 
+			<table name="MileStone">
+				<columns>
+					<add name="StoneId" columnName="ID" type="Guid" primaryKey="true" comment="节点ID"/>
+					<add name="StoneName"  type="string" dataLength="100"  display="节点名称" ></add>
+					<add name="StoneStatus"  type="Guid"   display="节点状态"/>
+					<add name="StoneType"  type="Guid"   display="节点类型"/>
+				</columns>
+			</table>
+
 			<table name="ProjectMileStone">
 				<columns>
-					<add name="PmsId" columnName="ID" type="Guid" primaryKey="true" comment="项目里程碑ID"/>
-					<add name="StoneId"  columnName="StoneId" type="Guid"   display="程碑ID" ></add>
+					<add name="PmsId" columnName="ID" type="Guid" primaryKey="true" comment="项目节点ID"/>
+					<add name="StoneId"  columnName="StoneId" type="Guid"   display="节点ID" ></add>
 					<add name="Projectid" columnName="Projectid" type="Guid" isNullable="true"  comment="项目ID" />
 					<add name="FolderId" columnName="FolderId" type="Guid"></add>
-					<add name="Status"  type="Guid"   display="当前项目里程碑状态"/>
 					<add name="Content" columnName="Description" type="string" dataLength="2000"  isNullable="true" display="内容"/>
+					<add name="StartDate"  columnName="StartDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now" display="开始时间" />
+					<add name="EndDate"  columnName="EndDate" type="DateTime" isNullable="true" display="结束时间" />
+					<add name="Status"  type="Guid"  display="当前项目里程碑状态" comment="冗余字段 TODO:20190103"/>
+				</columns>
+			</table>
+
+			<table name="ProjectStoneTask">
+				<columns>
+					<add name="PstId" columnName="ID" type="Guid" primaryKey="true" comment="节点任务ID"/>
+					<add name="PmsId" columnName="PmsId" type="Guid" primaryKey="true" comment="项目节点ID"/>
+					<add name="TaskName" columnName="Name" type="string"  dataLength="200" required="true" display="任务名称"/>
+					<add name="StartDate"  columnName="StartDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now" display="开始时间" />
+					<add name="EndDate"  columnName="EndDate" type="DateTime" isNullable="true" display="结束时间" />
+					<add name="RealStartDate"  columnName="RealStartDate" type="DateTime"  isNullable="true" display="实际开始时间" />
+					<add name="RealEndDate"  columnName="RealEndDate" type="DateTime"  isNullable="true" display="实际结束时间" />
+					<add name="TaskStatus"  columnName="Status" type="Guid"  isNullable="true"  display="任务状态" />
 				</columns>
 			</table>
 
