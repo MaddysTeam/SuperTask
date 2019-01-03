@@ -235,19 +235,6 @@
 				</columns>
 			</table>
 
-			<table name="ProjectPay" comment="项目款项">
-				<columns>
-					<add name="PayId" columnName="ID" type="Guid" primaryKey="true" comment="款项ID"/>
-					<add name="Projectid" columnName="Projectid" type="Guid" isNullable="true"  comment="项目ID" />
-					<add name="Money" columnName="Money" type="double" defaultValue="0"  display="总金额"/>
-					<add name="RateOfProgress" columnName="Progress" type="double" defaultValue="0"  display="付款进度"/>
-					<add name="InvoiceDate" columnName="InvoiceDate" type="DateTime"  display="开票时间"/>
-					<add name="PayDate" columnName="PayDate" type="DateTime"  display="付款时间"/>
-					<add name="PayType" columnName="PayType" type="Guid"   display="付款类型"/>
-					<add name="ResourceId" columnName="ResourceId" type="Guid" />
-				</columns>
-			</table>
-
 			<table name="MileStone">
 				<columns>
 					<add name="StoneId" columnName="ID" type="Guid" primaryKey="true" comment="里程碑ID"/>
@@ -257,6 +244,20 @@
 				</columns>
 
 				<!--<add name="FolderId" columnName="FolderId" type="Guid"></add>-->
+			</table>
+
+			<table name="Payments" comment="款项">
+				<columns>
+					<add name="PayId" columnName="ID" type="Guid" primaryKey="true" comment="款项ID"/>
+					<add name="PayName" columnName="PayName" type="string" dataLength="100" display="款项名称"  comment="款项名称"/>
+					<add name="ProjectId" columnName="ProjectId" type="Guid" isNullable="true" comment="项目id"/>
+					<add name="Money" columnName="Money" type="double" defaultValue="0"  display="总金额"/>
+					<add name="RateOfProgress" columnName="Progress" type="double" defaultValue="0"  display="付款进度"/>
+					<add name="InvoiceDate" columnName="InvoiceDate" type="DateTime" isNullable="true"  display="开票时间"/>
+					<add name="PayDate" columnName="PayDate" type="DateTime" isNullable="true"  display="付款时间"/>
+					<add name="PayType" columnName="PayType" type="Guid"   display="付款类型"/>
+					<add name="ResourceId" columnName="ResourceId" type="Guid" />
+				</columns>
 			</table>
 
 			<table name="ProjectMileStone">

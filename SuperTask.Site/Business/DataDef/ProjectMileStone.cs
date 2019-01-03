@@ -1,10 +1,5 @@
 ﻿using Business.Helper;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using TheSite.Models;
 
 namespace Business
 {
@@ -13,6 +8,8 @@ namespace Business
    {
 
       public string StoneName { get; set; }
+      public Guid StoneType { get; set; }
+      public bool IsDefaultType => StoneType == MilestoneKeys.DefaultType;
 
    }
 

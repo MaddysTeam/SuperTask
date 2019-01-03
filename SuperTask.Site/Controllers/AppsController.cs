@@ -47,19 +47,6 @@ namespace TheSite.Controllers
          }
 
 
-         //排序条件表达式
-
-         if (sort != null)
-         {
-            switch (sort.ID)
-            {
-               //case "userName": query.order_by(sort.OrderBy(u.UserName)); break;
-               //case "realName": query.order_by(sort.OrderBy(u.RealName)); break;
-               //case "userType": query.order_by(sort.OrderBy(u.UserType)); break;
-            }
-         }
-
-
          //获得查询的总数量
 
          var total = db.ExecuteSizeOfSelect(query);

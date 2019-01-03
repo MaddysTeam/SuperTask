@@ -221,8 +221,18 @@ namespace TheSite.Controllers
 
          project.Resources= db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
          project.MileStones = MilestoneHelper.GetProjectMileStones(id, db);
+         project.Payments = PaymentsHelper.GetProjectPayments(id,db);
 
          return View(project);
+      }
+
+
+      // Post-ajax: Project/LoadTemplate
+
+      [HttpPost]
+      public ActionResult LoadTemplate(string template)
+      {
+         return PartialView(template,null);
       }
 
 

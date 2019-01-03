@@ -21,7 +21,7 @@ namespace Business.Helper
          var ms = APDBDef.MileStone;
          var pms = APDBDef.ProjectMileStone;
 
-         var query = APQuery.select(pms.Status, pms.PmsId, pms.FolderId, pms.StoneId, pms.Content, ms.StoneName)
+         var query = APQuery.select(pms.Status, pms.PmsId, pms.FolderId, pms.StoneId, pms.Content, ms.StoneName,ms.StoneType)
                              .from(ms, pms.JoinInner(ms.StoneId == pms.StoneId & pms.Projectid == projectId));
 
          var result = query.query(db, r => new ProjectMileStone
@@ -32,7 +32,8 @@ namespace Business.Helper
             Content = pms.Content.GetValue(r),
             Status = pms.Status.GetValue(r),
             StoneId = pms.StoneId.GetValue(r),
-            StoneName = ms.StoneName.GetValue(r)
+            StoneName = ms.StoneName.GetValue(r),
+            StoneType=ms.StoneType.GetValue(r)
          }).ToList();
 
          return result;

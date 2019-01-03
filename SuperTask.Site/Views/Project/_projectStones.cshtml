@@ -1,0 +1,20 @@
+﻿@model ProjectMileStone
+<div class="row form-group">
+	@Html.HiddenFor(s => s.PmsId, new { @class = "pmsId" })
+	@Html.HiddenFor(s => s.Projectid, new { @class = "projectId" })
+	@Html.HiddenFor(s => s.FolderId, new { @class = "folderId" })
+	@Html.HiddenFor(s => s.StoneId, new { @class = "stoneId" })
+	<div class="col-md-1">@Html.Label(Model.StoneName, new { @class = "control-label" })</div>
+	<div class="col-md-3">
+		@Html.DropDownListFor(s=>s.Status,
+																  DictionaryCache.Cached(MilestoneKeys.MileStoneStatusKeyGuid).GetSelectListById(Model.Status)
+																  , new { @class = "form-control stoneStatus" })
+	</div>
+	<div class="col-md-1">内容:</div>
+	<div class="col-md-3">@Html.TextAreaFor(s=>s.Content, new { @class = "form-control stoneContent" })</div>
+	<div class="col-md-4">
+		<a class="btn btn-upload" title="上传文件"><i class="fa fa-upload"></i></a><a class="btn btn-editStone" title="保存"><i class="fa fa-save"></i></a>
+		@if (!Model.IsDefaultType)
+		{<a class="btn btn-removeStone"><i class="fa fa-remove"></i></a>}
+	</div>
+</div>

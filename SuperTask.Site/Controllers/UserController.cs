@@ -146,7 +146,7 @@ namespace TheSite.Controllers
                      });
                   }
                }
-               catch (Exception e)
+               catch
                {
                   result = false;
 

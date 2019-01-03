@@ -48,6 +48,8 @@ namespace Business
 
       public List<ProjectMileStone> MileStones { get; set; }
 
+      public List<Payments> Payments { get; set; }
+
       public List<Resource> Resources { get; set; }
 
 

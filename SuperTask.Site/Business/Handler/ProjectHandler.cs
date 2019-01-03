@@ -56,7 +56,7 @@ namespace Business
                db.ProjectDal.Update(project);
 
                //如果修改过项目属性则创建记录
-               ProjectRecordHelper.CreateRecord(project, option.Orignal, user.UserId, db);
+              // ProjectRecordHelper.CreateRecord(project, option.Orignal, user.UserId, db);
 
             }
 
@@ -98,6 +98,9 @@ namespace Business
 
          //创建默认里程碑
          MilestoneHelper.AddDefaultMileStones(project, db);
+
+         //创建默认款项管理
+          PaymentsHelper.AddDefaultPayments(project.ProjectId, db);
 
          //创建项目记录
          //ProjectRecordHelper.CreateRecord(project, user.UserId, db);

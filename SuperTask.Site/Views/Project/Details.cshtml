@@ -69,6 +69,42 @@
 
 		}
 
+		function bindPay() {
+			$('.btn-pay').off('click').on('click', function () {
+				var $this = $(this);
+				var $payContainer = $this.parents('.form-group');
+				var payments = {
+					PayId: $payContainer.find('.payId').val(),
+					Money: $payContainer.find('.money').val(),
+					ProjectId: $payContainer.find('.projectId').val(),
+					InvoiceDate: $payContainer.find('.invoiceDate').val(),
+					PayDate: $payContainer.find('.payDate').val(),
+					PayName: $payContainer.find('.payName').val(),
+					PayType: $payContainer.find('.payType').val(),
+				}
+
+				$.post('@Url.Action("Edit", "Payments")', { payments: payments }, function (data) {
+					popupMessage(data);
+				});
+			});
+		}
+
+		function bindRemovePay() {
+			$('.btn-removePay').off('click').on('click', function () {
+				var $this = $(this);
+				var $payContainer = $this.parents('.form-group');
+				var payId = $payContainer.find('.payId').val();
+				if (payId == '' || payid == '@Guid.Empty') {
+					$payContainer.remove();
+				}
+				else {
+					$.post('@Url.Action("Edit", "Payments")', { id: payId }, function (data) {
+						popupMessage(data);
+					})
+				}
+			});
+		}
+
 		$(function () {
 
 			ajaxSubmitForm($('form'));
@@ -126,23 +162,25 @@
 				});
 			});
 
+			$('.btn-upload').on('click', function () {
+				var $this = $(this);
+				var $stoneContainer = $this.parents('.form-group');
+				var folderId = $stoneContainer.find('.folderId').val();
+				$('#modelProxy')
+				.data('url', '@Url.Action("FileEdit", "ShareFolder")?folderId=' + folderId)
+				.trigger('click');
+			});
+
 			$('.btn-editStone').on('click', function () {
 				var $this = $(this);
 				var $stoneContainer = $this.parents('.form-group');
-				var projectId = $stoneContainer.find('.projectId').val();
-				var stoneId = $stoneContainer.find('.stoneId').val();
-				var pmsId = $stoneContainer.find('.pmsId').val();
-				var folderId = $stoneContainer.find('.folderId').val();
-				var status = $stoneContainer.find('.stoneStatus').val();
-				var content = $stoneContainer.find('.stoneContent').val();
-
 				var projectMileStone = {
-					PmsId: pmsId,
-					StoneId: stoneId,
-					Projectid: projectId,
-					FolderId: folderId,
-					Status: status,
-					Content: content
+					PmsId: $stoneContainer.find('.pmsId').val(),
+					StoneId: $stoneContainer.find('.stoneId').val(),
+					Projectid: $stoneContainer.find('.projectId').val(),
+					FolderId: $stoneContainer.find('.folderId').val(),
+					Status: $stoneContainer.find('.stoneStatus').val(),
+					Content: $stoneContainer.find('.stoneContent').val()
 				}
 
 				$.post('@Url.Action("EditMileStone", "ProjectManage")', { projectMileStone: projectMileStone }, function (data) {
@@ -150,8 +188,20 @@
 				});
 			});
 
+			bindPay();
+
+			$('.btn-addInternalVender').on('click', function () {
+				var $this = $(this);
+				var $payContainer = $this.parents('.form-group');
+				$.post('@Url.Action("LoadTemplate", "Project")?template=_internalVenderPayments', function (html) {
+					$payContainer.after($(html));
+					bindPay();
+					bindRemovePay();
+				});
+			});
+
 		});
 
 
 	</script>
-}
+}	

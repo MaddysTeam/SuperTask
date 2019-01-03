@@ -16,7 +16,7 @@ namespace System.Web.Mvc
          {
             var controller = filterContext.RouteData.Values["controller"];
             var action = filterContext.RouteData.Values["action"];
-            string msgTemplate = "在执行 controller[{0}] 的 action[{1}] 时产生异常";
+            //string msgTemplate = "在执行 controller[{0}] 的 action[{1}] 时产生异常";
          }
 
          if (filterContext.Result is JsonResult)

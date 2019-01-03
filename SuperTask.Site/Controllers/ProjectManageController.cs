@@ -416,22 +416,22 @@ namespace TheSite.Controllers
 
       // Post-Ajax: ProjectManage/PaymentList
 
-      public ActionResult PaymentList(Guid projectId)
-      {
-         return Json(new { });
-      }
+      //public ActionResult PaymentList(Guid projectId)
+      //{
+      //   return Json(new { });
+      //}
 
 
       // Post-Ajax: ProjectManage/EditPayments
 
-      [HttpPost]
-      public ActionResult EditPayments(List<ProjectPay> pay)
-      {
-         return Json(new
-         {
+      //[HttpPost]
+      //public ActionResult EditPayments(List<Payments> payment)
+      //{
+      //   return Json(new
+      //   {
 
-         });
-      }
+      //   });
+      //}
 
 
       // Post-Ajax: ProjectManage/PaymentList

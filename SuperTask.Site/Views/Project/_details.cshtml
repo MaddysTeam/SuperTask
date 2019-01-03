@@ -1,4 +1,5 @@
 ﻿@model Project
+@using Business
 @{
 	var resourceSelectList = SelectListHelper.GetSelectItems(Model.Resources, "ResourceName", "UserId", null, SelectListHelper.Default);
 }
@@ -12,34 +13,31 @@
 	}
 </style>
 <div class="widget">
-
 	<form class="form-horizontal details" action="@Url.Action("Edit","Project")" role="form" data-after-success="afterDialogSuccess()">
 		<div class="widget-header">
 			<h3><i class="fa fa-info"></i>项目信息</h3>
 			<div class="btn-group widget-header-toolbar">
 				@if (Html.HasPermission(Model.ProjectId.ToString(), "P_10002"))
 				{
-				<button type="submit" class="btn btn-danger btn-sm btn-save">保存</button>
-				@*<button type="submit" class="btn btn-success btn-sm btn-start">启动</button>
-					<button type="submit" class="btn btn-info btn-sm btn-forceClose" title="注意：强制关闭后，项目所有任务都关闭，项目状态也为关闭状态"><i class="fa fa-question-circle"></i>强制关闭</button>*@
-					}
+					<button type="submit" class="btn btn-danger btn-sm btn-save">保存</button>
+					@*<button type="submit" class="btn btn-success btn-sm btn-start">启动</button>
+						<button type="submit" class="btn btn-info btn-sm btn-forceClose" title="注意：强制关闭后，项目所有任务都关闭，项目状态也为关闭状态"><i class="fa fa-question-circle"></i>强制关闭</button>*@
+				}
 			</div>
 		</div>
 		<div class="widget-content">
 			<div class="row editProjectInfo">
 
-
 				<fieldset class="col-sm-6">
 					@Html.HiddenFor(p => p.ProjectId)
-					@Html.HiddenFor(p=>p.CreateDate)
-					@Html.HiddenFor(p=>p.Creator)
+					@Html.HiddenFor(p => p.CreateDate)
+					@Html.HiddenFor(p => p.Creator)
 					@Html.HiddenFor(p => p.Attachment.RealName)
 					@Html.HiddenFor(p => p.Attachment.Url)
 					@Html.HiddenFor(p => p.ProjectStatus)
 					@Html.HiddenFor(p => p.RateOfProgress)
 					@Html.HiddenFor(p => p.ProcessName)
 					@Html.HiddenFor(p => p.FolderId)
-
 					<div class="form-group">
 						@Html.LabelFor(p => p.ProjectName, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
@@ -133,53 +131,50 @@
 						</div>
 					</div>
 				</fieldset>
-
 			</div>
 			<div class="alert alert-success projectEstimate">
-					<div class="row">
-						<div class="col-md-4">项目预估 & 进度</div>
-					</div>
+				<div class="row">
+					<div class="col-md-4">项目预估 & 进度</div>
 				</div>
+			</div>
 			<div class="row projectEstimateEdit">
-					<fieldset class="col-sm-6">
-						<div class="form-group">
-							@Html.LabelFor(p => p.StartDate, new { @class = "control-label col-md-3" })
-							<div class="col-md-9">
-								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-									@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
-									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-								</div>
+				<fieldset class="col-sm-6">
+					<div class="form-group">
+						@Html.LabelFor(p => p.StartDate, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+								@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
+								<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 							</div>
 						</div>
-						<div class="form-group">
-							@Html.LabelFor(p => p.EndDate, new { @class = "control-label col-md-3" })
-							<div class="col-md-9">
-								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-									@Html.TextBoxFor(p => p.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
-									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-								</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(p => p.EndDate, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+								@Html.TextBoxFor(p => p.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
+								<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 							</div>
 						</div>
-						<div class="form-group">
-							<div class="col-sm-9 col-lg-offset-3">
-							</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-9 col-lg-offset-3">
 						</div>
-					</fieldset>
-					<fieldset class="col-sm-6"></fieldset>
-					<fieldset class="col-sm-6">
-						<div class="form-group">
-							@Html.LabelFor(p => p.RateOfProgress, new { @class = "control-label col-md-3" })
-							<div class="col-md-9">
-								<span class="form-control">@Model.RateOfProgress%</span>
-							</div>
+					</div>
+				</fieldset>
+				<fieldset class="col-sm-6"></fieldset>
+				<fieldset class="col-sm-6">
+					<div class="form-group">
+						@Html.LabelFor(p => p.RateOfProgress, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<span class="form-control">@Model.RateOfProgress%</span>
 						</div>
-					</fieldset>
+					</div>
+				</fieldset>
 			</div>
 		</div>
 	</form>
-
 </div>
-
 <div class="widget">
 	<div class="widget-header">
 		<h3><i class="fa fa-get-pocket"></i>项目里程碑</h3>
@@ -188,99 +183,26 @@
 		</div>
 	</div>
 	<div class="widget-content">
-		@foreach (var item in Model.MileStones)
+		@foreach (var item in Model.MileStones ?? new List<ProjectMileStone>())
 		{
-		<div class="row form-group">
-			<div class="col-md-1">@item.StoneName:</div>
-			<div class="col-md-3">
-				@Html.DropDownList("plan",
-										                    DictionaryCache.Cached(MilestoneKeys.MileStoneStatusKeyGuid).GetSelectListById(item.Status)
-																  , new { @class = "form-control stoneStatus" })
-		</div>
-		<div class="col-md-1">内容:</div>
-		<div class="col-md-3">@Html.TextArea("StoneContent", item.Content,new { @class = "form-control stoneContent" })</div>
-		<div class="col-md-4"><a class="btn btn-editStone" title="保存"><i class="fa fa-save"></i></a><a class="btn btn-removeStone"><i class="fa fa-remove"></i></a></div>
-		<input type="hidden" class="pmsId" value="@item.PmsId" />
-		<input type="hidden" class="folderId" value="@item.FolderId" />
-		<input type="hidden" class="stoneId" value="@item.StoneId" />
-		<input type="hidden" class="projectId" value="@item.Projectid" />
-	</div>
+			Html.RenderPartial("_projectStones", item);
 		}
 	</div>
 </div>
-
 <div class="widget">
 	<div class="widget-header">
 		<h3><i class="fa fa-file-o"></i>项目管理</h3>
 	</div>
 	<div class="widget-content">
-
 		<div class="alert alert-danger">
 			<div class="row">
 				<div class="col-md-4">款项管理</div>
 			</div>
 		</div>
-		<div class="row form-group">
-			<div class="col-md-1">首付款:</div>
-			@*<div class="col-md-1"><input class="form-control"  placeholder="%"/></div>*@
-			<div class="col-md-1"><input class="form-control" /></div>
-			<div class="col-md-1">开票时间:</div>
-			<div class="col-md-2">
-				<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-					@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
-					<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				</div>
-			</div>
-			<div class="col-md-1">到账时间:</div>
-			<div class="col-md-2">
-				<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-					@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
-					<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				</div>
-			</div>
-			<div class="col-md-1"><a class="btn btn-info" title="保存" ><i class="fa fa-save"></i></a></div>
-		</div>
-		<div class="row form-group">
-			<div class="col-md-1">首付款:</div>
-			@*<div class="col-md-1"><input class="form-control"  placeholder="%"/></div>*@
-			<div class="col-md-1"><input class="form-control" /></div>
-			<div class="col-md-1">开票时间:</div>
-			<div class="col-md-2">
-				<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-					@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
-					<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				</div>
-			</div>
-			<div class="col-md-1">到账时间:</div>
-			<div class="col-md-2">
-				<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-					@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
-					<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				</div>
-			</div>
-			<div class="col-md-1"><a class="btn btn-info" title="保存"><i class="fa fa-save"></i></a></div>
-		</div>
-		<div class="row form-group">
-			<div class="col-md-1">首付款:</div>
-			@*<div class="col-md-1"><input class="form-control"  placeholder="%"/></div>*@
-			<div class="col-md-1"><input class="form-control" /></div>
-			<div class="col-md-1">开票时间:</div>
-			<div class="col-md-2">
-				<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-					@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
-					<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				</div>
-			</div>
-			<div class="col-md-1">到账时间:</div>
-			<div class="col-md-2">
-				<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-					@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
-					<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				</div>
-			</div>
-			<div class="col-md-1"><a class="btn" title="保存"><i class="fa fa-save"></i></a></div>
-		</div>
-
+		@foreach (var item in Model.Payments.FindAll(p => p.IsProjectType) ?? new List<Payments>())
+		{
+			Html.RenderPartial("_projectPayments", item);
+		}
 		<div class="alert alert-info">
 			<div class="row">
 				<div class="col-md-4">外包管理</div>
@@ -288,21 +210,11 @@
 		</div>
 		<div><b>内部供应商:</b></div>
 		<hr />
-		<div class="row form-group">
-			<div class="col-md-1">名称:</div>
-			@*<div class="col-md-1"><input class="form-control"  placeholder="%"/></div>*@
-			<div class="col-md-2"><input class="form-control" /></div>
-			<div class="col-md-1">协作金额:</div>
-			<div class="col-md-1"><input class="form-control" /></div>
-			<div class="col-md-1">付款时间:</div>
-			<div class="col-md-2">
-				<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-					@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
-					<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-				</div>
-			</div>
-			<div class="col-md-2"><a class="btn" title="保存"><i class="fa fa-save"></i></a><a class="btn btn-removeStone"><i class="fa fa-plus-circle"></i></a></div>
-		</div>
+		@foreach (var item in Model.Payments.FindAll(p => p.IsInternalVenderType) ?? new List<Payments>())
+		{
+			Html.RenderPartial("_internalVenderPayments", item);
+		}
+
 		<div><b>外部供应商:</b></div>
 		<hr />
 		<div class="row form-group">
@@ -315,7 +227,7 @@
 			<div class="col-md-1"><input class="form-control" /></div>
 			<div class="col-md-1">协作金额:</div>
 			<div class="col-md-1"><input class="form-control" /></div>
-			<div class="col-md-2"><a class="btn" title="保存"><i class="fa fa-save"></i></a><a class="btn btn-removeStone"><i class="fa fa-plus-circle"></i></a></div>
+			<div class="col-md-2"><a class="btn" title="保存"><i class="fa fa-save"></i></a><a class="btn btn-addExternalVender"><i class="fa fa-plus-circle"></i></a></div>
 		</div>
 		<div class="alert alert-success">
 			<div class="row">
@@ -354,4 +266,3 @@
 		</div>
 	</div>
 </div>
-

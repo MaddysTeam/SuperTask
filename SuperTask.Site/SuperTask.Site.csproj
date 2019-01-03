@@ -255,6 +255,7 @@
     <Compile Include="Business\Config\ThisApp.cs" />
     <Compile Include="Business\DataDef\DictionaryCache.cs" />
     <Compile Include="Business\DataDef\Project.cs" />
+    <Compile Include="Business\DataDef\Payments.cs" />
     <Compile Include="Business\DataDef\ProjectMileStone.cs" />
     <Compile Include="Business\DataDef\ProjectRole.cs" />
     <Compile Include="Business\DataDef\Resource.cs" />
@@ -283,13 +284,13 @@
     <Compile Include="Business\Handler\PDFHandler.cs" />
     <Compile Include="Business\Handler\WorkJournalHandler.cs" />
     <Compile Include="Business\Helper\AppConfigHelper.cs" />
+    <Compile Include="Business\Helper\Keys\PaymentsKeys.cs" />
     <Compile Include="Business\Helper\Keys\AlertKeys.cs" />
     <Compile Include="Business\Helper\Keys\AdviceKeys.cs" />
     <Compile Include="Business\Helper\Keys\AppKeys.cs" />
     <Compile Include="Business\Helper\Keys\JournalKeys.cs" />
     <Compile Include="Business\Helper\Keys\DictionaryKeys.cs" />
     <Compile Include="Business\Helper\Keys\AttachmentKeys.cs" />
-    <Compile Include="Business\Helper\Keys\FolderKeys.cs" />
     <Compile Include="Business\Helper\Keys\OrgKeys.cs" />
     <Compile Include="Business\Helper\Keys\MilestoneKeys.cs" />
     <Compile Include="Business\Helper\Keys\ProjectKeys.cs" />
@@ -299,6 +300,7 @@
     <Compile Include="Business\Helper\Keys\ShareFolderKeys.cs" />
     <Compile Include="Business\Helper\Keys\TaskKeys.cs" />
     <Compile Include="Business\Helper\MilestoneHelper.cs" />
+    <Compile Include="Business\Helper\PaymentsHelper.cs" />
     <Compile Include="Business\Helper\ShareFolderHelper.cs" />
     <Compile Include="Business\Helper\Utilities\ExportHelper.cs" />
     <Compile Include="Business\Helper\Utilities\PDFHelper.cs" />
@@ -339,6 +341,7 @@
     <Compile Include="Controllers\EvalStatisticController.cs" />
     <Compile Include="Controllers\EvalTableGroupController.cs" />
     <Compile Include="Controllers\EvalPeriodController.cs" />
+    <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\JsonController.cs" />
     <Compile Include="Controllers\MileStoneController.cs" />
     <Compile Include="Controllers\ProjectManageController.cs" />
@@ -1586,6 +1589,9 @@
     <Content Include="Views\MileStone\Edit.cshtml" />
     <Content Include="Views\Project\Details.cshtml" />
     <Content Include="Views\MileStone\_milestones.cshtml" />
+    <Content Include="Views\Project\_projectPayments.cshtml" />
+    <Content Include="Views\Project\_projectStones.cshtml" />
+    <Content Include="Views\Project\_internalVenderPayments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

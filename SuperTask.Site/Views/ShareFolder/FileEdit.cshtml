@@ -1,6 +1,5 @@
 ﻿@model FileViewModel
 <div class="modal-dialog modal-lg">
-
 	<!-- widget -->
 	<div class="widget">
 		<div class="widget-header">
@@ -10,7 +9,6 @@
 			</div>
 		</div>
 		<div class="widget-content">
-
 			<form action="@Url.Action("UploadFile", "Attachment")" class="dropzonePop filePop"></form>
 			<form class="form-horizontal" action="@Url.Action("FileEdit", "ShareFolder")" role="form" data-after-success="afterDialogSuccess()">
 				<div class="row">
@@ -27,26 +25,26 @@
 								@Html.TextBoxFor(f => f.name, new { @class = "form-control" })
 							</div>
 						</div>
-						@if (Model==null || Model.attachmentId.IsEmpty())
+						@if (Model == null || Model.attachmentId.IsEmpty())
 						{
-						<div class="form-group">
-							<label class="col-md-3 control-label">上传文件</label>
-							<div class="col-md-9">
-								<input style="visibility:hidden;position:absolute;" />
-								<div class="input-group">
-									<label id="uploadNamePop" class="form-control oversize uploadNamePop"></label>
-									<span class="input-group-btn">
-										<button class="btn btn-danger" type="button" id="btn-uploadPop">附件上传</button>
-									</span>
-								</div>
-								<div class="progress" style="display:none">
-									<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-										<span class="sr-only"></span>
+							<div class="form-group">
+								<label class="col-md-3 control-label">上传文件</label>
+								<div class="col-md-9">
+									<input style="visibility:hidden;position:absolute;" />
+									<div class="input-group">
+										<label id="uploadNamePop" class="form-control oversize uploadNamePop"></label>
+										<span class="input-group-btn">
+											<button class="btn btn-danger" type="button" id="btn-uploadPop">附件上传</button>
+										</span>
+									</div>
+									<div class="progress" style="display:none">
+										<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+											<span class="sr-only"></span>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						}
+}
 						<div class="form-group">
 							<div class="col-sm-9 col-lg-offset-3">
 								<button type="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 保存</button>
@@ -56,7 +54,6 @@
 					</fieldset>
 				</div>
 			</form>
-
 		</div>
 	</div>
 	<!-- end widget -->
@@ -85,8 +82,8 @@
 					popupMessage({ result: 'error', msg: message });
 				}).on('processing', function () {
 					$(".progress").show();
-				}).on("totaluploadprogress", function(i){
-					$(".progress-bar").css("width", parseInt(i)+"%");
+				}).on("totaluploadprogress", function (i) {
+					$(".progress-bar").css("width", parseInt(i) + "%");
 				});
 			}
 		});
@@ -101,10 +98,14 @@
 
 	function afterDialogSuccess() {
 		$('#firstModal').modal('hide');
-		loadData(function () {
-			showFolderFiles(currentFolderId)
-			bindLeftNav();
-		});
+		try {
+			loadData(function () {
+				showFolderFiles(currentFolderId)
+				bindLeftNav();
+			});
+		} catch (e) {
+
+		}
 	}
 
 </script>
