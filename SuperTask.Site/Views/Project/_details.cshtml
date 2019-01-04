@@ -11,6 +11,13 @@
 	.projectInfo .form-control, .projectEstimateInfo .form-control {
 		background: #eee;
 	}
+
+	.nav{
+		border-bottom:0px;
+	}
+	.nav a{
+		margin-top:0px;
+	}
 </style>
 <div class="widget">
 	<form class="form-horizontal details" action="@Url.Action("Edit","Project")" role="form" data-after-success="afterDialogSuccess()">
@@ -175,20 +182,38 @@
 		</div>
 	</form>
 </div>
+
 <div class="widget">
 	<div class="widget-header">
-		<h3><i class="fa fa-get-pocket"></i>项目节点</h3>
-		<div class="btn-group widget-header-toolbar">
+		@*<h3><i class="fa fa-get-pocket"></i>项目节点</h3>*@
+		<div class="btn-group widget-header-toolbar pull-right">
 			<button class="btn btn-info btn-sm btn-milestone" id="milestones" data-toggle="ajax-modal" data-url="@Url.Action("ChooseExceptDefault", "MileStone",new { projectId= Model.ProjectId })" data-target="#firstModal">选择节点</button>
 		</div>
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#tab1" data-toggle="tab"><i class="fa fa-get-pocket"></i> 项目节点</a></li>
+			<li ><a href="#tab2" data-toggle="tab"><i class="fa fa-tag"></i> 节点任务</a></li>
+		</ul>
 	</div>
+
 	<div class="widget-content">
-		@foreach (var item in Model.MileStones ?? new List<ProjectMileStone>())
-		{
-			Html.RenderPartial("_projectStones", item);
-		}
+		<div class="tab-content no-padding">
+
+			<div class="tab-pane fade in active" id="tab1">
+				@foreach (var item in Model.MileStones ?? new List<ProjectMileStone>())
+				{
+					Html.RenderPartial("_projectStones", item);
+				}
+			</div>
+
+			<div class="tab-pane fade" id="tab2">
+				aaa
+			</div>
+
+		</div>
 	</div>
+
 </div>
+
 <div class="widget">
 	<div class="widget-header">
 		<h3><i class="fa fa-file-o"></i>项目管理</h3>

@@ -52,6 +52,8 @@ namespace Business
 
       public List<Resource> Resources { get; set; }
 
+      public List<ProjectStoneTask> StoneTasks { get; set; }
+
 
       public void SetStatus(Guid status)
       {

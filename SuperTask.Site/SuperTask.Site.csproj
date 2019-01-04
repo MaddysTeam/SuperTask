@@ -301,6 +301,7 @@
     <Compile Include="Business\Helper\Keys\TaskKeys.cs" />
     <Compile Include="Business\Helper\MilestoneHelper.cs" />
     <Compile Include="Business\Helper\PaymentsHelper.cs" />
+    <Compile Include="Business\Helper\StoneTaskHelper.cs" />
     <Compile Include="Business\Helper\ShareFolderHelper.cs" />
     <Compile Include="Business\Helper\Utilities\ExportHelper.cs" />
     <Compile Include="Business\Helper\Utilities\PDFHelper.cs" />
