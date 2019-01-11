@@ -220,9 +220,10 @@ namespace TheSite.Controllers
             }).FirstOrDefault();
 
          project.Resources= db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
+         //TODO: will change by ajax later
          project.MileStones = MilestoneHelper.GetProjectMileStones(id, db);
          project.Payments = PaymentsHelper.GetProjectPayments(id,db);
-         project.StoneTasks = StoneTaskHelper.GetProjectStoneTasks(id,db);
+         //project.StoneTasks = StoneTaskHelper.GetProjectStoneTasks(id,db);
 
          return View(project);
       }

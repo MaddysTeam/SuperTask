@@ -355,6 +355,7 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult AddMileStones(Guid projectId, string mileStoneIds)
       {
+         var userId = GetUserInfo().UserId;
          var project = db.ProjectDal.PrimaryGet(projectId);
          var milestones = MileStone.GetAll();
          var ids = mileStoneIds.Split(',');
@@ -364,7 +365,7 @@ namespace TheSite.Controllers
             var stone = milestones.FirstOrDefault(ms => ms.StoneId == item.ToGuid(Guid.Empty));
             if (stone != null)
             {
-               MilestoneHelper.AddProjectMileStone(project, stone, db); 
+               MilestoneHelper.AddProjectMileStone(project, stone, userId, db);
             }
          }
 
@@ -407,49 +408,106 @@ namespace TheSite.Controllers
             db.ProjectMileStoneDal.Update(projectMileStone);
          }
 
-         return Json(new {
+         return Json(new
+         {
             result = AjaxResults.Success,
             msg = Success.Project.Edit_MILESTONE_SUCCESS
          });
       }
 
+      // Post-Ajax: ProjectManage/StoneTaskList
 
-      // Post-Ajax: ProjectManage/PaymentList
-
-      //public ActionResult PaymentList(Guid projectId)
-      //{
-      //   return Json(new { });
-      //}
-
-
-      // Post-Ajax: ProjectManage/EditPayments
-
-      //[HttpPost]
-      //public ActionResult EditPayments(List<Payments> payment)
-      //{
-      //   return Json(new
-      //   {
-
-      //   });
-      //}
-
-
-      // Post-Ajax: ProjectManage/PaymentList
-
-      public ActionResult VenderList(Guid projectId)
+      [HttpPost]
+      public ActionResult StoneTaskList(Guid projectId, int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
-         return Json(new { });
+         var pst = APDBDef.ProjectStoneTask;
+
+         var query = APQuery.select(pst.Asterisk)
+                        .from(pst)
+                        .where(pst.ProjectId == projectId);
+
+         if (!string.IsNullOrEmpty(searchPhrase))
+         {
+            query.where_and(pst.TaskName.Match(searchPhrase));
+         }
+
+         query.primary(pst.PstId)
+          .order_by(pst.AddTime.Desc)
+          .skip((current - 1) * rowCount)
+          .take(rowCount);
+
+
+         //获得查询的总数量
+
+         var total = db.ExecuteSizeOfSelect(query);
+
+         var rows = query.query(db, r =>
+                        {
+                           return new
+                           {
+                              id = pst.PstId.GetValue(r),
+                              name = pst.TaskName.GetValue(r),
+                              start = pst.StartDate.GetValue(r),
+                              end = pst.EndDate.GetValue(r),
+                              realStart = pst.RealStartDate.GetValue(r),
+                              realEnd = pst.RealEndDate.GetValue(r)
+                           };
+                        }).ToList();
+
+         return Json(new
+         {
+            rows,
+            current,
+            rowCount,
+            total
+         });
       }
 
 
       // Post-Ajax: ProjectManage/EditPayments
+      // Post-Ajax: ProjectManage/RemovePayments
 
       [HttpPost]
-      public ActionResult EditVenders()
+      public ActionResult EditPayments(Payments payments)
       {
+         if (payments.PayId.IsEmpty())
+         {
+            payments.PayId = Guid.NewGuid();
+            db.PaymentsDal.Insert(payments);
+            db.ProjectStoneTaskDal.Insert(new ProjectStoneTask
+            {
+               PstId = Guid.NewGuid(),
+               ProjectId=payments.ProjectId,
+               StartDate = payments.InvoiceDate,
+               EndDate = payments.PayDate,
+               AddTime = DateTime.Now,
+               AddUserId = GetUserInfo().UserId,
+               TaskName = payments.PayName,
+               TaskStatus = TaskKeys.PlanStatus
+            });
+         }
+         else
+         {
+            db.PaymentsDal.Update(payments);
+         }
+
          return Json(new
          {
+            result = AjaxResults.Success,
+            msg = Success.Payments.EDITSUCCESS
+         });
+      }
 
+
+      [HttpPost]
+      public ActionResult RemovePayments(Guid id)
+      {
+         db.PaymentsDal.PrimaryDelete(id);
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.Payments.EDITSUCCESS
          });
       }
 

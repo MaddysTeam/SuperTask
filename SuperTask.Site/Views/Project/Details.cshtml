@@ -34,6 +34,42 @@
 	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
 }
 @section Scripts{
+
+<script>
+	function getGlobalRequest() {
+		return {
+			projectId: '@Model.ProjectId'
+		};
+	}
+
+	function getGridOptions() {
+		return $.extend(true, {}, gridOptions, {
+
+			url: '@Url.Action("StoneTaskList","ProjectManage")',
+
+			requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+			formatters: {
+				'commands': function (column, row) {
+					var id = row.id;
+					return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
+								'<button class="btn btn-lg btn-success btn-edit">编辑</button> ' +
+								'<button class="btn btn-lg btn-warning btn-requst">申请修改</button> ' +
+								'<button class="btn btn-lg btn-danger btn-delete">删除</button> '+
+							'</div>';
+				},
+			},
+		});
+	}
+
+	$(function () {
+		var grid = $('#bootgrid');
+		grid.bootgrid(getGridOptions())
+		.on('loaded.rs.jquery.bootgrid', function () {
+		});
+	});
+</script>
+
 	<script>
 		function whenProcess() {
 			$('.btn-modify,.projectProgress,.processName').show().removeAttr('disabled');
@@ -83,7 +119,7 @@
 					PayType: $payContainer.find('.payType').val(),
 				}
 
-				$.post('@Url.Action("Edit", "Payments")', { payments: payments }, function (data) {
+				$.post('@Url.Action("EditPayments", "ProjectManage")', { payments: payments }, function (data) {
 					popupMessage(data);
 				});
 			});

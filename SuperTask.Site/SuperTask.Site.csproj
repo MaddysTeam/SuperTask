@@ -342,7 +342,6 @@
     <Compile Include="Controllers\EvalStatisticController.cs" />
     <Compile Include="Controllers\EvalTableGroupController.cs" />
     <Compile Include="Controllers\EvalPeriodController.cs" />
-    <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\JsonController.cs" />
     <Compile Include="Controllers\MileStoneController.cs" />
     <Compile Include="Controllers\ProjectManageController.cs" />
@@ -1593,6 +1592,8 @@
     <Content Include="Views\Project\_projectPayments.cshtml" />
     <Content Include="Views\Project\_projectStones.cshtml" />
     <Content Include="Views\Project\_internalVenderPayments.cshtml" />
+    <Content Include="Views\Project\_stoneTaskList.cshtml" />
+    <Content Include="Views\Project\_stoneTaskEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

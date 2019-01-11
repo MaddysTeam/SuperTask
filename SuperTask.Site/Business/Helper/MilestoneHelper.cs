@@ -21,7 +21,7 @@ namespace Business.Helper
          var ms = APDBDef.MileStone;
          var pms = APDBDef.ProjectMileStone;
 
-         var query = APQuery.select(pms.Status, pms.PmsId, pms.FolderId, pms.StoneId, pms.Content, ms.StoneName,ms.StoneType)
+         var query = APQuery.select(pms.Status, pms.PmsId, pms.FolderId, pms.StoneId, pms.Content, ms.StoneName, ms.StoneType)
                              .from(ms, pms.JoinInner(ms.StoneId == pms.StoneId & pms.Projectid == projectId));
 
          var result = query.query(db, r => new ProjectMileStone
@@ -33,7 +33,7 @@ namespace Business.Helper
             Status = pms.Status.GetValue(r),
             StoneId = pms.StoneId.GetValue(r),
             StoneName = ms.StoneName.GetValue(r),
-            StoneType=ms.StoneType.GetValue(r)
+            StoneType = ms.StoneType.GetValue(r)
          }).ToList();
 
          return result;
@@ -43,50 +43,60 @@ namespace Business.Helper
       /// <summary>
       /// 添加项目里程碑节点
       /// </summary>
-      public static void AddProjectMileStone(Project project, MileStone mileStone, APDBDef db)
+      public static void AddProjectMileStone(Project project, MileStone mileStone, Guid userId, APDBDef db)
       {
          var f = APDBDef.Folder;
          var pm = APDBDef.ProjectMileStone;
 
-         var addUserId = project.CreatorId;
-         var projectId = project.ProjectId;
-         var stoneId = mileStone.StoneId;
-
-         var isExists = db.ProjectMileStoneDal.ConditionQueryCount(pm.Projectid == projectId & pm.StoneId == stoneId) > 0;
+         var isExists = db.ProjectMileStoneDal.ConditionQueryCount(pm.Projectid == project.ProjectId & pm.StoneId == mileStone.StoneId) > 0;
          if (!isExists)
          {
             // step1 if folder is not exists, then add folder
-            var folder = ShareFolderHelper.CreateFolder(Guid.NewGuid(), mileStone.StoneName, project.FolderId, addUserId, db);
+            var folder = ShareFolderHelper.CreateFolder(Guid.NewGuid(), mileStone.StoneName, project.FolderId, userId, db);
             var projectStone = new ProjectMileStone(
                   Guid.NewGuid(),
-                  stoneId,
-                  projectId,
+                  mileStone.StoneId,
+                  project.ProjectId,
                   folder.FolderId,
                   string.Empty,
                   project.StartDate,
                   project.EndDate,
-                  MilestoneKeys.ReadyStatus
+                  MilestoneKeys.ReadyStatus,
+                  userId,
+                  DateTime.Now
                );
 
             // step2 add milestone
             db.ProjectMileStoneDal.Insert(projectStone);
 
             //step3 create stoneTask template
-            db.ProjectStoneTaskDal.Insert(new ProjectStoneTask(Guid.NewGuid(), projectStone.PmsId,mileStone.StoneName, project.StartDate,project.EndDate, DateTime.MinValue, DateTime.MinValue, TaskKeys.PlanStatus));
+            db.ProjectStoneTaskDal.Insert(new ProjectStoneTask(
+               Guid.NewGuid(),
+               projectStone.PmsId,
+               project.ProjectId,
+               mileStone.StoneName,
+               project.StartDate,
+               project.EndDate,
+               DateTime.MinValue,
+               DateTime.MinValue,
+               TaskKeys.PlanStatus,
+               userId,
+               DateTime.Now
+               ));
          }
       }
 
       /// <summary>
       /// 为每个项目创建基本的里程碑节点
       /// </summary>
-      public static void AddDefaultMileStones(Project project, APDBDef db)
+      public static void AddDefaultMileStones(Project project, Guid userId, APDBDef db)
       {
          var m = APDBDef.MileStone;
 
          var defaultStones = db.MileStoneDal.ConditionQuery(m.StoneType == MilestoneKeys.DefaultType, null, null, null);
          foreach (var item in defaultStones)
          {
-            AddProjectMileStone(project, item, db);
+            AddProjectMileStone(project, item, userId, db);
          }
       }
 

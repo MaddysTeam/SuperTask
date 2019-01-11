@@ -96,8 +96,8 @@ namespace Business
          //创建项目文件夹
          var folder=ShareFolderHelper.CreateFolder(project.FolderId, project.ProjectName, ShareFolderKeys.RootProjectFolderId, user.UserId, db);
 
-         //创建默认里程碑
-         MilestoneHelper.AddDefaultMileStones(project, db);
+         //创建默认里程碑节点和节点任务
+         MilestoneHelper.AddDefaultMileStones(project,user.UserId, db);
 
          //创建默认款项管理
           PaymentsHelper.AddDefaultPayments(project.ProjectId, db);
