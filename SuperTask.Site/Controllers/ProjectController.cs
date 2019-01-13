@@ -229,12 +229,14 @@ namespace TheSite.Controllers
       }
 
 
-      // Post-ajax: Project/LoadTemplate
+      // Post-ajax: Project/LoadInternalVenderPaymentPartial
 
       [HttpPost]
-      public ActionResult LoadTemplate(string template)
+      public ActionResult LoadInternalVenderPaymentPartial(Guid id)
       {
-         return PartialView(template,null);
+         var project = db.ProjectDal.PrimaryGet(id);
+         var payment = new Payments { ProjectId = id, PayType = PaymentsKeys.InternalVenderPaymentsType,PayDate=project.EndDate }; 
+         return PartialView("_internalVenderPayments", payment);
       }
 
 

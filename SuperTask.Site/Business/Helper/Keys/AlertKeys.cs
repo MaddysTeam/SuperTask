@@ -143,6 +143,11 @@ namespace Business.Helper
          public const string NOT_ALLOWED_CONTENT_NULL = "建议内容不能为空！";
       }
 
+      public class Payments
+      {
+         public const string EDIT_FAIL = "编辑失败！";
+      }
+
    }
 
 

@@ -233,18 +233,17 @@
 				<div class="col-md-4">外包管理</div>
 			</div>
 		</div>
-		<div><b>内部供应商:</b></div>
+		<div><b>供应商:</b></div>
 		<hr />
 		@foreach (var item in Model.Payments.FindAll(p => p.IsInternalVenderType) ?? new List<Payments>())
 		{
 			Html.RenderPartial("_internalVenderPayments", item);
 		}
 
-		<div><b>外部供应商:</b></div>
+		@*<div><b>外部供应商:</b></div>
 		<hr />
 		<div class="row form-group">
 			<div class="col-md-1">名称:</div>
-			@*<div class="col-md-1"><input class="form-control"  placeholder="%"/></div>*@
 			<div class="col-md-2"><input class="form-control" /></div>
 			<div class="col-md-1">协作金额:</div>
 			<div class="col-md-1"><input class="form-control" /></div>
@@ -253,7 +252,7 @@
 			<div class="col-md-1">协作金额:</div>
 			<div class="col-md-1"><input class="form-control" /></div>
 			<div class="col-md-2"><a class="btn" title="保存"><i class="fa fa-save"></i></a><a class="btn btn-addExternalVender"><i class="fa fa-plus-circle"></i></a></div>
-		</div>
+		</div>*@
 		<div class="alert alert-success">
 			<div class="row">
 				<div class="col-md-4">项目验收管理</div>

@@ -54,6 +54,7 @@
 					var id = row.id;
 					return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
 								'<button class="btn btn-lg btn-success btn-edit">编辑</button> ' +
+								//'<button class="btn btn-lg btn-info btn-start">启动</button> ' +
 								'<button class="btn btn-lg btn-warning btn-requst">申请修改</button> ' +
 								'<button class="btn btn-lg btn-danger btn-delete">删除</button> '+
 							'</div>';
@@ -145,6 +146,7 @@
 
 			ajaxSubmitForm($('form'));
 
+			var projectId = '@Model.ProjectId';
 			var isPlanStatus = '@Model.IsPlanStatus' == 'True';
 			var isProcessStatus = '@Model.IsProcessStatus' == 'True';
 			var isCompleteStatus = '@Model.IsCompleteStatus' == 'True';
@@ -190,7 +192,6 @@
 			$('.btn-removeStone').on('click', function () {
 				var $this = $(this);
 				var $stoneContainer = $this.parents('.form-group');
-				var projectId = $stoneContainer.find('.projectId').val();
 				var stoneId = $stoneContainer.find('.stoneId').val();
 				$.post('@Url.Action("RemoveMileStone", "ProjectManage")', { projectId: projectId, mileStoneId: stoneId }, function () {
 					alert('remove success');
@@ -213,7 +214,7 @@
 				var projectMileStone = {
 					PmsId: $stoneContainer.find('.pmsId').val(),
 					StoneId: $stoneContainer.find('.stoneId').val(),
-					Projectid: $stoneContainer.find('.projectId').val(),
+					Projectid: projectId,
 					FolderId: $stoneContainer.find('.folderId').val(),
 					Status: $stoneContainer.find('.stoneStatus').val(),
 					Content: $stoneContainer.find('.stoneContent').val()
@@ -229,7 +230,7 @@
 			$('.btn-addInternalVender').on('click', function () {
 				var $this = $(this);
 				var $payContainer = $this.parents('.form-group');
-				$.post('@Url.Action("LoadTemplate", "Project")?template=_internalVenderPayments', function (html) {
+				$.post('@Url.Action("LoadInternalVenderPaymentPartial", "Project")?id='+projectId, function (html) {
 					$payContainer.after($(html));
 					bindPay();
 					bindRemovePay();

@@ -296,24 +296,6 @@ namespace Business
         };
 
 
-      public static WorkTask CreateProjectRootTask(Guid defaultUserId, string userName, Project project)
-         => new WorkTask
-         {
-            TaskId = Guid.NewGuid(),
-            TaskName = project.ProjectName,
-            Projectid = project.ProjectId,
-            ManagerId = defaultUserId,
-            CreatorId = defaultUserId,
-            ReviewerID = defaultUserId,
-            TaskType = TaskKeys.ProjectTaskType,
-            TaskStatus = TaskKeys.PlanStatus,
-            Creator = userName,
-            Manager = userName,
-            CreateDate = project.CreateDate,
-            EndDate = project.EndDate,
-            SortId = 1 //表示根任务
-         };
-
       public static bool IsProjectTask(Guid typeId) => typeId != TaskKeys.TempTaskType;
 
       // 只有项目任务才能包含除了临时任务外其他类型任务

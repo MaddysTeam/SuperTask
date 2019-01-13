@@ -67,6 +67,14 @@
 					<add name="Code"  columnName="Code" type="string" dataLength="200" isNullable="true"></add>
 					<add name="Note"  columnName="Note" type="string" dataLength="200" isNullable="true" display="应用描述"></add>
 
+					<!-- adapt work flow -->
+					<add name="backup1"  columnName="OpenMode"  type="int" isNullable="true"></add>
+					<add name="backup2"  columnName="Width"  type="int" isNullable="true" ></add>
+					<add name="backup3" columnName="Height" type="int" isNullable="true" ></add>
+					<add name="backup4"  columnName="Params" type="string" dataLength="2000" isNullable="true"></add>
+					<add name="backup5"  columnName="Manager" type="string" dataLength="2000" isNullable="true" ></add>
+					<add name="backup6"  columnName="UseMember" type="string" dataLength="2000" isNullable="true" ></add>
+
 				</columns>
 			</table>
 
@@ -268,8 +276,7 @@
 					<add name="StartDate"  columnName="StartDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now" display="开始时间" />
 					<add name="EndDate"  columnName="EndDate" type="DateTime" isNullable="true" display="结束时间" />
 					<add name="Status"  type="Guid"  display="当前项目里程碑状态" comment="冗余字段 TODO:20190103"/>
-					<add name="AddUserId" type="Guid" isNullable="true" ></add>
-					<add name="AddTime" type="DateTime" isNullable="true" ></add>
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
 				</columns>
 			</table>
 
@@ -277,6 +284,7 @@
 				<columns>
 					<add name="PstId" columnName="ID" type="Guid" primaryKey="true" comment="节点任务ID"/>
 					<add name="PmsId" columnName="PmsId" type="Guid"  comment="项目节点ID"/>
+					<!-- TODO: 由于款项类不适合添加节点 pmsId，所以暂时用 项目id -->
 					<add name="ProjectId" columnName="ProjectId" type="Guid" isNullable="false" comment="项目id 冗余针对没有pmsId的节点任务"/>
 					<add name="TaskName" columnName="Name" type="string"  dataLength="200" required="true" display="任务名称"/>
 					<add name="StartDate"  columnName="StartDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now" display="开始时间" />
@@ -284,10 +292,7 @@
 					<add name="RealStartDate"  columnName="RealStartDate" type="DateTime"  isNullable="true" display="实际开始时间" />
 					<add name="RealEndDate"  columnName="RealEndDate" type="DateTime"  isNullable="true" display="实际结束时间" />
 					<add name="TaskStatus"  columnName="Status" type="Guid"  isNullable="true"  display="任务状态" />
-					<add name="AddUserId" type="Guid"  ></add>
-					<add name="AddTime" type="DateTime"  ></add>
-					<!-- TODO: 由于款项类不适合添加节点 pmsId，所以暂时用 项目id -->
-
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
 				</columns>
 			</table>
 

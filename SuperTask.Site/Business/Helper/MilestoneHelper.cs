@@ -43,7 +43,7 @@ namespace Business.Helper
       /// <summary>
       /// 添加项目里程碑节点
       /// </summary>
-      public static void AddProjectMileStone(Project project, MileStone mileStone, Guid userId, APDBDef db)
+      public static void AddProjectMileStone(Project project, MileStone mileStone, APDBDef db)
       {
          var f = APDBDef.Folder;
          var pm = APDBDef.ProjectMileStone;
@@ -51,28 +51,23 @@ namespace Business.Helper
          var isExists = db.ProjectMileStoneDal.ConditionQueryCount(pm.Projectid == project.ProjectId & pm.StoneId == mileStone.StoneId) > 0;
          if (!isExists)
          {
-            // step1 if folder is not exists, then add folder
-            var folder = ShareFolderHelper.CreateFolder(Guid.NewGuid(), mileStone.StoneName, project.FolderId, userId, db);
-            var projectStone = new ProjectMileStone(
-                  Guid.NewGuid(),
+            var stoneId = Guid.NewGuid();
+
+            db.ProjectMileStoneDal.Insert(new ProjectMileStone(
+                  stoneId,
                   mileStone.StoneId,
                   project.ProjectId,
-                  folder.FolderId,
+                  project.FolderId,
                   string.Empty,
                   project.StartDate,
                   project.EndDate,
                   MilestoneKeys.ReadyStatus,
-                  userId,
                   DateTime.Now
-               );
+               ));
 
-            // step2 add milestone
-            db.ProjectMileStoneDal.Insert(projectStone);
-
-            //step3 create stoneTask template
             db.ProjectStoneTaskDal.Insert(new ProjectStoneTask(
                Guid.NewGuid(),
-               projectStone.PmsId,
+               stoneId,
                project.ProjectId,
                mileStone.StoneName,
                project.StartDate,
@@ -80,7 +75,6 @@ namespace Business.Helper
                DateTime.MinValue,
                DateTime.MinValue,
                TaskKeys.PlanStatus,
-               userId,
                DateTime.Now
                ));
          }
@@ -89,14 +83,14 @@ namespace Business.Helper
       /// <summary>
       /// 为每个项目创建基本的里程碑节点
       /// </summary>
-      public static void AddDefaultMileStones(Project project, Guid userId, APDBDef db)
+      public static void AddDefaultMileStones(Project project, APDBDef db)
       {
          var m = APDBDef.MileStone;
 
          var defaultStones = db.MileStoneDal.ConditionQuery(m.StoneType == MilestoneKeys.DefaultType, null, null, null);
          foreach (var item in defaultStones)
          {
-            AddProjectMileStone(project, item, userId, db);
+            AddProjectMileStone(project, item, db);
          }
       }
 

@@ -110,7 +110,7 @@ namespace Business.Helper
       /// <param name="delTaskIds">需要删除的任务id</param>
       /// <param name="all">任务列表</param>
       /// <param name="reOrderSortId">是否重新排序</param>
-      /// <returns></returns>
+      /// <returns>WorkTask list</returns>
       public static List<WorkTask> RemoveDelTasks(List<string> delTaskIds, List<WorkTask> all, bool reOrderSortId)
       {
          var removed = new List<WorkTask>();
@@ -154,12 +154,34 @@ namespace Business.Helper
       }
 
 
+      /// <summary>
+      /// 创建项目根任务
+      /// </summary>
+      /// <param name="user">用户</param>
+      /// <param name="project">项目</param>
+      /// <param name="db">APDBDef</param>
+      /// <returns>WorkTask</returns>
       public static WorkTask CreateAndSaveRootTaskInDB(UserInfo user,Project project, APDBDef db)
       {
-         var currentTask = WorkTask.CreateProjectRootTask(user.UserId, user.UserName, project);
-         db.WorkTaskDal.Insert(currentTask);
+         var task = new WorkTask
+         {
+            TaskId = Guid.NewGuid(),
+            TaskName = project.ProjectName,
+            Projectid = project.ProjectId,
+            ManagerId = user.UserId,
+            CreatorId = user.UserId,
+            ReviewerID = user.UserId,
+            TaskType = TaskKeys.ProjectTaskType,
+            TaskStatus = TaskKeys.PlanStatus,
+            //Creator = userName,
+            //Manager = userName,
+            CreateDate = DateTime.Now,
+            EndDate = project.EndDate,
+            SortId = 1 //表示根任务
+         };
+         db.WorkTaskDal.Insert(task);
 
-         return currentTask;
+         return task;
       }
 
 

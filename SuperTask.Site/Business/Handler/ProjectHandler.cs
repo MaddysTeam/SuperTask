@@ -85,6 +85,7 @@ namespace Business
             project.ProjectId,
             Resource.DefaultLeaderTypes);
 
+         //创建当前用户资源
          db.ResourceDal.Insert(currentResource);
 
          //创建项目下的资源角色
@@ -97,10 +98,10 @@ namespace Business
          var folder=ShareFolderHelper.CreateFolder(project.FolderId, project.ProjectName, ShareFolderKeys.RootProjectFolderId, user.UserId, db);
 
          //创建默认里程碑节点和节点任务
-         MilestoneHelper.AddDefaultMileStones(project,user.UserId, db);
+         MilestoneHelper.AddDefaultMileStones(project, db);
 
          //创建默认款项管理
-          PaymentsHelper.AddDefaultPayments(project.ProjectId, db);
+          PaymentsHelper.AddDefaultPayments(project, db);
 
          //创建项目记录
          //ProjectRecordHelper.CreateRecord(project, user.UserId, db);

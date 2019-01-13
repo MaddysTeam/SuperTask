@@ -365,7 +365,7 @@ namespace TheSite.Controllers
             var stone = milestones.FirstOrDefault(ms => ms.StoneId == item.ToGuid(Guid.Empty));
             if (stone != null)
             {
-               MilestoneHelper.AddProjectMileStone(project, stone, userId, db);
+               MilestoneHelper.AddProjectMileStone(project, stone, db);
             }
          }
 
@@ -432,7 +432,7 @@ namespace TheSite.Controllers
          }
 
          query.primary(pst.PstId)
-          .order_by(pst.AddTime.Desc)
+          .order_by(pst.CreateDate.Desc)
           .skip((current - 1) * rowCount)
           .take(rowCount);
 
@@ -470,26 +470,27 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult EditPayments(Payments payments)
       {
+         var validateResult = payments.Valiedate();
+         if (!validateResult.IsSuccess)
+            return Json(new
+            {
+               result = AjaxResults.Error,
+               msg = validateResult.Msg
+            });
+
+         var project = db.ProjectDal.PrimaryGet(payments.ProjectId);
          if (payments.PayId.IsEmpty())
          {
             payments.PayId = Guid.NewGuid();
             db.PaymentsDal.Insert(payments);
-            db.ProjectStoneTaskDal.Insert(new ProjectStoneTask
-            {
-               PstId = Guid.NewGuid(),
-               ProjectId=payments.ProjectId,
-               StartDate = payments.InvoiceDate,
-               EndDate = payments.PayDate,
-               AddTime = DateTime.Now,
-               AddUserId = GetUserInfo().UserId,
-               TaskName = payments.PayName,
-               TaskStatus = TaskKeys.PlanStatus
-            });
+
+            StoneTaskHelper.CreateStoneTask(payments.ProjectId, payments.PayName, payments.InvoiceDate, payments.PayDate, db);
          }
          else
          {
             db.PaymentsDal.Update(payments);
          }
+
 
          return Json(new
          {

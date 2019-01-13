@@ -13,36 +13,27 @@ namespace Business.Helper
       private static APDBDef.ProjectStoneTaskTableDef pst = APDBDef.ProjectStoneTask;
       private static APDBDef.ProjectMileStoneTableDef pm = APDBDef.ProjectMileStone;
 
-
       /// <summary>
-      /// get stone task by stone id
+      /// 新增节点任务
       /// </summary>
-      /// <param name="stoneId">stone id</param>
+      /// <param name="projectId">项目id</param>
+      /// <param name="taskName">任务名称</param>
+      /// <param name="start">开始时间</param>
+      /// <param name="end">结束时间</param>
+      /// <param name="addUserId"></param>
       /// <param name="db">APDBDef</param>
-      /// <returns>StoneTasks</returns>
-      public static List<ProjectStoneTask> GetProjectStoneTasksByStoneId(Guid stoneId, APDBDef db)
+      public static void CreateStoneTask(Guid projectId,string taskName,DateTime start,DateTime end,APDBDef db)
       {
-         return db.ProjectStoneTaskDal.ConditionQuery(pst.PmsId == stoneId, null, null, null);
-      }
-
-
-      /// <summary>
-      ///  get project stone tasks
-      /// </summary>
-      /// <param name="projectId">project id</param>
-      /// <param name="db">APDBDef</param>
-      /// <returns>StoneTasks</returns>
-      public static List<ProjectStoneTask> GetProjectStoneTasks(Guid projectId, APDBDef db)
-      {
-         return APQuery.select(pst.Asterisk)
-                       .from(pst, pm.JoinInner(pst.PmsId == pm.PmsId))
-                       .where(pm.Projectid == projectId)
-                       .query(db, r =>
-                       {
-                          ProjectStoneTask data = new ProjectStoneTask();
-                          pst.Fullup(r, data, false);
-                          return data;
-                       }).ToList() ;
+         db.ProjectStoneTaskDal.Insert(new ProjectStoneTask
+         {
+            PstId = Guid.NewGuid(),
+            ProjectId = projectId,
+            StartDate = start,
+            EndDate =end,
+            TaskName = taskName,
+            TaskStatus = TaskKeys.PlanStatus,
+            CreateDate=DateTime.Now,
+         });
       }
 
    }
