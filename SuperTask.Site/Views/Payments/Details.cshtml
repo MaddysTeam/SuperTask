@@ -1,0 +1,48 @@
+﻿@model List<Payments>
+<div class="alert alert-danger">
+	<div class="row">
+		<div class="col-md-4">款项管理</div>
+	</div>
+</div>
+@foreach (var item in Model.FindAll(p => p.IsProjectType) ?? new List<Payments>())
+{
+	Html.RenderPartial("_projectPayments", item);
+}
+
+<div class="alert alert-info">
+	<div class="row">
+		<div class="col-md-4">外包管理</div>
+	</div>
+</div>
+<div><b>供应商:</b></div>
+<hr />
+@foreach (var item in Model.FindAll(p => p.IsInternalVenderType) ?? new List<Payments>())
+{
+	Html.RenderPartial("_venderPayments", item);
+}
+
+<div class="alert alert-success">
+	<div class="row">
+		<div class="col-md-4">项目验收管理</div>
+	</div>
+</div>
+
+@foreach (var item in Model.FindAll(p => p.IsDeliveryType) ?? new List<Payments>())
+{
+	Html.RenderPartial("_deliveryPayments", item);
+}
+
+
+@*<div><b>外部供应商:</b></div>
+	<hr />
+	<div class="row form-group">
+		<div class="col-md-1">名称:</div>
+		<div class="col-md-2"><input class="form-control" /></div>
+		<div class="col-md-1">协作金额:</div>
+		<div class="col-md-1"><input class="form-control" /></div>
+		<div class="col-md-1">协作金额:</div>
+		<div class="col-md-1"><input class="form-control" /></div>
+		<div class="col-md-1">协作金额:</div>
+		<div class="col-md-1"><input class="form-control" /></div>
+		<div class="col-md-2"><a class="btn" title="保存"><i class="fa fa-save"></i></a><a class="btn btn-addExternalVender"><i class="fa fa-plus-circle"></i></a></div>
+	</div>*@

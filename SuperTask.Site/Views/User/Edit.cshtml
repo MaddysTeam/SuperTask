@@ -33,18 +33,7 @@
 								@Html.ValidationMessageFor(m => m.RealName)
 							</div>
 						</div>
-						@*<div class="form-group">
-							<label class="col-md-3">请选择角色</label>
-							<div class="col-md-9">
-								@Html.DropDownListFor(m => m.UserType, new SelectList(UserTypes.UserType), new { @class = "form-control" })
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-md-3">请选择权限</label>
-							<div class="col-md-9">
-								@Html.DropDownListFor(m => m.PermissionId, PermissionKeys.Permissions.Select(x => new SelectListItem { Text = x.Value, Value = x.Key.ToString() }), new { @class = "form-control" })
-							</div>
-						</div>*@
+
 						<div class="form-group">
 							<label class="col-md-3">邮箱</label>
 							<div class="col-md-9">
@@ -52,25 +41,7 @@
 								@Html.ValidationMessageFor(m => m.Email)
 							</div>
 						</div>
-						@*<div class="form-group">
-							<label class="col-md-3">上传头像</label>
-							<div class="col-md-9">
-								@Html.HiddenFor(m => m.HeadImgUrl)
-								@Html.TextBoxFor(m => m.HeadImgUrl, new { @style = "visibility:hidden;position:absolute;" })
-								<div class="input-group">
-									<label id="CoverUrl" class="form-control oversize" style="overflow:hidden">
-										@if (Model.HeadImgUrl != null)
-										{
-											@Model.HeadImgUrl.Substring(@Model.HeadImgUrl.LastIndexOf("/") + 1)
-										}
-									</label>
-									<span class="input-group-btn">
-										<button class="btn btn-danger" type="button" id="btn-header">上传头像</button>
-									</span>
-								</div>
-								@Html.ValidationMessageFor(m => m.HeadImgUrl)
-							</div>
-						</div>*@
+
 						<div class="form-group">
 							<div class="col-sm-offset-3 col-sm-9 ">
 								<button type="submit" id="submit" class="btn btn-primary btn-block"><i class="fa fa-check-circle"></i> 保存</button>

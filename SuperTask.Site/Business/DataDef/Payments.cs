@@ -19,6 +19,8 @@ namespace Business
 
       public bool IsProjectType => this.PayType == PaymentsKeys.ProjectPaymentsType; 
       public bool IsInternalVenderType => this.PayType == PaymentsKeys.InternalVenderPaymentsType;
+      public bool IsDeliveryType => this.PayType == PaymentsKeys.CheckBeforeDeliveryType;
+
    }
 
 }

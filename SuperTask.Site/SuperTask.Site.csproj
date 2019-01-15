@@ -332,6 +332,8 @@
     <Compile Include="Business\System.Web.MVC\Attribute\PermissionAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdviceController.cs" />
+    <Compile Include="Controllers\PaymentsController.cs" />
+    <Compile Include="Controllers\ProjectStoneTaskController.cs" />
     <Compile Include="Controllers\AppsController.cs" />
     <Compile Include="Controllers\AttachmentController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -345,6 +347,7 @@
     <Compile Include="Controllers\JsonController.cs" />
     <Compile Include="Controllers\MileStoneController.cs" />
     <Compile Include="Controllers\ProjectManageController.cs" />
+    <Compile Include="Controllers\ProjectMileStoneController.cs" />
     <Compile Include="Controllers\ResourceController.cs" />
     <Compile Include="Controllers\ShareFolderController.cs" />
     <Compile Include="Controllers\TaskManageController.cs" />
@@ -1589,11 +1592,13 @@
     <Content Include="Views\MileStone\Edit.cshtml" />
     <Content Include="Views\Project\Details.cshtml" />
     <Content Include="Views\MileStone\_milestones.cshtml" />
-    <Content Include="Views\Project\_projectPayments.cshtml" />
-    <Content Include="Views\Project\_projectStones.cshtml" />
-    <Content Include="Views\Project\_internalVenderPayments.cshtml" />
-    <Content Include="Views\Project\_stoneTaskList.cshtml" />
-    <Content Include="Views\Project\_stoneTaskEdit.cshtml" />
+    <Content Include="Views\ProjectMileStone\_item.cshtml" />
+    <Content Include="Views\ProjectMileStone\List.cshtml" />
+    <Content Include="Views\ProjectStoneTask\Edit.cshtml" />
+    <Content Include="Views\Payments\_deliveryPayments.cshtml" />
+    <Content Include="Views\Payments\_projectPayments.cshtml" />
+    <Content Include="Views\Payments\Details.cshtml" />
+    <Content Include="Views\Payments\_venderPayments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

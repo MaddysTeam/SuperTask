@@ -1,0 +1,21 @@
+﻿@model Payments
+<div class="row form-group">
+	@Html.HiddenFor(p => p.PayId, new { @class = "payId" })
+	@Html.HiddenFor(p => p.ProjectId, new { @class = "projectId" })
+	@Html.HiddenFor(p => p.PayName, new { @class = "payName" })
+	@Html.HiddenFor(p => p.PayType, new { @class = "payType" })
+
+	<div class="col-md-1">@Html.Label(Model.PayName, new { @class = "control-label" })</div>
+	@*<div class="col-md-1"><input class="form-control"  placeholder="%"/></div>*@
+	<div class="col-md-1"><input type="checkbox" name="ck" />保证金</div>
+	<div class="col-md-1"><input type="checkbox" name="ck" />保函</div>
+	<div class="col-md-1"><input type="checkbox" name="ck" />无</div>
+	<div class="col-md-1">预计回收时间:</div>
+	<div class="col-md-3">
+		<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+			@Html.TextBoxFor(p => p.PayDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.PayDate != DateTime.MinValue })
+			<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+		</div>
+	</div>
+	<div class="col-md-2"><a class="btn-deliveryPay" title="保存"><i class="fa fa-save"></i></a></div>
+</div>

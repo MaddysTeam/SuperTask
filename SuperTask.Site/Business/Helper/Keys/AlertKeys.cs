@@ -148,6 +148,11 @@ namespace Business.Helper
          public const string EDIT_FAIL = "编辑失败！";
       }
 
+      public class StoneTask
+      {
+         public const string EDIT_FAIL = "编辑失败！";
+      }
+
    }
 
 
@@ -230,6 +235,11 @@ namespace Business.Helper
       }
 
       public class Payments
+      {
+         public const string EDITSUCCESS = "编辑成功";
+      }
+
+      public class StoneTask
       {
          public const string EDITSUCCESS = "编辑成功";
       }

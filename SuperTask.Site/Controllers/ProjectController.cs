@@ -220,25 +220,10 @@ namespace TheSite.Controllers
             }).FirstOrDefault();
 
          project.Resources= db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
-         //TODO: will change by ajax later
-         project.MileStones = MilestoneHelper.GetProjectMileStones(id, db);
          project.Payments = PaymentsHelper.GetProjectPayments(id,db);
-         //project.StoneTasks = StoneTaskHelper.GetProjectStoneTasks(id,db);
 
          return View(project);
       }
-
-
-      // Post-ajax: Project/LoadInternalVenderPaymentPartial
-
-      [HttpPost]
-      public ActionResult LoadInternalVenderPaymentPartial(Guid id)
-      {
-         var project = db.ProjectDal.PrimaryGet(id);
-         var payment = new Payments { ProjectId = id, PayType = PaymentsKeys.InternalVenderPaymentsType,PayDate=project.EndDate }; 
-         return PartialView("_internalVenderPayments", payment);
-      }
-
 
       // GET: Project/CreateByTemplate
       // Post-ajax: Project/CreateByTemplate

@@ -4728,6 +4728,8 @@ namespace Business {
             
             private DateTimeAPColumnDef _createDate;
             
+            private GuidAPColumnDef _taskType;
+            
             public ProjectStoneTaskTableDef(string tableName) : 
                     base(tableName) {
             }
@@ -4868,6 +4870,19 @@ namespace Business {
             }
             
             /// <summary>
+            /// TaskType ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef TaskType {
+                get {
+                    if (Object.ReferenceEquals(_taskType, null)) {
+                        _taskType = new GuidAPColumnDef(this, "Type", true);
+                        _taskType.Display = "任务类型";
+                    }
+                    return _taskType;
+                }
+            }
+            
+            /// <summary>
             /// Default Index
             /// </summary>
             public virtual APSqlOrderPhrase DefaultOrder {
@@ -4897,6 +4912,7 @@ namespace Business {
                 data.RealEndDate = RealEndDate.GetValue<System.DateTime>(reader, throwIfValidColumnName);
                 data.TaskStatus = TaskStatus.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.CreateDate = CreateDate.GetValue<System.DateTime>(reader, throwIfValidColumnName, DateTime.Now);
+                data.TaskType = TaskType.GetValue<System.Guid>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -13815,7 +13831,7 @@ namespace Business {
             /// Insert Data.
             /// </summary>
             public virtual void Insert(ProjectStoneTask data) {
-                var query = APQuery.insert(APDBDef.ProjectStoneTask).values(APDBDef.ProjectStoneTask.PstId.SetValue(data.PstId), APDBDef.ProjectStoneTask.PmsId.SetValue(data.PmsId), APDBDef.ProjectStoneTask.ProjectId.SetValue(data.ProjectId), APDBDef.ProjectStoneTask.TaskName.SetValue(data.TaskName), APDBDef.ProjectStoneTask.StartDate.SetValue(data.StartDate), APDBDef.ProjectStoneTask.EndDate.SetValue(data.EndDate), APDBDef.ProjectStoneTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.ProjectStoneTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.ProjectStoneTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.ProjectStoneTask.CreateDate.SetValue(data.CreateDate));
+                var query = APQuery.insert(APDBDef.ProjectStoneTask).values(APDBDef.ProjectStoneTask.PstId.SetValue(data.PstId), APDBDef.ProjectStoneTask.PmsId.SetValue(data.PmsId), APDBDef.ProjectStoneTask.ProjectId.SetValue(data.ProjectId), APDBDef.ProjectStoneTask.TaskName.SetValue(data.TaskName), APDBDef.ProjectStoneTask.StartDate.SetValue(data.StartDate), APDBDef.ProjectStoneTask.EndDate.SetValue(data.EndDate), APDBDef.ProjectStoneTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.ProjectStoneTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.ProjectStoneTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.ProjectStoneTask.CreateDate.SetValue(data.CreateDate), APDBDef.ProjectStoneTask.TaskType.SetValue(data.TaskType));
                 ExecuteNonQuery(query);
             }
             
@@ -13823,7 +13839,7 @@ namespace Business {
             /// Update Data.
             /// </summary>
             public virtual void Update(ProjectStoneTask data) {
-                var query = APQuery.update(APDBDef.ProjectStoneTask).values(APDBDef.ProjectStoneTask.PmsId.SetValue(data.PmsId), APDBDef.ProjectStoneTask.ProjectId.SetValue(data.ProjectId), APDBDef.ProjectStoneTask.TaskName.SetValue(data.TaskName), APDBDef.ProjectStoneTask.StartDate.SetValue(data.StartDate), APDBDef.ProjectStoneTask.EndDate.SetValue(data.EndDate), APDBDef.ProjectStoneTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.ProjectStoneTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.ProjectStoneTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.ProjectStoneTask.CreateDate.SetValue(data.CreateDate)).where((APDBDef.ProjectStoneTask.PstId == data.PstId));
+                var query = APQuery.update(APDBDef.ProjectStoneTask).values(APDBDef.ProjectStoneTask.PmsId.SetValue(data.PmsId), APDBDef.ProjectStoneTask.ProjectId.SetValue(data.ProjectId), APDBDef.ProjectStoneTask.TaskName.SetValue(data.TaskName), APDBDef.ProjectStoneTask.StartDate.SetValue(data.StartDate), APDBDef.ProjectStoneTask.EndDate.SetValue(data.EndDate), APDBDef.ProjectStoneTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.ProjectStoneTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.ProjectStoneTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.ProjectStoneTask.CreateDate.SetValue(data.CreateDate), APDBDef.ProjectStoneTask.TaskType.SetValue(data.TaskType)).where((APDBDef.ProjectStoneTask.PstId == data.PstId));
                 ExecuteNonQuery(query);
             }
             
@@ -31396,6 +31412,11 @@ namespace Business {
         private System.DateTime _createDate = DateTime.Now;
         
         /// <summary>
+        /// TaskType
+        /// </summary>
+        private System.Guid _taskType;
+        
+        /// <summary>
         /// Default constructor.
         /// </summary>
         public ProjectStoneTaskBase() {
@@ -31404,7 +31425,7 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public ProjectStoneTaskBase(System.Guid pstId, System.Guid pmsId, System.Guid projectId, string taskName, System.DateTime startDate, System.DateTime endDate, System.DateTime realStartDate, System.DateTime realEndDate, System.Guid taskStatus, System.DateTime createDate) {
+        public ProjectStoneTaskBase(System.Guid pstId, System.Guid pmsId, System.Guid projectId, string taskName, System.DateTime startDate, System.DateTime endDate, System.DateTime realStartDate, System.DateTime realEndDate, System.Guid taskStatus, System.DateTime createDate, System.Guid taskType) {
             _pstId = pstId;
             _pmsId = pmsId;
             _projectId = projectId;
@@ -31415,6 +31436,7 @@ namespace Business {
             _realEndDate = realEndDate;
             _taskStatus = taskStatus;
             _createDate = createDate;
+            _taskType = taskType;
         }
         
         /// <summary>
@@ -31637,6 +31659,28 @@ namespace Business {
         }
         
         /// <summary>
+        /// TaskType
+        /// </summary>
+        [Display(Name="任务类型")]
+        public virtual System.Guid TaskType {
+            get {
+                return _taskType;
+            }
+            set {
+                _taskType = value;
+            }
+        }
+        
+        /// <summary>
+        /// TaskType APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef TaskTypeDef {
+            get {
+                return APDBDef.ProjectStoneTask.TaskType;
+            }
+        }
+        
+        /// <summary>
         /// ProjectStoneTaskTableDef APTableDef
         /// </summary>
         public static APDBDef.ProjectStoneTaskTableDef TableDef {
@@ -31668,6 +31712,7 @@ namespace Business {
             RealEndDate = data.RealEndDate;
             TaskStatus = data.TaskStatus;
             CreateDate = data.CreateDate;
+            TaskType = data.TaskType;
         }
         
         /// <summary>
@@ -31702,6 +31747,9 @@ namespace Business {
                 return false;
             }
             if ((CreateDate != data.CreateDate)) {
+                return false;
+            }
+            if ((TaskType != data.TaskType)) {
                 return false;
             }
             return true;
@@ -31800,8 +31848,8 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public ProjectStoneTask(System.Guid pstId, System.Guid pmsId, System.Guid projectId, string taskName, System.DateTime startDate, System.DateTime endDate, System.DateTime realStartDate, System.DateTime realEndDate, System.Guid taskStatus, System.DateTime createDate) : 
-                base(pstId, pmsId, projectId, taskName, startDate, endDate, realStartDate, realEndDate, taskStatus, createDate) {
+        public ProjectStoneTask(System.Guid pstId, System.Guid pmsId, System.Guid projectId, string taskName, System.DateTime startDate, System.DateTime endDate, System.DateTime realStartDate, System.DateTime realEndDate, System.Guid taskStatus, System.DateTime createDate, System.Guid taskType) : 
+                base(pstId, pmsId, projectId, taskName, startDate, endDate, realStartDate, realEndDate, taskStatus, createDate, taskType) {
         }
     }
     

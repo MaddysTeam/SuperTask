@@ -25,6 +25,10 @@ namespace Business.Helper
 
             // 外包款项
             new Payments(Guid.NewGuid(),"内部供应商",projectId,0,0,start,end,PaymentsKeys.InternalVenderPaymentsType,Guid.Empty),
+
+            // 验收款项
+            new Payments(Guid.NewGuid(),"是否有履约保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,Guid.Empty),
+            new Payments(Guid.NewGuid(),"是否有质量保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,Guid.Empty),
          };
 
          payments.ForEach(p =>
