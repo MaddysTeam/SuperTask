@@ -22,6 +22,9 @@ namespace Business.Helper
       public static string MiddlePayment = "中期款";
       public static string TailPayment = "尾款";
 
+      public static Guid AppointGuaranteeResourceId = Guid.Parse("9ea2e0f3-3806-4cc0-807d-1943ab63200b");
+      public static Guid QualityGuaranteeResourceId = Guid.Parse("86e4cd97-f19d-4637-a50f-5ca72d49e3f8");
+
       public static string GetTypeKeyByValue<V>(V val) => DictionaryHelper.GetDicByValue(PaymensTypeGuid, val).Title;
    }
 

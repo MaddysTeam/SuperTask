@@ -253,7 +253,7 @@
 					<add name="InvoiceDate" columnName="InvoiceDate" type="DateTime" isNullable="true"  display="开票时间"/>
 					<add name="PayDate" columnName="PayDate" type="DateTime" isNullable="true"  display="付款时间"/>
 					<add name="PayType" columnName="PayType" type="Guid"   display="付款类型"/>
-					<add name="ResourceId" columnName="ResourceId" type="Guid" />
+					<add name="ResourceId" columnName="ResourceId" type="Guid" comment="冗余字段，备用" />
 				</columns>
 			</table>
 
@@ -749,7 +749,7 @@
 				</columns>
 			</table>
 
-			<!-- add 2018-06-20 add-->
+			<!-- 2018-06-20-->
 			<table name="EvalSubmitResult" comment="评价-最终-结果">
 				<columns>
 

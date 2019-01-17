@@ -1,11 +1,6 @@
 ﻿using Business;
-using Business.Config;
 using Business.Helper;
-using Symber.Web.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using TheSite.Models;
 
@@ -33,13 +28,16 @@ namespace TheSite.Controllers
          {
             payments.PayId = Guid.NewGuid();
             db.PaymentsDal.Insert(payments);
-
-            StoneTaskHelper.CreateStoneTask(payments.ProjectId, payments.PayName, payments.InvoiceDate, payments.PayDate, db);
          }
          else
          {
             db.PaymentsDal.Update(payments);
          }
+
+         MilestoneHelper.AddProjectMileStoneIfNotExits(
+            project,
+            new MileStone { StoneId = payments.PayId, StoneName = payments.PayName }, //这里的milestone 不会存入数据库，将payment 作为一个隐形的 mileStone
+            db);
 
 
          return Json(new

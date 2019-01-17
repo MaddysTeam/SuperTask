@@ -46,6 +46,17 @@ namespace Business
           {ProjectKeys.DevelopmentProjectType,new DevelopmentProjectTemplateEditHandler() }
       };
 
+      public static Dictionary<Guid, ProjectReviewHandler> ProjectReviewHandlers = new Dictionary<Guid, ProjectReviewHandler>
+      {
+         {ReviewKeys.ReviewTypeForPjChanged, new ProjectStartRequestHandler() }
+      };
+
+      public static Dictionary<Guid, ProjectStoneTaskReviewHandler> ProjectStoneTaskReviewHandlers = new Dictionary<Guid, ProjectStoneTaskReviewHandler>
+      {
+         //{ReviewKeys.ReviewTypeForPjChanged, new ProjectStartRequestHandler() }
+      };
+
+
       public static Dictionary<Guid, DefaultTaskSearchHandler> TaskSearchHandlers = new Dictionary<Guid, DefaultTaskSearchHandler>
       {
          {TaskKeys.SearchByDetaultType,new TaskSearchHandler() },

@@ -27,9 +27,11 @@
 	</div>
 </div>
 
-@foreach (var item in Model.FindAll(p => p.IsDeliveryType) ?? new List<Payments>())
-{
-	Html.RenderPartial("_deliveryPayments", item);
+@{ 
+	foreach (var item in Model.FindAll(p => p.IsDeliveryType) ?? new List<Payments>())
+	{
+		Html.RenderPartial("_deliveryPayments", item);
+	}
 }
 
 

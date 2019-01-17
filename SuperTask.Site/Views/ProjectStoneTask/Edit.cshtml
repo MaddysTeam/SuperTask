@@ -16,6 +16,14 @@
 						@Html.HiddenFor(t => t.PstId)
 						@Html.HiddenFor(t => t.ProjectId)
 						@Html.HiddenFor(t => t.TaskStatus)
+						@Html.HiddenFor(t => t.TaskName)
+
+						<div class="form-group">
+							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.Label(Model.TaskName, new { @class = "form-control" })
+							</div>
+						</div>
 
 						<div class="form-group">
 							@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-3" })

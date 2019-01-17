@@ -45,7 +45,8 @@ namespace TheSite.Controllers
                start = pst.StartDate.GetValue(r),
                end = pst.EndDate.GetValue(r),
                realStart = pst.RealStartDate.GetValue(r),
-               realEnd = pst.RealEndDate.GetValue(r)
+               realEnd = pst.RealEndDate.GetValue(r),
+               hasStone = pst.PmsId.GetValue(r).IsEmpty() //TODO: let me think....
             };
          }).ToList();
 

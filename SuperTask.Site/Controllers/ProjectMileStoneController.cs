@@ -19,8 +19,6 @@ namespace TheSite.Controllers
       static APDBDef.ProjectMileStoneTableDef pm = APDBDef.ProjectMileStone;
 
       // Post-Ajax: ProjectManage/AddMileStones
-      // Post-Ajax: ProjectManage/RemoveMileStone
-      // Post-Ajax: ProjectManage/EditStone
 
       [HttpPost]
       public ActionResult AddStones(Guid projectId, string mileStoneIds)
@@ -35,7 +33,7 @@ namespace TheSite.Controllers
             var stone = milestones.FirstOrDefault(ms => ms.StoneId == item.ToGuid(Guid.Empty));
             if (stone != null)
             {
-               MilestoneHelper.AddProjectMileStone(project, stone, db);
+               MilestoneHelper.AddProjectMileStoneIfNotExits(project, stone, db);
             }
          }
 
@@ -46,13 +44,20 @@ namespace TheSite.Controllers
          });
       }
 
+
+      // Post-Ajax: ProjectManage/RemoveMileStone
+
       [HttpPost]
       public ActionResult Remove(Guid projectId, Guid mileStoneId)
       {
-         var isExists = ProjectMileStone.ConditionQueryCount(pm.Projectid == projectId & pm.StoneId == mileStoneId) > 0;
-         if (isExists)
+         var pst = APDBDef.ProjectStoneTask;
+         var pms = db.ProjectMileStoneDal
+            .ConditionQuery(pm.Projectid == projectId & pm.StoneId == mileStoneId,null,null,null)
+            .FirstOrDefault();
+         if (pms!=null)
          {
-            ProjectMileStone.ConditionDelete(pm.Projectid == projectId & pm.StoneId == mileStoneId);
+            db.ProjectMileStoneDal.ConditionDelete(pm.Projectid == projectId & pm.StoneId == mileStoneId);
+            db.ProjectStoneTaskDal.ConditionDelete(pst.PmsId == pms.PmsId);
          }
 
          return Json(new
@@ -61,6 +66,9 @@ namespace TheSite.Controllers
             msg = Success.Project.Edit_MILESTONE_SUCCESS
          });
       }
+
+
+      // Post-Ajax: ProjectManage/EditStone
 
       [HttpPost]
       public ActionResult Edit(ProjectMileStone projectMileStone)
@@ -82,12 +90,38 @@ namespace TheSite.Controllers
          });
       }
 
+
+      // Post-Ajax: ProjectManage/List
+
       [HttpPost]
       public ActionResult List(Guid projectId)
       {
          return PartialView(
             MilestoneHelper.GetProjectMileStones(projectId, db)
             );
+      }
+
+
+      // GET: MileStone/ChooseList
+
+      public ActionResult ChooseList(Guid projectId)
+      {
+         var m = APDBDef.MileStone;
+
+         var subQuery = APQuery.select(pm.StoneId).from(pm).where(pm.Projectid == projectId);
+
+         var result = APQuery.select(m.Asterisk)
+                          .from(m)
+                          .where(m.StoneId.NotIn(subQuery))
+                          //.order_by(pm.CreateDate.Desc)
+                          .query(db,r=> 
+                          {
+                             var mileStone = new MileStone();
+                             m.Fullup(r, mileStone,false);
+                             return mileStone;
+                          }).ToList();
+
+         return PartialView(result);
       }
 
    }

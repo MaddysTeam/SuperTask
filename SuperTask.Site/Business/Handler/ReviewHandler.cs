@@ -1,11 +1,7 @@
-﻿using Business;
-using Business.Helper;
+﻿using Business.Helper;
 using Business.Roadflow;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TheSite.Models;
 
 namespace Business
@@ -150,5 +146,75 @@ namespace Business
       public APDBDef db { get; set; }
    }
 
+
+   public class ProjectReviewHandler : IHandler<Project, ReviewRequestOption>
+   {
+      static APDBDef.ReviewTableDef rv = APDBDef.Review;
+
+      public void Handle(Project p, ReviewRequestOption v)
+      {
+         var isInReview = v.db.ReviewDal.ConditionQueryCount(rv.ProjectId == p.ProjectId & rv.ReviewType == v.ReviewType & rv.Result == ReviewKeys.ResultWait) > 0;
+         if (isInReview)
+         {
+            v.Result.Msg = Errors.Review.HAS_IN_REVIEW;
+            v.Result.IsSuccess = false;
+            return;
+         }
+
+         var user = v.User;
+         var reviewerId = p.ManagerId;
+         var title = ReviewKeys.GetTypeKeyByValue(v.ReviewType);
+         var review = new Review
+         {
+            SenderID = user.UserId,
+            Sender = user.UserName,
+            ReceiverID = reviewerId,
+            SendDate = DateTime.Now,
+            ReviewDate = DateTime.Parse("1/1/1753").AddYears(100),
+            ReviewType = v.ReviewType,
+            Result = ReviewKeys.ResultWait,
+            ProjectId = p.ProjectId,
+            Title = title,
+            ProjectName = p.ProjectName,
+            DateRange = string.Format("{0}  至  {1}", p.StartDate, p.EndDate),
+         };
+
+         var json = Newtonsoft.Json.JsonConvert.SerializeObject(review, new Newtonsoft.Json.JsonSerializerSettings() { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeNonAscii });
+         var flowParams = new RunParams
+         {
+            UserId = user.UserId.ToString(),
+            DetaultMember = reviewerId.ToString(),
+            FlowId = v.FlowId.ToString(),
+            Display = "1",
+            ObjJson = json,
+            Title = title,
+         };
+
+         v.RunParams = flowParams;
+         v.Result.IsSuccess = true;
+      }
+
+   }
+
+
+   public class ProjectStartRequestHandler: ProjectReviewHandler
+   {
+
+   }
+
+
+   public class ProjectStoneTaskReviewHandler : IHandler<ProjectStoneTask, ReviewRequestOption>
+   {
+      public void Handle(ProjectStoneTask t, ReviewRequestOption v)
+      {
+         throw new NotImplementedException();
+      }
+   }
+
+
+   public class ProjectStoneTaskEditRequestHandler : ProjectStoneTaskReviewHandler { }
+
+
+   public class ProejctStoneTaskSubmitRequestHandler : ProjectStoneTaskReviewHandler { }
 
 }

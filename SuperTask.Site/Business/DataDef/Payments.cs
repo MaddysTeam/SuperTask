@@ -9,7 +9,7 @@ namespace Business
    {
       public Result Valiedate()
       {
-         if (ProjectId.IsEmpty())
+         if (ProjectId.IsEmpty() || PayType.IsEmpty())
          {
             return new Result { IsSuccess = false, Msg = Errors.Payments.EDIT_FAIL };
          }
@@ -17,9 +17,12 @@ namespace Business
          return new Result { IsSuccess = true};
       }
 
-      public bool IsProjectType => this.PayType == PaymentsKeys.ProjectPaymentsType; 
-      public bool IsInternalVenderType => this.PayType == PaymentsKeys.InternalVenderPaymentsType;
-      public bool IsDeliveryType => this.PayType == PaymentsKeys.CheckBeforeDeliveryType;
+      public bool IsProjectType => PayType == PaymentsKeys.ProjectPaymentsType; 
+      public bool IsInternalVenderType => PayType == PaymentsKeys.InternalVenderPaymentsType;
+      public bool IsDeliveryType => PayType == PaymentsKeys.CheckBeforeDeliveryType ||
+                                    PayType == PaymentsKeys.BondType ||
+                                    PayType == PaymentsKeys.GuaranteeType ||
+                                    PayType == PaymentsKeys.NothingType;
 
    }
 

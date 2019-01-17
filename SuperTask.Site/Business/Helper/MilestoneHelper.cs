@@ -20,21 +20,36 @@ namespace Business.Helper
       {
          var ms = APDBDef.MileStone;
          var pms = APDBDef.ProjectMileStone;
+         var p = APDBDef.Payments;
 
-         var query = APQuery.select(pms.Status, pms.PmsId, pms.FolderId, pms.StoneId, pms.Content, ms.StoneName, ms.StoneType)
-                             .from(ms, pms.JoinInner(ms.StoneId == pms.StoneId & pms.Projectid == projectId));
+         var query = APQuery.select(pms.Status, pms.PmsId, pms.FolderId, pms.StoneId, pms.Content,
+                                    pms.StartDate, pms.EndDate, ms.StoneName, ms.StoneType,
+                                    p.PayId,p.PayName)
+                             .from(pms,
+                                     ms.JoinLeft(ms.StoneId == pms.StoneId),
+                                     p.JoinLeft(p.PayId == pms.StoneId)
+                                     )
+                             .where(pms.Projectid == projectId);
 
-         var result = query.query(db, r => new ProjectMileStone
+         var result = query.query(db, r =>
          {
-            PmsId = pms.PmsId.GetValue(r),
-            FolderId = pms.FolderId.GetValue(r),
-            Projectid = projectId,
-            Content = pms.Content.GetValue(r),
-            Status = pms.Status.GetValue(r),
-            StoneId = pms.StoneId.GetValue(r),
-            StoneName = ms.StoneName.GetValue(r),
-            StoneType = ms.StoneType.GetValue(r)
-         }).ToList();
+            var stoneName = ms.StoneName.GetValue(r);
+            stoneName = string.IsNullOrEmpty(stoneName) ? p.PayName.GetValue(r) : stoneName ;
+            return new ProjectMileStone
+            {
+               PmsId = pms.PmsId.GetValue(r),
+               FolderId = pms.FolderId.GetValue(r),
+               Projectid = projectId,
+               Content = pms.Content.GetValue(r),
+               Status = pms.Status.GetValue(r),
+               StoneId = pms.StoneId.GetValue(r),
+               StoneName = stoneName,
+               StoneType = ms.StoneType.GetValue(r),
+               StartDate = pms.StartDate.GetValue(r),
+               EndDate = pms.EndDate.GetValue(r)
+            };
+         }
+         ).ToList();
 
          return result;
       }
@@ -43,10 +58,14 @@ namespace Business.Helper
       /// <summary>
       /// 添加项目里程碑节点
       /// </summary>
-      public static void AddProjectMileStone(Project project, MileStone mileStone, APDBDef db)
+      public static void AddProjectMileStoneIfNotExits(Project project, MileStone mileStone, APDBDef db)
       {
          var f = APDBDef.Folder;
          var pm = APDBDef.ProjectMileStone;
+
+         //var isStoneExits = db.MileStoneDal.PrimaryGet(mileStone.StoneId) != null;
+         //if (!isStoneExits && !string.IsNullOrEmpty(mileStone.StoneName))
+         //   db.MileStoneDal.Insert(mileStone);
 
          var isExists = db.ProjectMileStoneDal.ConditionQueryCount(pm.Projectid == project.ProjectId & pm.StoneId == mileStone.StoneId) > 0;
          if (!isExists)
@@ -91,7 +110,7 @@ namespace Business.Helper
          var defaultStones = db.MileStoneDal.ConditionQuery(m.StoneType == MilestoneKeys.DefaultType, null, null, null);
          foreach (var item in defaultStones)
          {
-            AddProjectMileStone(project, item, db);
+            AddProjectMileStoneIfNotExits(project, item, db);
          }
       }
 

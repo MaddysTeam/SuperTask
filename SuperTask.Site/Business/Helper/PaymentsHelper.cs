@@ -27,15 +27,13 @@ namespace Business.Helper
             new Payments(Guid.NewGuid(),"内部供应商",projectId,0,0,start,end,PaymentsKeys.InternalVenderPaymentsType,Guid.Empty),
 
             // 验收款项
-            new Payments(Guid.NewGuid(),"是否有履约保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,Guid.Empty),
-            new Payments(Guid.NewGuid(),"是否有质量保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,Guid.Empty),
+            new Payments(Guid.NewGuid(),"是否有履约保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,PaymentsKeys.AppointGuaranteeResourceId),
+            new Payments(Guid.NewGuid(),"是否有质量保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,PaymentsKeys.QualityGuaranteeResourceId),
          };
 
          payments.ForEach(p =>
          {
             db.PaymentsDal.Insert(p);
-
-            StoneTaskHelper.CreateStoneTask(p.ProjectId, p.PayName, p.InvoiceDate, p.PayDate, db);
          });
       }
 

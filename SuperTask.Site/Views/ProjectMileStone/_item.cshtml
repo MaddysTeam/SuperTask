@@ -27,8 +27,7 @@
 	<div class="col-md-3">内容:@Html.TextAreaFor(s => s.Content, new { @class = "form-control stoneContent" })</div>
 	<div class="col-md-2">
 		操作：<a class="btn btn-editStone" title="保存"><i class="fa fa-save"></i></a>
-		@*<a class="btn btn-upload" title="上传文件"><i class="fa fa-upload"></i></a><a class="btn btn-editStone" title="保存"><i class="fa fa-save"></i></a>*@
-		@if (!Model.IsDefaultType)
-		{<a class="btn btn-removeStone"><i class="fa fa-remove"></i></a>}
+		@*@if (!Model.IsDefaultType)*@
+		<a class="btn btn-removeStone"><i class="fa fa-remove"></i></a>
 	</div>
 </div>

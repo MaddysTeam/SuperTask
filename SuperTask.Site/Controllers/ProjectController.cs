@@ -252,6 +252,33 @@ namespace TheSite.Controllers
       }
 
 
+      // GET: Project/ReviewRequest
+
+      public ActionResult ReviewRequest(Guid id, Guid reviewType)
+      {
+         if (id.IsEmpty())
+            throw new ArgumentException(Errors.Task.NOT_ALLOWED_ID_NULL);
+
+         var project = db.ProjectDal.PrimaryGet(id);
+
+         var requestOption = new ReviewRequestOption
+         {
+            Project = project,
+            User = GetUserInfo(),
+            ReviewType = reviewType,
+            db = db,
+            Result = Result.Initial()
+         };
+
+         HandleManager.ProjectReviewHandlers[reviewType].Handle(project, requestOption);
+
+         if (!requestOption.Result.IsSuccess)
+            throw new ApplicationException(requestOption.Result.Msg);
+
+
+         return RedirectToAction("FlowIndex", "WorkFlowRun", requestOption.RunParams);
+      }
+
    }
 
 }

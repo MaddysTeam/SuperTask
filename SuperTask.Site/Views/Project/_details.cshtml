@@ -188,7 +188,7 @@
 	<div class="widget-header">
 		
 		<div class="btn-group widget-header-toolbar pull-right">
-			<button class="btn btn-info btn-sm btn-milestone" id="milestones" data-toggle="ajax-modal" data-url="@Url.Action("ChooseExceptDefault", "MileStone",new { projectId= Model.ProjectId })" data-target="#firstModal">选择节点</button>
+			<button class="btn btn-info btn-sm btn-milestone" id="milestones" data-toggle="ajax-modal" data-url="@Url.Action("ChooseList", "ProjectMileStone",new { projectId= Model.ProjectId })" data-target="#firstModal">选择节点</button>
 		</div>
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="#tab1" data-toggle="tab"><i class="fa fa-get-pocket"></i> 项目节点</a></li>

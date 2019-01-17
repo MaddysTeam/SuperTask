@@ -301,7 +301,6 @@
     <Compile Include="Business\Helper\Keys\TaskKeys.cs" />
     <Compile Include="Business\Helper\MilestoneHelper.cs" />
     <Compile Include="Business\Helper\PaymentsHelper.cs" />
-    <Compile Include="Business\Helper\StoneTaskHelper.cs" />
     <Compile Include="Business\Helper\ShareFolderHelper.cs" />
     <Compile Include="Business\Helper\Utilities\ExportHelper.cs" />
     <Compile Include="Business\Helper\Utilities\PDFHelper.cs" />
@@ -1591,7 +1590,7 @@
     <Content Include="Views\MileStone\Search.cshtml" />
     <Content Include="Views\MileStone\Edit.cshtml" />
     <Content Include="Views\Project\Details.cshtml" />
-    <Content Include="Views\MileStone\_milestones.cshtml" />
+    <Content Include="Views\ProjectMileStone\ChooseList.cshtml" />
     <Content Include="Views\ProjectMileStone\_item.cshtml" />
     <Content Include="Views\ProjectMileStone\List.cshtml" />
     <Content Include="Views\ProjectStoneTask\Edit.cshtml" />

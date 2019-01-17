@@ -11,18 +11,12 @@
 @section Css{
 	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
 }
-
 <div class="content-wrapper">
-
 	@Html.Partial("_subMenu", submenu)
-
 	<div class="details">
-
 		@Html.Partial("_details", Model)
-
 	</div>
 </div>
-
 @section Modals{
 	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
 	<!-- Modal start -->
@@ -34,52 +28,54 @@
 	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
 }
 @section Scripts{
+	<script>
+		function getGlobalRequest() {
+			return {
+				projectId: '@Model.ProjectId'
+			};
+		}
 
-<script>
-	function getGlobalRequest() {
-		return {
-			projectId: '@Model.ProjectId'
-		};
-	}
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
 
-	function getGridOptions() {
-		return $.extend(true, {}, gridOptions, {
+				url: '@Url.Action("List", "ProjectStoneTask")',
 
-			url: '@Url.Action("List", "ProjectStoneTask")',
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
 
-			requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
-
-			formatters: {
-				'commands': function (column, row) {
-					var id = row.id;
-					return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
-								'<button class="btn btn-lg btn-success btn-edit">编辑</button> ' +
-								//'<button class="btn btn-lg btn-info btn-start">启动</button> ' +
-								'<button class="btn btn-lg btn-warning btn-requst">申请修改</button> ' +
-								'<button class="btn btn-lg btn-danger btn-delete">删除</button> '+
-							'</div>';
+				formatters: {
+					'commands': function (column, row) {
+						var id = row.id;
+						var hasStone = row.hasStone;
+						var buttons = '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
+												'<button class="btn btn-lg btn-success btn-edit">编辑</button> ' +
+												'<button class="btn btn-lg btn-warning btn-requst">申请修改</button> ' +
+												'<button class="btn btn-lg btn-info btn-requst">申请提交</button> ';
+						if (hasStone)
+							buttons += '<button class="btn btn-lg btn-danger btn-delete">删除</button> ';
+						buttons+='</div>';
+						
+						return buttons;
+					},
 				},
-			},
-		});
-	}
-
-	$(function () {
-		var grid = $('#bootgrid');
-		grid.bootgrid(getGridOptions())
-		.on('loaded.rs.jquery.bootgrid', function () {
-
-			grid.find('.btn-edit').on('click', function () {
-				var id = $(this).parent().data('rowId');
-				var $proxy = $('#modelProxy');
-				$proxy
-					.data('url', '/ProjectStoneTask/Edit/' + id)
-					.trigger('click');
 			});
+		}
 
+		$(function () {
+			var grid = $('#bootgrid');
+			grid.bootgrid(getGridOptions())
+			.on('loaded.rs.jquery.bootgrid', function () {
+
+				grid.find('.btn-edit').on('click', function () {
+					var id = $(this).parent().data('rowId');
+					var $proxy = $('#modelProxy');
+					$proxy
+						.data('url', '/ProjectStoneTask/Edit/' + id)
+						.trigger('click');
+				});
+
+			});
 		});
-	});
-</script>
-
+	</script>
 	<script>
 		function whenProcess() {
 			$('.btn-modify,.projectProgress,.processName').show().removeAttr('disabled');
@@ -119,14 +115,17 @@
 			$('.btn-pay').off('click').on('click', function () {
 				var $this = $(this);
 				var $payContainer = $this.parents('.form-group');
+				var payType = $payContainer.find('#PayType').val();
+				var resourceId = $payContainer.find('#ResourceId').val();
 				var payments = {
-					PayId: $payContainer.find('.payId').val(),
-					Money: $payContainer.find('.money').val(),
-					ProjectId: $payContainer.find('.projectId').val(),
-					InvoiceDate: $payContainer.find('.invoiceDate').val(),
-					PayDate: $payContainer.find('.payDate').val(),
-					PayName: $payContainer.find('.payName').val(),
-					PayType: $payContainer.find('.payType').val(),
+					PayId: $payContainer.find('#PayId').val(),
+					Money: $payContainer.find('#Money').val(),
+					ProjectId: $payContainer.find('#ProjectId').val(),
+					InvoiceDate: $payContainer.find('#InvoiceDate').val(),
+					PayDate: $payContainer.find('#PayDate').val(),
+					PayName: $payContainer.find('#PayName').val(),
+					resourceId:resourceId,
+					PayType: payType == null || payType == '' ? $payContainer.find('.resource_' + resourceId + ':checked').val() : payType,
 				}
 
 				$.post('@Url.Action("Edit", "Payments")', { payments: payments }, function (data) {
