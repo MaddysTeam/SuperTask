@@ -16,5 +16,11 @@
 			<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 		</div>
 	</div>
-	<div class="col-md-2"><a class="btn-pay" title="保存"><i class="fa fa-save"></i></a></div>
+	<div class="col-md-2">
+		<a class="btn-pay" title="保存"><i class="fa fa-save"></i></a>
+		@if (Model.Valiedate().IsSuccess)
+		{
+			<a class="btn btn-clear" title="清除并删除节点任务"> <font color="red"><i class="fa fa-times-circle-o"></i></font></a>
+		}
+	</div>
 </div>

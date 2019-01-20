@@ -117,7 +117,7 @@
 
 		function flowBack(){
 			var currentReviewType=$('.reviewType').val();
-			if(currentReviewType=='@ReviewKeys.ReviewTypeForPjChanged')
+			if(currentReviewType=='@ReviewKeys.ReviewTypeForPjStart')
 				$('.reviewType').val('@ReviewKeys.ProjectRequestFailed');
 			else
 				$('.reviewType').val('@ReviewKeys.TaskRequestFailed');

@@ -258,6 +258,7 @@
     <Compile Include="Business\DataDef\Payments.cs" />
     <Compile Include="Business\DataDef\ProjectMileStone.cs" />
     <Compile Include="Business\DataDef\ProjectRole.cs" />
+    <Compile Include="Business\DataDef\ProjectStoneTask.cs" />
     <Compile Include="Business\DataDef\Resource.cs" />
     <Compile Include="Business\DataDef\Review.cs" />
     <Compile Include="Business\DataDef\Advice.cs" />

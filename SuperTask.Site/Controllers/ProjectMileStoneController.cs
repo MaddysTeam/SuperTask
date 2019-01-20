@@ -48,16 +48,14 @@ namespace TheSite.Controllers
       // Post-Ajax: ProjectManage/RemoveMileStone
 
       [HttpPost]
-      public ActionResult Remove(Guid projectId, Guid mileStoneId)
+      public ActionResult Remove(Guid id)
       {
          var pst = APDBDef.ProjectStoneTask;
-         var pms = db.ProjectMileStoneDal
-            .ConditionQuery(pm.Projectid == projectId & pm.StoneId == mileStoneId,null,null,null)
-            .FirstOrDefault();
+         var pms = db.ProjectMileStoneDal.PrimaryGet(id);
          if (pms!=null)
          {
-            db.ProjectMileStoneDal.ConditionDelete(pm.Projectid == projectId & pm.StoneId == mileStoneId);
-            db.ProjectStoneTaskDal.ConditionDelete(pst.PmsId == pms.PmsId);
+            db.ProjectMileStoneDal.PrimaryDelete(id);
+            db.ProjectStoneTaskDal.ConditionDelete(pst.PmsId == id);
          }
 
          return Json(new

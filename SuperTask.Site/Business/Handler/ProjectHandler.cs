@@ -146,6 +146,15 @@ namespace Business
 
          project.Start();
 
+         //启动节点任务
+         var pst = APDBDef.ProjectStoneTask;
+         APQuery.update(pst)
+                 .set(
+                      pst.TaskStatus.SetValue(TaskKeys.ProcessStatus),
+                      pst.RealStartDate.SetValue(DateTime.Now))
+                 .where(pst.ProjectId == project.ProjectId)
+                 .execute(ctx.db);
+
          //启动未启动的任务，将任务设置为启动状态
          foreach (var tk in tasks)
          {

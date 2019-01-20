@@ -7681,8 +7681,8 @@ namespace Business {
             public virtual StringAPColumnDef AttachmentUrl {
                 get {
                     if (Object.ReferenceEquals(_attachmentUrl, null)) {
-                        _attachmentUrl = new StringAPColumnDef(this, "AttachmentUrl", true, 1000);
-                        _attachmentUrl.Display = "AttachmentUrl";
+                        _attachmentUrl = new StringAPColumnDef(this, "AttachmentId", true, 1000);
+                        _attachmentUrl.Display = "AttachmentId";
                     }
                     return _attachmentUrl;
                 }
@@ -30261,7 +30261,7 @@ namespace Business {
         private System.Guid _payType;
         
         /// <summary>
-        /// ResourceId
+        /// 冗余字段，备用
         /// </summary>
         private System.Guid _resourceId;
         
@@ -30462,7 +30462,7 @@ namespace Business {
         }
         
         /// <summary>
-        /// ResourceId
+        /// 冗余字段，备用
         /// </summary>
         public virtual System.Guid ResourceId {
             get {
@@ -30474,7 +30474,7 @@ namespace Business {
         }
         
         /// <summary>
-        /// ResourceId APColumnDef
+        /// 冗余字段，备用 APColumnDef
         /// </summary>
         public static GuidAPColumnDef ResourceIdDef {
             get {

@@ -24,7 +24,7 @@ namespace Business.Helper
             new Payments(Guid.NewGuid(),PaymentsKeys.TailPayment,projectId,0,0,start,end,PaymentsKeys.ProjectPaymentsType,Guid.Empty),
 
             // 外包款项
-            new Payments(Guid.NewGuid(),"内部供应商",projectId,0,0,start,end,PaymentsKeys.InternalVenderPaymentsType,Guid.Empty),
+            new Payments(Guid.NewGuid(),string.Empty,projectId,0,0,start,end,PaymentsKeys.InternalVenderPaymentsType,Guid.Empty),
 
             // 验收款项
             new Payments(Guid.NewGuid(),"是否有履约保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,PaymentsKeys.AppointGuaranteeResourceId),

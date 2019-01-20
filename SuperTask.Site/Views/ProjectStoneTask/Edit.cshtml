@@ -9,7 +9,7 @@
 			</div>
 		</div>
 		<div class="widget-content">
-			<form class="form-horizontal" action="@Url.Action("Edit", "Project")" role="form" data-after-success="afterDialogSuccess()">
+			<form class="form-horizontal" action="@Url.Action("Edit", "ProjectStoneTask")" role="form" data-after-success="afterDialogSuccess()">
 				@Html.AntiForgeryToken()
 				<div class="row">
 					<fieldset class="col-sm-12">
@@ -17,6 +17,8 @@
 						@Html.HiddenFor(t => t.ProjectId)
 						@Html.HiddenFor(t => t.TaskStatus)
 						@Html.HiddenFor(t => t.TaskName)
+						@Html.HiddenFor(t => t.RealStartDate)
+						@Html.HiddenFor(t => t.RealEndDate)
 
 						<div class="form-group">
 							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-3" })
@@ -28,14 +30,20 @@
 						<div class="form-group">
 							@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-3" })
 							<div class="col-md-9">
-								@Html.TextBoxFor(t => t.StartDate, new { @class = "form-control" })
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(t => t.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
 							</div>
 						</div>
 
 						<div class="form-group">
 							@Html.LabelFor(t => t.EndDate, new { @class = "control-label col-md-3" })
 							<div class="col-md-9">
-								@Html.TextBoxFor(t => t.EndDate, new { @class = "form-control" })
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(t => t.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
 							</div>
 						</div>
 

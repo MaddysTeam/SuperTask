@@ -48,12 +48,13 @@ namespace Business
 
       public static Dictionary<Guid, ProjectReviewHandler> ProjectReviewHandlers = new Dictionary<Guid, ProjectReviewHandler>
       {
-         {ReviewKeys.ReviewTypeForPjChanged, new ProjectStartRequestHandler() }
+         {ReviewKeys.ReviewTypeForPjStart, new ProjectStartRequestHandler() }
       };
 
       public static Dictionary<Guid, ProjectStoneTaskReviewHandler> ProjectStoneTaskReviewHandlers = new Dictionary<Guid, ProjectStoneTaskReviewHandler>
       {
-         //{ReviewKeys.ReviewTypeForPjChanged, new ProjectStartRequestHandler() }
+         {ReviewKeys.ReviewTypeForStoneTaskChanged, new ProjectStoneTaskEditRequestHandler() },
+         {ReviewKeys.ReviewTypeForStoneTaskSubmit, new ProejctStoneTaskSubmitRequestHandler() }
       };
 
 

@@ -1,5 +1,5 @@
 ﻿@model Payments
-<div class="row form-group">
+<div class="row form-group" id="venderList">
 	@Html.HiddenFor(p => p.PayId, new { @class = "payId" })
 	@Html.HiddenFor(p => p.ProjectId, new { @class = "projectId" })
 	@Html.HiddenFor(p => p.PayType, new { @class = "payType" })
@@ -18,10 +18,11 @@
 	<div class="col-md-2"><a class="btn btn-pay" title="保存"><i class="fa fa-save"></i></a>
 	@if (Model == null)
 	{
-		<a class="btn btn-removePay"> <font color="red"><i class="fa fa-minus-circle"></i></font></a>
+		
 	}
 	else {
-	<a class="btn  btn-addInternalVender"><font color="#3c763d"><i class="fa fa-plus-circle"></i></font></a>
+	@*<a class="btn  btn-addInternalVender"><font color="#3c763d"><i class="fa fa-plus-circle"></i></font></a>*@
+	<a class="btn btn-removePay"> <font color="red"><i class="fa fa-minus-circle"></i></font></a>
 	}
 	</div>
 </div>

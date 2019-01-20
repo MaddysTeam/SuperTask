@@ -514,7 +514,7 @@
 					<add name="Result" columnName="Result" type="Guid"></add>
 					<add name="SendDate" columnName="SendDate" type="DateTime" defaultValue="DateTime.Now"></add>
 					<add name="ReviewDate" columnName="ReviewDate" type="DateTime"  isNullable="true" defaultValue="DateTime.Now"></add>
-					<add name="AttachmentUrl" columnName="AttachmentUrl" type="string" dataLength="1000" isNullable="true"></add>
+					<add name="AttachmentUrl" columnName="AttachmentId" type="string" dataLength="1000" isNullable="true"></add>
 					<add name="Comment"  columnName="Comment" type="string" dataLength="1000"></add>
 					<add name="Title"  columnName="Title" type="string" dataLength="50" isNullable="true"></add>
 

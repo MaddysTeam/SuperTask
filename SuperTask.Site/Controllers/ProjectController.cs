@@ -161,8 +161,8 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult Edit(Project project)
       {
-         var orignal = ProjectrHelper.GetCurrentProject(project.ProjectId,db,true);
-         var option = new ProjectEditOption { CurrentUser = GetUserInfo(), db = db, Status=project.ProjectStatus,Orignal= orignal };
+         var orignal = ProjectrHelper.GetCurrentProject(project.ProjectId, db, true);
+         var option = new ProjectEditOption { CurrentUser = GetUserInfo(), db = db, Status = project.ProjectStatus, Orignal = orignal };
          HandleManager.ProjectEditHandlers[ProjectKeys.DefaultProjectType].Handle(project, option);
 
          if (!option.Result.IsSuccess)
@@ -214,13 +214,12 @@ namespace TheSite.Controllers
                proj.Reviewer = ru.UserName.GetValue(r, "ReviewerName");
                proj.Manager = pu.UserName.GetValue(r, "Manager");
                proj.Header = he.UserName.GetValue(r, "Header");
-               proj.RateOfProgress = p.RateOfProgress.GetValue(r);
 
                return proj;
             }).FirstOrDefault();
 
-         project.Resources= db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
-         project.Payments = PaymentsHelper.GetProjectPayments(id,db);
+         project.Resources = db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
+         project.ProjectProgress = 100;
 
          return View(project);
       }
@@ -236,11 +235,12 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult CreateByTemplate(Guid projectType)
       {
-         var option = new PorjectTemplateEditOption {
-            CurrentUser =GetUserInfo(),
-            db =db,
-            Status =ProjectKeys.PlanStatus,
-            ProjectEditHandler =HandleManager.ProjectEditHandlers[ProjectKeys.DefaultProjectType],
+         var option = new PorjectTemplateEditOption
+         {
+            CurrentUser = GetUserInfo(),
+            db = db,
+            Status = ProjectKeys.PlanStatus,
+            ProjectEditHandler = HandleManager.ProjectEditHandlers[ProjectKeys.DefaultProjectType],
          };
          HandleManager.ProjectTemplateEditHandlers[projectType].Handle(null, option);
 
@@ -253,6 +253,9 @@ namespace TheSite.Controllers
 
 
       // GET: Project/ReviewRequest
+      // GET: Project/AfterProjectStartReviewSend
+      // GET: Project/AfterProjectStartSubimitReview
+      // GET: Project/AfterReviewFail
 
       public ActionResult ReviewRequest(Guid id, Guid reviewType)
       {
@@ -277,6 +280,45 @@ namespace TheSite.Controllers
 
 
          return RedirectToAction("FlowIndex", "WorkFlowRun", requestOption.RunParams);
+      }
+
+
+      public ActionResult AfterProjectStartReviewSend(Guid instanceId)
+      {
+         if (instanceId.IsEmpty())
+            throw new NullReferenceException("instance id 不能为空！");
+
+         var review = db.ReviewDal.PrimaryGet(instanceId);
+         var project = db.ProjectDal.PrimaryGet(review.ProjectId);
+
+         project.SetStatus(TaskKeys.ReviewStatus);
+
+         db.ProjectDal.Update(project);
+
+         //重定向到项目明细
+         return RedirectToAction("Details", new { id = project.ProjectId });
+      }
+
+      public ActionResult AfterProjectStartSubimitReview(Guid instanceId)
+      {
+
+         if (instanceId.IsEmpty())
+            throw new NullReferenceException("instance id 不能为空！");
+
+         var review = db.ReviewDal.PrimaryGet(instanceId);
+         var project = db.ProjectDal.PrimaryGet(review.ProjectId);
+
+         project.SetStatus(ProjectKeys.EditStatus);
+
+         db.ProjectDal.Update(project);
+
+         //重定向到项目明细
+         return RedirectToAction("Details", new { id = project.ProjectId });
+      }
+
+      public ActionResult AfterReviewFail(Guid instanceId)
+      {
+         return null;
       }
 
    }

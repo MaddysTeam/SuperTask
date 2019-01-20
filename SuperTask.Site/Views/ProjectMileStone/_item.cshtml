@@ -1,9 +1,11 @@
 ﻿@model ProjectMileStone
 <div class="row form-group">
-	@Html.HiddenFor(s => s.PmsId, new { @class = "pmsId" })
-	@Html.HiddenFor(s => s.Projectid, new { @class = "projectId" })
-	@Html.HiddenFor(s => s.FolderId, new { @class = "folderId" })
-	@Html.HiddenFor(s => s.StoneId, new { @class = "stoneId" })
+	@Html.HiddenFor(s => s.PmsId)
+	@Html.HiddenFor(s => s.Projectid)
+	@Html.HiddenFor(s => s.FolderId)
+	@Html.HiddenFor(s => s.StoneId)
+	@Html.HiddenFor(s => s.Status)
+
 	<div class="col-md-1">@Html.Label(Model.StoneName, new { @class = "control-label" })</div>
 	@*<div class="col-md-3">
 		@Html.DropDownListFor(s=>s.Status,
@@ -26,7 +28,7 @@
 	</div>
 	<div class="col-md-3">内容:@Html.TextAreaFor(s => s.Content, new { @class = "form-control stoneContent" })</div>
 	<div class="col-md-2">
-		操作：<a class="btn btn-editStone" title="保存"><i class="fa fa-save"></i></a>
+		<a class="btn btn-editStone" title="保存"><i class="fa fa-save"></i></a>
 		@*@if (!Model.IsDefaultType)*@
 		<a class="btn btn-removeStone"><i class="fa fa-remove"></i></a>
 	</div>

@@ -146,6 +146,11 @@ namespace Business.Helper
       public class Payments
       {
          public const string EDIT_FAIL = "编辑失败！";
+         public const string NOT_ALLOWED_NAME_NULL = "请填写款项名称！";
+         public const string NOT_ALLOWED_TYPE_NULL = "请选择类型！";
+         public const string NOT_ALLOWED_Money_ZERO = "请填写金额！";
+         public const string NOT_ALLOWED_TIME_NULL = "请填写时间！";
+         public const string NOT_ALLOWED_TYPE_WHEN_DELIVERY = "必须选择交付凭证";
       }
 
       public class StoneTask
@@ -163,8 +168,8 @@ namespace Business.Helper
       {
 
          public const string EDIT_SUCCESS = "项目编辑成功！";
-         public const string ADD_MILESTONE_SUCCESS = "里程碑绑定成功";
-         public const string Edit_MILESTONE_SUCCESS = "项目里程碑编辑成功";
+         public const string ADD_MILESTONE_SUCCESS = "项目节点绑定成功";
+         public const string Edit_MILESTONE_SUCCESS = "项目节点编辑成功";
       }
 
 

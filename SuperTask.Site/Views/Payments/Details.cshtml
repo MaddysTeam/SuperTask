@@ -14,7 +14,7 @@
 		<div class="col-md-4">外包管理</div>
 	</div>
 </div>
-<div><b>供应商:</b></div>
+<div><button class="btn btn-info btn-addVender"><i class="fa fa-plus-circle"></i>新增供应商</button></div>
 <hr />
 @foreach (var item in Model.FindAll(p => p.IsInternalVenderType) ?? new List<Payments>())
 {

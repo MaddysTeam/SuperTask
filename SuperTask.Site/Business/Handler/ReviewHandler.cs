@@ -205,9 +205,53 @@ namespace Business
 
    public class ProjectStoneTaskReviewHandler : IHandler<ProjectStoneTask, ReviewRequestOption>
    {
-      public void Handle(ProjectStoneTask t, ReviewRequestOption v)
+      static APDBDef.ReviewTableDef rv = APDBDef.Review;
+
+      public void Handle(ProjectStoneTask pst, ReviewRequestOption v)
       {
-         throw new NotImplementedException();
+         var isInReview = v.db.ReviewDal.ConditionQueryCount(rv.TaskId == pst.PstId & rv.ReviewType == v.ReviewType & rv.Result == ReviewKeys.ResultWait) > 0;
+         if (isInReview)
+         {
+            v.Result.Msg = Errors.Review.HAS_IN_REVIEW;
+            v.Result.IsSuccess = false;
+            return;
+         }
+
+         var project = v.Project;
+         var user = v.User;
+         var title = ReviewKeys.GetTypeKeyByValue(v.ReviewType);
+         var reviewerId = project.ManagerId;
+         var review = new Review
+         {
+            SenderID = user.UserId,
+            Sender = user.UserName,
+            ReceiverID = reviewerId,
+            SendDate = DateTime.Now,
+            ReviewDate = DateTime.Parse("1/1/1753").AddYears(100),
+            ReviewType = v.ReviewType,
+            Result = ReviewKeys.ResultWait,
+            ProjectId = pst.ProjectId,
+            TaskId = pst.PstId,
+            Title = title,
+            TaskName = pst.TaskName,
+            ProjectName = project.ProjectName,
+            DateRange = string.Format("{0}  至  {1}", pst.StartDate, pst.EndDate)
+         };
+
+         var json = Newtonsoft.Json.JsonConvert.SerializeObject(review, new Newtonsoft.Json.JsonSerializerSettings() { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeNonAscii });
+         var flowParams = new RunParams
+         {
+            UserId = user.UserId.ToString(),
+            DetaultMember = reviewerId.ToString(),
+            FlowId = v.FlowId.ToString(),
+            Display = "1",
+            ObjJson = json,
+            Title = title,
+         };
+
+
+         v.RunParams = flowParams;
+         v.Result.IsSuccess = true;
       }
    }
 

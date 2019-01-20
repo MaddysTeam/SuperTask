@@ -16,7 +16,7 @@ namespace Business.Helper
 
       public static Guid StatusGuid => Guid.Parse("dd3adc7f-a55c-3c58-9caf-d3a2b7a9da7b");
 
-      public static Guid ReviewTypeForPjChanged => Guid.Parse("E98894E6-1DA1-3BCC-2E03-AF0BAAA4C62F");
+      public static Guid ReviewTypeForPjStart => Guid.Parse("E98894E6-1DA1-3BCC-2E03-AF0BAAA4C62F");
 
       public static Guid ReviewTypeForTkChanged => Guid.Parse("26999EA8-3BDD-A4FB-495B-E440B6FF7408");
 
@@ -25,6 +25,15 @@ namespace Business.Helper
       public static Guid ProjectRequestFailed => Guid.Parse("30472940-C13B-0413-CC4E-E6656BC07C67");
 
       public static Guid TaskRequestFailed => Guid.Parse("2B34A362-DA94-6A50-7C01-D0FC10A17ACA");
+
+
+      public static Guid ReviewTypeForStoneTaskStart => Guid.Parse("415f0ab2-c136-4df5-831d-eefa23e6adae");//TODO: add into dictionary
+
+      public static Guid ReviewTypeForStoneTaskChanged => Guid.Parse("407e8141-54d7-4eb2-a7d1-36051f01fbd3");//TODO: add into dictionary
+
+      public static Guid ReviewTypeForStoneTaskSubmit => Guid.Parse("607be361-b823-4324-a370-c48051ced39f"); //TODO: add into dictionary
+
+      public static Guid StoneTaskRequestFailed => Guid.Parse("5ff8204e-f877-4a44-84bd-93108b6580ac"); //TODO: add into dictionary
 
 
       public static Guid ResultWait => Guid.Parse("D39C12D1-D7B1-31FF-4960-949C994F3574");

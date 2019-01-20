@@ -28,8 +28,20 @@
 				@if (Html.HasPermission(Model.ProjectId.ToString(), "P_10002"))
 				{
 					<button type="submit" class="btn btn-danger btn-sm btn-save">保存</button>
-					@*<button type="submit" class="btn btn-success btn-sm btn-start">启动</button>
-						<button type="submit" class="btn btn-info btn-sm btn-forceClose" title="注意：强制关闭后，项目所有任务都关闭，项目状态也为关闭状态"><i class="fa fa-question-circle"></i>强制关闭</button>*@
+					if (Model.IsPlanStatus)
+					{
+					 <a class="btn btn-sm btn-warning" href="@Url.Action("ReviewRequest", "Project", new { id = Model.ProjectId, reviewType = ReviewKeys.ReviewTypeForPjStart })"><i class="fa fa-refresh"></i>启动申请</a>
+					}
+					if (Model.IsReviewStatus)
+					{
+						<button  class="btn btn-success btn-sm btn-start" disabled>启动审核中</button>
+					}
+					if (Model.IsEditStatus)
+					{
+						<button type="submit" class="btn btn-success btn-sm btn-start">启动</button>
+					}
+
+						@*<button type="submit" class="btn btn-success btn-sm btn-start">启动</button><button type="submit" class="btn btn-info btn-sm btn-forceClose" title="注意：强制关闭后，项目所有任务都关闭，项目状态也为关闭状态"><i class="fa fa-question-circle"></i>强制关闭</button>*@
 				}
 			</div>
 		</div>
@@ -173,9 +185,9 @@
 				<fieldset class="col-sm-6"></fieldset>
 				<fieldset class="col-sm-6">
 					<div class="form-group">
-						@Html.LabelFor(p => p.RateOfProgress, new { @class = "control-label col-md-3" })
+						@Html.LabelFor(p => p.ProjectProgress, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
-							<span class="form-control">@Model.RateOfProgress%</span>
+							<span class="form-control">@Model.ProjectProgress%</span>
 						</div>
 					</div>
 				</fieldset>
@@ -211,8 +223,9 @@
 								<th data-column-id="name">节点任务</th>
 								<th data-column-id="start" data-formatter="DateOnly">预估开始</th>
 								<th data-column-id="end" data-formatter="DateOnly">预估结束</th>
-								<th data-column-id="realStart" data-formatter="DateOnly">实际开始</th>
-								<th data-column-id="realEnd" data-formatter="DateOnly">实际结束</th>
+								<th data-column-id="realStart">实际开始</th>
+								<th data-column-id="realEnd">实际结束</th>
+								<th data-column-id="status">任务状态</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" data-header-Css-Class="width220">操作</th>
 							</tr>
 						</thead>

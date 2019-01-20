@@ -36,18 +36,27 @@ namespace Business
 
       public static Dictionary<Guid, string> ReturnUrlsAfterReview => new Dictionary<Guid, string>
       {
-         {ReviewKeys.ReviewTypeForPjChanged,"/Project/AfterEditReview" },
+         {ReviewKeys.ReviewTypeForPjStart,"/Project/AfterProjectStartSubimitReview" },
+         {ReviewKeys.ProjectRequestFailed,"/Project/AfterReviewFail"},
+
          {ReviewKeys.ReviewTypeForTkChanged,"/Task/AfterEditReview" },
          {ReviewKeys.ReviewTypeForTkSubmit,"/Task/AfterSubmitReview" },
          {ReviewKeys.TaskRequestFailed,"/Task/AfterReviewFail"},
-         {ReviewKeys.ProjectRequestFailed,"/Project/AfterReviewFail"}
+
+         {ReviewKeys.ReviewTypeForStoneTaskChanged,"/ProjectStoneTask/AfterEditReview" },
+         {ReviewKeys.ReviewTypeForStoneTaskSubmit,"/ProjectStoneTask/AfterSubmitReview" },
+         {ReviewKeys.StoneTaskRequestFailed,"/ProjectStoneTask/AfterReviewFail"},
       };
 
       public static Dictionary<Guid, string> ReturnUrlsAfterSend => new Dictionary<Guid, string>
       {
-         {ReviewKeys.ReviewTypeForPjChanged,"/Project/AfterEditReviewSend" },
+         {ReviewKeys.ReviewTypeForPjStart,"/Project/AfterProjectStartReviewSend" },
+
          {ReviewKeys.ReviewTypeForTkChanged,"/Task/AfterEditReviewSend" },
          {ReviewKeys.ReviewTypeForTkSubmit,"/Task/AfterSubmitReviewSend" },
+
+         {ReviewKeys.ReviewTypeForStoneTaskChanged,"/ProjectStoneTask/AfterEditReviewSend" },
+         {ReviewKeys.ReviewTypeForStoneTaskSubmit,"/ProjectStoneTask/AfterSubmitReviewSend" },
       };
 
 

@@ -63,10 +63,6 @@ namespace Business.Helper
          var f = APDBDef.Folder;
          var pm = APDBDef.ProjectMileStone;
 
-         //var isStoneExits = db.MileStoneDal.PrimaryGet(mileStone.StoneId) != null;
-         //if (!isStoneExits && !string.IsNullOrEmpty(mileStone.StoneName))
-         //   db.MileStoneDal.Insert(mileStone);
-
          var isExists = db.ProjectMileStoneDal.ConditionQueryCount(pm.Projectid == project.ProjectId & pm.StoneId == mileStone.StoneId) > 0;
          if (!isExists)
          {

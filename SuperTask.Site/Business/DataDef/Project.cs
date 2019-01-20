@@ -32,6 +32,9 @@ namespace Business
       [Display(Name = "审核者")]
       public string Reviewer { get; set; }
 
+      [Display(Name = "项目进度")]
+      public double ProjectProgress { get; set; }
+
       public Attachment Attachment { get; set; }
 
       public bool IsPlanStatus => this.ProjectStatus == ProjectKeys.PlanStatus;
@@ -45,10 +48,6 @@ namespace Business
       public bool IsDelStatus => ProjectStatus == ProjectKeys.DeleteStatus;
 
       public bool IsReviewStatus => ProjectStatus == ProjectKeys.ReviewStatus;
-
-      public List<ProjectMileStone> MileStones { get; set; }
-
-      public List<Payments> Payments { get; set; }
 
       public List<Resource> Resources { get; set; }
 

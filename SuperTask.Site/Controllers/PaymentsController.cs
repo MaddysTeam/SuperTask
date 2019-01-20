@@ -3,6 +3,8 @@ using Business.Helper;
 using System;
 using System.Web.Mvc;
 using TheSite.Models;
+using System.Linq;
+using Symber.Web.Data;
 
 namespace TheSite.Controllers
 {
@@ -34,11 +36,31 @@ namespace TheSite.Controllers
             db.PaymentsDal.Update(payments);
          }
 
-         MilestoneHelper.AddProjectMileStoneIfNotExits(
-            project,
-            new MileStone { StoneId = payments.PayId, StoneName = payments.PayName }, //这里的milestone 不会存入数据库，将payment 作为一个隐形的 mileStone
-            db);
+         #region [TODO]:
+         //MilestoneHelper.AddProjectMileStoneIfNotExits(
+         //   project,
+         //   new MileStone { StoneId = payments.PayId, StoneName = payments.PayName }, //这里的milestone 不会存入数据库，将payment 作为一个隐形的 mileStone
+         //   db);
+         #endregion
+         var pst = APDBDef.ProjectStoneTask;
+         var taskExists = db.ProjectStoneTaskDal.ConditionQueryCount(pst.PmsId == payments.PayId & pst.ProjectId == payments.ProjectId) > 0;
 
+         if (!taskExists)
+         {
+            db.ProjectStoneTaskDal.Insert(new ProjectStoneTask(
+              Guid.NewGuid(),
+              payments.PayId,
+              project.ProjectId,
+              payments.PayName,
+              project.StartDate,
+              project.EndDate,
+              DateTime.MinValue,
+              DateTime.MinValue,
+              TaskKeys.PlanStatus,
+              DateTime.Now,
+              Guid.Empty
+              ));
+         }
 
          return Json(new
          {
@@ -53,7 +75,23 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult Remove(Guid id)
       {
-         db.PaymentsDal.PrimaryDelete(id);
+         var pms = APDBDef.ProjectMileStone;
+         var pst = APDBDef.ProjectStoneTask;
+         var payments = db.PaymentsDal.PrimaryGet(id);
+
+         db.BeginTrans();
+
+         try
+         {
+            db.PaymentsDal.PrimaryDelete(id);
+            db.ProjectStoneTaskDal.ConditionDelete(pst.PmsId == payments.PayId & pst.ProjectId == payments.ProjectId);
+
+            db.Commit();
+         }
+         catch
+         {
+            db.Rollback();
+         }
 
          return Json(new
          {
@@ -80,6 +118,32 @@ namespace TheSite.Controllers
       public ActionResult Details(Guid projectId)
       {
          return PartialView("Details", PaymentsHelper.GetProjectPayments(projectId, db));
+      }
+
+
+      // Post-ajax: Payment/Clare
+
+      [HttpPost]
+      public ActionResult Clare(Guid id, Guid projectId)
+      {
+         var p = APDBDef.Payments;
+         var pst = APDBDef.ProjectStoneTask;
+
+         APQuery.update(p).set(
+            p.Money.SetValue(0),
+            p.PayDate.SetValue(DateTime.MinValue),
+            p.InvoiceDate.SetValue(DateTime.MinValue)
+            )
+            .where(p.PayId==id)
+            .execute(db);
+
+         db.ProjectStoneTaskDal.ConditionDelete(pst.PmsId==id & pst.ProjectId==projectId);
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.Payments.EDITSUCCESS
+         });
       }
 
 

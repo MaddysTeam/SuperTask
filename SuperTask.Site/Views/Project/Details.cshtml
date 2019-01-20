@@ -1,12 +1,6 @@
 ﻿@model Project
 @{
-	//Layout = "~/Views/Shared/_Layout.cshtml";
-	//var pageTitle = "项目明细";
-	//var projectId = Request["projectId"];
-	//var resource = ViewBag.CurrentResource as Resource;
-	//var isLeader = resource.IsLeader();
 	var submenu = MenuHelper.GetProjectMenuItems(Model.ProjectId, Html.GetUserProfile().UserId, MenuHelper.ProjectMainPageCode);
-
 }
 @section Css{
 	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
@@ -28,7 +22,12 @@
 	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
 }
 @section Scripts{
+
 	<script>
+
+		var stoneTaskEditReviewType = '@ReviewKeys.ReviewTypeForStoneTaskChanged'; // 节点任务-编辑审核类型id
+		var stoneTaskSubmitReviewType = '@ReviewKeys.ReviewTypeForStoneTaskSubmit';
+
 		function getGlobalRequest() {
 			return {
 				projectId: '@Model.ProjectId'
@@ -46,72 +45,37 @@
 					'commands': function (column, row) {
 						var id = row.id;
 						var hasStone = row.hasStone;
-						var buttons = '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
-												'<button class="btn btn-lg btn-success btn-edit">编辑</button> ' +
-												'<button class="btn btn-lg btn-warning btn-requst">申请修改</button> ' +
-												'<button class="btn btn-lg btn-info btn-requst">申请提交</button> ';
-						if (hasStone)
-							buttons += '<button class="btn btn-lg btn-danger btn-delete">删除</button> ';
-						buttons+='</div>';
-						
+						var isProcessStatus = row.statusId == '@TaskKeys.ProcessStatus';
+						var isPlanStatus = row.statusId == '@TaskKeys.PlanStatus';
+						var isReviewStaus = row.statusId == '@TaskKeys.ReviewStatus';
+						var isTempEditStatus = row.isTempEdit = '@TaskKeys.TaskTempEditStatus';
+						var isCompleteStatus = row.isCompleteStatus = '@TaskKeys.CompleteStatus';
+
+						var buttons = '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">';
+						if (isPlanStatus) {
+							buttons += '<button class="btn btn-lg btn-success btn-edit">编辑</button>';
+						}
+						else if (isProcessStatus) {
+							buttons += '<a class="btn btn-lg btn-warning btn-requst" href="@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + row.id + '&reviewType=' + stoneTaskEditReviewType + '">申请修改</a> ' +
+										  '<a class="btn btn-lg btn-info btn-requst" href="@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + row.id + '&reviewType=' + stoneTaskSubmitReviewType + '">申请提交</a> ';
+						}
+						else if (isReviewStaus) {
+							buttons += '<button disabled>审核中</button>';
+						}
+						else if (isTempEditStatus) {
+							buttons += '<button class="btn btn-lg btn-success btn-edit">临时修改</button>';
+						}
+						else if (isCompleteStatus) {
+							buttons += '<button disabled>已完成</button>';
+						}
+						buttons += '</div>';
 						return buttons;
 					},
 				},
 			});
 		}
 
-		$(function () {
-			var grid = $('#bootgrid');
-			grid.bootgrid(getGridOptions())
-			.on('loaded.rs.jquery.bootgrid', function () {
-
-				grid.find('.btn-edit').on('click', function () {
-					var id = $(this).parent().data('rowId');
-					var $proxy = $('#modelProxy');
-					$proxy
-						.data('url', '/ProjectStoneTask/Edit/' + id)
-						.trigger('click');
-				});
-
-			});
-		});
-	</script>
-	<script>
-		function whenProcess() {
-			$('.btn-modify,.projectProgress,.processName').show().removeAttr('disabled');
-			$('.btn-start').hide();
-			var startDate = $('.startDate'),
-			endDate = $('.endDate'),
-			hasStartDate = startDate.attr('hasValue') == 'True',
-			hasEndDate = startDate.attr('hasValue') == 'True';
-			if (!hasStartDate)
-				startDate.val(new Date().Format('yyyy-MM-dd'));
-			if (!hasEndDate)
-				endDate.val(new Date().Format('yyyy-MM-dd'));
-		}
-
-		function whenPlan() {
-			$('.btn-start').show().removeAttr('disabled');
-		}
-
-		function whenComplete() {
-			$('.details button').hide();
-		}
-
-		function whenEdit() {
-			$('.btn-modify,.btn-start').hide();
-			$('.btn-save').show();
-		}
-
-		function whenReview() {
-			whenComplete();
-		}
-
-		function afterDialogSuccess() {
-
-		}
-
-		function bindPay() {
+		function bindPay(func) {
 			$('.btn-pay').off('click').on('click', function () {
 				var $this = $(this);
 				var $payContainer = $this.parents('.form-group');
@@ -124,49 +88,58 @@
 					InvoiceDate: $payContainer.find('#InvoiceDate').val(),
 					PayDate: $payContainer.find('#PayDate').val(),
 					PayName: $payContainer.find('#PayName').val(),
-					resourceId:resourceId,
+					resourceId: resourceId,
 					PayType: payType == null || payType == '' ? $payContainer.find('.resource_' + resourceId + ':checked').val() : payType,
 				}
 
 				$.post('@Url.Action("Edit", "Payments")', { payments: payments }, function (data) {
 					popupMessage(data);
+					if (func) func();
 				});
 			});
 		}
 
-		function bindRemovePay() {
+		function bindRemovePay(func) {
 			$('.btn-removePay').off('click').on('click', function () {
 				var $this = $(this);
 				var $payContainer = $this.parents('.form-group');
 				var payId = $payContainer.find('.payId').val();
-				if (payId == '' || payid == '@Guid.Empty') {
+				if (payId == '' || payId == '@Guid.Empty') {
 					$payContainer.remove();
 				}
 				else {
+					//alert();
 					$.post('@Url.Action("Remove", "Payments")', { id: payId }, function (data) {
 						popupMessage(data);
+
+						if (func) func();
 					})
 				}
 			});
 		}
 
+		function bindClarePayment(func) {
+			$('.btn-clear').off('click').on('click', function () {
+				var $this = $(this);
+				var $payContainer = $this.parents('.form-group');
+				var payId = $payContainer.find('.payId').val();
+				var projectId='@Model.ProjectId';
+				$.post('@Url.Action("Clare", "Payments")', { id: payId,projectId:projectId }, function (data) {
+					popupMessage(data);
+					if (func) func();
+				})
+			});
+		}
+
 
 		$(function () {
+			var isProcessStatus = '@Model.IsProcessStatus' == 'True';
+			var IsPlanStatus = '@Model.IsPlanStatus' == "True";
+			var isEditStatus = '@Model.IsEditStatus' == "True";
 
 			ajaxSubmitForm($('form'));
 
 			var projectId = '@Model.ProjectId';
-			var isPlanStatus = '@Model.IsPlanStatus' == 'True';
-			var isProcessStatus = '@Model.IsProcessStatus' == 'True';
-			var isCompleteStatus = '@Model.IsCompleteStatus' == 'True';
-			var isEditStatus = '@Model.IsEditStatus' == 'True';
-			var isReviewStatus = '@Model.IsReviewStatus' == 'True';
-
-			if (isPlanStatus) whenPlan();
-			else if (isCompleteStatus) whenComplete();
-			else if (isProcessStatus) whenProcess();
-			else if (isEditStatus) whenEdit();
-			else if (isReviewStatus) whenReview();
 
 			$('.btn-start').on('click', function () {
 				if (confirm('@Confirm.Project.PROJECT_CONFIRM_START')) {
@@ -198,16 +171,37 @@
 					return false;
 			});
 
+
+			// load stone task grid
+			var grid = $('#bootgrid');
+			grid.bootgrid(getGridOptions())
+			.on('loaded.rs.jquery.bootgrid', function () {
+
+				grid.find('.btn-edit').on('click', function () {
+					var id = $(this).parent().data('rowId');
+					var $proxy = $('#modelProxy');
+					$proxy
+						.data('url', '/ProjectStoneTask/Edit/' + id)
+						.trigger('click');
+				});
+
+			});
+
 			// load stone list
 			$.post('@Url.Action("List", "ProjectMileStone")', { projectId: projectId }, function (data) {
 				$('#tab1').html(data);
+				if (!IsPlanStatus) {
+					$('#tab1').find('input,textarea').attr('readonly', 'readonly');
+					$('#tab1').find('button,a').remove();
+				}
+
 				$('.btn-removeStone').on('click', function () {
 					var $this = $(this);
 					var $stoneContainer = $this.parents('.form-group');
-					var stoneId = $stoneContainer.find('.stoneId').val();
-					$.post('@Url.Action("Remove", "ProjectMileStone")', { projectId: projectId, mileStoneId: stoneId }, function () {
-						alert('remove success');
+					var pmsId = $stoneContainer.find('#PmsId').val();
+					$.post('@Url.Action("Remove", "ProjectMileStone")', { id: pmsId }, function () {
 						$this.parent().parent().remove();
+						grid.bootgrid('reload');
 					});
 				});
 
@@ -215,37 +209,53 @@
 					var $this = $(this);
 					var $stoneContainer = $this.parents('.form-group');
 					var projectMileStone = {
-						PmsId: $stoneContainer.find('.pmsId').val(),
-						StoneId: $stoneContainer.find('.stoneId').val(),
+						PmsId: $stoneContainer.find('#PmsId').val(),
+						StoneId: $stoneContainer.find('#StoneId').val(),
 						Projectid: projectId,
-						FolderId: $stoneContainer.find('.folderId').val(),
-						Status: $stoneContainer.find('.stoneStatus').val(),
-						Content: $stoneContainer.find('.stoneContent').val()
+						FolderId: $stoneContainer.find('#FolderId').val(),
+						Status: $stoneContainer.find('#Status').val(),
+						Content: $stoneContainer.find('#Content').val()
 					}
 
 					$.post('@Url.Action("Edit", "ProjectMileStone")', { projectMileStone: projectMileStone }, function (data) {
 						popupMessage(data);
+						grid.bootgrid('reload');
 					});
 				});
 
 			});
 
 			// load project payments
-			$.post('@Url.Action("Details", "Payments")', { projectId: projectId }, function (data) {
-				$('#paymentsArea').html(data);
-				// bind pay
-				bindPay();
-				// add vender payment by ajax
-				$('.btn-addInternalVender').off('click').on('click', function () {
-					var $this = $(this);
-					var $payContainer = $this.parents('.form-group');
-					$.post('@Url.Action("CreateTempVenderPayment", "Payments")?id=' + projectId, function (html) {
-						$payContainer.after($(html));
-						bindPay();
-						bindRemovePay();
+			loadPayments();
+
+			function loadPayments() {
+				$.post('@Url.Action("Details", "Payments")', { projectId: projectId }, function (data) {
+					var callback = function () { grid.bootgrid('reload'); loadPayments(); };
+					$('#paymentsArea').html(data);
+
+					if (!IsPlanStatus) {
+						$('#paymentsArea').find('input,textarea').attr('readonly', 'readonly');
+						$('#paymentsArea').find('button,a').remove();
+					}
+
+					// bind payment
+					bindPay(callback);
+					// bind remove payment
+					bindRemovePay(callback);
+					// bind clear payment
+					bindClarePayment(callback);
+					// add vender payment by ajax
+					$('.btn-addVender').off('click').on('click', function () {
+						var $this = $(this);
+						var $payContainer = $('#venderList');
+						$.post('@Url.Action("CreateTempVenderPayment", "Payments")?id=' + projectId, function (html) {
+							$payContainer.after($(html));
+							bindPay(func);
+							bindRemovePay(func);
+						});
 					});
 				});
-			})
+			}
 
 		});
 

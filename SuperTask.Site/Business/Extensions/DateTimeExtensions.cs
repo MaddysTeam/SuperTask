@@ -144,6 +144,12 @@ namespace Business
          return date == DateTime.MinValue;
       }
 
+
+      public static string ConvertToString(this DateTime date)
+      {
+         return date.IsEmpty()? "-":date.ToString() ;
+      }
+
    }
 
 }

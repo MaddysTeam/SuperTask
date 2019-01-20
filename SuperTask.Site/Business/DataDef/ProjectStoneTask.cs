@@ -17,6 +17,19 @@ namespace Business
          return new Result { IsSuccess = true};
       }
 
+      public void SetStatus(Guid status)
+      {
+         TaskStatus = status;
+      }
+
+      public virtual void Complete(DateTime realEndDate)
+      {
+         RealEndDate = realEndDate;
+         SetStatus(TaskKeys.CompleteStatus);
+      }
+
+      public bool IsTempEditStatus => TaskStatus == TaskKeys.TaskTempEditStatus;
+
       //public bool IsProjectType => this.PayType == PaymentsKeys.ProjectPaymentsType; 
       //public bool IsInternalVenderType => this.PayType == PaymentsKeys.InternalVenderPaymentsType;
    }
