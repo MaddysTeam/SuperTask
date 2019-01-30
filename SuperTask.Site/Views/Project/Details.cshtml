@@ -22,11 +22,14 @@
 	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
 }
 @section Scripts{
-
 	<script>
 
 		var stoneTaskEditReviewType = '@ReviewKeys.ReviewTypeForStoneTaskChanged'; // 节点任务-编辑审核类型id
 		var stoneTaskSubmitReviewType = '@ReviewKeys.ReviewTypeForStoneTaskSubmit';
+
+		function afterSubmitSuccess() {
+			//location.href = location.href;
+		}
 
 		function getGlobalRequest() {
 			return {
@@ -48,8 +51,8 @@
 						var isProcessStatus = row.statusId == '@TaskKeys.ProcessStatus';
 						var isPlanStatus = row.statusId == '@TaskKeys.PlanStatus';
 						var isReviewStaus = row.statusId == '@TaskKeys.ReviewStatus';
-						var isTempEditStatus = row.isTempEdit = '@TaskKeys.TaskTempEditStatus';
-						var isCompleteStatus = row.isCompleteStatus = '@TaskKeys.CompleteStatus';
+						var isTempEditStatus = row.statusId == '@TaskKeys.TaskTempEditStatus';
+						var isCompleteStatus = row.statusId == '@TaskKeys.CompleteStatus';
 
 						var buttons = '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">';
 						if (isPlanStatus) {
@@ -66,7 +69,7 @@
 							buttons += '<button class="btn btn-lg btn-success btn-edit">临时修改</button>';
 						}
 						else if (isCompleteStatus) {
-							buttons += '<button disabled>已完成</button>';
+							buttons += '<button class="btn btn-success" disabled>已完成</button>';
 						}
 						buttons += '</div>';
 						return buttons;
@@ -89,6 +92,7 @@
 					PayDate: $payContainer.find('#PayDate').val(),
 					PayName: $payContainer.find('#PayName').val(),
 					resourceId: resourceId,
+					Sort: $payContainer.find('#Sort').val(),
 					PayType: payType == null || payType == '' ? $payContainer.find('.resource_' + resourceId + ':checked').val() : payType,
 				}
 
@@ -108,7 +112,6 @@
 					$payContainer.remove();
 				}
 				else {
-					//alert();
 					$.post('@Url.Action("Remove", "Payments")', { id: payId }, function (data) {
 						popupMessage(data);
 
@@ -123,8 +126,8 @@
 				var $this = $(this);
 				var $payContainer = $this.parents('.form-group');
 				var payId = $payContainer.find('.payId').val();
-				var projectId='@Model.ProjectId';
-				$.post('@Url.Action("Clare", "Payments")', { id: payId,projectId:projectId }, function (data) {
+				var projectId = '@Model.ProjectId';
+				$.post('@Url.Action("Clare", "Payments")', { id: payId, projectId: projectId }, function (data) {
 					popupMessage(data);
 					if (func) func();
 				})
@@ -170,6 +173,7 @@
 				else
 					return false;
 			});
+
 
 
 			// load stone task grid
@@ -225,19 +229,25 @@
 
 			});
 
+			
 			// load project payments
-			loadPayments();
+			var currentTabId = 'moneyTab';
+			loadPayments(currentTabId);
 
-			function loadPayments() {
-				$.post('@Url.Action("Details", "Payments")', { projectId: projectId }, function (data) {
-					var callback = function () { grid.bootgrid('reload'); loadPayments(); };
+			function loadPayments(currentTabId) {
+				$.post('@Url.Action("Details", "Payments")', { projectId: projectId, tabId: currentTabId }, function (data) {
 					$('#paymentsArea').html(data);
 
 					if (!IsPlanStatus) {
 						$('#paymentsArea').find('input,textarea').attr('readonly', 'readonly');
-						$('#paymentsArea').find('button,a').remove();
+						$('#paymentsArea .widget-content').find('button,a').remove();
 					}
 
+					// save current tabId to aviod it being change after loading payments 
+					$('.nav-tabs li a').click(function () { currentTabId = $(this).attr('href').replace('#', ''); });
+
+					// call back 
+					var callback = function () { grid.bootgrid('reload'); loadPayments(currentTabId); };
 					// bind payment
 					bindPay(callback);
 					// bind remove payment
@@ -249,11 +259,19 @@
 						var $this = $(this);
 						var $payContainer = $('#venderList');
 						$.post('@Url.Action("CreateTempVenderPayment", "Payments")?id=' + projectId, function (html) {
-							$payContainer.after($(html));
-							bindPay(func);
-							bindRemovePay(func);
+							$payContainer.append($(html));
+							bindPay(callback);
+							bindRemovePay(callback);
 						});
 					});
+
+					$('.btn-money').on('click', function () {
+						var money = $('#TotalMoney').val();
+						$.post('@Url.Action("EditMoney","Project")', { id: projectId, money: money }, function (data) {
+							popupMessage(data);
+						})
+					});
+
 				});
 			}
 

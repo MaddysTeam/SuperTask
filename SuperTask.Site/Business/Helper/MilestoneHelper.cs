@@ -11,7 +11,7 @@ namespace Business.Helper
    {
 
       /// <summary>
-      /// 查询项目里程碑
+      /// 查询项目里程碑节点
       /// </summary>
       /// <param name="projectId">项目id</param>
       /// <param name="db">APDBDef</param>
@@ -24,11 +24,12 @@ namespace Business.Helper
 
          var query = APQuery.select(pms.Status, pms.PmsId, pms.FolderId, pms.StoneId, pms.Content,
                                     pms.StartDate, pms.EndDate, ms.StoneName, ms.StoneType,
-                                    p.PayId,p.PayName)
+                                    p.PayId, p.PayName)
                              .from(pms,
                                      ms.JoinLeft(ms.StoneId == pms.StoneId),
                                      p.JoinLeft(p.PayId == pms.StoneId)
                                      )
+                             .order_by(ms.Sort.Asc)
                              .where(pms.Projectid == projectId);
 
          var result = query.query(db, r =>
@@ -91,7 +92,8 @@ namespace Business.Helper
                DateTime.MinValue,
                TaskKeys.PlanStatus,
                DateTime.Now,
-               Guid.Empty
+               TaskKeys.NodeTaskType,
+               project.ManagerId
                ));
          }
       }

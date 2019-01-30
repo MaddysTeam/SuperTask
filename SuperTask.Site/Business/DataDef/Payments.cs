@@ -41,6 +41,8 @@ namespace Business
          return new Result { IsSuccess = true };
       }
 
+      public string Ratio { get; set; }
+
       public bool IsProjectType => PayType == PaymentsKeys.ProjectPaymentsType;
       public bool IsInternalVenderType => PayType == PaymentsKeys.InternalVenderPaymentsType;
       public bool IsDeliveryType => PayType == PaymentsKeys.CheckBeforeDeliveryType ||

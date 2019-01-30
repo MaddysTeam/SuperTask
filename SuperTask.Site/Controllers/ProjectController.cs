@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using Business;
-using Symber.Web.Data;
+﻿using Business;
 using Business.Config;
 using Business.Helper;
+using Symber.Web.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 using TheSite.Models;
-using Business.Roadflow;
 
 namespace TheSite.Controllers
 {
@@ -219,7 +217,7 @@ namespace TheSite.Controllers
             }).FirstOrDefault();
 
          project.Resources = db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
-         project.ProjectProgress = 100;
+         project.ProjectProgress = ProjectrHelper.GetProcessByNodeTasks(id, db);
 
          return View(project);
       }
@@ -242,7 +240,25 @@ namespace TheSite.Controllers
             Status = ProjectKeys.PlanStatus,
             ProjectEditHandler = HandleManager.ProjectEditHandlers[ProjectKeys.DefaultProjectType],
          };
+
          HandleManager.ProjectTemplateEditHandlers[projectType].Handle(null, option);
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.Project.EDIT_SUCCESS
+         });
+      }
+
+
+      // Post-ajax: Project/UpdateTotalPayment
+
+      [HttpPost]
+      public ActionResult EditMoney(Guid id, double money)
+      {
+         APQuery.update(p).set(p.Money.SetValue(money))
+            .where(p.ProjectId == id)
+            .execute(db);
 
          return Json(new
          {
@@ -282,44 +298,47 @@ namespace TheSite.Controllers
          return RedirectToAction("FlowIndex", "WorkFlowRun", requestOption.RunParams);
       }
 
-
       public ActionResult AfterProjectStartReviewSend(Guid instanceId)
-      {
-         if (instanceId.IsEmpty())
-            throw new NullReferenceException("instance id 不能为空！");
-
-         var review = db.ReviewDal.PrimaryGet(instanceId);
-         var project = db.ProjectDal.PrimaryGet(review.ProjectId);
-
-         project.SetStatus(TaskKeys.ReviewStatus);
-
-         db.ProjectDal.Update(project);
-
-         //重定向到项目明细
-         return RedirectToAction("Details", new { id = project.ProjectId });
-      }
+         => AfterReviewSendOrSubmit(instanceId, ProjectKeys.ReviewStatus);
 
       public ActionResult AfterProjectStartSubimitReview(Guid instanceId)
       {
-
          if (instanceId.IsEmpty())
             throw new NullReferenceException("instance id 不能为空！");
 
          var review = db.ReviewDal.PrimaryGet(instanceId);
          var project = db.ProjectDal.PrimaryGet(review.ProjectId);
 
-         project.SetStatus(ProjectKeys.EditStatus);
+         project.SetStatus(ProjectKeys.ProcessStatus);
 
-         db.ProjectDal.Update(project);
+         Edit(project);
 
-         //重定向到项目明细
-         return RedirectToAction("Details", new { id = project.ProjectId });
+         return RedirectToAction("Details", "Project", new { id = project.ProjectId });
+
       }
 
       public ActionResult AfterReviewFail(Guid instanceId)
+         => AfterReviewSendOrSubmit(instanceId, ProjectKeys.ProcessStatus);
+
+
+      #region [ private ]
+
+      private ActionResult AfterReviewSendOrSubmit(Guid instanceId, Guid status)
       {
-         return null;
+         if (instanceId.IsEmpty())
+            throw new NullReferenceException("instance id 不能为空！");
+
+         var review = db.ReviewDal.PrimaryGet(instanceId);
+         var project = db.ProjectDal.PrimaryGet(review.ProjectId);
+
+         project.SetStatus(status);
+
+         db.ProjectDal.Update(project);
+
+         return RedirectToAction("Details", "Project", new { id = project.ProjectId });
       }
+
+      #endregion
 
    }
 

@@ -671,6 +671,26 @@ namespace Business
 
    public class ManagementTaskEditHandler : TempTaskEditHandler { }
 
+   public class ProjectNodeTaskEditHandler: TaskEditHandler
+   {
+
+      public override void Handle(WorkTask task, TaskEditOption option)
+      {
+         base.Handle(task, option);
+      }
+
+      private void ClearTask(WorkTask task)
+      {
+         task.SortId = 0;
+         task.TaskLevel = 0;
+         task.ParentId = Guid.Empty;
+         task.ParentTaskName = null;
+         task.ServiceCount = 0;
+      }
+
+   }
+
+
 
    public class TaskSearchOption : SearchOption
    {

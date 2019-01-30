@@ -20,8 +20,9 @@
 	}
 </style>
 
-<div class="widget">
-	<form class="form-horizontal details" action="@Url.Action("Edit","Project")" role="form" data-after-success="afterDialogSuccess()">
+<div id="info" class="widget">
+
+	<form class="form-horizontal details" action="@Url.Action("Edit","Project")" role="form" data-after-success="afterSubmitSuccess()">
 		<div class="widget-header">
 			<h3><i class="fa fa-info"></i>项目信息</h3>
 			<div class="btn-group widget-header-toolbar">
@@ -30,22 +31,23 @@
 					<button type="submit" class="btn btn-danger btn-sm btn-save">保存</button>
 					if (Model.IsPlanStatus)
 					{
-					 <a class="btn btn-sm btn-warning" href="@Url.Action("ReviewRequest", "Project", new { id = Model.ProjectId, reviewType = ReviewKeys.ReviewTypeForPjStart })"><i class="fa fa-refresh"></i>启动申请</a>
+					 <a class="btn btn-sm" href="@Url.Action("ReviewRequest", "Project", new { id = Model.ProjectId, reviewType = ReviewKeys.ReviewTypeForPjStart })"><i class="fa fa-refresh"></i>启动申请</a>
 					}
 					if (Model.IsReviewStatus)
 					{
 						<button  class="btn btn-success btn-sm btn-start" disabled>启动审核中</button>
 					}
-					if (Model.IsEditStatus)
+					@*if (Model.IsEditStatus)
 					{
 						<button type="submit" class="btn btn-success btn-sm btn-start">启动</button>
-					}
+					}*@
 
 						@*<button type="submit" class="btn btn-success btn-sm btn-start">启动</button><button type="submit" class="btn btn-info btn-sm btn-forceClose" title="注意：强制关闭后，项目所有任务都关闭，项目状态也为关闭状态"><i class="fa fa-question-circle"></i>强制关闭</button>*@
 				}
 			</div>
 		</div>
 		<div class="widget-content">
+
 			<div class="row editProjectInfo">
 
 				<fieldset class="col-sm-6">
@@ -58,6 +60,7 @@
 					@Html.HiddenFor(p => p.RateOfProgress)
 					@Html.HiddenFor(p => p.ProcessName)
 					@Html.HiddenFor(p => p.FolderId)
+					@Html.HiddenFor(p => p.Money)
 					<div class="form-group">
 						@Html.LabelFor(p => p.ProjectName, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
@@ -70,22 +73,6 @@
 						<div class="col-md-9">
 							@Html.TextBoxFor(p => p.ProjectOwner, new { @class = "form-control plan" })
 							@Html.ValidationMessageFor(p => p.ProjectOwner)
-						</div>
-					</div>
-					<div class="form-group">
-						@Html.LabelFor(p => p.ProjectExecutor, new { @class = "control-label col-md-3" })
-						<div class="col-md-9">
-							@Html.TextBoxFor(p => p.ProjectExecutor, new { @class = "form-control plan" })
-							@Html.ValidationMessageFor(p => p.ProjectExecutor)
-						</div>
-					</div>
-					<div class="form-group">
-						@Html.LabelFor(p => p.OrgId, new { @class = "control-label col-md-3 plan" })
-						<div class="col-md-9">
-							@Html.DropDownListFor(p => p.OrgId,
-									DictionaryCache.Cached(OrgKeys.OrgKey)
-														.GetSelectListById(Model.OrgId),
-									new { @class = "form-control" })
 						</div>
 					</div>
 					<div class="form-group">
@@ -103,7 +90,54 @@
 							@Html.ValidationMessageFor(p => p.Description)
 						</div>
 					</div>
+
+					@if (Model.IsPlanStatus)
+					{
+						<div class="form-group">
+							@Html.LabelFor(p => p.StartDate, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(p => p.EndDate, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(p => p.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+					}
+					else
+					{
+						@Html.HiddenFor(x => x.StartDate)
+						@Html.HiddenFor(x => x.EndDate)
+						<div class="form-group">
+							@Html.LabelFor(p => p.EndDate, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+									@Html.Label("预估开始", Model.StartDate.ToString("yyyy-MM-dd"), new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue,@readonly = "readonly" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(p => p.EndDate, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+									@Html.Label("预估结束", Model.StartDate.ToString("yyyy-MM-dd"), new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue,@readonly="readonly" })
+							</div>
+						</div>
+					}
+					<div class="form-group">
+						@Html.LabelFor(p => p.ProjectProgress, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<span class="form-control">@Model.ProjectProgress%</span>
+						</div>
+					</div>
+
 				</fieldset>
+
 				<fieldset class="col-sm-6">
 					<div class="form-group">
 						@Html.LabelFor(p => p.Code, new { @class = "control-label col-md-3" })
@@ -149,62 +183,42 @@
 									resourceSelectList,
 									new { @class = "form-control dropdown-reviewer" })
 						</div>
-					</div>
+					</div>	
 				</fieldset>
+
 			</div>
-			<div class="alert alert-success projectEstimate">
-				<div class="row">
-					<div class="col-md-4">项目预估 & 进度</div>
-				</div>
-			</div>
-			<div class="row projectEstimateEdit">
+
+			@*<div class="row projectEstimateEdit">
 				<fieldset class="col-sm-6">
-					<div class="form-group">
-						@Html.LabelFor(p => p.StartDate, new { @class = "control-label col-md-3" })
-						<div class="col-md-9">
-							<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-								@Html.TextBoxFor(p => p.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
-								<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						@Html.LabelFor(p => p.EndDate, new { @class = "control-label col-md-3" })
-						<div class="col-md-9">
-							<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-								@Html.TextBoxFor(p => p.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue })
-								<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-9 col-lg-offset-3">
-						</div>
-					</div>
+				
+					
+			
 				</fieldset>
 				<fieldset class="col-sm-6"></fieldset>
 				<fieldset class="col-sm-6">
-					<div class="form-group">
-						@Html.LabelFor(p => p.ProjectProgress, new { @class = "control-label col-md-3" })
-						<div class="col-md-9">
-							<span class="form-control">@Model.ProjectProgress%</span>
-						</div>
-					</div>
+				
 				</fieldset>
-			</div>
+			</div>*@
+
 		</div>
 	</form>
+
 </div>
 
-<div class="widget">
+<div id="paymentsArea" class="widget"></div>
+
+<div id="nodes" class="widget">
 	<div class="widget-header">
 		
+		@if (Model.IsPlanStatus)
+		{
 		<div class="btn-group widget-header-toolbar pull-right">
-			<button class="btn btn-info btn-sm btn-milestone" id="milestones" data-toggle="ajax-modal" data-url="@Url.Action("ChooseList", "ProjectMileStone",new { projectId= Model.ProjectId })" data-target="#firstModal">选择节点</button>
+			<button class="btn btn-info btn-sm btn-milestone" id="milestones" data-toggle="ajax-modal" data-url="@Url.Action("ChooseList", "ProjectMileStone", new { projectId = Model.ProjectId })" data-target="#firstModal">选择节点</button>
 		</div>
+		}
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="#tab1" data-toggle="tab"><i class="fa fa-get-pocket"></i> 项目节点</a></li>
-			<li ><a href="#tab2" data-toggle="tab"><i class="fa fa-tag"></i> 节点任务</a></li>
+			<li ><a href="#tab2" data-toggle="tab"><i class="fa fa-tag"></i> 节点任务(实施内容)</a></li>
 		</ul>
 	</div>
 
@@ -223,7 +237,6 @@
 								<th data-column-id="name">节点任务</th>
 								<th data-column-id="start" data-formatter="DateOnly">预估开始</th>
 								<th data-column-id="end" data-formatter="DateOnly">预估结束</th>
-								<th data-column-id="realStart">实际开始</th>
 								<th data-column-id="realEnd">实际结束</th>
 								<th data-column-id="status">任务状态</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" data-header-Css-Class="width220">操作</th>
@@ -236,18 +249,5 @@
 		</div>
 	</div>
 
-</div>
-
-<div class="widget">
-	<div class="widget-header">
-		<h3><i class="fa fa-file-o"></i>项目管理</h3>
-	</div>
-	<div class="widget-content" >
-
-		<div id="paymentsArea">
-
-		</div>
-		
-	</div>
 </div>
 	

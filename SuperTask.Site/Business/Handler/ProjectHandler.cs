@@ -62,7 +62,7 @@ namespace Business
 
             db.Commit();
          }
-         catch(Exception e)
+         catch
          {
             db.Rollback();
          }

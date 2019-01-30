@@ -83,6 +83,9 @@ namespace Business.Helper
 
       public static Guid DefaultType => Guid.Parse("77AAD589-E95B-839E-C1F5-55027AE3BC14");
 
+      //节点任务类型
+      public static Guid NodeTaskType => Guid.Parse("77AAD559-E95B-849E-C1F5-56027AE3BC18");
+
 
       public static int TaskNameDisplayLength = 10;
 

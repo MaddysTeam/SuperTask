@@ -13,7 +13,7 @@ namespace TheSite.Controllers
    {
 
       // Post-Ajax: Payment/Edit
-
+         
       [HttpPost]
       public ActionResult Edit(Payments payments)
       {
@@ -58,7 +58,8 @@ namespace TheSite.Controllers
               DateTime.MinValue,
               TaskKeys.PlanStatus,
               DateTime.Now,
-              Guid.Empty
+              TaskKeys.NodeTaskType,
+              project.ManagerId
               ));
          }
 
@@ -115,11 +116,13 @@ namespace TheSite.Controllers
       // Post-ajax: Payment/Details
 
       [HttpPost]
-      public ActionResult Details(Guid projectId)
+      public ActionResult Details(Guid projectId,string tabId)
       {
+         ViewBag.Project = db.ProjectDal.PrimaryGet(projectId);
+         ViewBag.TabId = tabId;
+
          return PartialView("Details", PaymentsHelper.GetProjectPayments(projectId, db));
       }
-
 
       // Post-ajax: Payment/Clare
 
@@ -145,7 +148,6 @@ namespace TheSite.Controllers
             msg = Success.Payments.EDITSUCCESS
          });
       }
-
 
    }
 

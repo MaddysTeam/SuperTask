@@ -48,6 +48,16 @@ namespace Business.Helper
          return _currentProject;
       }
 
+
+      public static  double GetProcessByNodeTasks(Guid id,APDBDef db)
+      {
+         var pst = APDBDef.ProjectStoneTask;
+         var all = db.ProjectStoneTaskDal.ConditionQueryCount(pst.ProjectId==id);
+         var completed = db.ProjectStoneTaskDal.ConditionQueryCount(pst.ProjectId == id & pst.TaskStatus == TaskKeys.CompleteStatus);
+
+         return all <= 0 ? 0 : ((double)(completed * 100 / all)).Round(2);
+      }
+
    }
 
 

@@ -707,7 +707,6 @@
     <Content Include="assets\plugins\jQueryGantt-master\res\twBanner.jpg" />
     <Content Include="assets\plugins\jQueryGantt-master\teamwork-regular-webfont.svg" />
     <Content Include="assets\plugins\jQueryGantt-master\teamworkFont.css" />
-    <Content Include="assets\plugins\kindeditor\asp.net\bin\LitJSON.dll" />
     <Content Include="assets\plugins\kindeditor\asp.net\demo.aspx" />
     <Content Include="assets\plugins\kindeditor\asp.net\README.txt" />
     <Content Include="assets\plugins\kindeditor\ckeditor\plugins\insertVideo\ckplayer6.8\ckplayer\ckplayer.js" />
@@ -1602,6 +1601,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="assets\plugins\kindeditor\asp.net\bin\" />
     <Folder Include="Attachments\" />
     <Folder Include="Models\SearchOptions\" />
     <Folder Include="Views\Designer\" />

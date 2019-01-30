@@ -1,10 +1,11 @@
 ﻿@model Payments
-<div class="row form-group" id="venderList">
+<div class="row form-group" >
 	@Html.HiddenFor(p => p.PayId, new { @class = "payId" })
 	@Html.HiddenFor(p => p.ProjectId, new { @class = "projectId" })
 	@Html.HiddenFor(p => p.PayType, new { @class = "payType" })
+	@Html.HiddenFor(p => p.Sort, new { @class = "sort" })
 
-	<div class="col-md-1">@Html.Label("名称", new { @class = "control-label" })</div>
+	<div class="col-md-1 col-md-offset-1">@Html.Label("名称", new { @class = "control-label" })</div>
 	<div class="col-md-2">@Html.TextBoxFor(p => p.PayName, new { @class = "form-control payName" })</div>
 	<div class="col-md-1">@Html.Label("协作金额", new { @class = "control-label" })</div>
 	<div class="col-md-1">@Html.TextBoxFor(p => p.Money, new { @class = "form-control money" })</div>

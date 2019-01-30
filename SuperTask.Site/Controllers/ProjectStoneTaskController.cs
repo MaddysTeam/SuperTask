@@ -107,6 +107,11 @@ namespace TheSite.Controllers
       }
 
 
+      // GET: ProjectStoneTask/ReviewRequest
+      // GET: ProjectStoneTask/AfterProjectStartReviewSend
+      // GET: ProjectStoneTask/AfterProjectStartSubimitReview
+      // GET: ProjectStoneTask/AfterReviewFail
+
       public ActionResult ReviewRequest(Guid id, Guid reviewType)
       {
          if (id.IsEmpty())
@@ -139,7 +144,7 @@ namespace TheSite.Controllers
 
       public ActionResult AfterEditReview(Guid instanceId)
       {
-         return GetTaskFromInstanceAndChangeStatus(instanceId, TaskKeys.TaskTempEditStatus);
+         return AfterReviewSendOrSubmit(instanceId, TaskKeys.TaskTempEditStatus);
       }
 
       public ActionResult AfterSubmitReview(Guid instanceId)
@@ -153,27 +158,29 @@ namespace TheSite.Controllers
 
          pst.Complete(review.SendDate < pst.StartDate ? pst.EndDate : review.SendDate);
 
+         db.ProjectStoneTaskDal.Update(pst);
+
          //重定向到项目明细
          return RedirectToAction("Details", "Project", new { id = pst.ProjectId });
       }
 
       public ActionResult AfterEditReviewSend(Guid instanceId)
       {
-         return GetTaskFromInstanceAndChangeStatus(instanceId, TaskKeys.ReviewStatus);
+         return AfterReviewSendOrSubmit(instanceId, TaskKeys.ReviewStatus);
       }
 
       public ActionResult AfterSubmitReviewSend(Guid instanceId)
       {
-         return GetTaskFromInstanceAndChangeStatus(instanceId, TaskKeys.ReviewStatus);
+         return AfterReviewSendOrSubmit(instanceId, TaskKeys.ReviewStatus);
       }
 
       public ActionResult AfterReviewFail(Guid instanceId)
       {
-         return GetTaskFromInstanceAndChangeStatus(instanceId, TaskKeys.ProcessStatus);
+         return AfterReviewSendOrSubmit(instanceId, TaskKeys.ProcessStatus);
 
       }
 
-      private ActionResult GetTaskFromInstanceAndChangeStatus(Guid instanceId,Guid status)
+      private ActionResult AfterReviewSendOrSubmit(Guid instanceId,Guid status)
       {
          if (instanceId.IsEmpty())
             throw new NullReferenceException("instance id 不能为空！");
@@ -188,6 +195,10 @@ namespace TheSite.Controllers
          return RedirectToAction("Details", "Project", new { id = pst.ProjectId });
       }
 
+      private ActionResult NodeTaskDeny()
+      {
+         return null;
+      }
 
    }
 

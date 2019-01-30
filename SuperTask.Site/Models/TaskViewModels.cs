@@ -40,4 +40,28 @@ namespace TheSite.Models
 
    }
 
+   public class PlanAndNodeTaskViewModel
+   {
+      public Guid id { get; set; }
+      public string name { get; set; }
+      public Guid statusId { get; set; }
+      public string status { get; set; }
+      public DateTime start { get; set; }
+      public DateTime end { get; set; }
+      public Guid projectId { get; set; }
+      public string project { get; set; }
+      public Guid managerId { get; set; }
+      public string manager { get; set; }
+      public Guid taskTypeId { get; set; }
+      public Guid reviewerId { get; set; }
+      public string reviewer { get; set; }
+      public DateTime realEnd { get; set; }
+      public string realEndString { get; set; }
+
+      public bool isMe { get; set; }
+      public bool isParent { get; set; }
+      public bool reviewerIsMe { get; set; }
+
+   }
+
 }

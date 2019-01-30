@@ -4,8 +4,9 @@
 	@Html.HiddenFor(p => p.ProjectId, new { @class = "projectId" })
 	@Html.HiddenFor(p => p.PayName, new { @class = "payName" })
 	@Html.HiddenFor(p => p.ResourceId, new { @class = "payName" })
+	@Html.HiddenFor(p => p.Sort, new { @class = "sort" })
 
-	<div class="col-md-1">@Html.Label(Model.PayName, new { @class = "control-label" })</div>
+	<div class="col-md-1 col-md-offset-1">@Html.Label(Model.PayName, new { @class = "control-label" })</div>
 	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId" value="@PaymentsKeys.BondType"       @(Model.PayType==@PaymentsKeys.BondType? "checked":"")/>保证金</div>
 	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId"  value="@PaymentsKeys.GuaranteeType" @(Model.PayType==@PaymentsKeys.GuaranteeType? "checked":"")/>保函</div>
 	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId"  value="@PaymentsKeys.NothingType"   @(Model.PayType==@PaymentsKeys.NothingType? "checked":"")/>无</div>

@@ -4,9 +4,11 @@
 	@Html.HiddenFor(p => p.ProjectId, new { @class = "projectId" })
 	@Html.HiddenFor(p => p.PayName, new { @class = "payName" })
 	@Html.HiddenFor(p => p.PayType, new { @class = "payType" })
+	@Html.HiddenFor(p => p.Sort, new { @class = "sort" })
 
-	<div class="col-md-1">@Html.Label(Model.PayName, new { @class = "control-label" })</div>
+	<div class="col-md-1 col-md-offset-1">@Html.Label(Model.PayName, new { @class = "control-label" })</div>
 	<div class="col-md-1">@Html.TextBoxFor(p => p.Money, new { @class = "form-control money" })</div>
+	<div class="col-md-1">@Html.Label("radio", Model.Ratio, new { @class = "form-control" })</div>
 	<div class="col-md-1">@Html.LabelFor(p => p.InvoiceDate, new { @class = "control-label" })</div>
 	<div class="col-md-2">
 		<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">

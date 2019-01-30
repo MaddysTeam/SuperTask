@@ -184,7 +184,7 @@
 					<add name="ProcessName" type="string"  dataLength="100"   isNullable="true" display="项目进展" />
 
 					<add name="FolderId" columnName="FolderId" type="Guid" isNullable="true" display="项目文件夹ID"   />
-
+					<add name="Money" columnName="money" type="double" isNullable="true"  display="总金额"/>
 				</columns>
 			</table>
 
@@ -254,6 +254,7 @@
 					<add name="PayDate" columnName="PayDate" type="DateTime" isNullable="true"  display="付款时间"/>
 					<add name="PayType" columnName="PayType" type="Guid"   display="付款类型"/>
 					<add name="ResourceId" columnName="ResourceId" type="Guid" comment="冗余字段，备用" />
+					<add name="Sort"  type="double" isNullable="true"  comment="排序"/>
 				</columns>
 			</table>
 
@@ -263,6 +264,7 @@
 					<add name="StoneName"  type="string" dataLength="100"  display="节点名称" ></add>
 					<add name="StoneStatus"  type="Guid"   display="节点状态"/>
 					<add name="StoneType"  type="Guid"   display="节点类型"/>
+					<add name="Sort"  type="double" isNullable="true"  comment="排序"/>
 				</columns>
 			</table>
 
@@ -283,6 +285,7 @@
 			<!-- TODO: 和 worktask 没有关系，业务独立 -->
 			<table name="ProjectStoneTask">
 				<columns>
+					
 					<add name="PstId" columnName="ID" type="Guid" primaryKey="true" comment="节点任务ID"/>
 					<add name="PmsId" columnName="PmsId" type="Guid"  comment="项目节点ID"/>
 					<!-- TODO: 由于款项类不适合添加节点 pmsId，所以暂时用 项目id -->
@@ -295,6 +298,8 @@
 					<add name="TaskStatus"  columnName="Status" type="Guid"  isNullable="true"  display="任务状态" />
 					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
 					<add name="TaskType"  columnName="Type" type="Guid"  isNullable="true"  display="任务类型" />
+					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true"  display="任务负责人ID" />
+					
 				</columns>
 			</table>
 

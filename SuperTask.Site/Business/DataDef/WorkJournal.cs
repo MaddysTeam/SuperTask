@@ -25,7 +25,7 @@ namespace Business
       [Display(Name = "任务名称")]
       public string TaskName { get; set; }
 
-      public Guid TaskType { get; set; }
+    //  public Guid TaskType { get; set; }
 
       public Attachment Attachment { get; set; }
 
