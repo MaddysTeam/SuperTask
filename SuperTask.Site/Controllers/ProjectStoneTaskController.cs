@@ -12,6 +12,8 @@ namespace TheSite.Controllers
    public class ProjectStoneTaskController : BaseController
    {
 
+      static APDBDef.ProjectStoneTaskTableDef pst = APDBDef.ProjectStoneTask;
+
       // POST-Ajax: ProjectStoneTask/List
 
       [HttpPost]
@@ -51,7 +53,7 @@ namespace TheSite.Controllers
                realStart = realStart.ConvertToString(),
                realEnd = realEnd.ConvertToString(),
                status = TaskKeys.GetStatusKeyByValue(pst.TaskStatus.GetValue(r)),
-               statusId=pst.TaskStatus.GetValue(r)
+               statusId = pst.TaskStatus.GetValue(r)
             };
          }).ToList();
 
@@ -103,6 +105,64 @@ namespace TheSite.Controllers
          {
             result = AjaxResults.Success,
             msg = Success.StoneTask.EDITSUCCESS
+         });
+      }
+
+
+      // POST-Ajax: ProjectStoneTask/Deny
+
+      [HttpPost]
+      public ActionResult Deny(Guid id)
+      {
+         var task = db.ProjectStoneTaskDal.PrimaryGet(id);
+         task.SetStatus(TaskKeys.PlanStatus);
+
+         return Edit(task);
+      }
+
+
+      // POST-Ajax: ProjectStoneTask/Start
+
+      [HttpPost]
+      public ActionResult Start(Guid id)
+      {
+         var task = db.ProjectStoneTaskDal.PrimaryGet(id);
+         var pj = ProjectrHelper.GetCurrentProject(task.ProjectId);
+         Result re = new Result { IsSuccess=true,  Msg=Success.StoneTask.EDITSUCCESS };
+
+         if (pj.IsPlanStatus)
+         {
+            re.IsSuccess = false;
+            re.Msg = Errors.StoneTask.NOT_ALLOWED_START_DUE_TO_PROJECT_NOT_START;
+         }
+         else if (pj.IsCompleteStatus)
+         {
+            re.IsSuccess = false;
+            re.Msg = Errors.StoneTask.NOT_ALLOWED_EDIT_TASK_WHEN_PROJECT_COMPELETE;
+         }
+         else if (task.StartDate > pj.EndDate ||
+               task.StartDate < pj.StartDate ||
+               task.EndDate > pj.EndDate ||
+               task.EndDate < pj.StartDate)
+         {
+            re.IsSuccess = false;
+            re.Msg = Errors.StoneTask.TASKS_OUT_OF_PROJECT_RANGE;
+         }
+         else
+         {
+            APQuery.update(pst)
+                    .set(
+                         pst.TaskStatus.SetValue(TaskKeys.ProcessStatus),
+                         pst.RealStartDate.SetValue(DateTime.Now))
+                    .where(pst.PstId == id)
+                    .execute(db);
+         }
+
+
+         return Json(new
+         {
+            result = re.IsSuccess? AjaxResults.Success:AjaxResults.Error,
+            msg =  re.Msg
          });
       }
 
@@ -180,7 +240,7 @@ namespace TheSite.Controllers
 
       }
 
-      private ActionResult AfterReviewSendOrSubmit(Guid instanceId,Guid status)
+      private ActionResult AfterReviewSendOrSubmit(Guid instanceId, Guid status)
       {
          if (instanceId.IsEmpty())
             throw new NullReferenceException("instance id 不能为空！");
@@ -193,11 +253,6 @@ namespace TheSite.Controllers
          db.ProjectStoneTaskDal.Update(pst);
 
          return RedirectToAction("Details", "Project", new { id = pst.ProjectId });
-      }
-
-      private ActionResult NodeTaskDeny()
-      {
-         return null;
       }
 
    }

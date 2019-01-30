@@ -2,6 +2,8 @@
 @{ 
 	var project= ViewBag.Project as Project;
 	var tabId = ViewBag.TabId;
+
+	ViewData["project"] = project;
 }
 
 	<div class="widget-header">
@@ -15,6 +17,10 @@
 			<div class="tab-content no-padding">
 
 				<div class="tab-pane fade in  @(tabId=="moneytab" ? "active":string.Empty)" id="moneyTab" data-id="moneyTab">
+					@if (project.IsProcessStatus)
+					{
+					<div class="alert alert-danger text-center">注意!    最终确认后,预估款项将不可修改!</div>
+					}
 					<div class="row form-group">
 						<div class="col-md-1 col-md-offset-1">
 							@Html.Label("总金额", new { @class = "control-label" })
@@ -27,7 +33,7 @@
 					<hr />
 					@foreach (var item in Model.FindAll(p => p.IsProjectType) ?? new List<Payments>())
 					{
-						Html.RenderPartial("_projectPayments", item);
+						Html.RenderPartial("_projectPayments", item, ViewData);
 					}
 				</div>
 

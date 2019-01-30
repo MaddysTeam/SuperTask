@@ -44,7 +44,7 @@
 
 				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
 
-				formatters: {
+				@*formatters: {
 					'commands': function (column, row) {
 						var id = row.id;
 						var hasStone = row.hasStone;
@@ -74,7 +74,7 @@
 						buttons += '</div>';
 						return buttons;
 					},
-				},
+				},*@
 			});
 		}
 
@@ -181,13 +181,13 @@
 			grid.bootgrid(getGridOptions())
 			.on('loaded.rs.jquery.bootgrid', function () {
 
-				grid.find('.btn-edit').on('click', function () {
-					var id = $(this).parent().data('rowId');
-					var $proxy = $('#modelProxy');
-					$proxy
-						.data('url', '/ProjectStoneTask/Edit/' + id)
-						.trigger('click');
-				});
+				//grid.find('.btn-edit').on('click', function () {
+				//	var id = $(this).parent().data('rowId');
+				//	var $proxy = $('#modelProxy');
+				//	$proxy
+				//		.data('url', '/ProjectStoneTask/Edit/' + id)
+				//		.trigger('click');
+				//});
 
 			});
 

@@ -26,6 +26,7 @@ namespace Business.Helper
          public const string EARLER_THAN_CHILD_TASK_COMPLETED = "项目结束日期不能早于任务结束日期 或者 项目开始日期不能晚于任务开始日期";
          public const string NOT_ALLOWED_OPERATOR_NULL = "当前操作者不能为空";
          public const string NOT_ALLOWED_ORIGNAL_NULL = "项目不存在";
+         public const string NOT_ALLOWED_BOTH_CODE = "只能填写一个编号";
       }
 
       public class Task
@@ -156,6 +157,9 @@ namespace Business.Helper
       public class StoneTask
       {
          public const string EDIT_FAIL = "编辑失败！";
+         public const string NOT_ALLOWED_START_DUE_TO_PROJECT_NOT_START = "该任务所属项目还未启动";
+         public const string NOT_ALLOWED_EDIT_TASK_WHEN_PROJECT_COMPELETE = "任务所属项目已经完成，无法编辑！";
+         public const string TASKS_OUT_OF_PROJECT_RANGE = "任务时间范围不能超过项目时间范围";
       }
 
    }

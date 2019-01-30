@@ -96,6 +96,11 @@ namespace Business
             message = Errors.Project.NOT_ALLOWED_SEPCIAL_CHAR;
             result = false;
          }
+         else if(!string.IsNullOrEmpty(Code) && !string.IsNullOrEmpty(RealCode))
+         {
+            message = Errors.Project.NOT_ALLOWED_BOTH_CODE;
+            result = false;
+         }
 
          return new Result { IsSuccess = result, Msg = message };
       }

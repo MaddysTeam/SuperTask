@@ -93,7 +93,8 @@ namespace Business.Helper
                TaskKeys.PlanStatus,
                DateTime.Now,
                TaskKeys.NodeTaskType,
-               project.ManagerId
+               project.ManagerId,
+               project.ReviewerId
                ));
          }
       }

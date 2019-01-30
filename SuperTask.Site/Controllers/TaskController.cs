@@ -604,25 +604,23 @@ namespace TheSite.Controllers
                                       int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
          var user = GetUserInfo();
-        
+
          var sql = $@"
                   
                   select 
                   id,
                   name,
                   projectId,
+                  project,
                   reviewerId,
                   start,
                   [end],
                   statusId,
                   isParent,
-                  ManagerId,
                   realEnd,
                   taskTypeId,
-                  reviewer,
                   manager,
-                  managerId,
-                  reviewerId
+                  managerId      
                    from (
                   select
                    t.id,
@@ -636,15 +634,14 @@ namespace TheSite.Controllers
                    t.ManagerId,
                    t.RealEndDate as 'realEnd',
                    t.Type as 'taskTypeId',
-                   ru.UserName as 'reviewer',
                    u.username as 'manager',
                    u.id as 'mangerId',
-                   ru.id as 'reviewerId2'
+                   p.name as project
                    from worktask t
                    join UserInfo u on t.ManagerId=u.ID
                    join Project p on t.ProjectId= p.ID
-                   join UserInfo ru on ru.id=p.ReviewerId
-                   where t.Type ='{TaskKeys.PlanTaskTaskType}'
+                   where t.Type = @PlanTaskType
+                   and t.managerId= @ManagerId
 
                    union all
 
@@ -652,22 +649,21 @@ namespace TheSite.Controllers
                    t.id,
                    t.ProjectId as 'projectId',
                    t.name,
-                   p.ReviewerId,
+                   t.ReviewerId,
                    t.StartDate,
                    t.EndDate,
                    t.Status, 
                    0,
                    p.ManagerId,
                    t.RealEndDate,
-                   '{TaskKeys.NodeTaskType}',
-                   ru.UserName as 'reviewer',
+                   @NodeTaskType,
                    u.username as 'manager',
-                   u.id ,
-                   ru.id 
+                   u.id,
+                   p.name
                    from ProjectStoneTask t
-                   join UserInfo u on t.id=u.ID
+                   join UserInfo u on t.managerId=u.ID
                    join Project p on t.ProjectId= p.ID
-                   join UserInfo ru on ru.id=p.ReviewerId
+                   where t.managerId=@ManagerId
                   )
                   s
                   where s.start>= @StartDate and s.[end] <=@EndDate
@@ -675,25 +671,38 @@ namespace TheSite.Controllers
 
          var builder = new System.Text.StringBuilder(sql);
 
-         if (user.UserId != ResourceKeys.TempBossId2)
-         {
-            builder.Append($" and  s.ManagerId='{user.UserId}'");
-         }
          if (!projectId.IsEmpty() && projectId != AppKeys.SelectAll)
          {
-            builder.Append($" and  s.projectId='{projectId}'");
+            builder.Append($" and  s.projectId = @ProjectId'");
          }
+
+         // 如果是易佳,则可以查看所有项目经理的计划和节点任务
          if (user.UserId == ResourceKeys.TempBossId)
          {
-            builder.Append($" and  s.statusId <> '{TaskKeys.PlanStatus}'");
+            builder.Append($" and  s.statusId <> @PlanStatusId ");
+         }
+         else
+         {
+            builder.Append($" and  s.ManagerId= @ManagerId");
          }
 
-         var result = DapperHelper.QueryBySQL<PlanAndNodeTaskViewModel>(builder.ToString(), new { StartDate = start, EndDate = end });
-         var total = result.Count; 
+         var result = DapperHelper.QueryBySQL<PlanAndNodeTaskViewModel>(builder.ToString(), new
+         {
+            StartDate = start,
+            EndDate = end,
+            ManagerId = user.UserId,
+            PlanTaskType = TaskKeys.PlanTaskTaskType,
+            NodeTaskType = TaskKeys.NodeTaskType,
+            ProjectId = projectId,
+            PlanStatusId = TaskKeys.PlanStatus
+         });
 
-         foreach(var item in result)
+         var total = result.Count;
+
+         foreach (var item in result)
          {
             item.status = TaskKeys.GetStatusKeyByValue(item.statusId);
+            item.taskType = TaskKeys.GetTypeKeyByValue(item.taskTypeId);
             item.isMe = user.UserId == item.managerId;
             item.reviewerIsMe = user.UserId == item.reviewerId;
             item.realEndString = item.realEnd.IsEmpty() ? "-" : item.realEnd.ToString();
@@ -821,18 +830,18 @@ namespace TheSite.Controllers
       }
 
       [HttpPost]
-      public ActionResult PlanTaskStart(Guid taskId)
+      public ActionResult PlanTaskStart(Guid id)
       {
-         var task = db.WorkTaskDal.PrimaryGet(taskId);
+         var task = db.WorkTaskDal.PrimaryGet(id);
          task.SetStatus(TaskKeys.ProcessStatus);
 
          return Edit(task);
       }
 
       [HttpPost]
-      public ActionResult PlanTaskDeny(Guid taskId)
+      public ActionResult PlanTaskDeny(Guid id)
       {
-         var task = db.WorkTaskDal.PrimaryGet(taskId);
+         var task = db.WorkTaskDal.PrimaryGet(id);
          task.SetStatus(TaskKeys.PlanStatus);
 
          return Edit(task);

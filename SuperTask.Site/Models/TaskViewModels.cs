@@ -53,8 +53,9 @@ namespace TheSite.Models
       public Guid managerId { get; set; }
       public string manager { get; set; }
       public Guid taskTypeId { get; set; }
+      public string taskType { get; set; }
       public Guid reviewerId { get; set; }
-      public string reviewer { get; set; }
+      //public string reviewer { get; set; }
       public DateTime realEnd { get; set; }
       public string realEndString { get; set; }
 

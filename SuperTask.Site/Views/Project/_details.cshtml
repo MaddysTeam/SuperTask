@@ -61,6 +61,8 @@
 					@Html.HiddenFor(p => p.ProcessName)
 					@Html.HiddenFor(p => p.FolderId)
 					@Html.HiddenFor(p => p.Money)
+					@Html.HiddenFor(p => p.Header)
+
 					<div class="form-group">
 						@Html.LabelFor(p => p.ProjectName, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
@@ -76,20 +78,27 @@
 						</div>
 					</div>
 					<div class="form-group">
+						@Html.LabelFor(p => p.ProjectExecutor, new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							@Html.TextBoxFor(p => p.ProjectExecutor, new { @class = "form-control plan" })
+							@Html.ValidationMessageFor(p => p.ProjectOwner)
+						</div>
+					</div>
+					@*<div class="form-group">
 						@Html.LabelFor(p => p.Header, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
 							@Html.DropDownListFor(p => p.PMId,
 									resourceSelectList,
 									new { @class = "form-control dropdown-header" })
 						</div>
-					</div>
-					<div class="form-group">
+					</div>*@
+					@*<div class="form-group">
 						@Html.LabelFor(p => p.Description, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
 							@Html.TextAreaFor(p => p.Description, new { @class = "form-control plan" })
 							@Html.ValidationMessageFor(p => p.Description)
 						</div>
-					</div>
+					</div>*@
 
 					@if (Model.IsPlanStatus)
 					{
@@ -239,7 +248,6 @@
 								<th data-column-id="end" data-formatter="DateOnly">预估结束</th>
 								<th data-column-id="realEnd">实际结束</th>
 								<th data-column-id="status">任务状态</th>
-								<th data-column-id="commands" data-formatter="commands" data-sortable="false" data-header-Css-Class="width220">操作</th>
 							</tr>
 						</thead>
 					</table>

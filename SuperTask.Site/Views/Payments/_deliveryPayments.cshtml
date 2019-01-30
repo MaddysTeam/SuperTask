@@ -7,7 +7,7 @@
 	@Html.HiddenFor(p => p.Sort, new { @class = "sort" })
 
 	<div class="col-md-1 col-md-offset-1">@Html.Label(Model.PayName, new { @class = "control-label" })</div>
-	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId" value="@PaymentsKeys.BondType"       @(Model.PayType==@PaymentsKeys.BondType? "checked":"")/>保证金</div>
+	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId" value="@PaymentsKeys.BondType"       @(Model.PayType==@PaymentsKeys.BondType? "checked":"")/>保证金 @Html.TextBoxFor(p => p.Money, new { @class = "form-control money" })</div>
 	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId"  value="@PaymentsKeys.GuaranteeType" @(Model.PayType==@PaymentsKeys.GuaranteeType? "checked":"")/>保函</div>
 	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId"  value="@PaymentsKeys.NothingType"   @(Model.PayType==@PaymentsKeys.NothingType? "checked":"")/>无</div>
 	<div class="col-md-1">预计回收时间:</div>

@@ -19,6 +19,9 @@
 						@Html.HiddenFor(t => t.TaskName)
 						@Html.HiddenFor(t => t.RealStartDate)
 						@Html.HiddenFor(t => t.RealEndDate)
+						@Html.HiddenFor(t => t.ManagerId)
+						@Html.HiddenFor(t => t.ReviewerID)
+
 
 						<div class="form-group">
 							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-3" })

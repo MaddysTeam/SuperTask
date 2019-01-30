@@ -251,7 +251,7 @@
 					<add name="Money" columnName="Money" type="double" defaultValue="0"  display="总金额"/>
 					<add name="RateOfProgress" columnName="Progress" type="double" defaultValue="0"  display="付款进度"/>
 					<add name="InvoiceDate" columnName="InvoiceDate" type="DateTime" isNullable="true"  display="开票时间"/>
-					<add name="PayDate" columnName="PayDate" type="DateTime" isNullable="true"  display="付款时间"/>
+					<add name="PayDate" columnName="PayDate" type="DateTime" isNullable="true"  display="收款时间"/>
 					<add name="PayType" columnName="PayType" type="Guid"   display="付款类型"/>
 					<add name="ResourceId" columnName="ResourceId" type="Guid" comment="冗余字段，备用" />
 					<add name="Sort"  type="double" isNullable="true"  comment="排序"/>
@@ -299,6 +299,7 @@
 					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
 					<add name="TaskType"  columnName="Type" type="Guid"  isNullable="true"  display="任务类型" />
 					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true"  display="任务负责人ID" />
+					<add name="ReviewerID" columnName="ReviewerId" type="Guid"   isNullable="true" display="任务审核者ID" />
 					
 				</columns>
 			</table>

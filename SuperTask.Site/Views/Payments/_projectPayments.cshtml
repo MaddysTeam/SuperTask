@@ -1,6 +1,9 @@
 ﻿@model Payments
+@{
+	var project = ViewData["project"] as Project;
+}
 <div class="row form-group">
-	@Html.HiddenFor(p => p.PayId,new {@class="payId" })
+	@Html.HiddenFor(p => p.PayId, new { @class = "payId" })
 	@Html.HiddenFor(p => p.ProjectId, new { @class = "projectId" })
 	@Html.HiddenFor(p => p.PayName, new { @class = "payName" })
 	@Html.HiddenFor(p => p.PayType, new { @class = "payType" })
@@ -23,11 +26,15 @@
 			<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 		</div>
 	</div>
-	<div class="col-md-1">
+	<div class="col-md-2">
 		<a class="btn btn-pay" title="保存"> <i class="fa fa-save"></i></a>
+		@if (project.IsProcessStatus)
+		{
+		<a class="btn btn-danger" title="最终确认" hidden><i class="fa fa-"></i>最终确认</a>
+		}
 		@if (Model.Valiedate().IsSuccess)
 		{
-		<a class="btn btn-clear" title="清除并删除节点任务"> <font color="red"><i class="fa fa-times-circle-o"></i></font></a>
+			<a class="btn btn-clear" title="清除并删除节点任务"> <font color="red"><i class="fa fa-times-circle-o"></i></font></a>
 		}
 	</div>
 </div>

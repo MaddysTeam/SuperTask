@@ -59,7 +59,8 @@ namespace TheSite.Controllers
               TaskKeys.PlanStatus,
               DateTime.Now,
               TaskKeys.NodeTaskType,
-              project.ManagerId
+              project.ManagerId,
+              project.ReviewerId
               ));
          }
 

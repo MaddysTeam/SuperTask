@@ -6,9 +6,9 @@ namespace Business
    public class ResourceKeys
    {
 
-      public static Guid TempBossId = Guid.Parse("D1E6E02A-40FF-4F5A-80C3-24710996B9AE"); //TODO:懒得关联，先写死
+      public static Guid TempBossId = Guid.Parse("D1E6E02A-40FF-4F5A-80C3-24710996B9AE"); //TODO:懒得关联，先写死 易佳
 
-      public static Guid TempBossId2 = Guid.Parse("47682BDF-9987-4281-9F3F-BDBA4CCA8F2C"); //TODO:懒得关联，先写死
+      public static Guid TempBossId2 = Guid.Parse("47682BDF-9987-4281-9F3F-BDBA4CCA8F2C"); //TODO:懒得关联，先写死 季炜
 
       public static Guid DefaultSearchType => Guid.Parse("3A7B1F54-B875-3AF4-FA6E-A080E8E1E7EF");
 
