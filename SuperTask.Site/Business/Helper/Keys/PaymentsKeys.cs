@@ -21,6 +21,7 @@ namespace Business.Helper
       public static string FirstPayment="首付款";
       public static string MiddlePayment = "中期款";
       public static string TailPayment = "尾款";
+      public static string DefaultVenderName = "默认供应商";
 
       public static Guid AppointGuaranteeResourceId = Guid.Parse("9ea2e0f3-3806-4cc0-807d-1943ab63200b");
       public static Guid QualityGuaranteeResourceId = Guid.Parse("86e4cd97-f19d-4637-a50f-5ca72d49e3f8");

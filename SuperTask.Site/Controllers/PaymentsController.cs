@@ -36,12 +36,6 @@ namespace TheSite.Controllers
             db.PaymentsDal.Update(payments);
          }
 
-         #region [TODO]:
-         //MilestoneHelper.AddProjectMileStoneIfNotExits(
-         //   project,
-         //   new MileStone { StoneId = payments.PayId, StoneName = payments.PayName }, //这里的milestone 不会存入数据库，将payment 作为一个隐形的 mileStone
-         //   db);
-         #endregion
          var pst = APDBDef.ProjectStoneTask;
          var taskExists = db.ProjectStoneTaskDal.ConditionQueryCount(pst.PmsId == payments.PayId & pst.ProjectId == payments.ProjectId) > 0;
 
@@ -77,13 +71,12 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult Remove(Guid id)
       {
-         var pms = APDBDef.ProjectMileStone;
          var pst = APDBDef.ProjectStoneTask;
          var p = APDBDef.Payments;
 
          var payments = db.PaymentsDal.PrimaryGet(id);
-         var children = db.PaymentsDal.ConditionQuery(p.ParentId==id,null,null,null);
-         var subQuery = APQuery.select(p.PayId).from(p).where(p.ParentId==id | p.PayId==id);
+         var children = db.PaymentsDal.ConditionQuery(p.ParentId == id, null, null, null);
+         var subQuery = APQuery.select(p.PayId).from(p).where(p.ParentId == id | p.PayId == id);
 
          db.BeginTrans();
 
@@ -91,7 +84,7 @@ namespace TheSite.Controllers
          {
             db.ProjectStoneTaskDal.ConditionDelete(pst.PmsId.In(subQuery) & pst.ProjectId == payments.ProjectId);
             db.PaymentsDal.ConditionDelete(p.PayId.In(subQuery));
-         
+
             db.Commit();
          }
          catch
@@ -112,19 +105,29 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult CreateTempVenderPayment(Guid? id, Guid projectId)
       {
+         var p = APDBDef.Payments;
+         var payments = db.PaymentsDal.ConditionQuery(p.ProjectId == projectId & p.PayType == PaymentsKeys.InternalVenderPaymentsType, null, null, null);
+
          Payments payment = null;
          if (id != null)
          {
+            var childCount = payments.Count(x => x.ParentId == id);
             payment = db.PaymentsDal.PrimaryGet(id.Value);
-            var payId = payment.PayId ;
-            payment.PayId = Guid.Empty;
+            var payId = payment.PayId;
+            payment.PayId = Guid.NewGuid();
             payment.ParentId = payId;
+            payment.Sort = childCount;
+            payment.PayName += $"({++childCount})";
+            payment.Money = 0;
          }
-         else {
+         else
+         {
+            var parentCount = payments.Count(x => x.ParentId == Guid.Empty);
             var project = db.ProjectDal.PrimaryGet(projectId);
-            payment = new Payments { PayId = Guid.Empty, PayName =string.Empty, ParentId=Guid.Empty, ProjectId = projectId, PayType = PaymentsKeys.InternalVenderPaymentsType, PayDate = project.EndDate };
+            payment = new Payments { PayId = Guid.NewGuid(), PayName = PaymentsKeys.DefaultVenderName, ParentId = Guid.Empty, ProjectId = projectId, PayType = PaymentsKeys.InternalVenderPaymentsType, PayDate = project.EndDate, Sort = parentCount };
          }
 
+         db.PaymentsDal.Insert(payment);
 
          return PartialView("_venderPayments", payment);
       }

@@ -109,7 +109,6 @@
 			loadData(function () {
 				bindLeftNav();
 				showFolderFiles();
-				//openFolder('a647df69-d2a5-439d-b14d-40bce40dcf58');
 			}, para);
 
 		});
@@ -130,9 +129,9 @@
 			  { text: '预览', onclick: function (e) { preview(e.data['fileId']); } },
 			  { text: '重命名', onclick: function (e) { editFile(e.data['fileId']); } },
 			  { text: '下载', onclick: function (e) { download(e.data['filePath']); } },
-			  { text: '删除', onclick: function (e) { delFile(e.data['fileId']) } },
+			  { text: '删除', onclick: function (e) { delFile(e.data['fileId']); } },
 			  { divider: true },
-			  { text: '设置权限', function (e) { alert('功能还在研发中'); } }
+			  { text: '设置权限',onclick: function (e) { alert('功能还在研发中'); } }
 			]
 		};
 		var emptyMessageStr = '<div class="text-center">该文件夹为空</div>';

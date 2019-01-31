@@ -29,7 +29,7 @@ namespace Business.Helper
             new Payments(Guid.NewGuid(),PaymentsKeys.TailPayment,projectId,0,0,start,end,PaymentsKeys.ProjectPaymentsType,Guid.Empty,3,false,Guid.Empty),
 
             // 外包款项
-            new Payments(Guid.NewGuid(),string.Empty,projectId,0,0,start,end,PaymentsKeys.InternalVenderPaymentsType,Guid.Empty,1,false,Guid.Empty),
+           // new Payments(Guid.NewGuid(),string.Empty,projectId,0,0,start,end,PaymentsKeys.InternalVenderPaymentsType,Guid.Empty,1,false,Guid.Empty),
 
             // 验收款项
             new Payments(Guid.NewGuid(),"是否有履约保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,PaymentsKeys.AppointGuaranteeResourceId,1,false,Guid.Empty),
@@ -62,6 +62,30 @@ namespace Business.Helper
          }
 
          return result.Count > 0 ? result.OrderBy(x => x.Sort).ToList() : result;
+      }
+
+      /// <summary>
+      /// 得到外包款项，注意有层级关系，先取得父级，然后放子级
+      /// </summary>
+      /// <param name="projectPayments"></param>
+      /// <returns></returns>
+      public static List<Payments> GetVenderPaymentsFromProjectPayments(List<Payments> projectPayments)
+      {
+         var parents = projectPayments
+                                 .Where(p => p.PayType == PaymentsKeys.InternalVenderPaymentsType && p.ParentId.IsEmpty())
+                                 .OrderBy(p => p.Sort);
+         if (parents.Count() <= 0) return null;
+
+         var result = new List<Payments>();
+
+         foreach (var item in parents)
+         {
+            var children = projectPayments.FindAll(p => p.ParentId == item.PayId);
+            result.Add(item);
+            result.AddRange(children.OrderByDescending(x => x.Sort));
+         }
+
+         return result;
       }
 
    }

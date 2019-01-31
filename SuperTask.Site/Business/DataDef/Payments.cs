@@ -13,7 +13,7 @@ namespace Business
          {
             return new Result { IsSuccess = false, Msg = Errors.Payments.EDIT_FAIL };
          }
-         else if (string.IsNullOrEmpty(PayName))
+         else if (string.IsNullOrEmpty(PayName) &&(ParentId.IsEmpty())) // 只有父级元素款项名称必填
          {
             return new Result { IsSuccess = false, Msg = Errors.Payments.NOT_ALLOWED_NAME_NULL };
          }

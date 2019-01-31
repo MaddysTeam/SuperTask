@@ -4,6 +4,7 @@
 	@Html.HiddenFor(p => p.ProjectId, new { @class = "projectId" })
 	@Html.HiddenFor(p => p.PayType, new { @class = "payType" })
 	@Html.HiddenFor(p => p.Sort, new { @class = "sort" })
+	@Html.HiddenFor(p => p.IsConfirm, new { @class = "isConfirm" })
 	@Html.HiddenFor(p => p.ParentId, new { @class = "parentId" })
 
 	@if (Model.ParentId.IsEmpty())
@@ -13,9 +14,8 @@
 	}
 	else
 	{
-		<div class="col-md-1 col-md-offset-1"></div>
 		@Html.HiddenFor(p => p.PayName, new { @class = "payName" })
-		<div class="col-md-2">@Html.Label("payName", Model.PayName, new { @class = "form-control" })</div>
+		<div class="col-md-1 col-md-offset-3"></div>
 	}
 
 	<div class="col-md-1">@Html.Label("协作金额", new { @class = "control-label" })</div>
