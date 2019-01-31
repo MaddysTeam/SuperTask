@@ -1,6 +1,7 @@
 ﻿@model Payments
 @{
 	var project = ViewData["project"] as Project;
+	var canEdit =!project.IsCompleteStatus && !Model.IsConfirm;
 }
 <div class="row form-group">
 	@Html.HiddenFor(p => p.PayId, new { @class = "payId" })
@@ -8,33 +9,65 @@
 	@Html.HiddenFor(p => p.PayName, new { @class = "payName" })
 	@Html.HiddenFor(p => p.PayType, new { @class = "payType" })
 	@Html.HiddenFor(p => p.Sort, new { @class = "sort" })
-
 	<div class="col-md-1 col-md-offset-1">@Html.Label(Model.PayName, new { @class = "control-label" })</div>
-	<div class="col-md-1">@Html.TextBoxFor(p => p.Money, new { @class = "form-control money" })</div>
-	<div class="col-md-1">@Html.Label("radio", Model.Ratio, new { @class = "form-control" })</div>
+	<div class="col-md-1">
+		@if (canEdit)
+		{
+			@Html.TextBoxFor(p => p.Money, new { @class = "form-control money" })
+		}
+		else
+		{
+			@Html.HiddenFor(p => p.Money, new { @class = "sort" })
+			@Html.Label("", Model.Money.ToString(), new { @class = "form-control",@readonly = "readonly" })
+		}
+
+	</div>
+	<div class="col-md-1">@Html.Label("radio", Model.Ratio, new { @class = "form-control" , @readonly = "readonly" })</div>
 	<div class="col-md-1">@Html.LabelFor(p => p.InvoiceDate, new { @class = "control-label" })</div>
 	<div class="col-md-2">
-		<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-			@Html.TextBoxFor(p => p.InvoiceDate, "{0:yyyy-MM-dd}", new { @class = "form-control invoiceDate", @hasValue = Model.InvoiceDate != DateTime.MinValue })
-			<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+			@if (canEdit)
+			{
+				<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+					@Html.TextBoxFor(p => p.InvoiceDate, "{0:yyyy-MM-dd}", new { @class = "form-control invoiceDate", @hasValue = Model.InvoiceDate != DateTime.MinValue })
+					<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+				</div>
+			}
+			else
+			{
+				@Html.HiddenFor(p => p.InvoiceDate, new { @class = "sort" })
+				@Html.Label("", Model.InvoiceDate.ToString("yyyy-MM-dd"), new { @class = "form-control", @readonly = "readonly" })
+			}
 		</div>
-	</div>
+
 	<div class="col-md-1">@Html.LabelFor(p => p.PayDate, new { @class = "control-label" })</div>
 	<div class="col-md-2">
-		<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-			@Html.TextBoxFor(p => p.PayDate, "{0:yyyy-MM-dd}", new { @class = "form-control", @hasValue = Model.PayDate != DateTime.MinValue })
-			<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-		</div>
+	
+			@if (canEdit)
+			{
+				<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+					@Html.TextBoxFor(p => p.PayDate, "{0:yyyy-MM-dd}", new { @class = "form-control", @hasValue = Model.PayDate != DateTime.MinValue })
+					<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+				</div>
+			}
+			else
+			{
+				@Html.HiddenFor(p => p.PayDate, new { @class = "sort" })
+				@Html.Label("", Model.PayDate.ToString("yyyy-MM-dd"), new { @class = "form-control", @readonly = "readonly" })
+			}
 	</div>
 	<div class="col-md-2">
-		<a class="btn btn-pay" title="保存"> <i class="fa fa-save"></i></a>
-		@if (project.IsProcessStatus)
+		
+		@if (canEdit)
 		{
-		<a class="btn btn-danger" title="最终确认" hidden><i class="fa fa-"></i>最终确认</a>
-		}
-		@if (Model.Valiedate().IsSuccess)
-		{
-			<a class="btn btn-clear" title="清除并删除节点任务"> <font color="red"><i class="fa fa-times-circle-o"></i></font></a>
+			<a class="btn btn-pay" title="保存"> <i class="fa fa-save"></i></a>
+			if (!project.IsPlanStatus && !project.IsCompleteStatus)
+			{
+				<a class="btn btn-danger btn-confirm-pay" title="最终确认" data-confirm="true" hidden><i class="fa fa-"></i>最终确认</a>
+			}
+			if (Model.Valiedate().IsSuccess)
+			{
+				<a class="btn btn-clear" title="清除并删除节点任务"> <font color="red"><i class="fa fa-times-circle-o"></i></font></a>
+			}
 		}
 	</div>
 </div>

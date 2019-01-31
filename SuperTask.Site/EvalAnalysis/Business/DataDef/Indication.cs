@@ -43,6 +43,12 @@ namespace Business
       }
 
 
+      public override int GetHashCode()
+      {
+         return base.GetHashCode();
+      }
+
+
       public bool IsInUse()
       {
          var eri = APDBDef.EvalResultItem;

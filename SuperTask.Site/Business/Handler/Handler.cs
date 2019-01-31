@@ -41,11 +41,6 @@ namespace Business
          {ProjectKeys.DefaultProjectType,new ProjectEditHandler() }
       };
 
-      public static Dictionary<Guid, ProjectTemplateEditHandler> ProjectTemplateEditHandlers = new Dictionary<Guid, ProjectTemplateEditHandler>
-      {
-          {ProjectKeys.DevelopmentProjectType,new DevelopmentProjectTemplateEditHandler() }
-      };
-
       public static Dictionary<Guid, ProjectReviewHandler> ProjectReviewHandlers = new Dictionary<Guid, ProjectReviewHandler>
       {
          {ReviewKeys.ReviewTypeForPjStart, new ProjectStartRequestHandler() }

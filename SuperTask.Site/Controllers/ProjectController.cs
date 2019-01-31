@@ -222,34 +222,6 @@ namespace TheSite.Controllers
          return View(project);
       }
 
-      // GET: Project/CreateByTemplate
-      // Post-ajax: Project/CreateByTemplate
-
-      public ActionResult CreateByTemplate()
-      {
-         return PartialView();
-      }
-
-      [HttpPost]
-      public ActionResult CreateByTemplate(Guid projectType)
-      {
-         var option = new PorjectTemplateEditOption
-         {
-            CurrentUser = GetUserInfo(),
-            db = db,
-            Status = ProjectKeys.PlanStatus,
-            ProjectEditHandler = HandleManager.ProjectEditHandlers[ProjectKeys.DefaultProjectType],
-         };
-
-         HandleManager.ProjectTemplateEditHandlers[projectType].Handle(null, option);
-
-         return Json(new
-         {
-            result = AjaxResults.Success,
-            msg = Success.Project.EDIT_SUCCESS
-         });
-      }
-
 
       // Post-ajax: Project/UpdateTotalPayment
 

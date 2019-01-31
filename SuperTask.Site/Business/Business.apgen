@@ -255,6 +255,8 @@
 					<add name="PayType" columnName="PayType" type="Guid"   display="付款类型"/>
 					<add name="ResourceId" columnName="ResourceId" type="Guid" comment="冗余字段，备用" />
 					<add name="Sort"  type="double" isNullable="true"  comment="排序"/>
+					<add name="IsConfirm"  columnName="IsConfirm" type="bool" comment="是否最终确认" ></add>
+					<add name="ParentId" columnName="ParentId" type="Guid"  isNullable="true"  comment="父级ID"/>
 				</columns>
 			</table>
 

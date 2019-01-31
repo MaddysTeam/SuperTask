@@ -62,7 +62,7 @@ namespace Business
 
             db.Commit();
          }
-         catch(Exception e)
+         catch
          {
             db.Rollback();
          }
@@ -224,101 +224,6 @@ namespace Business
 
       public Project Orignal { get; set; }
 
-   }
-
-
-   public class ProjectTemplateEditHandler : IHandler<Project, PorjectTemplateEditOption>
-   {
-
-      public void Handle(Project p, PorjectTemplateEditOption v)
-      {
-         //创建项目
-         p = CreateProject(p, v);
-
-
-         //创建任务
-         var taskOptions = new TaskEditOption { Project = p, db = v.db };
-         CreateTasks(taskOptions);
-      }
-
-
-      protected virtual Project CreateProject(Project p, PorjectTemplateEditOption v)
-      {
-         v.ProjectEditHandler.Handle(p, v);
-
-         return p;
-      }
-
-
-      protected virtual void CreateTasks(TaskEditOption option)
-      {
-
-      }
-
-   }
-
-
-   public class DevelopmentProjectTemplateEditHandler : ProjectTemplateEditHandler
-   {
-      protected override Project CreateProject(Project p, PorjectTemplateEditOption v)
-      {
-         var start = DateTime.Now;
-         var end = DateTime.Now.AddDays(10);
-         p = p ?? Project.Create("软件开发类项目", v.CurrentUser.UserId, start, end, ProjectKeys.PlanStatus, ProjectKeys.DefaultProjectType);
-
-         return base.CreateProject(p, v);
-      }
-
-      protected override void CreateTasks(TaskEditOption option)
-      {
-         var projectId = option.Project.ProjectId;
-         var createrId = option.Project.CreatorId;
-
-         var db = option.db ?? new APDBDef();
-         var r = APDBDef.WorkTask;
-         var start = DateTime.Now;
-         var end = DateTime.Now.AddDays(10);
-         var list = new List<WorkTask>();
-
-         db.WorkTaskDal.ConditionDelete(r.Projectid == projectId & r.ParentId == Guid.Empty & r.SortId == 1);
-
-         var rootTask = WorkTask.Create(createrId, projectId, "软件开发类项目", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 1, 1, true, Guid.Empty);
-         var task1 = WorkTask.Create(createrId, projectId, "功能模块", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 1, 2, true, rootTask.TaskId);
-         var task2 = WorkTask.Create(createrId, projectId, "功能子模块1-1", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 3, 3, false, task1.TaskId);
-         var task3 = WorkTask.Create(createrId, projectId, "功能子模块1-2", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 3, 4, false, task1.TaskId);
-         var task4 = WorkTask.Create(createrId, projectId, "功能子模块1-4", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 3, 5, false, task1.TaskId);
-         var task5 = WorkTask.Create(createrId, projectId, "测试模块1", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 2, 6, true, task1.TaskId);
-         var task6 = WorkTask.Create(createrId, projectId, "测试任务1", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 3, 7, false, task5.TaskId);
-         var task7 = WorkTask.Create(createrId, projectId, "测试任务2", start, end, TaskKeys.PlanStatus, TaskKeys.ProjectTaskType, 3, 8, false, task5.TaskId);
-         list = new WorkTask[] { task1, task2, task3, task4, task5, task6, task7 }.ToList();
-         foreach (var item in list)
-         {
-            db.WorkTaskDal.Insert(item);
-         }
-      }
-   }
-
-
-   public class MaintanceProjectTemplateEditHandler : ProjectTemplateEditHandler
-   {
-
-      protected override Project CreateProject(Project p, PorjectTemplateEditOption v)
-      {
-         return base.CreateProject(p, v);
-      }
-
-
-      protected override void CreateTasks(TaskEditOption option)
-      {
-         base.CreateTasks(option);
-      }
-
-   }
-
-
-   public class PorjectTemplateEditOption : ProjectEditOption
-   {
-      public ProjectEditHandler ProjectEditHandler { get; set; }
    }
 
 }

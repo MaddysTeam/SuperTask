@@ -24,12 +24,7 @@
 @section Scripts{
 	<script>
 
-		var stoneTaskEditReviewType = '@ReviewKeys.ReviewTypeForStoneTaskChanged'; // 节点任务-编辑审核类型id
-		var stoneTaskSubmitReviewType = '@ReviewKeys.ReviewTypeForStoneTaskSubmit';
-
-		function afterSubmitSuccess() {
-			//location.href = location.href;
-		}
+		function afterSubmitSuccess() { }
 
 		function getGlobalRequest() {
 			return {
@@ -43,43 +38,11 @@
 				url: '@Url.Action("List", "ProjectStoneTask")',
 
 				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
-
-				@*formatters: {
-					'commands': function (column, row) {
-						var id = row.id;
-						var hasStone = row.hasStone;
-						var isProcessStatus = row.statusId == '@TaskKeys.ProcessStatus';
-						var isPlanStatus = row.statusId == '@TaskKeys.PlanStatus';
-						var isReviewStaus = row.statusId == '@TaskKeys.ReviewStatus';
-						var isTempEditStatus = row.statusId == '@TaskKeys.TaskTempEditStatus';
-						var isCompleteStatus = row.statusId == '@TaskKeys.CompleteStatus';
-
-						var buttons = '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">';
-						if (isPlanStatus) {
-							buttons += '<button class="btn btn-lg btn-success btn-edit">编辑</button>';
-						}
-						else if (isProcessStatus) {
-							buttons += '<a class="btn btn-lg btn-warning btn-requst" href="@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + row.id + '&reviewType=' + stoneTaskEditReviewType + '">申请修改</a> ' +
-										  '<a class="btn btn-lg btn-info btn-requst" href="@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + row.id + '&reviewType=' + stoneTaskSubmitReviewType + '">申请提交</a> ';
-						}
-						else if (isReviewStaus) {
-							buttons += '<button disabled>审核中</button>';
-						}
-						else if (isTempEditStatus) {
-							buttons += '<button class="btn btn-lg btn-success btn-edit">临时修改</button>';
-						}
-						else if (isCompleteStatus) {
-							buttons += '<button class="btn btn-success" disabled>已完成</button>';
-						}
-						buttons += '</div>';
-						return buttons;
-					},
-				},*@
 			});
 		}
 
 		function bindPay(func) {
-			$('.btn-pay').off('click').on('click', function () {
+			$('.btn-pay,.btn-confirm-pay').off('click').on('click', function () {
 				var $this = $(this);
 				var $payContainer = $this.parents('.form-group');
 				var payType = $payContainer.find('#PayType').val();
@@ -94,6 +57,8 @@
 					resourceId: resourceId,
 					Sort: $payContainer.find('#Sort').val(),
 					PayType: payType == null || payType == '' ? $payContainer.find('.resource_' + resourceId + ':checked').val() : payType,
+					IsConfirm: $this.data('confirm') == true,
+					ParentId: $payContainer.find('#ParentId').val(),
 				}
 
 				$.post('@Url.Action("Edit", "Payments")', { payments: payments }, function (data) {
@@ -134,11 +99,27 @@
 			});
 		}
 
+		function bindAddVender(func) {
+			$('.btn-addVender').off('click').on('click', function () {
+				var $this = $(this);
+				var $payContainer = $('#venderList');
+				var paymentId = $this.data('id');
+				var url = '@Url.Action("CreateTempVenderPayment", "Payments")?id=' + paymentId + '&projectId='+'@Model.ProjectId';
+				$.post(url, function (html) {
+					if (!paymentId)
+						$payContainer.append($(html));
+					else
+						$('.' + paymentId).after($(html));
+					bindAddVender(func);
+					bindPay(func);
+					bindRemovePay(func);
+				});
+
+			});
+		}
+
 
 		$(function () {
-			var isProcessStatus = '@Model.IsProcessStatus' == 'True';
-			var IsPlanStatus = '@Model.IsPlanStatus' == "True";
-			var isEditStatus = '@Model.IsEditStatus' == "True";
 
 			ajaxSubmitForm($('form'));
 
@@ -174,30 +155,13 @@
 					return false;
 			});
 
-
-
 			// load stone task grid
 			var grid = $('#bootgrid');
-			grid.bootgrid(getGridOptions())
-			.on('loaded.rs.jquery.bootgrid', function () {
-
-				//grid.find('.btn-edit').on('click', function () {
-				//	var id = $(this).parent().data('rowId');
-				//	var $proxy = $('#modelProxy');
-				//	$proxy
-				//		.data('url', '/ProjectStoneTask/Edit/' + id)
-				//		.trigger('click');
-				//});
-
-			});
+			grid.bootgrid(getGridOptions());
 
 			// load stone list
 			$.post('@Url.Action("List", "ProjectMileStone")', { projectId: projectId }, function (data) {
 				$('#tab1').html(data);
-				if (!IsPlanStatus) {
-					$('#tab1').find('input,textarea').attr('readonly', 'readonly');
-					$('#tab1').find('button,a').remove();
-				}
 
 				$('.btn-removeStone').on('click', function () {
 					var $this = $(this);
@@ -229,7 +193,7 @@
 
 			});
 
-			
+
 			// load project payments
 			var currentTabId = 'moneyTab';
 			loadPayments(currentTabId);
@@ -238,15 +202,10 @@
 				$.post('@Url.Action("Details", "Payments")', { projectId: projectId, tabId: currentTabId }, function (data) {
 					$('#paymentsArea').html(data);
 
-					if (!IsPlanStatus) {
-						$('#paymentsArea').find('input,textarea').attr('readonly', 'readonly');
-						$('#paymentsArea .widget-content').find('button,a').remove();
-					}
-
-					// save current tabId to aviod it being change after loading payments 
+					// save current tabId to aviod it being change after loading payments
 					$('.nav-tabs li a').click(function () { currentTabId = $(this).attr('href').replace('#', ''); });
 
-					// call back 
+					// call back
 					var callback = function () { grid.bootgrid('reload'); loadPayments(currentTabId); };
 					// bind payment
 					bindPay(callback);
@@ -255,15 +214,7 @@
 					// bind clear payment
 					bindClarePayment(callback);
 					// add vender payment by ajax
-					$('.btn-addVender').off('click').on('click', function () {
-						var $this = $(this);
-						var $payContainer = $('#venderList');
-						$.post('@Url.Action("CreateTempVenderPayment", "Payments")?id=' + projectId, function (html) {
-							$payContainer.append($(html));
-							bindPay(callback);
-							bindRemovePay(callback);
-						});
-					});
+					bindAddVender(callback);
 
 					$('.btn-money').on('click', function () {
 						var money = $('#TotalMoney').val();

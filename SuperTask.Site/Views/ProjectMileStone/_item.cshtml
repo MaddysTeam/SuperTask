@@ -1,35 +1,51 @@
 ﻿@model ProjectMileStone
+@{
+	var project = ViewData["Project"] as Project;
+	var canEdit = project.IsPlanStatus || project.IsEditStatus;
+}
 <div class="row form-group">
 	@Html.HiddenFor(s => s.PmsId)
 	@Html.HiddenFor(s => s.Projectid)
 	@Html.HiddenFor(s => s.FolderId)
 	@Html.HiddenFor(s => s.StoneId)
 	@Html.HiddenFor(s => s.Status)
-
 	<div class="col-md-1">@Html.Label(Model.StoneName, new { @class = "control-label" })</div>
-	@*<div class="col-md-3">
-		@Html.DropDownListFor(s=>s.Status,
-																  DictionaryCache.Cached(MilestoneKeys.MileStoneStatusKeyGuid).GetSelectListById(Model.Status)
-																  , new { @class = "form-control stoneStatus" })
-	</div>*@
 	<div class="col-md-2">
 		@Html.LabelFor(s => s.StartDate, new { @class = "control-label" })
-		<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-			@Html.TextBoxFor(s => s.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control invoiceDate", @hasValue = Model.StartDate != DateTime.MinValue })
-			<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-		</div>
+		@if (canEdit)
+		{
+			<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+				@Html.TextBoxFor(s => s.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control invoiceDate", @hasValue = Model.StartDate != DateTime.MinValue })
+				<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+			</div>
+		}
+		else
+		{
+			@Html.HiddenFor(s => s.StartDate)
+			@Html.Label("StartDate",Model.StartDate.ToString("yyyy-MM-dd"),new { @class = "form-control",@readonly = "readonly" })
+		}
 	</div>
 	<div class="col-md-2">
 		@Html.LabelFor(s => s.EndDate, new { @class = "control-label" })
-		<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-			@Html.TextBoxFor(s => s.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control invoiceDate", @hasValue = Model.EndDate != DateTime.MinValue })
-			<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-		</div>
+		@if (canEdit)
+		{
+			<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+				@Html.TextBoxFor(s => s.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control invoiceDate", @hasValue = Model.EndDate != DateTime.MinValue })
+				<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+			</div>
+		}
+		else
+		{
+			@Html.HiddenFor(s => s.EndDate)
+			@Html.Label("EndDate", Model.EndDate.ToString("yyyy-MM-dd"), new { @class = "form-control" ,@readonly="readonly" })
+		}
 	</div>
-	<div class="col-md-3">备注:@Html.TextAreaFor(s => s.Content, new { @class = "form-control stoneContent" })</div>
+	<div class="col-md-3">备注:@Html.TextAreaFor(s => s.Content, new { @class = "form-control stoneContent" ,@readonly=canEdit? "":"readonly" })</div>
 	<div class="col-md-2">
+		@if (canEdit)
+		{
 		<a class="btn btn-editStone" title="保存"><i class="fa fa-save"></i></a>
-		@*@if (!Model.IsDefaultType)*@
 		<a class="btn btn-removeStone"><i class="fa fa-remove"></i></a>
+		}
 	</div>
 </div>

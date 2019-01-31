@@ -145,7 +145,11 @@
 
 						var editUrl = isPlan ? '@Url.Action("PlanTaskEdit", "Task")' : '@Url.Action("Edit", "ProjectStoneTask")';
 						var startUrl = isPlan ? '@Url.Action("PlanTaskStart", "Task")' : '@Url.Action("Start", "ProjectStoneTask")';
-						var reqeustUrl = isPlan ? '@Url.Action("ReviewRequest", "Task")' : '@Url.Action("ReviewRequest", "ProjectStoneTask")';
+						var editReqeustUrl = isPlan ? '@Url.Action("ReviewRequest", "Task")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForTkChanged' :
+							                           '@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForStoneTaskChanged';
+						var submitReqeustUrl = isPlan ? '@Url.Action("ReviewRequest", "Task")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForTkSubmit' :
+							                           '@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForStoneTaskSubmit';
+
 						var denyUrl = isPlan ? '@Url.Action("PlanTaskDeny", "Task")' : '@Url.Action("Deny", "ProjectStoneTask")';
 						var reviewUrl = '@Url.Action("Search", "WorkFlowTask")';
 
@@ -157,9 +161,9 @@
 							buttons += '<button class="btn btn-lg btn-success btn-edit"  data-url="' + editUrl + '">编辑</button>';
 						}
 						else if (isMe && row.statusId == '@TaskKeys.ProcessStatus') {
-							buttons += '<button class="btn btn-lg btn-info btn-editReq"   data-url="' + reqeustUrl + '">修改申请</button>';
+							buttons += '<button class="btn btn-lg btn-info btn-editReq"   data-url="' + editReqeustUrl + '">修改申请</button>';
 							if (!row.isParent)
-								buttons += '<button class="btn btn-lg btn-info btn-submitReq" data-url="' + reqeustUrl + '">提交申请</button>';
+								buttons += '<button class="btn btn-lg btn-info btn-submitReq" data-url="' + submitReqeustUrl + '">提交申请</button>';
 							else
 								buttons += '<button class="btn btn-lg" disable>父任务无需提交</button>';
 						}
@@ -167,7 +171,7 @@
 							buttons += '<button class="btn btn-lg btn-info btn-deny" data-url="' + denyUrl + '">不合理退回</button>';
 						}
 						else if (reviewerIsMe && row.statusId == '@TaskKeys.ReviewStatus') {
-							buttons += '<button class="btn btn-lg btn-success btn-view">查看详细</button>';
+							buttons += '<button class="btn btn-lg btn-success btn-view" disabled>审核中</button>';
 							buttons += '<button class="btn btn-lg btn-info btn-review" data-url="' + reviewUrl + '">去审核</button>';
 						}
 						else if (!isMe) {
@@ -218,9 +222,7 @@
 				});
 
 				grid.find('.btn-editReq').on('click', function (e) {
-					var rowId = $(this).parent().data('rowId');
-					var url = $(this).data('url') + '?id=' + rowId + '&reviewType=@ReviewKeys.ReviewTypeForTkChanged';
-
+					var url = $(this).data('url');
 					if (confirm('@Confirm.Task.TASK_SUBMIT_EDIT')) {
 						window.open(url);
 					}
@@ -229,9 +231,7 @@
 				});
 
 				grid.find('.btn-submitReq').on('click', function (e) {
-					var rowId = $(this).parent().data('rowId');
-					var url = $(this).data('url') + '?id=' + rowId + '&reviewType=@ReviewKeys.ReviewTypeForTkSubmit';
-
+					var url = $(this).data('url');
 					if (confirm('@Confirm.Task.TASK_SUBMIT_REQUEST')) {
 						window.open(url);
 					}

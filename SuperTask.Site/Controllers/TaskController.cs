@@ -818,8 +818,6 @@ namespace TheSite.Controllers
             rowCount,
             total
          });
-
-         return null;
       }
 
       public ActionResult PlanTaskEdit(Guid id)

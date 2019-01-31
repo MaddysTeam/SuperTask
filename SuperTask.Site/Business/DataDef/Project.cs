@@ -126,24 +126,8 @@ namespace Business
                             .GetNextMondayIfIsWeekend();
          prj.Code = prj.GenerateCode();
          prj.FolderId = Guid.NewGuid();
+         prj.PMId = ResourceKeys.TempBossId;
       }
-
-
-      public static Project Create(string projectName, Guid userId, DateTime start, DateTime end, Guid status, Guid projectType)
-          => new Project
-          {
-             PMId = userId,
-             ManagerId = userId,
-             ReviewerId = userId,
-             ProjectStatus = status,
-             ProjectName = projectName,
-             ProjectType = projectType,
-             StartDate = start,
-             EndDate = end,
-             CreatorId = userId,
-             CreateDate = DateTime.Now,
-          };
-
 
 
       public override bool Equals(object obj)

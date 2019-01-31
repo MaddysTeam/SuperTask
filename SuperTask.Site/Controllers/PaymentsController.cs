@@ -13,7 +13,7 @@ namespace TheSite.Controllers
    {
 
       // Post-Ajax: Payment/Edit
-         
+
       [HttpPost]
       public ActionResult Edit(Payments payments)
       {
@@ -79,15 +79,19 @@ namespace TheSite.Controllers
       {
          var pms = APDBDef.ProjectMileStone;
          var pst = APDBDef.ProjectStoneTask;
+         var p = APDBDef.Payments;
+
          var payments = db.PaymentsDal.PrimaryGet(id);
+         var children = db.PaymentsDal.ConditionQuery(p.ParentId==id,null,null,null);
+         var subQuery = APQuery.select(p.PayId).from(p).where(p.ParentId==id | p.PayId==id);
 
          db.BeginTrans();
 
          try
          {
-            db.PaymentsDal.PrimaryDelete(id);
-            db.ProjectStoneTaskDal.ConditionDelete(pst.PmsId == payments.PayId & pst.ProjectId == payments.ProjectId);
-
+            db.ProjectStoneTaskDal.ConditionDelete(pst.PmsId.In(subQuery) & pst.ProjectId == payments.ProjectId);
+            db.PaymentsDal.ConditionDelete(p.PayId.In(subQuery));
+         
             db.Commit();
          }
          catch
@@ -106,10 +110,22 @@ namespace TheSite.Controllers
       // Post-ajax: Payment/CreateTempVenderPayment
 
       [HttpPost]
-      public ActionResult CreateTempVenderPayment(Guid id)
+      public ActionResult CreateTempVenderPayment(Guid? id, Guid projectId)
       {
-         var project = db.ProjectDal.PrimaryGet(id);
-         var payment = new Payments { ProjectId = id, PayType = PaymentsKeys.InternalVenderPaymentsType, PayDate = project.EndDate };
+         Payments payment = null;
+         if (id != null)
+         {
+            payment = db.PaymentsDal.PrimaryGet(id.Value);
+            var payId = payment.PayId ;
+            payment.PayId = Guid.Empty;
+            payment.ParentId = payId;
+         }
+         else {
+            var project = db.ProjectDal.PrimaryGet(projectId);
+            payment = new Payments { PayId = Guid.Empty, PayName =string.Empty, ParentId=Guid.Empty, ProjectId = projectId, PayType = PaymentsKeys.InternalVenderPaymentsType, PayDate = project.EndDate };
+         }
+
+
          return PartialView("_venderPayments", payment);
       }
 
@@ -117,7 +133,7 @@ namespace TheSite.Controllers
       // Post-ajax: Payment/Details
 
       [HttpPost]
-      public ActionResult Details(Guid projectId,string tabId)
+      public ActionResult Details(Guid projectId, string tabId)
       {
          ViewBag.Project = db.ProjectDal.PrimaryGet(projectId);
          ViewBag.TabId = tabId;
@@ -138,10 +154,10 @@ namespace TheSite.Controllers
             p.PayDate.SetValue(DateTime.MinValue),
             p.InvoiceDate.SetValue(DateTime.MinValue)
             )
-            .where(p.PayId==id)
+            .where(p.PayId == id)
             .execute(db);
 
-         db.ProjectStoneTaskDal.ConditionDelete(pst.PmsId==id & pst.ProjectId==projectId);
+         db.ProjectStoneTaskDal.ConditionDelete(pst.PmsId == id & pst.ProjectId == projectId);
 
          return Json(new
          {
