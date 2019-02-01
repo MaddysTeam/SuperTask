@@ -58,10 +58,12 @@
 							@if (Model.ManagerId == currentUserId)
 						{
 						<div class="form-group">
+							
 							@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileNamePop" })
 							@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePathPop" })
 							<label class="col-md-3 control-label">上传文件</label>
 							<div class="col-md-9">
+								<font color="red">* 文件会上传至项目文件夹中</font>
 								<input style="visibility:hidden;position:absolute;" />
 								<div class="input-group">
 									<label id="uploadNamePop" class="form-control oversize uploadNamePop"></label>

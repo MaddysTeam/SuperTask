@@ -18,6 +18,7 @@ namespace TheSite.Controllers
 
       public ActionResult InitialDictionary()
       {
+         InitialProjectMileStoneAndPayments();
          return View();
       }
 
@@ -115,7 +116,7 @@ namespace TheSite.Controllers
             //{"工作量", DefaultAlgorithms.TaskQuantityId },
             //{"计划完成度", DefaultAlgorithms.PlanTaskComplentionId },
             //{"计划时效性", DefaultAlgorithms.PlanTaskTimelinessId }
-              {"日志更新时效性", DefaultAlgorithms.WorkJournalFillingRateId }
+             // {"日志更新时效性", DefaultAlgorithms.WorkJournalFillingRateId }
          };
 
          foreach (var item in indicationIds)
@@ -433,27 +434,28 @@ namespace TheSite.Controllers
          // 填了value,不让其成为父任务，不让其修改子类型
       }
 
-      public void InitialProjectMileStone()
+      public void InitialProjectMileStoneAndPayments()
       {
-         var projects = Project.GetAll();
+         var projects = Project.GetAll().Where(x => x.CreateDate < DateTime.Parse("2019-01-01"));
          var db = new APDBDef();
 
          foreach (var item in projects)
          {
             MilestoneHelper.AddDefaultMileStones(item, db);
-         }
-      }
-
-      public void InitialProjectPayments()
-      {
-         var projects = Project.GetAll();
-         var db = new APDBDef();
-
-         foreach (var item in projects)
-         {
             PaymentsHelper.AddDefaultPayments(item, db);
          }
       }
+
+      //public void InitialProjectPayments()
+      //{
+      //   var projects = Project.GetAll();
+      //   var db = new APDBDef();
+
+      //   foreach (var item in projects)
+      //   {
+      //      PaymentsHelper.AddDefaultPayments(item, db);
+      //   }
+      //}
 
    }
 

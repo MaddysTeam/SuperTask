@@ -15,6 +15,12 @@ namespace Business.Helper
       /// </summary>
       public static string DefaultTaskName = "新建任务";
 
+
+      /// <summary>
+      /// 临时的节点任务
+      /// </summary>
+      public static string TempNodeTaskName = "节点任务";
+
       /// <summary>
       /// 任务类型
       /// </summary>

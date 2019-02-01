@@ -15,21 +15,21 @@ namespace Business.Helper
 
       public static Guid TableStatusKeyGuid = Guid.Parse("94decd1d-8c60-4c85-8f00-e735c1d8870b");
 
-      public static int SubjectType = (int)EvalTableType.SubjectType;
+      public static Guid SubjectType = Guid.Parse("afefcf41-0052-489e-bf0b-89d907fd854a");
 
-      public static int AutoType = (int)EvalTableType.AutoType;
+      public static Guid AutoType = Guid.Parse("75368d97-583a-47b2-8cae-e4282f031663");
 
       public static Guid SubjectTypeGuid => Guid.Parse("94DECD1D-8C60-4C85-8F00-E740C1D1111B");
 
       public static Guid AutoTypeGuid => Guid.Parse("94DECD1D-8C60-4C85-8F00-E740C1D2222B");
 
-      public static int ReadyStatus = (int)IndicationStatus.enable;
+      public static Guid ReadyStatus = Guid.Parse("d7879aa0-af61-434d-983a-4aca2363f791");
 
-      public static int DisableStatus = (int)IndicationStatus.disable;
+      public static Guid DisableStatus = Guid.Parse("9812e555-ac3a-47c2-8789-f689e2fda9cf");
 
-      public static int ProcessStatus = (int)EvalTableStatus.processing;
+      public static Guid ProcessStatus = Guid.Parse("ed64da61-8223-4e5e-b87d-95fb0016b42a");
 
-      public static int DoneStatus = (int)EvalTableStatus.done;
+      public static Guid DoneStatus = Guid.Parse("dfeb4db8-9084-41ba-804d-e9948cc57093");
 
       public static Guid DisableStatusGuid => Guid.Parse("94DECD1D-8C60-4C85-8F00-E735C1D4430B");
 
@@ -47,19 +47,19 @@ namespace Business.Helper
    }
 
 
-   public enum EvalTableType
-   {
-      SubjectType=1,
-      AutoType=2
-   }
+   //public enum EvalTableType
+   //{
+   //   SubjectType=1,
+   //   AutoType=2
+   //}
 
-   public enum EvalTableStatus
-   {
-      disable = 0,//禁用
-      //ready=1,//量表准备中
-      processing=2,//量表制作中
-      done=3//两表制作完毕
-   }
+   //public enum EvalTableStatus
+   //{
+   //   disable = 0,//禁用
+   //   //ready=1,//量表准备中
+   //   processing=2,//量表制作中
+   //   done=3//两表制作完毕
+   //}
 
 
 

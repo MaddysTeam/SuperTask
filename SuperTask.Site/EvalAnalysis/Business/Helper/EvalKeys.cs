@@ -10,17 +10,10 @@ namespace Business.Helper
    public static class EvalKeys
    {
 
-      public static int SubjectType = (int)EvalTableType.SubjectType;
+      public static Guid SubjectType = Guid.Parse("c0cdc592-885b-4266-bdbc-ab2719bb2c55");
 
-      public static int AutoType = (int)EvalTableType.AutoType;
+      public static Guid AutoType = Guid.Parse("66c5ca5e-8dcf-4c4e-862c-3dc2ac1fa719");
 
-   }
-
-
-   public enum EvalType
-   {
-      SubjectType=1,
-      AutoType=2
    }
 
 }

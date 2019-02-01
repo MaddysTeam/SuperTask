@@ -40,7 +40,7 @@ namespace TheSite.Controllers
 
          var ma = APDBDef.UserInfo.As("M");//负责人
          var cr = APDBDef.UserInfo.As("C"); //创建人
-         var o = APDBDef.Organize;
+        // var o = APDBDef.Organize;
          var p = APDBDef.Project;
          var wj = APDBDef.WorkJournal;
 
@@ -703,7 +703,24 @@ namespace TheSite.Controllers
             builder.Append($" and s.name like '%"+ searchPhrase + "%' or s.project like '%"+ searchPhrase + "%' ");
          }
 
-        
+
+         //排序条件表达式
+
+         if (sort != null)
+         {
+            var according = sort.According == APSqlOrderAccording.Asc ? "Asc" : "Desc";
+
+            switch (sort.ID)
+            {
+               case "name": builder.Append($" order by s.name {according}"); break;
+               case "project": builder.Append($" order by s.project  {according}"); break;
+               case "manager": builder.Append($" order by s.manager  {according}"); break;
+               //case "taskType": builder.Append($" order by s.taskType {according}"); break;
+               case "start": builder.Append($" order by s.start {according}"); break;
+               case "end": builder.Append($" order by s.[end] {according} "); break;
+               default: builder.Append($" order by s.start desc "); break;
+            }
+         }
 
          var result = DapperHelper.QueryBySQL<PlanAndNodeTaskViewModel>(builder.ToString(), new
          {
@@ -723,30 +740,13 @@ namespace TheSite.Controllers
          foreach (var item in result)
          {
             item.status = TaskKeys.GetStatusKeyByValue(item.statusId);
-            item.taskType = TaskKeys.GetTypeKeyByValue(item.taskTypeId);
+            item.taskType =  item.taskTypeId==TaskKeys.NodeTaskType?
+                                                      TaskKeys.TempNodeTaskName : //TODO: 由于不想修改原逻辑，所以暂时把节点任务与一般任务脱离
+                                                      TaskKeys.GetTypeKeyByValue(item.taskTypeId);
             item.isMe = user.UserId == item.managerId;
             item.reviewerIsMe = user.UserId == item.reviewerId;
             item.realEndString = item.realEnd.IsEmpty() ? "-" : item.realEnd.ToString();
          }
-
-         //排序条件表达式
-
-         //if (sort != null)
-         //{
-         //   var according = sort.According == APSqlOrderAccording.Asc ? "Asc" : "Desc";
-            
-         //   switch (sort.ID)
-         //   {
-         //      case "name":
-         //         result.OrderBy()  //builder.Append($" order by s.name {according}"); break;
-         //      case "project": builder.Append($" order by s.project desc {according}"); break;
-         //      case "manager": builder.Append($" order by s.manager desc {according}"); break;
-         //      case "taskTypeId": builder.Append($" order by s.taskTypeId {according}"); break;
-         //      case "start": builder.Append($" order by s.start {according}"); break;
-         //      case "end": builder.Append($" order by s.[end] {according} "); break;
-         //      default: builder.Append($" order by s.start {according} "); break;
-         //   }
-         //}
 
          result = result.Skip(rowCount * (current - 1)).Take(rowCount).ToList();
 

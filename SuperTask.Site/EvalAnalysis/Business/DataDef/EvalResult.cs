@@ -11,7 +11,7 @@ namespace Business
     
       public List<EvalResultItem> Items { get; set; }
 
-      public static List<EvalResult> GetTargetEvalResult(Guid accessorId,Guid accessorRoleId, Guid targetId, Guid targetRoleId,int evalType)
+      public static List<EvalResult> GetTargetEvalResult(Guid accessorId,Guid accessorRoleId, Guid targetId, Guid targetRoleId,Guid evalType)
       {
          var er = APDBDef.EvalResult;
          return EvalResult.ConditionQuery(er.AccesserId == accessorId

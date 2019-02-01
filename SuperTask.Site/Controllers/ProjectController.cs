@@ -47,16 +47,17 @@ namespace TheSite.Controllers
       {
          ThrowNotAjax();
 
-         var o = APDBDef.Organize;
+        // var o = APDBDef.Organize;
          var u = APDBDef.UserInfo;
          var r = APDBDef.Resource;
          var user = GetUserInfo();
 
          var query = APQuery.select(p.ProjectId, p.RealCode, p.ProjectType, p.ProjectExecutor, p.ProjectName, p.RateOfProgress,
-                                    p.ProjectOwner, p.ProjectStatus, p.OrgId, u.UserName.As("managerName"),
-                                    o.Name.As("orgName"))
+                                    p.ProjectOwner, p.ProjectStatus, p.OrgId, u.UserName.As("managerName")
+                                   // o.Name.As("orgName")
+                                    )
             .from(p,
-                  o.JoinLeft(o.ID == p.OrgId),
+                  //o.JoinLeft(o.ID == p.OrgId),
                   u.JoinLeft(u.UserId == p.ManagerId),
                   r.JoinInner((r.Projectid == p.ProjectId & r.UserId == user.UserId))
                   )
@@ -129,7 +130,7 @@ namespace TheSite.Controllers
                pmName = u.UserName.GetValue(rd, "managerName"),
                projectStatus = ProjectKeys.GetStatusKeyById(statusVal),
                orgId = p.OrgId.GetValue(rd),
-               orgName = o.Name.GetValue(rd, "orgName"),
+               //orgName = o.Name.GetValue(rd, "orgName"),
                type = ProjectKeys.GetTypeKeyById(type)
             };
          });
@@ -190,16 +191,18 @@ namespace TheSite.Controllers
          var pu = APDBDef.UserInfo.As("Manager");//项目经理
          var he = APDBDef.UserInfo.As("Header");//项目负责人
          var ru = APDBDef.UserInfo.As("Reviewer");
-         var o = APDBDef.Organize;
+         //var o = APDBDef.Organize;
          var re = APDBDef.Resource;
 
-         var project = APQuery.select(p.Asterisk, he.UserName.As("Header"), cu.UserName, pu.UserName.As("Manager"), ru.UserName.As("ReviewerName"), o.Name.As("OrgName"))
+         var project = APQuery.select(p.Asterisk, he.UserName.As("Header"), cu.UserName, pu.UserName.As("Manager"), ru.UserName.As("ReviewerName")
+            //o.Name.As("OrgName")
+            )
             .from(p,
             cu.JoinLeft(cu.UserId == p.CreatorId),
             pu.JoinLeft(pu.UserId == p.ManagerId),//项目经理
             he.JoinLeft(he.UserId == p.PMId),//项目负责人
-            ru.JoinLeft(ru.UserId == p.ReviewerId),
-            o.JoinLeft(o.ID == p.OrgId)
+            ru.JoinLeft(ru.UserId == p.ReviewerId)
+           // o.JoinLeft(o.ID == p.OrgId)
             )
             .where(p.ProjectId == id)
             .query(db, r =>
@@ -208,7 +211,7 @@ namespace TheSite.Controllers
                p.Fullup(r, proj, false);
 
                proj.Creator = cu.UserName.GetValue(r);
-               proj.OrgName = o.Name.GetValue(r, "OrgName");
+              // proj.OrgName = o.Name.GetValue(r, "OrgName");
                proj.Reviewer = ru.UserName.GetValue(r, "ReviewerName");
                proj.Manager = pu.UserName.GetValue(r, "Manager");
                proj.Header = he.UserName.GetValue(r, "Header");

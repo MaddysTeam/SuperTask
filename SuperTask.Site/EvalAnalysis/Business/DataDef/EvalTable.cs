@@ -46,15 +46,15 @@ namespace Business
       {
          AccessorRoles = new List<Role>();
 
-         if (!string.IsNullOrEmpty(AccessorRoleIds))
-         {
-            AccessorRoleIds.Split(',').ToList().ForEach(ro =>
-            {
-               var role = roles.Find(x => x.RoleId == ro.ToGuid(Guid.Empty));
-               if (role != null)
-                  AccessorRoles.Add(role);
-            });
-         }
+         //if (!string.IsNullOrEmpty(AccessorRoleIds))
+         //{
+         //   AccessorRoleIds.Split(',').ToList().ForEach(ro =>
+         //   {
+         //      var role = roles.Find(x => x.RoleId == ro.ToGuid(Guid.Empty));
+         //      if (role != null)
+         //         AccessorRoles.Add(role);
+         //   });
+         //}
       }
 
       public bool IsInUse()
