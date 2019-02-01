@@ -600,7 +600,7 @@ namespace TheSite.Controllers
       }
 
       [HttpPost]
-      public ActionResult PlanTaskList(Guid projectId, Guid resourceId, DateTime start, DateTime end,
+      public ActionResult PlanTaskList(Guid projectId, Guid resourceId, DateTime start, DateTime end, Guid taskTypeId,
                                       int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
          var user = GetUserInfo();
@@ -641,7 +641,7 @@ namespace TheSite.Controllers
                    join UserInfo u on t.ManagerId=u.ID
                    join Project p on t.ProjectId= p.ID
                    where t.Type = @PlanTaskType
-                   and t.managerId= @ManagerId
+                   --and t.managerId= @ManagerId
 
                    union all
 
@@ -663,7 +663,7 @@ namespace TheSite.Controllers
                    from ProjectStoneTask t
                    join UserInfo u on t.managerId=u.ID
                    join Project p on t.ProjectId= p.ID
-                   where t.managerId=@ManagerId
+                   --where t.managerId=@ManagerId
                   )
                   s
                   where s.start>= @StartDate and s.[end] <=@EndDate
@@ -673,18 +673,37 @@ namespace TheSite.Controllers
 
          if (!projectId.IsEmpty() && projectId != AppKeys.SelectAll)
          {
-            builder.Append($" and  s.projectId = @ProjectId'");
+            builder.Append($" and  s.projectId = @ProjectId ");
+         }
+
+         if (!taskTypeId.IsEmpty() && taskTypeId != AppKeys.SelectAll)
+         {
+            builder.Append($" and  s.taskTypeId = @TaskTypeId ");
          }
 
          // 如果是易佳,则可以查看所有项目经理的计划和节点任务
          if (user.UserId == ResourceKeys.TempBossId)
          {
             builder.Append($" and  s.statusId <> @PlanStatusId ");
+
+            if (!resourceId.IsEmpty() && resourceId != TaskKeys.SelectAll)
+               builder.Append($" and  s.ManagerId= @ResouceId ");
          }
          else
          {
-            builder.Append($" and  s.ManagerId= @ManagerId");
+            builder.Append($" and  s.ManagerId= @ManagerId ");
          }
+   
+         //过滤条件
+         //模糊搜索用户名、实名进行
+
+         searchPhrase = searchPhrase.Trim();
+         if (searchPhrase != "")
+         {
+            builder.Append($" and s.name like '%"+ searchPhrase + "%' or s.project like '%"+ searchPhrase + "%' ");
+         }
+
+        
 
          var result = DapperHelper.QueryBySQL<PlanAndNodeTaskViewModel>(builder.ToString(), new
          {
@@ -694,7 +713,9 @@ namespace TheSite.Controllers
             PlanTaskType = TaskKeys.PlanTaskTaskType,
             NodeTaskType = TaskKeys.NodeTaskType,
             ProjectId = projectId,
-            PlanStatusId = TaskKeys.PlanStatus
+            PlanStatusId = TaskKeys.PlanStatus,
+            ResouceId = resourceId,
+            TaskTypeId = taskTypeId
          });
 
          var total = result.Count;
@@ -707,109 +728,27 @@ namespace TheSite.Controllers
             item.reviewerIsMe = user.UserId == item.reviewerId;
             item.realEndString = item.realEnd.IsEmpty() ? "-" : item.realEnd.ToString();
          }
-         // var result = DapperHelper.QueryBySQL<>(sql, new { StartDate = start, EndDate = end });
 
-         //var user = GetUserInfo();
-         //var u = APDBDef.UserInfo;
-         //var ru = APDBDef.UserInfo.As("reu");
-         //var re = APDBDef.Resource;
-         //var p = APDBDef.Project;
-
-         //var subQuery = APQuery.select(re.UserId).from(re, p.JoinInner(re.Projectid == p.ProjectId & (p.ManagerId == user.UserId | p.PMId == user.UserId)));
-         //var query = APQuery.select(t.TaskId, t.TaskName, t.StartDate, t.EndDate, t.ReviewerID, t.EstimateWorkHours, t.TaskStatus, t.IsParent, t.ManagerId, t.RealEndDate,
-         //                           p.ProjectName.As("projectName"), u.UserName.As("userName"), u.UserId.As("userId"),
-         //                           ru.UserName.As("receiver"), ru.UserId
-         //                          )
-         //                         .from(t,
-         //                               u.JoinInner(u.UserId == t.ManagerId),
-         //                               p.JoinInner(p.ProjectId == t.Projectid),
-         //                               ru.JoinLeft(t.ReviewerID == ru.UserId)
-         //                               );
-
-         //if (user.UserId == ResourceKeys.TempBossId2) //TODO: fucked jiwei !
-         //{
-         //   query = query.where(t.TaskType == TaskKeys.PlanTaskTaskType
-         //                             & t.StartDate >= start & t.EndDate <= end)
-         //                         .order_by(t.ManagerId.Asc, t.StartDate.Desc, t.EndDate.Desc);
-         //}
-         //else {
-         //   query = query.where(t.TaskType == TaskKeys.PlanTaskTaskType & t.ManagerId.In(subQuery)
-         //        & t.StartDate >= start & t.EndDate <= end)
-         //    .order_by(t.ManagerId.Asc, t.StartDate.Desc, t.EndDate.Desc);
-         //}
-
-         //if (!projectId.IsEmpty() && projectId != AppKeys.SelectAll)
-         //   query.where_and(t.Projectid == projectId);
-
-         //if (!resourceId.IsEmpty() && resourceId != AppKeys.SelectAll)
-         //   query.where_and(t.ManagerId == resourceId);
-
-         ////TODO:懒得改，如果是领导角色只显示执行中的计划任务
-         //if (user.UserId == ResourceKeys.TempBossId)
-         //   query.where_and(t.TaskStatus != TaskKeys.PlanStatus);
-
-         //query = query.primary(t.TaskId)
-         //             .skip(rowCount * (current - 1))
-         //             .take(rowCount);
-
-
-         ////过滤条件
-         ////模糊搜索用户名、实名进行
-
-         //searchPhrase = searchPhrase.Trim();
-         //if (searchPhrase != "")
-         //{
-         //   query.where_and(t.TaskName.Match(searchPhrase) |
-         //      p.ProjectName.Match(searchPhrase) |
-         //      u.UserName.Match(searchPhrase) |
-         //      ru.UserName.Match(searchPhrase)
-         //      );
-         //}
-
-
-         ////排序条件表达式
+         //排序条件表达式
 
          //if (sort != null)
          //{
+         //   var according = sort.According == APSqlOrderAccording.Asc ? "Asc" : "Desc";
+            
          //   switch (sort.ID)
          //   {
-         //      case "project": query.order_by(sort.OrderBy(p.ProjectName)); break;
-         //      case "task": query.order_by(sort.OrderBy(t.TaskName)); break;
-         //      case "manager": query.order_by(sort.OrderBy(u.UserName)); break;
-         //      case "start": query.order_by(sort.OrderBy(t.StartDate)); break;
-         //      case "end": query.order_by(sort.OrderBy(t.EndDate)); break;
-         //      case "status": query.order_by(sort.OrderBy(t.TaskStatus)); break;
-         //      case "reviewer": query.order_by(sort.OrderBy(ru.UserName)); break;
+         //      case "name":
+         //         result.OrderBy()  //builder.Append($" order by s.name {according}"); break;
+         //      case "project": builder.Append($" order by s.project desc {according}"); break;
+         //      case "manager": builder.Append($" order by s.manager desc {according}"); break;
+         //      case "taskTypeId": builder.Append($" order by s.taskTypeId {according}"); break;
+         //      case "start": builder.Append($" order by s.start {according}"); break;
+         //      case "end": builder.Append($" order by s.[end] {according} "); break;
+         //      default: builder.Append($" order by s.start {according} "); break;
          //   }
          //}
 
-         //var total = db.ExecuteSizeOfSelect(query);
-
-         //var result = query.query(db, rd =>
-         //{
-         //   var userId = u.UserId.GetValue(rd, "userId");
-         //   var reviewerId = t.ReviewerID.GetValue(rd);
-         //   var statusId = t.TaskStatus.GetValue(rd);
-         //   var realEnd = t.RealEndDate.GetValue(rd);
-         //   return new
-         //   {
-         //      id = t.TaskId.GetValue(rd),
-         //      task = t.TaskName.GetValue(rd),
-         //      statusId = statusId,
-         //      status = TaskKeys.GetStatusKeyByValue(statusId),
-         //      project = p.ProjectName.GetValue(rd, "projectName"),
-         //      start = t.StartDate.GetValue(rd),
-         //      end = t.EndDate.GetValue(rd),
-         //      manager = u.UserName.GetValue(rd),
-         //      managerId = userId,
-         //      isParent = t.IsParent.GetValue(rd),
-         //      isMe = userId == user.UserId,
-         //      reviewerId = reviewerId,
-         //      reviewer = ru.UserName.GetValue(rd, "receiver"),
-         //      reviewerIsMe = reviewerId == user.UserId,
-         //      realEnd = realEnd.IsEmpty() ? "无" : realEnd.ToString()
-         //   };
-         //}).ToList();
+         result = result.Skip(rowCount * (current - 1)).Take(rowCount).ToList();
 
          return Json(new
          {

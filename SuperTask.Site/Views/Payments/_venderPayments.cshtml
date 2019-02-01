@@ -1,5 +1,9 @@
 ﻿@model Payments
-<div class="row form-group @Model.PayId" >
+@{
+	var project = ViewData["project"] as Project;
+	var canEdit = project.IsPlanStatus || project.IsEditStatus;
+}
+<div class="row form-group @Model.PayId">
 	@Html.HiddenFor(p => p.PayId, new { @class = "payId" })
 	@Html.HiddenFor(p => p.ProjectId, new { @class = "projectId" })
 	@Html.HiddenFor(p => p.PayType, new { @class = "payType" })
@@ -10,7 +14,14 @@
 	@if (Model.ParentId.IsEmpty())
 	{
 		<div class="col-md-1 col-md-offset-1">@Html.Label("名称", new { @class = "control-label" })</div>
-		<div class="col-md-2">@Html.TextBoxFor(p => p.PayName, new { @class = "form-control payName" })</div>
+		if (canEdit)
+		{
+			<div class="col-md-2">@Html.TextBoxFor(p => p.PayName, new { @class = "form-control payName" })</div>
+		}
+		else
+		{
+			<div class="col-md-2">@Html.Label("", Model.PayName, new { @class = "form-control" })</div>
+		}
 	}
 	else
 	{
@@ -22,17 +33,27 @@
 	<div class="col-md-1">@Html.TextBoxFor(p => p.Money, new { @class = "form-control money" })</div>
 	<div class="col-md-1">@Html.LabelFor(p => p.PayDate, new { @class = "control-label" })</div>
 	<div class="col-md-2">
-		<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-			@Html.TextBoxFor(p => p.PayDate, "{0:yyyy-MM-dd}", new { @class = "form-control payDate", @hasValue = Model != null && Model.PayDate != DateTime.MinValue })
-			<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-		</div>
+		@if (canEdit)
+		{
+			<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+				@Html.TextBoxFor(p => p.PayDate, "{0:yyyy-MM-dd}", new { @class = "form-control payDate", @hasValue = Model != null && Model.PayDate != DateTime.MinValue })
+				<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+			</div>
+		}
+		else
+		{
+			@Html.Label("", Model.PayDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
+		}
 	</div>
 	<div class="col-md-2">
-		<a class="btn btn-pay" title="保存"><i class="fa fa-save"></i></a>
-		@if (!Model.PayId.IsEmpty() && Model.ParentId.IsEmpty())
+		@if (canEdit)
 		{
-			<a class="btn btn-addMoney btn-addVender" data-id="@Model.PayId" data-parentId="@Model.ParentId"><font color="#3c763d"><i class="fa fa-plus-circle"></i></font></a>
+			<a class="btn btn-pay" title="保存"><i class="fa fa-save"></i></a>
+			if (!Model.PayId.IsEmpty() && Model.ParentId.IsEmpty())
+			{
+				<a class="btn btn-addMoney btn-addVender" data-id="@Model.PayId" data-parentId="@Model.ParentId"><font color="#3c763d"><i class="fa fa-plus-circle"></i></font></a>
+			}
+			<a class="btn btn-removePay"> <font color="red"><i class="fa fa-minus-circle"></i></font></a>
 		}
-		<a class="btn btn-removePay"> <font color="red"><i class="fa fa-minus-circle"></i></font></a>
 	</div>
 </div>

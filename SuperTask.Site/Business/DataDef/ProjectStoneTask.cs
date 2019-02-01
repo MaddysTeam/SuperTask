@@ -7,6 +7,9 @@ namespace Business
 
    public partial class ProjectStoneTask
    {
+
+      public Attachment CurrentAttachment { get; set; }
+
       public Result Valiedate()
       {
          if (ProjectId.IsEmpty())

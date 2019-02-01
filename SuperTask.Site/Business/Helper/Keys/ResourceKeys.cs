@@ -7,6 +7,7 @@ namespace Business
    {
 
       public static Guid TempBossId = Guid.Parse("D1E6E02A-40FF-4F5A-80C3-24710996B9AE"); //TODO:懒得关联，先写死 易佳
+      public static string TempBoss = "易佳";
 
       public static Guid TempBossId2 = Guid.Parse("47682BDF-9987-4281-9F3F-BDBA4CCA8F2C"); //TODO:懒得关联，先写死 季炜
 

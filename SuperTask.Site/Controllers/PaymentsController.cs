@@ -54,7 +54,7 @@ namespace TheSite.Controllers
               DateTime.Now,
               TaskKeys.NodeTaskType,
               project.ManagerId,
-              project.ReviewerId
+              project.ReviewerId 
               ));
          }
 
@@ -129,6 +129,8 @@ namespace TheSite.Controllers
 
          db.PaymentsDal.Insert(payment);
 
+         ViewData["project"] = ProjectrHelper.GetCurrentProject(projectId);
+
          return PartialView("_venderPayments", payment);
       }
 
@@ -138,7 +140,7 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult Details(Guid projectId, string tabId)
       {
-         ViewBag.Project = db.ProjectDal.PrimaryGet(projectId);
+         ViewData["project"] = ProjectrHelper.GetCurrentProject(projectId);
          ViewBag.TabId = tabId;
 
          return PartialView("Details", PaymentsHelper.GetProjectPayments(projectId, db));

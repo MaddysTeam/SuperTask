@@ -1,27 +1,40 @@
 ﻿@model Payments
+@{
+	var project = ViewData["project"] as Project;
+	var canEdit = project.IsPlanStatus || project.IsEditStatus;
+}
 <div class="row form-group">
 	@Html.HiddenFor(p => p.PayId, new { @class = "payId" })
 	@Html.HiddenFor(p => p.ProjectId, new { @class = "projectId" })
 	@Html.HiddenFor(p => p.PayName, new { @class = "payName" })
 	@Html.HiddenFor(p => p.ResourceId, new { @class = "payName" })
 	@Html.HiddenFor(p => p.Sort, new { @class = "sort" })
-
 	<div class="col-md-1 col-md-offset-1">@Html.Label(Model.PayName, new { @class = "control-label" })</div>
-	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId" value="@PaymentsKeys.BondType"       @(Model.PayType==@PaymentsKeys.BondType? "checked":"")/>保证金 @Html.TextBoxFor(p => p.Money, new { @class = "form-control money" })</div>
-	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId"  value="@PaymentsKeys.GuaranteeType" @(Model.PayType==@PaymentsKeys.GuaranteeType? "checked":"")/>保函</div>
-	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId"  value="@PaymentsKeys.NothingType"   @(Model.PayType==@PaymentsKeys.NothingType? "checked":"")/>无</div>
+	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId" value="@PaymentsKeys.BondType" @(Model.PayType == @PaymentsKeys.BondType ? "checked" : "") />保证金 @Html.TextBoxFor(p => p.Money, new { @class = "form-control money" })</div>
+	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId" value="@PaymentsKeys.GuaranteeType" @(Model.PayType == @PaymentsKeys.GuaranteeType ? "checked" : "") />保函</div>
+	<div class="col-md-1"><input type="radio" name="resource_@Model.ResourceId" class="resource_@Model.ResourceId" value="@PaymentsKeys.NothingType" @(Model.PayType == @PaymentsKeys.NothingType ? "checked" : "") />无</div>
 	<div class="col-md-1">预计回收时间:</div>
 	<div class="col-md-3">
-		<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-			@Html.TextBoxFor(p => p.PayDate, "{0:yyyy-MM-dd}", new { @class = "form-control payDate", @hasValue = Model.PayDate != DateTime.MinValue })
-			<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-		</div>
+		@if (canEdit)
+		{
+			<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+				@Html.TextBoxFor(p => p.PayDate, "{0:yyyy-MM-dd}", new { @class = "form-control payDate", @hasValue = Model.PayDate != DateTime.MinValue })
+				<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+			</div>
+		}
+		else
+		{
+			@Html.Label("", Model.PayDate.ToString("yyyy-MM-dd"), new { @class = "control-label" })
+		}
 	</div>
 	<div class="col-md-2">
-		<a class="btn-pay" title="保存"><i class="fa fa-save"></i></a>
-		@if (Model.Valiedate().IsSuccess)
+		@if (canEdit)
 		{
-			<a class="btn btn-clear" title="清除并删除节点任务"> <font color="red"><i class="fa fa-times-circle-o"></i></font></a>
+			<a class="btn-pay" title="保存"><i class="fa fa-save"></i></a>
+			if (Model.Valiedate().IsSuccess)
+			{
+				<a class="btn btn-clear" title="清除并删除节点任务"> <font color="red"><i class="fa fa-times-circle-o"></i></font></a>
+			}
 		}
 	</div>
 </div>

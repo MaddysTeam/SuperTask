@@ -1,9 +1,15 @@
 ﻿@{
-	Layout = "~/Views/Shared/_StudioLayout.cshtml";
-	var pageTitle = ViewBag.Title = "计划任务列表";
-	var defaultItem = new SelectListItem { Text = "全部", Value = TaskKeys.SelectAll.ToString() };
-	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId", null, defaultItem);
-	var resourceSelectList = SelectListHelper.GetSelectItems(ViewBag.Resources as List<Account>, "UserName", "UserId", null, defaultItem);
+		Layout = "~/Views/Shared/_StudioLayout.cshtml";
+		var pageTitle = ViewBag.Title = "计划任务列表";
+		var defaultItem = new SelectListItem { Text = "全部", Value = TaskKeys.SelectAll.ToString() };
+		var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId", null, defaultItem);
+		var resourceSelectList = SelectListHelper.GetSelectItems(ViewBag.Resources as List<Account>, "UserName", "UserId", null, defaultItem);
+		var taskTypeList = new List<SelectListItem>
+	{
+		defaultItem,
+		new SelectListItem { Text = "节点任务", Value = TaskKeys.NodeTaskType.ToString() },
+		new SelectListItem { Text = "计划任务", Value = TaskKeys.PlanTaskTaskType.ToString() }
+	};
 }
 @section Css{
 	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
@@ -30,20 +36,32 @@
 							<div class="FormGroup">
 								<label class="col-md-4 control-label">项目名称</label>
 								<div class="col-md-7">
-									@Html.DropDownList("dpProjects", projectsSelectList, new { @class = "form-control dropdown-myProjects" })
+									@Html.DropDownList("Projects", projectsSelectList, new { @class = "form-control dropdown-myProjects" })
 								</div>
 							</div>
 						</div>
 
 					</div>
 
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<div class="FormGroup">
+								<label class="col-md-4 control-label">任务类型</label>
+								<div class="col-md-7">
+									@Html.DropDownList("TaskType", taskTypeList, new { @class = "form-control dropdown-myProjects" })
+								</div>
+							</div>
+						</div>
+					</div>
+
+	
 					<!-- 项目经理筛选下拉框 -->
 					<div class="col-sm-4">
 						<div class="form-horizontal">
 							<div class="FormGroup">
 								<label class="col-md-4 control-label">任务负责人</label>
 								<div class="col-md-7">
-									@Html.DropDownList("dpResources", resourceSelectList, new { @class = "form-control dropdown-resources" })
+									@Html.DropDownList("Resources", resourceSelectList, new { @class = "form-control dropdown-resources" })
 								</div>
 							</div>
 						</div>
@@ -119,12 +137,14 @@
 
 @section Scripts {
 	<script>
+
 		function getGlobalRequest() {
 			return {
-				projectId: $('.dropdown-myProjects').val(),
-				resourceId: $('.dropdown-resources').val(),
-				start: $('.startDate').val(),
-				end: $('.endDate').val(),
+				projectId: $('#Projects').val(),
+				resourceId: $('#Resources').val(),
+				start: $('#Start').val(),
+				end: $('#End').val(),
+				taskTypeId: $('#TaskType').val()
 			};
 		}
 
@@ -143,14 +163,14 @@
 						var buttons = '<div class="btn-group btn-group-xs pull-right" data-row-id="' + id + '">';
 						var isPlan = row.taskTypeId == '@TaskKeys.PlanTaskTaskType';
 
-						var editUrl = isPlan ? '@Url.Action("PlanTaskEdit", "Task")' : '@Url.Action("Edit", "ProjectStoneTask")';
-						var startUrl = isPlan ? '@Url.Action("PlanTaskStart", "Task")' : '@Url.Action("Start", "ProjectStoneTask")';
-						var editReqeustUrl = isPlan ? '@Url.Action("ReviewRequest", "Task")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForTkChanged' :
-							                           '@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForStoneTaskChanged';
+						var editUrl = isPlan ? '@Url.Action("PlanTaskEdit", "Task")' : '@Url.Action("Edit", "ProjectStoneTask")';  //post
+						var startUrl = isPlan ? '@Url.Action("PlanTaskStart", "Task")' : '@Url.Action("Start", "ProjectStoneTask")'; //post
+						var editReqeustUrl = isPlan ? '@Url.Action("ReviewRequest", "Task")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForTkChanged' : //get
+							                           '@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForStoneTaskChanged';  //get
 						var submitReqeustUrl = isPlan ? '@Url.Action("ReviewRequest", "Task")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForTkSubmit' :
-							                           '@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForStoneTaskSubmit';
+							                           '@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForStoneTaskSubmit';  //get
 
-						var denyUrl = isPlan ? '@Url.Action("PlanTaskDeny", "Task")' : '@Url.Action("Deny", "ProjectStoneTask")';
+						var denyUrl = isPlan ? '@Url.Action("PlanTaskDeny", "Task")?id=' + id  : '@Url.Action("Deny", "ProjectStoneTask")?id=' + id ; // post 
 						var reviewUrl = '@Url.Action("Search", "WorkFlowTask")';
 
 						if (isMe && row.statusId == '@TaskKeys.PlanStatus') {
@@ -175,7 +195,7 @@
 							buttons += '<button class="btn btn-lg btn-info btn-review" data-url="' + reviewUrl + '">去审核</button>';
 						}
 						else if (!isMe) {
-							buttons += '<button class="btn btn-lg btn-success btn-view">查看详细</button>';
+							buttons += '<button class="btn btn-lg btn-success btn-view" data-url="' + editUrl + '">查看详细</button>';
 						}
 
 						buttons += '</div>';
@@ -189,7 +209,7 @@
 
 		$(function () {
 
-			$('.dropdown-myProjects,.dropdown-resources,.startDate,.endDate').change(function () {
+			$('#Projects,#Resources,#Start,#End,#TaskType').change(function () {
 				$('#bootgrid').bootgrid('reload');
 			});
 
@@ -239,25 +259,23 @@
 						return false;
 				});
 
-				@*grid.find('.btn-review').on('click', function (e) {
-					var rowId = $(this).parent().data('rowId');
-					var url = reviewUrl + '?taskId=' + rowId;
+				grid.find('.btn-review').on('click', function (e) {
+					var url = $(this).data('url');
+					//var url = reviewUrl + '?taskId=' + rowId;
 
 					window.open(url);
 				});
 
 				grid.find('.btn-deny').on('click', function (e) {
-					var rowId = $(this).parent().data('rowId');
-					var url = denyUrl + '?taskId=' + rowId;
-
-					$.post(url, { taskId: rowId }, function (data) {
+					var url = $(this).data('url');
+					$.post(url, function (data) {
 						popupMessage(data, {
 							success: function () {
 								$('#bootgrid').bootgrid('reload');
 							}
 						});
 					});
-				});*@
+				});
 
 			});
 

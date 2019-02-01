@@ -18,11 +18,6 @@ namespace TheSite.Controllers
 
       public ActionResult InitialDictionary()
       {
-         // InitialTaskType();
-         //InitialEval();
-
-         InitialProjectMileStone();
-
          return View();
       }
 
@@ -223,7 +218,7 @@ namespace TheSite.Controllers
 
       public void InitialTaskType()
       {
-        var taskTypeId = TaskKeys.TypeGuid;
+         var taskTypeId = TaskKeys.TypeGuid;
          var projectTaskTypeId = TaskKeys.ProjectTaskType;
          var tempTaskTypeId = TaskKeys.TempTaskType;
          var documentTaskTypeId = TaskKeys.DocumentTaskType;
@@ -274,8 +269,8 @@ namespace TheSite.Controllers
          var st16 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "导入数据整理（复杂）", "5", "Y23", "5'/个", "个", 4);
          var st17 = new Dictionary(Guid.NewGuid(), maintanceTaskTypeId, "课程视频审核", "2", "Y24", "2'/个", "个", 4);
 
-         var st18= new Dictionary(Guid.NewGuid(), manageTaskTypeId, "会务组织及支持（主持）", "1", "G08", "1'/小时", "小时", 4);
-         var st19= new Dictionary(Guid.NewGuid(), manageTaskTypeId, "会务组织及支持（参与）", "0.5", "G09", "0.5'/小时", "小时", 4);
+         var st18 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "会务组织及支持（主持）", "1", "G08", "1'/小时", "小时", 4);
+         var st19 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "会务组织及支持（参与）", "0.5", "G09", "0.5'/小时", "小时", 4);
          var st20 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "活动现场采风", "3", "G10", "3'/次", "次", 4);
          var st21 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "客户拜访洽谈", "3", "G11", "3'/次", "次", 4);
          var st22 = new Dictionary(Guid.NewGuid(), manageTaskTypeId, "应标谈判", "3", "G12", "3'/次", "次", 4);
@@ -440,74 +435,25 @@ namespace TheSite.Controllers
 
       public void InitialProjectMileStone()
       {
-         //MilestoneHelper.AddProjectMileStone(Guid.Parse("D0ADE72B-C831-4619-9A48-CF457F357BC1"), Guid.Parse("F11DB3FC-0954-4C76-A2F7-D04F1BCCD4A9"), Guid.Parse("336BE3BF-4DCF-4DCB-8C4E-2BE48A1BD03D"), db);
+         var projects = Project.GetAll();
+         var db = new APDBDef();
+
+         foreach (var item in projects)
+         {
+            MilestoneHelper.AddDefaultMileStones(item, db);
+         }
       }
 
-      // private List<Guid> ProjectRoles => RoleMapping.Select(x => x.Value.ToGuid(Guid.Empty)).ToList();
+      public void InitialProjectPayments()
+      {
+         var projects = Project.GetAll();
+         var db = new APDBDef();
 
-
-      //private Dictionary<int, string> RoleMapping = new Dictionary<int, string>
-      //{
-      //  {1,"D832C25C-B4A2-40B6-8D25-28B1A54D2855" },
-      //  {2,"E4CE70F5-E2FB-4E26-9FE2-5712DC6C0F19" },
-      //  {3,"75FDECAD-434E-40F7-943E-1B46AC9B8DF8" },
-      //  {4,"B72E4531-DDAD-4ADE-A9FC-F6D61275952C" },
-      //  {5,"7C83D402-4D02-4975-B894-5AED20F04847" },
-      //  {6,"F2810545-D8DA-4B0C-A9AC-062AC3542791" },
-      //  {7,"4FDB1AEC-0B46-403E-B434-D471E508F18F" },
-      //  {8,"895CBEF0-B7C5-48C4-A0B7-58D63547088B" },
-      //  {9,"BA7D6C28-1D3E-459E-96A0-3D34BC2BF710" },
-      //  {10,"40952B32-0521-4072-9AC4-14C69A7A482F" },
-      //};
-
-      //private Dictionary<string, Project> _projects = new Dictionary<string, Project>
-      //{
-      //   {"LX201410821",new Project { ProjectId=Guid.NewGuid(),Code="LX201410821", ProjectName="电教馆学生学籍注册系统",ProjectOwner="电教馆", ProjectExecutor="电达" } },
-      //   {"LX201510301",new Project { ProjectId=Guid.NewGuid(),Code="LX201510301", ProjectName="上海市长宁区教育信息中心服务器设备租赁协议",ProjectOwner="长宁教育学院", ProjectExecutor="电达"  } },
-      //   {"LX201510305",new Project { ProjectId=Guid.NewGuid(),Code="LX201510305", ProjectName="不间断电源设备租赁",ProjectOwner="教研室" , ProjectExecutor="电达" } },
-      //   {"LX201510313",new Project { ProjectId=Guid.NewGuid(),Code="LX201510313", ProjectName="上海市教委教研室平板电脑租赁",ProjectOwner="教研室", ProjectExecutor="电达"  } },
-      //   {"LX201510323",new Project { ProjectId=Guid.NewGuid(),Code="LX201510323", ProjectName="上海教育丛书编委会平板电脑租赁",ProjectOwner="上海市中小学幼儿教师奖励基金会" , ProjectExecutor="电达" } },
-      //   {"LX201510326",new Project { ProjectId=Guid.NewGuid(),Code="LX201510326", ProjectName="上海市普通高中学生综合素质评价信息管理平台（一期）建设",ProjectOwner="电教馆" , ProjectExecutor="电达" } },
-      //   {"LX201510329",new Project { ProjectId=Guid.NewGuid(),Code="LX201510329", ProjectName="上海市教委教研室iPad Air2平板电脑租赁服务",ProjectOwner="教研室"  , ProjectExecutor="电达"} },
-      //   {"LX201510608",new Project { ProjectId=Guid.NewGuid(),Code="LX201510608", ProjectName="上海市电化教育馆基础教育统一身份认证服务平台建设",ProjectOwner="电教馆", ProjectExecutor="电达"  } },
-      //   {"LXJR201510601",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201510601", ProjectName="上海市教育学会 台式一体机打印机笔记本电脑设备租赁",ProjectOwner="上海市教育学会" ,ProjectExecutor="教软"  } },
-      //   {"LXJR201510602",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201510602", ProjectName="上海市教育委员会教学研究室网络设备租赁（2015-2020）",ProjectOwner="教研室" ,ProjectExecutor="教软"  } },
-      //   {"LX201510609",new Project { ProjectId=Guid.NewGuid(),Code="LX201510609", ProjectName="上海市中小学专题教育网络平台升级改造及支持服务",ProjectOwner="电教馆" ,ProjectExecutor="电达" } },
-      //   {"LXJR201510604",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201510604", ProjectName="乒乓球训练自适应学习和评分系统",ProjectOwner="上海市电化教育馆"  ,ProjectExecutor="教软"} },
-      //   {"LXJR201510606",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201510606", ProjectName="上海市长宁区教育学院日志服务器租赁服务（2016年-2020年）",ProjectOwner="长宁区教育学院"  ,ProjectExecutor="教软"} },
-      //   {"LXJR201510611",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201510611", ProjectName="上海市教育委员会教学研究室惠普扫描仪工作站租赁服务",ProjectOwner="教研室" ,ProjectExecutor="教软" } },
-      //   {"LXJR201610602",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610602", ProjectName="上海市教委教研室信息化建设笔记本电脑租赁服务（2016年-2019年）",ProjectOwner="教研室" ,ProjectExecutor="教软" } },
-      //   {"LX201610601",new Project { ProjectId=Guid.NewGuid(),Code="LX201610601", ProjectName="上海市普通高中学生综合素质评价信息管理系统运营支持服务",ProjectOwner="电教馆"  ,ProjectExecutor="电达"} },
-      //   {"LX201610602",new Project { ProjectId=Guid.NewGuid(),Code="LX201610602", ProjectName="上海市特教信息化公共服务平台功能升级及运维服务",ProjectOwner="电教馆"  ,ProjectExecutor="电达"} },
-      //   {"LXJR201610604",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610604", ProjectName="上海教委教研室信息化建设网络运维服务（2016年-2019年）",ProjectOwner="教研室"  ,ProjectExecutor="教软"} },
-      //   {"LXJR201610607",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610607", ProjectName="上海市教育委员会教学研究室打印机设备租赁（2016年-2019年）",ProjectOwner="教研室" ,ProjectExecutor="教软" } },
-      //   {"LX201610606",new Project { ProjectId=Guid.NewGuid(),Code="LX201610606", ProjectName="虹口区中小学生信息管理平台 ",ProjectOwner="虹口区教育局"  ,ProjectExecutor="电达"} },
-      //   {"LX201610607",new Project { ProjectId=Guid.NewGuid(),Code="LX201610607", ProjectName="虹口区教师专业人才梯队建设管理平台二期",ProjectOwner="上海市虹口区教育校产基建管理站"  ,ProjectExecutor="电达"} },
-      //   {"LXJR201610611",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610611", ProjectName="长三角优质教育资源网升级及运维服务",ProjectOwner="电教馆"  ,ProjectExecutor="教软"} },
-      //   {"LX201610610",new Project { ProjectId=Guid.NewGuid(),Code="LX201610610", ProjectName="上海市义务教育入学报名系统一站式服务",ProjectOwner="电教馆"  ,ProjectExecutor="电达"} },
-      //   {"LX201610611",new Project { ProjectId=Guid.NewGuid(),Code="LX201610611", ProjectName="学科德育数字化资源再加工服务",ProjectOwner="电教馆"  ,ProjectExecutor="电达"} },
-      //   {"LXJR201610618",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610618", ProjectName="学生成长数据汇聚平台",ProjectOwner="电教馆"  ,ProjectExecutor="教软"} },
-      //   {"LXJR201610612",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610612", ProjectName="教研室专项会议支持（数学教育改革经验总结交流会及教学评价推进)",ProjectOwner="教研室" ,ProjectExecutor="教软" } },
-      //   {"LXJR201610619",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610619", ProjectName="上海市普通高中学生综合素质评价信息管理系统综合门户",ProjectOwner="电教馆" ,ProjectExecutor="教软" } },
-      //   {"LX201610614",new Project { ProjectId=Guid.NewGuid(),Code="LX201610614", ProjectName="上海市普通高中学生综合素质评价信息管理系统呼叫中心客户服务支持",ProjectOwner="电教馆"  ,ProjectExecutor="电达"} },
-      //   {"LXJR201610620",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610620", ProjectName="上海市中小幼教师信息技术应用能力提升工程全员培训支持服务采购需求",ProjectOwner="电教馆"  ,ProjectExecutor="教软"} },
-      //   {"LXJR201610613",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610613", ProjectName="上海市宝山区行知实验幼儿园网站系统建设",ProjectOwner="上海市宝山区行知实验幼儿园" ,ProjectExecutor="教软" } },
-      //   {"LXJR201610614",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610614", ProjectName="教研室DHCP服务器及File存储设备租赁服务",ProjectOwner="教研室"  ,ProjectExecutor="教软"} },
-      //   {"LXJR201610615",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610615", ProjectName="教研室网络环境及服务器设备运行情况展示服务",ProjectOwner="教研室"  ,ProjectExecutor="教软"} },
-      //   {"LX201610615",new Project { ProjectId=Guid.NewGuid(),Code="LX201610615", ProjectName="教研室网络环境及服务器设备运行情况展示服务",ProjectOwner="教研室"  ,ProjectExecutor="电达"} },
-      //   {"LX201610616",new Project { ProjectId=Guid.NewGuid(),Code="LX201610616", ProjectName="2017年中小学生学籍业务运营综合支持服务",ProjectOwner="电教馆"  ,ProjectExecutor="电达"} },
-      //   {"LX201610617",new Project { ProjectId=Guid.NewGuid(),Code="LX201610617", ProjectName="综评系统高校管理平台及高校信息化平台对接服务",ProjectOwner="电教馆"  ,ProjectExecutor="电达"} },
-      //   {"LX201610618",new Project { ProjectId=Guid.NewGuid(),Code="LX201610618", ProjectName="上海市普通高中学生综合素质评价信息管理系统（二期）",ProjectOwner="电教馆" ,ProjectExecutor="电达" } },
-      //   {"LX201610619",new Project { ProjectId=Guid.NewGuid(),Code="LX201610619", ProjectName="义务教育招生业务数据监控及运营综合支持服务",ProjectOwner="电教馆"  ,ProjectExecutor="电达"} },
-      //   {"LX201610620",new Project { ProjectId=Guid.NewGuid(),Code="LX201610620", ProjectName="上海市义务教育入学报名业务监控服务和移动应用开发",ProjectOwner="电教馆"  ,ProjectExecutor="电达"} },
-      //   {"LX201610621",new Project { ProjectId=Guid.NewGuid(),Code="LX201610621", ProjectName="上海市市区两级学籍系统的运维与安全管理服务",ProjectOwner="电教馆"  ,ProjectExecutor="电达"} },
-      //   {"LX201610622",new Project { ProjectId=Guid.NewGuid(),Code="LX201610622", ProjectName="上海市教师信息技术应用能力提升工程技术素养类课程资",ProjectOwner="电教馆" ,ProjectExecutor="电达" } },
-      //   {"LXJR201610624",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610624", ProjectName="教研室办公设备续租续租服务",ProjectOwner="教研室"  ,ProjectExecutor="教软"} },
-      //   {"LXJR201610626",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610626", ProjectName="上海市教育督导事务中心笔记本电脑租赁项目",ProjectOwner="上海市教育督导事务中心" ,ProjectExecutor="教软" } },
-      //   {"LXJR201610628",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201610628", ProjectName="教研室群晖存储设备租赁",ProjectOwner="教研室"  ,ProjectExecutor="教软"} },
-      //   {"LXJR201710601",new Project { ProjectId=Guid.NewGuid(),Code="LXJR201710601", ProjectName="宝山区信息技术应用能力提升工程培训支持服务",ProjectOwner="宝山区教育学院"  ,ProjectExecutor="教软"} },
-
-      //};
+         foreach (var item in projects)
+         {
+            PaymentsHelper.AddDefaultPayments(item, db);
+         }
+      }
 
    }
 

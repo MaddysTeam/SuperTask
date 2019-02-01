@@ -128,7 +128,7 @@ namespace TheSite.Controllers
       {
          var task = db.ProjectStoneTaskDal.PrimaryGet(id);
          var pj = ProjectrHelper.GetCurrentProject(task.ProjectId);
-         Result re = new Result { IsSuccess=true,  Msg=Success.StoneTask.EDITSUCCESS };
+         Result re = new Result { IsSuccess = true, Msg = Success.StoneTask.EDITSUCCESS };
 
          if (pj.IsPlanStatus)
          {
@@ -161,8 +161,42 @@ namespace TheSite.Controllers
 
          return Json(new
          {
-            result = re.IsSuccess? AjaxResults.Success:AjaxResults.Error,
-            msg =  re.Msg
+            result = re.IsSuccess ? AjaxResults.Success : AjaxResults.Error,
+            msg = re.Msg
+         });
+      }
+
+
+      // POST-Ajax: ProjectStoneTask/Start
+
+      [HttpPost]
+      public ActionResult SaveFile(Guid projectId, Guid taskId, string fileName, string filePath, string fileExt)
+      {
+         var f = APDBDef.Folder;
+
+         var project = ProjectrHelper.GetCurrentProject(projectId);
+         var attachment = new Attachment();
+         attachment.TaskId = taskId;
+         attachment.Projectid = projectId;
+         attachment.PublishUserId = GetUserInfo().UserId;
+         attachment.UploadDate = DateTime.Now;
+         attachment.AttachmentId = Guid.NewGuid();
+         attachment.RealName = fileName;
+         attachment.Url = filePath;
+         attachment.FileExtName = fileExt;
+
+         db.AttachmentDal.Insert(attachment);
+         db.FolderFileDal.Insert(new FolderFile
+         {
+            FolderFileId = Guid.NewGuid(),
+            AttachmentId = attachment.AttachmentId,
+            FolderId = project.FolderId
+         });
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.StoneTask.EDITSUCCESS
          });
       }
 

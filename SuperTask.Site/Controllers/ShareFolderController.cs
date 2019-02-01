@@ -25,21 +25,6 @@ namespace TheSite.Controllers
          return View();
       }
 
-      // POST-AJAX: ShareFolder/Search
-      // POST-AJAX: ShareFolder/SearchProjectFolders
-
-      //[HttpPost]
-      //public ActionResult Search(string phrase)
-      //{
-      //   var folders = GetAllFolders();
-      //   var files = GetFiles(phrase);
-
-      //   return Json(new
-      //   {
-      //      rows = new { folders = folders, files = files },
-      //   });
-      //}
-
       [HttpPost]
       public ActionResult Search(Guid projectId, string phrase)
       {

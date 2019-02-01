@@ -35,8 +35,8 @@ namespace Business
       public virtual bool IsHeader()
       => ResourceTypes.InlcudeAny(new Guid[] { ResourceKeys.HeaderType });
 
-      public static string DefaultLeaderTypes=> string.Join(",", new string[] { ResourceKeys.HeaderType.ToString(), ResourceKeys.PMType.ToString() });
-
+      //public static string DefaultLeaderTypes=> string.Join(",", new string[] { ResourceKeys.HeaderType.ToString()});
+      //public static string DefaultPMTypes => ResourceKeys.PMType.ToString()
 
       public void SetStatus(Guid status)
       {

@@ -162,7 +162,7 @@ namespace Business
          }
 
          var user = v.User;
-         var reviewerId = p.ManagerId;
+         var reviewerId = p.ReviewerId;
          var title = ReviewKeys.GetTypeKeyByValue(v.ReviewType);
          var review = new Review
          {
@@ -220,7 +220,7 @@ namespace Business
          var project = v.Project;
          var user = v.User;
          var title = ReviewKeys.GetTypeKeyByValue(v.ReviewType);
-         var reviewerId = project.ManagerId;
+         var reviewerId = pst.ReviewerID;
          var review = new Review
          {
             SenderID = user.UserId,

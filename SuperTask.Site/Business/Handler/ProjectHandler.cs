@@ -75,18 +75,32 @@ namespace Business
 
          Project.Initial(project);
 
-         project.CreatorId = user.UserId;
-         db.ProjectDal.Insert(project);
+       
 
          //创建项目下的第一个默认资源,默认资源类型为项目负责人
          var currentResource = Resource.Create(
             user.UserName,
             user.UserId,
             project.ProjectId,
-            Resource.DefaultLeaderTypes);
+            ResourceKeys.PMType.ToString());
+
+         var leader = Resource.Create(
+          ResourceKeys.TempBoss,
+          ResourceKeys.TempBossId,
+          project.ProjectId,
+          ResourceKeys.HeaderType.ToString());
 
          //创建当前用户资源
          db.ResourceDal.Insert(currentResource);
+         db.ResourceDal.Insert(leader);
+
+         //设置默认审核员和负责人为领导
+         project.PMId = ResourceKeys.TempBossId;
+         project.ReviewerId = ResourceKeys.TempBossId;
+         project.CreatorId = user.UserId;
+
+         // 插入项目数据
+         db.ProjectDal.Insert(project);
 
          //创建项目下的资源角色
          ResourceHelper.AddDefaultResoureRoles(project, db);

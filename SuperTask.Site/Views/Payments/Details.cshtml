@@ -1,10 +1,8 @@
 ﻿@model List<Payments>
 @{
-	var project = ViewBag.Project as Project;
 	var tabId = ViewBag.TabId;
+	var project = ViewData["project"] as Project;
 	var venderPayments = PaymentsHelper.GetVenderPaymentsFromProjectPayments(Model);
-
-	ViewData["project"] = project;
 	var canEdit = !Model.Where(x => x.PayType == PaymentsKeys.ProjectPaymentsType).All(x => x.IsConfirm == true);
 }
 <div class="widget-header">

@@ -126,7 +126,6 @@ namespace Business
                             .GetNextMondayIfIsWeekend();
          prj.Code = prj.GenerateCode();
          prj.FolderId = Guid.NewGuid();
-         prj.PMId = ResourceKeys.TempBossId;
       }
 
 
