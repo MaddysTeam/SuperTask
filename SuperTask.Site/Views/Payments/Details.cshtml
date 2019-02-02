@@ -3,7 +3,7 @@
 	var tabId = ViewBag.TabId;
 	var project = ViewData["project"] as Project;
 	var venderPayments = PaymentsHelper.GetVenderPaymentsFromProjectPayments(Model);
-	var canEdit = !Model.Where(x => x.PayType == PaymentsKeys.ProjectPaymentsType).All(x => x.IsConfirm == true);
+	var canEdit = !Model.Where(x => x.PayType == PaymentsKeys.ProjectPaymentsType).All(x => x.IsConfirm == true) || project.IsPlanStatus || project.IsEditStatus;
 }
 <div class="widget-header">
 	<ul class="nav nav-tabs">
@@ -21,19 +21,37 @@
 			}
 			<div class="row form-group">
 				<div class="col-md-1 col-md-offset-1">
-					@Html.Label("总金额", new { @class = "control-label" })
+					@Html.Label("预估总金额", new { @class = "control-label" })
 				</div>
 				@if (canEdit)
 				{
-					<div class="col-md-1">@Html.TextBox("TotalMoney", project.Money, new { @class = "form-control totalMoney" })</div>
+
+					<div class="col-md-1">@Html.TextBox("EsitimateMoney", project.Money, new { @class = "form-control totalMoney" })</div>
 					<div class="col-md-1">
-						<a class="btn btn-money" title="保存"> <i class="fa fa-save"></i></a>
+						<a class="btn btn-emoney" title="保存"> <i class="fa fa-save"></i></a>
 					</div>
 				}
 				else
 				{
-					<div class="col-md-1">@Html.Label("TotalMoney", project.Money.ToString(), new { @class = "form-control", @readonly = "readonly" })</div>
+					<div class="col-md-1">@Html.Label("EsitimateMoney", project.Money.ToString(), new { @class = "form-control", @readonly = "readonly" })</div>
 				}
+
+				<div class="col-md-1">
+					@Html.Label("合同总金额", new { @class = "control-label" })
+				</div>
+				@if (canEdit)
+				{
+					
+					<div class="col-md-1">@Html.TextBox("ContractMoney", project.CMoney, new { @class = "form-control totalMoney" })</div>
+					<div class="col-md-1">
+						<a class="btn btn-cmoney" title="保存"> <i class="fa fa-save"></i></a>
+					</div>
+				}
+				else
+				{
+					<div class="col-md-1">@Html.Label("ContractMoney", project.CMoney.ToString(), new { @class = "form-control", @readonly = "readonly" })</div>
+				}
+			
 			</div>
 			<hr />
 			@foreach (var item in Model.FindAll(p => p.IsProjectType) ?? new List<Payments>())

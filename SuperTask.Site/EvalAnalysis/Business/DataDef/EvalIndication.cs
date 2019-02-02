@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Business.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using TheSite.Models;
 
 namespace Business
 {
@@ -9,13 +11,11 @@ namespace Business
    public partial class EvalIndication
    {
 
-      public List<EvalIndicationItem> Items { get; set; }
+      //public List<EvalIndicationItem> Items { get; set; }
 
       public string IndicationName { get; set; }
 
-      public string IndicationDescription { get; set; }
-
-      public string AccessorRoleName { get; set; }
+      public Guid IndicationType { get; set; }
 
       public override bool Equals(object obj)
       {
@@ -29,6 +29,20 @@ namespace Business
       public override int GetHashCode()
       {
          return base.GetHashCode();
+      }
+
+      public Result Validate()
+      {
+         var message = string.Empty;
+         var result = true;
+
+         if (TableId.IsEmpty())
+         {
+            message = Errors.EvalTable.NOT_ALLOWED_ID_NULL;
+            result = false;
+         }
+
+         return new Result { IsSuccess = result, Msg = message };
       }
 
    }

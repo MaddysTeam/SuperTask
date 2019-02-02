@@ -172,13 +172,14 @@
 
 						var denyUrl = isPlan ? '@Url.Action("PlanTaskDeny", "Task")?id=' + id  : '@Url.Action("Deny", "ProjectStoneTask")?id=' + id ; // post 
 						var reviewUrl = '@Url.Action("Search", "WorkFlowTask")';
+						var edit = isPlan ? "编辑" : "上传文件";
 
 						if (isMe && row.statusId == '@TaskKeys.PlanStatus') {
 							buttons += '<button class="btn btn-lg btn-danger btn-start" data-url="' + startUrl + '">启动</button>';
-							buttons += '<button class="btn btn-lg btn-success btn-edit" data-url="' + editUrl + '">编辑</button>';
+							buttons += '<button class="btn btn-lg btn-success btn-edit" data-url="' + editUrl + '">' + edit + '</button>';
 						}
 						else if (isMe && row.statusId == '@TaskKeys.TaskTempEditStatus') {
-							buttons += '<button class="btn btn-lg btn-success btn-edit"  data-url="' + editUrl + '">编辑</button>';
+							buttons += '<button class="btn btn-lg btn-success btn-edit"  data-url="' + editUrl + '">' + edit + '</button>';
 						}
 						else if (isMe && row.statusId == '@TaskKeys.ProcessStatus') {
 							buttons += '<button class="btn btn-lg btn-info btn-editReq"   data-url="' + editReqeustUrl + '">修改申请</button>';

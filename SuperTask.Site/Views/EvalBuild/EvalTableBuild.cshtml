@@ -3,12 +3,24 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Css{
-<link href="~/assets/plugins/dragula-master/dist/dragula.min.css" rel="stylesheet" />
-<style>
-	.itemTitle{ font-size:18px; margin:10px 5px;}
-	.subItem{margin:5px 2px;}
-	.important{color:red;}
-	input:read-only{background-color:#E0E0E0;}
+	<link href="~/assets/plugins/dragula-master/dist/dragula.min.css" rel="stylesheet" />
+	<style>
+		.itemTitle {
+			font-size: 18px;
+			margin: 10px 5px;
+		}
+
+		.subItem {
+			margin: 5px 2px;
+		}
+
+		.important {
+			color: red;
+		}
+
+		input:read-only {
+			background-color: #E0E0E0;
+		}
 	</style>
 }
 <div class="content-wrapper">
@@ -17,22 +29,22 @@
 		<div class="row">
 			<div class="col-md-3">
 
-					@if (!Model.EvalTable.IsBuildDone)
-					{
-						<div class="widget" style="height:1000px; overflow:auto">
-							<div class="widget-header">
-								<h3><i class="fa fa-paperclip"></i>指标列表</h3>
-							</div>
-
-				
-							<div id="left-events" class="widget-content" style="overflow: hidden; width: auto;">
-
-								@Html.Partial("_indications", Model)
-
-							</div>
-					
+				@if (!Model.EvalTable.IsBuildDone)
+				{
+					<div class="widget" style="height:1000px; overflow:auto">
+						<div class="widget-header">
+							<h3><i class="fa fa-paperclip"></i>指标列表</h3>
 						</div>
-					}
+
+
+						<div id="left-events" class="widget-content" style="overflow: hidden; width: auto;">
+
+							@Html.Partial("_indications", Model)
+
+						</div>
+
+					</div>
+				}
 			</div>
 			<div class="row col-md-6">
 
@@ -43,11 +55,11 @@
 							<div class="btn-group widget-header-toolbar">
 								@if (!Model.EvalTable.IsBuildDone)
 								{
-								<button type="submit" class="btn btn-sm btn-success  btn-done"><i class="fa fa-pencil"></i>完成制作</button>
+									<button type="submit" class="btn btn-sm btn-success  btn-done"><i class="fa fa-pencil"></i>完成制作</button>
 								}
 								else
 								{
-								<button data-url="@Url.Action("EvalTableBuildEdit","EvalBuild",new {id=Model.EvalTable.TableId})" class="btn btn-sm btn-danger btn-modifyAll"><i class="fa fa-pencil"></i>修改</button>
+									<button data-url="@Url.Action("EvalTableBuildEdit","EvalBuild",new {id=Model.EvalTable.TableId})" class="btn btn-sm btn-danger btn-modifyAll"><i class="fa fa-pencil"></i>修改</button>
 								}
 								<button data-url="@Url.Action("EvalTablePreview","EvalBuild",new {id=Model.EvalTable.TableId,roleId=Guid.Empty})" target="_blank" class="btn btn-sm btn-info  btn-preview"><i class="fa fa-eye"></i>预览量表</button>
 							</div>
@@ -56,12 +68,12 @@
 						<div id="right-events" class="widget-content" style="overflow: hidden; width: auto;">
 
 							<div class="alert alert-danger empty row">
-							<div class="col-md-7"><h3>@Model.EvalTable.TableName</h3></div>
-							<div><h3>满分：@Model.EvalTable.FullScore</h3></div>
+								<div class="col-md-7"><h3>@Model.EvalTable.TableName</h3></div>
+								<div><h3>满分：@Model.EvalTable.FullScore</h3></div>
 							</div>
 
 							@Html.Partial("_evalIndications", Model)
-							
+
 						</div>
 
 					</div>
@@ -76,164 +88,122 @@
 </div>
 
 @section Plugins{
-<script src="~/assets/plugins/dragula-master/dist/dragula.min.js"></script>
+	<script src="~/assets/plugins/dragula-master/dist/dragula.min.js"></script>
 }
 @section Scripts{
-<script>
-	$(function () {
+	<script>
+		$(function () {
 
-		$('#left-events').find('.subItem').hide();
+			$('#left-events').find('.subItem').hide();
 
-		dragula([document.getElementById('left-events'), document.getElementById('right-events')])
-					.on('drop', function (el, container,source) {
-						if (container.id == 'left-events' && source.id == 'right-events') {
+			dragula([document.getElementById('left-events'), document.getElementById('right-events')])
+						.on('drop', function (el, container, source) {
+							if (container.id == 'left-events' && source.id == 'right-events') {
 								$(el).find('.subItem').hide();
 								removeEvalIndication($(el));
-						}
-						else if (container.id == 'right-events') {
-							$(el).find('.subItem').show();
-						}
-					});
+							}
+							else if (container.id == 'right-events') {
+								$(el).find('.subItem').show();	
+							}
+						});
 
-		$('.score').change(function () {
-			var $this = $(this);
-			var score = $this.val();
-			checkScore(score);
-			showScore($this,score);
-
-		});
-
-		$('.btn-ok').on('click', function () {
-			var indications = [];
-			var $this = $(this);
-			var $currentIndication = $this.parent().parent();
-			var score = $currentIndication.find('.score').val();
-			var weights = $currentIndication.find('.weight');
-			var indicationId = $currentIndication.find('.indicationId').val();
-			var evalType = $currentIndication.find('.evalType').val();
-			var tableId = $('#tableId').val();
-			var $btnModify = $currentIndication.find('.btn-modify');
-
-			$btnModify.hide();
-
-			if (!checkScore(score)) {
-				return false;
-			}
-			if (!checkWeight(weights)) {
-				return false;
-			}
-
-			showScore($currentIndication.find('.fullScore'),score);
-
-			weights.each(function () {
+			$('.score').change(function () {
 				var $this = $(this);
-				var weight = parseFloat($this.val())
-				var roleId = $this.parent().parent().find('.roleId').val();
-				var evalIndicationId = $this.parent().parent().find('.evalIndicationId').val();
+				var score = $this.val();
+				checkScore(score);
+				showScore($this, score);
 
-				indications.push(
-					new evalIndication(evalIndicationId, indicationId, score, roleId, weight, evalType, tableId)
-					);
 			});
 
-			$.post('@Url.Action("EvalIndicationBuild", "EvalBuild")', {items: indications }, function (data) {
-				popupMessage(data, {
-					success: function () {
-						$currentIndication.find('input').attr('readonly', 'readonly');
-						$this.hide();
-						$btnModify.removeClass('hidden').show();
-					}
-				});
-			});
-		});
+			$('.btn-ok').on('click', function () {
+				var $this = $(this);
+				var $currentIndication = $this.parent().parent();
+				var score = $currentIndication.find('#Score').val();
+				var evalIndicationId = $currentIndication.find('#EvalIndicationId').val();
+				var indicationId = $currentIndication.find('#IndicationId').val();
+				var evalType = $currentIndication.find('#EvalType').val();
+				var tableId = $('#tableId').val();
 
-		$('.btn-modify').on('click', function () {
-			var $this = $(this).hide();
-			var $currentIndication = $this.parent().parent();
-			$currentIndication.find('input').removeAttr('readonly');
-			$currentIndication.find('.btn-ok').removeClass('hidden').show();
-		});
+				var evalIndication = { id: evalIndicationId, indicationId: indicationId, fullScore: score, evalType: evalType, tableId: tableId };
+				console.log(evalIndication);
 
-		$('.btn-done').on('click', function () {
+				var $btnModify = $currentIndication.find('.btn-modify');
+				$btnModify.hide();
 
-			$.post('@Url.Action("EvalTableDone", "EvalBuild")', { id: $('#tableId').val() }, function (data) {
-				popupMessage(data, {
-					success: function () {
-						location.href = location.href;
-					}
-				});
-			});
-		});
-
-		$('.btn-modifyAll,.btn-preview').click(function () {
-			location.href=$(this).data('url')
-		});
-
-		function checkScore(score) {
-			if (isNaN(score)) {
-				popupMessage({ msg: '总分必须输入数字', result: 'error' });
-				return false;
-			}
-			else if (score <= 0) {
-				popupMessage({ msg: '分数必须大于0', result: 'error' });
-				return false;
-			}
-
-			return true;
-		}
-
-		function showScore(container,score) {
-			$(container).html(score);
-		}
-			
-		function checkWeight(weights) {
-			var weight = 0;
-			$(weights).each(function () {
-				var w = $(this).val();
-				if (isNaN(w)) {
-					popupMessage({ msg: '权重必须输入数字', result: 'error' });
+				if (!checkScore(score)) {
 					return false;
 				}
-				weight += parseInt(w);
-			});
-			
-			if (weight != 100) {
-				popupMessage({ msg: '权重之和应为100%', result: 'error' });
-				return false;
-			}
 
-			return true;
-		}
+				showScore($currentIndication.find('.fullScore'), score);
 
-		function removeEvalIndication(ele) {
-			var $currentIndication = ele;
-			var indicationId = $currentIndication.find('.indicationId').val();
-
-			$.post('@Url.Action("EvalIndicationRemove", "EvalBuild")', { tableId: $('#tableId').val(), indicationId: indicationId }, function (data) {
-				popupMessage(data, {
-					success: function () {
-						$currentIndication.find('input').removeAttr('readonly');
-						$currentIndication.find('.btn-modify').hide();
-						$currentIndication.find('.btn-ok').removeClass('hidden').show();
-					}
+				$.post('@Url.Action("EvalIndicationEdit", "EvalBuild")', { item: evalIndication }, function (data) {
+					popupMessage(data, {
+						success: function () {
+							$currentIndication.find('input').attr('readonly', 'readonly');
+							$this.hide();
+							$btnModify.removeClass('hidden').show();
+						}
+					});
 				});
 			});
 
-			return;
-		}
+			$('.btn-modify').on('click', function () {
+				var $this = $(this).hide();
+				var $currentIndication = $this.parent().parent();
+				$currentIndication.find('input').removeAttr('readonly');
+				$currentIndication.find('.btn-ok').removeClass('hidden').show();
+			});
 
-	});
+			$('.btn-done').on('click', function () {
 
-	
-	function evalIndication(id,indicationId, score, roleId, propertion, evalType,tableId) {
-		this.id = id;
-		this.indicationId = indicationId;
-		this.fullScore = score;
-		this.accessorRoleId = roleId;
-		this.propertion = propertion;
-		this.evalType = evalType;
-		this.tableId = tableId;
-	}
+				$.post('@Url.Action("EvalTableDone", "EvalBuild")', { id: $('#tableId').val() }, function (data) {
+					popupMessage(data, {
+						success: function () {
+							location.href = location.href;
+						}
+					});
+				});
+			});
 
-</script>
+			$('.btn-modifyAll,.btn-preview').click(function () {
+				location.href = $(this).data('url')
+			});
+
+			function checkScore(score) {
+				if (isNaN(score)) {
+					popupMessage({ msg: '@Errors.EvalTable.NOT_ALLOWED_SCORE_LESS_THAN_ZERO', result: 'error' });
+					return false;
+				}
+				else if (score <= 0) {
+					popupMessage({ msg: '@Errors.EvalTable.NOT_ALLOWED_SCORE_LESS_THAN_ZERO', result: 'error' });
+					return false;
+				}
+
+				return true;
+			}
+
+			function showScore(container, score) {
+				$(container).html(score);
+			}
+
+			function removeEvalIndication(ele) {
+				var $currentIndication = ele;
+				var indicationId = $currentIndication.find('.indicationId').val();
+
+				$.post('@Url.Action("EvalIndicationRemove", "EvalBuild")', { tableId: $('#tableId').val(), indicationId: indicationId }, function (data) {
+					popupMessage(data, {
+						success: function () {
+							$currentIndication.find('input').removeAttr('readonly');
+							$currentIndication.find('.btn-modify').hide();
+							$currentIndication.find('.btn-ok').removeClass('hidden').show();
+						}
+					});
+				});
+
+				return;
+			}
+
+		});
+
+	</script>
 }

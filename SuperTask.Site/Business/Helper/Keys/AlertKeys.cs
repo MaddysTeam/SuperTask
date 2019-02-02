@@ -154,6 +154,11 @@ namespace Business.Helper
          public const string NOT_ALLOWED_TYPE_WHEN_DELIVERY = "必须选择交付凭证";
       }
 
+      public class MileStone
+      {
+         public const string EDIT_FAIL = "编辑失败！";
+      }
+
       public class StoneTask
       {
          public const string EDIT_FAIL = "编辑失败！";

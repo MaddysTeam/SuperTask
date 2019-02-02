@@ -11,13 +11,13 @@ namespace Business
    public partial class EvalTable
    {
 
-      public Dictionary<Indication, List<EvalIndication>> EvalIndications { get; set; }
+      //public Dictionary<Indication, List<EvalIndication>> EvalIndications { get; set; }
 
-      public List<Role> AccessorRoles { get; protected set; }
+      //public List<Role> AccessorRoles { get; protected set; }
 
-      public List<Role> MemberRoles { get; set; }
+      //public List<Role> MemberRoles { get; set; }
 
-      public string AccessorRoleNames { get; set; }
+      //public string AccessorRoleNames { get; set; }
 
       public bool IsSelected { get; set; }
 
@@ -41,21 +41,6 @@ namespace Business
       }
 
       public bool IsBuildDone => TableStatus == EvalTableKeys.DoneStatus;
-
-      public void BuildAccessorRoles(List<Role> roles)
-      {
-         AccessorRoles = new List<Role>();
-
-         //if (!string.IsNullOrEmpty(AccessorRoleIds))
-         //{
-         //   AccessorRoleIds.Split(',').ToList().ForEach(ro =>
-         //   {
-         //      var role = roles.Find(x => x.RoleId == ro.ToGuid(Guid.Empty));
-         //      if (role != null)
-         //         AccessorRoles.Add(role);
-         //   });
-         //}
-      }
 
       public bool IsInUse()
       {

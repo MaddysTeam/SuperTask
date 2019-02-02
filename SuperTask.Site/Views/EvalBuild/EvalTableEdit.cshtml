@@ -22,8 +22,8 @@
 						@Html.HiddenFor(t => t.CreateDate)
 						@Html.HiddenFor(t => t.TableStatus)
 						@Html.HiddenFor(t => t.UseCount)
-						@Html.HiddenFor(t => t.AccessorRoleIds)
-						@Html.HiddenFor(t => t.MemberRoleIds)
+						@*@Html.HiddenFor(t => t.AccessorRoleIds)
+						@Html.HiddenFor(t => t.MemberRoleIds)*@
 
 						<div class="form-group">
 							<label class="col-md-3">@Html.LabelFor(t => t.TableName)</label>
@@ -39,23 +39,23 @@
 							</div>
 						</div>
 
-						<div class="form-group">
+						@*<div class="form-group">
 							<label class="col-md-3">@Html.LabelFor(t => t.AccessorRoleIds)</label>
 							<div class="col-md-9">
 								@Html.DropDownList("AccessorRoles",
 															ViewBag.AccessorRoles as List<SelectListItem>,
 															  new { @class = "form-control dropdown-AccessorRoles", @multiple = "multiple" })
 							</div>
-						</div>
+						</div>*@
 
-						<div class="form-group">
+						@*<div class="form-group">
 							<label class="col-md-3">@Html.LabelFor(t => t.MemberRoleIds)</label>
 							<div class="col-md-9">
 								@Html.DropDownList("MemberRoles",
 															ViewBag.MemberRoles as List<SelectListItem>,
 															  new { @class = "form-control dropdown-MemberRoles", @multiple = "multiple" })
 							</div>
-						</div>
+						</div>*@
 
 						<div class="form-group">
 							<label class="col-md-3">@Html.LabelFor(t => t.TableType)</label>
@@ -112,11 +112,11 @@
 		});
 
 
-		var accessorRoleVals = '@Model.AccessorRoleIds'.split(',');	
+		@*var accessorRoleVals = '@Model.AccessorRoleIds'.split(',');	
 		$('.dropdown-AccessorRoles').multiselect('select', accessorRoleVals);
 
 		var memberRoleVals = '@Model.MemberRoleIds'.split(',');
-		$('.dropdown-MemberRoles').multiselect('select', memberRoleVals);
+		$('.dropdown-MemberRoles').multiselect('select', memberRoleVals);*@
 
 
 		$('.btn-save').click(function () {

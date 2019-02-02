@@ -23,12 +23,13 @@ namespace Business.Helper
       public class EvalTable
       {
          public const string NOT_ALLOWED_NAME_NULL = "考核表名称不能为空";
-         public const string NOT_ALLOWED_ID_NULL = "指标ID不能为空";
+         public const string NOT_ALLOWED_ID_NULL = "考核表ID不能为空";
          public const string NOT_ALLOWED_SCORE_LESS_THAN_ZERO = "总分设置不能小于等于0";
          public const string EVALINDICATION_SUMSCORE_SHOULD_SAME_WITH_TABLE_SCORE = "指标总分之和不等于考核表总分！";
          public const string IS_IN_USE = "考核表已经被使用，无法修改！";
          public const string IS_NULL = "考核表为空";
          public const string WITHOUT_ANY_TABLES = "没有考核表";
+         public const string SCORE_MUST_GREATER_THAN_ZERO = "总分必须输入数字";
       }
 
       public class EvalTableGroup

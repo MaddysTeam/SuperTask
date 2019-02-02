@@ -184,7 +184,8 @@
 					<add name="ProcessName" type="string"  dataLength="100"   isNullable="true" display="项目进展" />
 
 					<add name="FolderId" columnName="FolderId" type="Guid" isNullable="true" display="项目文件夹ID"   />
-					<add name="Money" columnName="money" type="double" isNullable="true"  display="总金额"/>
+					<add name="Money" columnName="money" type="double" isNullable="true"  display="预估总金额"/>
+					<add name="CMoney" columnName="cmoney" type="double" isNullable="true"  display="合同总金额"/>
 				</columns>
 			</table>
 
@@ -588,7 +589,7 @@
 				</columns>
 			</table>
 
-			<table name="EvalIndicationItem" tableName="EvalIndicationItem" comment="考核-指标-指标项">
+			<!--<table name="EvalIndicationItem" tableName="EvalIndicationItem" comment="考核-指标-指标项">
 				<columns>
 
 					<add name="ItemId" columnName="ID" type="Guid" primaryKey="true" ></add>
@@ -598,7 +599,7 @@
 					<add name="ItemValue" columnName="Value" type="string"  dataLength="200" required="true" display="指标项值"/>
 
 				</columns>
-			</table>
+			</table>-->
 
 			<table name="EvalTable" tableName="EvalTable" comment="考核表">
 				<columns>

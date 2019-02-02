@@ -216,9 +216,16 @@
 					// add vender payment by ajax
 					bindAddVender(callback);
 
-					$('.btn-money').on('click', function () {
-						var money = $('#TotalMoney').val();
-						$.post('@Url.Action("EditMoney","Project")', { id: projectId, money: money }, function (data) {
+					$('.btn-emoney').on('click', function () {
+						var money = $('#EsitimateMoney').val();
+						$.post('@Url.Action("EditEestimateMoney", "Project")', { id: projectId, emoney: money }, function (data) {
+							popupMessage(data);
+						})
+					});
+
+					$('.btn-cmoney').on('click', function () {
+						var money = $('#ContractMoney').val();
+						$.post('@Url.Action("EditConstractMoney", "Project")', { id: projectId, cmoney: money }, function (data) {
 							popupMessage(data);
 						})
 					});

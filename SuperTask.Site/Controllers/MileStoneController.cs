@@ -89,6 +89,14 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult Edit(MileStone mileStone)
       {
+         if(mileStone==null || string.IsNullOrEmpty(mileStone.StoneName))
+         {
+            return Json(new
+            {
+               result = AjaxResults.Error,
+               msg = Errors.MileStone.EDIT_FAIL
+            });
+         }
          if (mileStone.StoneId.IsEmpty())
          {
             mileStone.StoneId = Guid.NewGuid();

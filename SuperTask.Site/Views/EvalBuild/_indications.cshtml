@@ -10,23 +10,25 @@
 		</div>
 		<div class="row subItem">
 			<div class="col-sm-2 important">设置分值:</div>
-			<div class="col-sm-4"><input placeholder="输入分值"  class="score form-control"  /></div>
+			<div class="col-sm-4"><input placeholder="输入分值" id="Score"  class="score form-control"  /></div>
 		</div>
 		<hr class="subItem" />
-		@foreach (var role in Model.EvalTable.AccessorRoles)
+		@*@foreach (var role in Model.EvalTable.AccessorRoles)
 		{
 			<div class="row subItem">
 				<div class="col-sm-2">@(role.RoleName)(权重%):</div>
 				<div class="col-sm-4"><input placeholder="输入权重" class="weight form-control"/></div>
 				<input type="hidden" class="roleId" value="@role.RoleId" />
 			</div>
-		}
+		}*@
 		<div class="text-right subItem">
 			<button  class="btn btn-success btn-ok">确定</button>
 			<button  class="btn btn-info btn-modify hidden">修改</button>
 		</div>
-		<input type="hidden" class="indicationId" value="@item.IndicationId" />
-		<input type="hidden" class="evalType" value="@item.IndicationType" />
 
+		<input type="hidden" id="EvalIndicationId" value="@Guid.Empty" />
+		<input type="hidden" id="IndicationId"  value="@item.IndicationId" />
+		<input type="hidden" id="IndicationType"  value="@item.IndicationType" />
+		<input type="hidden" id="EvalType" value="@Model.EvalTable.TableType" />
 	</div>
 }

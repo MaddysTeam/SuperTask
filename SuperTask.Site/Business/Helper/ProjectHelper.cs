@@ -10,9 +10,6 @@ namespace Business.Helper
    public static class ProjectrHelper
    {
 
-      private static Project _currentProject;
-
-
       public static List<Project> UserJoinedProjects(Guid userId, APDBDef db)
       {
          var p = APDBDef.Project;
@@ -39,13 +36,8 @@ namespace Business.Helper
       /// <returns></returns>
       public static Project GetCurrentProject(Guid projectid, APDBDef db = null, bool isforceClear = false)
       {
-         if (_currentProject != null && _currentProject.ProjectId == projectid && !isforceClear)
-            return _currentProject;
-
          db = db ?? new APDBDef();
-         _currentProject = db.ProjectDal.PrimaryGet(projectid);
-
-         return _currentProject;
+         return db.ProjectDal.PrimaryGet(projectid);
       }
 
 

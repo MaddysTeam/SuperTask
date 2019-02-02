@@ -226,12 +226,26 @@ namespace TheSite.Controllers
       }
 
 
-      // Post-ajax: Project/UpdateTotalPayment
+      // Post-ajax: Project/EditEestimateMoney
+      // Post-ajax: Project/EditEestimateMoney
+      [HttpPost]
+      public ActionResult EditEestimateMoney(Guid id, double emoney)
+      {
+         APQuery.update(p).set(p.Money.SetValue(emoney))
+            .where(p.ProjectId == id)
+            .execute(db);
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.Project.EDIT_SUCCESS
+         });
+      }
 
       [HttpPost]
-      public ActionResult EditMoney(Guid id, double money)
+      public ActionResult EditConstractMoney(Guid id, double cmoney)
       {
-         APQuery.update(p).set(p.Money.SetValue(money))
+         APQuery.update(p).set(p.CMoney.SetValue(cmoney))
             .where(p.ProjectId == id)
             .execute(db);
 

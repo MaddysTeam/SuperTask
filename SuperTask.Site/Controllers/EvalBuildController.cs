@@ -366,77 +366,56 @@ namespace TheSite.Controllers
 
       public ActionResult EvalTableBuild(Guid id)
       {
-       //  var r = APDBDef.Role;
-
          var table = db.EvalTableDal.PrimaryGet(id);
-         table.EvalIndications = new Dictionary<Indication, List<EvalIndication>>();
          if (table.IsInUse())
          {
             throw new NullReferenceException("考核表已被使用");
          }
 
-         var indications = db.IndicationDal.ConditionQuery(i.IndicationType == table.TableType & i.IndicationStatus == IndicationKeys.EnabelStatus, null, null, null);
-         var evalIndications = APQuery.select(evi.Asterisk)
-                                      .from(evi)
+         var subQuery = APQuery.select(evi.IndicationId).from(evi).where(evi.TableId == id);
+         var indications = db.IndicationDal.ConditionQuery(
+            i.IndicationType == IndicationKeys.SubjectType &
+            i.IndicationStatus == IndicationKeys.EnabelStatus &
+            i.IndicationId.NotIn(subQuery), null, null, null);
+
+         var evalIndications = APQuery.select(evi.Asterisk,i.IndicationName.As("IndicationName"),i.IndicationType)
+                                      .from(evi, i.JoinInner(i.IndicationId==evi.IndicationId))
                                       .where(evi.TableId == id)
                                       .query(db, rd =>
                                        {
                                           var ev = new EvalIndication();
-                                          evi.Fullup(rd, ev, false);
+                                          evi.Fullup(rd, ev, false);                                        
+                                          ev.IndicationName = i.IndicationName.GetValue(rd, "IndicationName");
+                                          ev.IndicationType = i.IndicationType.GetValue(rd);
                                           return ev;
-                                       });
+                                       })
+                                      .ToList();
 
-         if (evalIndications != null && evalIndications.Count() > 0)
-         {
-            foreach (var item in indications.DeepClone())
-            {
-               var eis = evalIndications.ToList().FindAll(e => e.IndicationId == item.IndicationId);
-               if (eis != null && eis.Count > 0)
-               {
-                  table.EvalIndications.Add(item, eis);
-
-                  indications.Remove(item);
-               }
-            }
-         }
-
-         //var roles = db.RoleDal.ConditionQuery(r.RoleType == RoleKeys.SystemType, null, null, null);
-         //table.BuildAccessorRoles(roles);
-
-         var models = new EvalBuilderViewModel() { EvalTable = table, Indications = indications };
+         var models = new EvalBuilderViewModel() { EvalTable = table, Indications = indications,EvalIndications=evalIndications };
 
          return View(models);
       }
 
       [HttpPost]
-      public ActionResult EvalIndicationBuild(List<EvalIndication> items)
+      public ActionResult EvalIndicationEdit(EvalIndication item)
       {
-         db.BeginTrans();
-
-         try
+         if (item == null || !item.Validate().IsSuccess)
          {
-            if (items.Count > 0)
-            {
-               foreach (var item in items)
-               {
-                  db.EvalIndicationItemDal.ConditionDelete(evii.EvalIndicationId == item.Id);
-                  db.EvalIndicationDal.PrimaryDelete(item.Id);
-               }
-            }
-
-            BuildEvalIndications(items);
-
-            db.Commit();
-         }
-         catch
-         {
-            db.Rollback();
-
             return Json(new
             {
                result = AjaxResults.Error,
                msg = Errors.Indicaiton.EDIT_FAIL
             });
+         }
+
+         if (item.Id.IsEmpty())
+         {
+            item.Id = Guid.NewGuid();
+            db.EvalIndicationDal.Insert(item);
+         }
+         else
+         {
+            db.EvalIndicationDal.Update(item);
          }
 
          return Json(new
@@ -578,58 +557,6 @@ namespace TheSite.Controllers
          //});
 
          return null;
-      }
-
-
-      private void BuildEvalIndications(List<EvalIndication> items)
-      {
-         //IEnumerable<EvalIndicationItem> indicationItems = null;
-         //var builders = BuilderManager.Builders;
-
-         //foreach (var item in items)
-         //{
-         //   if (item.Id.IsEmpty())
-         //      item.Id = Guid.NewGuid();
-
-         //   if (builders.Count > 0 && builders.ContainsKey(item.EvalType))
-         //   {
-         //      var realScore = item.FullScore * (item.Propertion / 100);
-         //      indicationItems = builders[item.EvalType].AutoBuildEvalItem(item.Id, string.Empty, realScore, EvalBuilderConfig.AutoEvalIndicationItemCount);
-         //   }
-         //   else
-         //      continue;
-
-         //   if (indicationItems != null)
-         //   {
-         //      foreach (var subItem in indicationItems)
-         //      {
-         //         db.EvalIndicationItemDal.Insert(subItem);
-         //      }
-         //   }
-
-         //   db.EvalIndicationDal.Insert(item);
-         //}
-      }
-
-
-      private IEnumerable<SelectListItem> GetSelectRoleItem(List<Role> roles, string roleIdStr)
-      {
-         if (roles == null && roles.Count <= 0)
-         {
-            return null;
-         }
-
-         var roleSelectItems = roles.Select(item => new SelectListItem { Text = item.RoleName, Value = item.RoleId.ToString() });
-
-         var accessorRoles = string.IsNullOrEmpty(roleIdStr) ? null : roleIdStr.Split(',');
-
-         if (accessorRoles != null && accessorRoles.Count() > 0)
-         {
-            foreach (var item in roleSelectItems)
-               item.Selected = accessorRoles.Contains(item.Value, StringComparison.InvariantCultureIgnoreCase);
-         }
-
-         return roleSelectItems;
       }
 
    }
