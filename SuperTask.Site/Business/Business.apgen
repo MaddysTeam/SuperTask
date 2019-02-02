@@ -339,7 +339,7 @@
 					<add name="IsParent"  columnName="IsParent" type="bool" comment="是否是父任务" ></add>
 
 					<!--该字段用于文档归类，体现在每个项目管理中的文件管理板块-->
-					<add name="TaskFileType"  columnName="FileType" type="Guid"   display="文档类型" />
+					<add name="TaskFileType"  columnName="FileType" type="Guid"  isNullable="true"  display="文档类型" />
 
 					<!--该字段只有运维任务用到-->
 					<add name="ServiceCount" columnName="ServiceCount" type="int" isNullable="true" display="运维数量" comment="（该字段只为运维任务创建）"></add>
@@ -781,9 +781,9 @@
 			<table name="Folder"  comment="文件夹">
 				<columns>
 
-					<add name="FolderId" columnName="ID" type="Guid" primaryKey="true" display="文件夹ID" />
-					<add name="ParentId"   type="Guid" />
-					<add name="SortId"     type="int" />
+					<add name="FolderId"  columnName="ID" type="Guid" primaryKey="true" display="文件夹ID" />
+					<add name="ParentId"  columnName="ParentId"  type="Guid" />
+					<add name="SortId"   columnName="SortId"   type="int" />
 					<add name="FolderName" type="string"  dataLength="200"  display="文件夹名称" />
 					<add name="FolderType" type="int" />
 					<add name="FolderPath" type="string" dataLength="1000"  />

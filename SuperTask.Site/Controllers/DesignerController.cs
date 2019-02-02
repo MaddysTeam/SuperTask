@@ -436,13 +436,13 @@ namespace TheSite.Controllers
 
       public void InitialProjectMileStoneAndPayments()
       {
-         var projects = Project.GetAll().Where(x => x.CreateDate < DateTime.Parse("2019-01-01"));
+         var projects = Project.GetAll();
          var db = new APDBDef();
 
          foreach (var item in projects)
          {
-            MilestoneHelper.AddDefaultMileStones(item, db);
-            PaymentsHelper.AddDefaultPayments(item, db);
+           // MilestoneHelper.AddDefaultMileStones(item, db);
+            var folder = ShareFolderHelper.CreateFolder(Guid.NewGuid(), item.ProjectName, ShareFolderKeys.RootProjectFolderId, item.ManagerId, db);
          }
       }
 

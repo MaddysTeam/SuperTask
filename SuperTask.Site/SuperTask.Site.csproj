@@ -1602,7 +1602,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="assets\plugins\kindeditor\asp.net\bin\" />
-    <Folder Include="Attachments\" />
+    <Folder Include="Business\Attachments\" />
     <Folder Include="Models\SearchOptions\" />
     <Folder Include="Views\Designer\" />
     <Folder Include="Views\EvalUtil\" />
