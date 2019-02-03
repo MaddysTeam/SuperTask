@@ -1,7 +1,7 @@
 ﻿@model Payments
 @{
 	var project = ViewData["project"] as Project;
-	var canEdit = project.IsPlanStatus || project.IsEditStatus;
+	var canEdit = project.IsPlanStatus || project.IsEditStatus || project.CreateDate < DateTime.Parse("2019-02-01");
 }
 <div class="row form-group">
 	@Html.HiddenFor(p => p.PayId, new { @class = "payId" })

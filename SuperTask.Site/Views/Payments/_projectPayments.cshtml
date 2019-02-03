@@ -1,7 +1,7 @@
 ﻿@model Payments
 @{
 	var project = ViewData["project"] as Project;
-	var canEdit =!project.IsCompleteStatus && !Model.IsConfirm;
+	var canEdit =!project.IsCompleteStatus && !Model.IsConfirm ;
 }
 <div class="row form-group">
 	@Html.HiddenFor(p => p.PayId, new { @class = "payId" })
@@ -9,6 +9,7 @@
 	@Html.HiddenFor(p => p.PayName, new { @class = "payName" })
 	@Html.HiddenFor(p => p.PayType, new { @class = "payType" })
 	@Html.HiddenFor(p => p.Sort, new { @class = "sort" })
+
 	<div class="col-md-1 col-md-offset-1">@Html.Label(Model.PayName, new { @class = "control-label" })</div>
 	<div class="col-md-1">
 		@if (canEdit)
@@ -69,5 +70,6 @@
 				<a class="btn btn-clear" title="清除并删除节点任务"> <font color="red"><i class="fa fa-times-circle-o"></i></font></a>
 			}
 		}
+
 	</div>
 </div>
