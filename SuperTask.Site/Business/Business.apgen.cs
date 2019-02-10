@@ -84,13 +84,11 @@ namespace Business {
         
         private static EvalPeriodTableDef _evalPeriod;
         
-        private static EvalTableGroupTableDef _evalTableGroup;
-        
-        private static EvalTableGroupItemTableDef _evalTableGroupItem;
+        private static EvalTargetTablePropertionTableDef _evalTargetTablePropertion;
         
         private static EvalGroupTableDef _evalGroup;
         
-        private static EvalGroupTargetTableDef _evalGroupTarget;
+        private static EvalGroupMemberTableDef _evalGroupMember;
         
         private static EvalGroupAccessorTableDef _evalGroupAccessor;
         
@@ -174,13 +172,11 @@ namespace Business {
         
         private APDalDef.EvalPeriodDal _evalPeriodDal;
         
-        private APDalDef.EvalTableGroupDal _evalTableGroupDal;
-        
-        private APDalDef.EvalTableGroupItemDal _evalTableGroupItemDal;
+        private APDalDef.EvalTargetTablePropertionDal _evalTargetTablePropertionDal;
         
         private APDalDef.EvalGroupDal _evalGroupDal;
         
-        private APDalDef.EvalGroupTargetDal _evalGroupTargetDal;
+        private APDalDef.EvalGroupMemberDal _evalGroupMemberDal;
         
         private APDalDef.EvalGroupAccessorDal _evalGroupAccessorDal;
         
@@ -581,26 +577,14 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核表组 TableDef
+        /// 考核表-比重 TableDef
         /// </summary>
-        public static EvalTableGroupTableDef EvalTableGroup {
+        public static EvalTargetTablePropertionTableDef EvalTargetTablePropertion {
             get {
-                if ((_evalTableGroup == null)) {
-                    _evalTableGroup = new EvalTableGroupTableDef("EvalTableGroup");
+                if ((_evalTargetTablePropertion == null)) {
+                    _evalTargetTablePropertion = new EvalTargetTablePropertionTableDef("EvalTargetTablePropertion");
                 }
-                return _evalTableGroup;
-            }
-        }
-        
-        /// <summary>
-        ///  TableDef
-        /// </summary>
-        public static EvalTableGroupItemTableDef EvalTableGroupItem {
-            get {
-                if ((_evalTableGroupItem == null)) {
-                    _evalTableGroupItem = new EvalTableGroupItemTableDef("EvalTableGroupItem");
-                }
-                return _evalTableGroupItem;
+                return _evalTargetTablePropertion;
             }
         }
         
@@ -617,14 +601,14 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核组-评审对象 TableDef
+        /// 考核组-成员 TableDef
         /// </summary>
-        public static EvalGroupTargetTableDef EvalGroupTarget {
+        public static EvalGroupMemberTableDef EvalGroupMember {
             get {
-                if ((_evalGroupTarget == null)) {
-                    _evalGroupTarget = new EvalGroupTargetTableDef("EvalGroupTarget");
+                if ((_evalGroupMember == null)) {
+                    _evalGroupMember = new EvalGroupMemberTableDef("EvalGroupMember");
                 }
-                return _evalGroupTarget;
+                return _evalGroupMember;
             }
         }
         
@@ -1109,26 +1093,14 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核表组 Dal
+        /// 考核表-比重 Dal
         /// </summary>
-        public virtual APDalDef.EvalTableGroupDal EvalTableGroupDal {
+        public virtual APDalDef.EvalTargetTablePropertionDal EvalTargetTablePropertionDal {
             get {
-                if ((_evalTableGroupDal == null)) {
-                    _evalTableGroupDal = new APDalDef.EvalTableGroupDal(this);
+                if ((_evalTargetTablePropertionDal == null)) {
+                    _evalTargetTablePropertionDal = new APDalDef.EvalTargetTablePropertionDal(this);
                 }
-                return _evalTableGroupDal;
-            }
-        }
-        
-        /// <summary>
-        ///  Dal
-        /// </summary>
-        public virtual APDalDef.EvalTableGroupItemDal EvalTableGroupItemDal {
-            get {
-                if ((_evalTableGroupItemDal == null)) {
-                    _evalTableGroupItemDal = new APDalDef.EvalTableGroupItemDal(this);
-                }
-                return _evalTableGroupItemDal;
+                return _evalTargetTablePropertionDal;
             }
         }
         
@@ -1145,14 +1117,14 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核组-评审对象 Dal
+        /// 考核组-成员 Dal
         /// </summary>
-        public virtual APDalDef.EvalGroupTargetDal EvalGroupTargetDal {
+        public virtual APDalDef.EvalGroupMemberDal EvalGroupMemberDal {
             get {
-                if ((_evalGroupTargetDal == null)) {
-                    _evalGroupTargetDal = new APDalDef.EvalGroupTargetDal(this);
+                if ((_evalGroupMemberDal == null)) {
+                    _evalGroupMemberDal = new APDalDef.EvalGroupMemberDal(this);
                 }
-                return _evalGroupTargetDal;
+                return _evalGroupMemberDal;
             }
         }
         
@@ -1310,10 +1282,9 @@ namespace Business {
                 db.EvalIndicationItemDal.InitData(db);
                 db.EvalTableDal.InitData(db);
                 db.EvalPeriodDal.InitData(db);
-                db.EvalTableGroupDal.InitData(db);
-                db.EvalTableGroupItemDal.InitData(db);
+                db.EvalTargetTablePropertionDal.InitData(db);
                 db.EvalGroupDal.InitData(db);
-                db.EvalGroupTargetDal.InitData(db);
+                db.EvalGroupMemberDal.InitData(db);
                 db.EvalGroupAccessorDal.InitData(db);
                 db.EvalAccessorTargetDal.InitData(db);
                 db.EvalResultDal.InitData(db);
@@ -2912,7 +2883,7 @@ namespace Business {
             public virtual DoubleAPColumnDef CMoney {
                 get {
                     if (Object.ReferenceEquals(_cMoney, null)) {
-                        _cMoney = new DoubleAPColumnDef(this, "Cmoney", true);
+                        _cMoney = new DoubleAPColumnDef(this, "cmoney", true);
                         _cMoney.Display = "合同总金额";
                     }
                     return _cMoney;
@@ -8869,6 +8840,8 @@ namespace Business {
             
             private BooleanAPColumnDef _isCurrent;
             
+            private DateTimeAPColumnDef _createDate;
+            
             public EvalPeriodTableDef(string tableName) : 
                     base(tableName) {
             }
@@ -8995,6 +8968,19 @@ namespace Business {
             }
             
             /// <summary>
+            /// CreateDate ColumnDef
+            /// </summary>
+            public virtual DateTimeAPColumnDef CreateDate {
+                get {
+                    if (Object.ReferenceEquals(_createDate, null)) {
+                        _createDate = new DateTimeAPColumnDef(this, "CreateDate", true);
+                        _createDate.Display = "创建时间";
+                    }
+                    return _createDate;
+                }
+            }
+            
+            /// <summary>
             /// Default Index
             /// </summary>
             public virtual APSqlOrderPhrase DefaultOrder {
@@ -9023,6 +9009,7 @@ namespace Business {
                 data.AnalysisName = AnalysisName.GetValue<string>(reader, throwIfValidColumnName);
                 data.AnalysisType = AnalysisType.GetValue<string>(reader, throwIfValidColumnName);
                 data.IsCurrent = IsCurrent.GetValue<bool>(reader, throwIfValidColumnName);
+                data.CreateDate = CreateDate.GetValue<System.DateTime>(reader, throwIfValidColumnName, DateTime.Now);
             }
             
             /// <summary>
@@ -9077,195 +9064,38 @@ namespace Business {
         }
         
         [Serializable()]
-        public partial class EvalTableGroupTableDef : APTableDef {
+        public partial class EvalTargetTablePropertionTableDef : APTableDef {
             
-            private GuidAPColumnDef _tableGroupId;
-            
-            private StringAPColumnDef _tableGroupName;
-            
-            private GuidAPColumnDef _periodId;
-            
-            private GuidAPColumnDef _targetRoleId;
-            
-            public EvalTableGroupTableDef(string tableName) : 
-                    base(tableName) {
-            }
-            
-            protected EvalTableGroupTableDef(string tableName, string alias) : 
-                    base(tableName, alias) {
-            }
-            
-            /// <summary>
-            /// TableGroupId ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef TableGroupId {
-                get {
-                    if (Object.ReferenceEquals(_tableGroupId, null)) {
-                        _tableGroupId = new GuidAPColumnDef(this, "ID", false);
-                        _tableGroupId.Display = "ID";
-                    }
-                    return _tableGroupId;
-                }
-            }
-            
-            /// <summary>
-            /// TableGroupName ColumnDef
-            /// </summary>
-            public virtual StringAPColumnDef TableGroupName {
-                get {
-                    if (Object.ReferenceEquals(_tableGroupName, null)) {
-                        _tableGroupName = new StringAPColumnDef(this, "Name", false, 200);
-                        _tableGroupName.Display = "考核表组名称";
-                    }
-                    return _tableGroupName;
-                }
-            }
-            
-            /// <summary>
-            /// PeriodId ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef PeriodId {
-                get {
-                    if (Object.ReferenceEquals(_periodId, null)) {
-                        _periodId = new GuidAPColumnDef(this, "PeriodId", false);
-                        _periodId.Display = "考核周期ID";
-                    }
-                    return _periodId;
-                }
-            }
-            
-            /// <summary>
-            /// TargetRoleId ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef TargetRoleId {
-                get {
-                    if (Object.ReferenceEquals(_targetRoleId, null)) {
-                        _targetRoleId = new GuidAPColumnDef(this, "TargetRoleId", false);
-                        _targetRoleId.Display = "考核对象角色";
-                    }
-                    return _targetRoleId;
-                }
-            }
-            
-            /// <summary>
-            /// Default Index
-            /// </summary>
-            public virtual APSqlOrderPhrase DefaultOrder {
-                get {
-                    return null;
-                }
-            }
-            
-            /// <summary>
-            /// Create a alias table
-            /// </summary>
-            public virtual EvalTableGroupTableDef As(string name) {
-                return new EvalTableGroupTableDef("EvalTableGroup", name);
-            }
-            
-            /// <summary>
-            /// Fill the data.
-            /// </summary>
-            public virtual void Fullup(IDataReader reader, EvalTableGroup data, bool throwIfValidColumnName) {
-                data.TableGroupId = TableGroupId.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.TableGroupName = TableGroupName.GetValue<string>(reader, throwIfValidColumnName);
-                data.PeriodId = PeriodId.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.TargetRoleId = TargetRoleId.GetValue<System.Guid>(reader, throwIfValidColumnName);
-            }
-            
-            /// <summary>
-            /// Fill the data.
-            /// </summary>
-            public virtual EvalTableGroup Map(IDataReader reader) {
-                EvalTableGroup data = new EvalTableGroup();
-                Fullup(reader, data, true);
-                return data;
-            }
-            
-            /// <summary>
-            /// Fill the data.
-            /// </summary>
-            public virtual EvalTableGroup TolerantMap(IDataReader reader) {
-                EvalTableGroup data = new EvalTableGroup();
-                Fullup(reader, data, false);
-                return data;
-            }
-            
-            /// <summary>
-            /// Fill the data.
-            /// </summary>
-            public virtual List<EvalTableGroup> MapList(IDataReader reader) {
-                List<EvalTableGroup> list = new List<EvalTableGroup>();
-                try {
-                    for (; reader.Read(); ) {
-                        list.Add(Map(reader));
-                    }
-                }
-                finally {
-                    reader.Close();
-                }
-                return list;
-            }
-            
-            /// <summary>
-            /// Fill the data.
-            /// </summary>
-            public virtual List<EvalTableGroup> TolerantMapList(IDataReader reader) {
-                List<EvalTableGroup> list = new List<EvalTableGroup>();
-                try {
-                    for (; reader.Read(); ) {
-                        list.Add(TolerantMap(reader));
-                    }
-                }
-                finally {
-                    reader.Close();
-                }
-                return list;
-            }
-        }
-        
-        [Serializable()]
-        public partial class EvalTableGroupItemTableDef : APTableDef {
-            
-            private GuidAPColumnDef _groupItemId;
-            
-            private GuidAPColumnDef _tableGroupId;
+            private GuidAPColumnDef _propertionID;
             
             private GuidAPColumnDef _tableId;
             
+            private GuidAPColumnDef _targetId;
+            
             private DoubleAPColumnDef _propertion;
             
-            public EvalTableGroupItemTableDef(string tableName) : 
+            private GuidAPColumnDef _periodId;
+            
+            private GuidAPColumnDef _groupId;
+            
+            public EvalTargetTablePropertionTableDef(string tableName) : 
                     base(tableName) {
             }
             
-            protected EvalTableGroupItemTableDef(string tableName, string alias) : 
+            protected EvalTargetTablePropertionTableDef(string tableName, string alias) : 
                     base(tableName, alias) {
             }
             
             /// <summary>
-            /// GroupItemId ColumnDef
+            /// PropertionID ColumnDef
             /// </summary>
-            public virtual GuidAPColumnDef GroupItemId {
+            public virtual GuidAPColumnDef PropertionID {
                 get {
-                    if (Object.ReferenceEquals(_groupItemId, null)) {
-                        _groupItemId = new GuidAPColumnDef(this, "ID", false);
-                        _groupItemId.Display = "ID";
+                    if (Object.ReferenceEquals(_propertionID, null)) {
+                        _propertionID = new GuidAPColumnDef(this, "ID", false);
+                        _propertionID.Display = "ID";
                     }
-                    return _groupItemId;
-                }
-            }
-            
-            /// <summary>
-            /// TableGroupId ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef TableGroupId {
-                get {
-                    if (Object.ReferenceEquals(_tableGroupId, null)) {
-                        _tableGroupId = new GuidAPColumnDef(this, "TableGroupId", false);
-                        _tableGroupId.Display = "TableGroupId";
-                    }
-                    return _tableGroupId;
+                    return _propertionID;
                 }
             }
             
@@ -9283,6 +9113,19 @@ namespace Business {
             }
             
             /// <summary>
+            /// TargetId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef TargetId {
+                get {
+                    if (Object.ReferenceEquals(_targetId, null)) {
+                        _targetId = new GuidAPColumnDef(this, "TargetId", false);
+                        _targetId.Display = "TargetId";
+                    }
+                    return _targetId;
+                }
+            }
+            
+            /// <summary>
             /// Propertion ColumnDef
             /// </summary>
             public virtual DoubleAPColumnDef Propertion {
@@ -9292,6 +9135,32 @@ namespace Business {
                         _propertion.Display = "分值权重";
                     }
                     return _propertion;
+                }
+            }
+            
+            /// <summary>
+            /// PeriodId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef PeriodId {
+                get {
+                    if (Object.ReferenceEquals(_periodId, null)) {
+                        _periodId = new GuidAPColumnDef(this, "PeriodId", false);
+                        _periodId.Display = "周期ID";
+                    }
+                    return _periodId;
+                }
+            }
+            
+            /// <summary>
+            /// GroupId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef GroupId {
+                get {
+                    if (Object.ReferenceEquals(_groupId, null)) {
+                        _groupId = new GuidAPColumnDef(this, "GroupId", true);
+                        _groupId.Display = "考核组ID";
+                    }
+                    return _groupId;
                 }
             }
             
@@ -9307,25 +9176,27 @@ namespace Business {
             /// <summary>
             /// Create a alias table
             /// </summary>
-            public virtual EvalTableGroupItemTableDef As(string name) {
-                return new EvalTableGroupItemTableDef("EvalTableGroupItem", name);
+            public virtual EvalTargetTablePropertionTableDef As(string name) {
+                return new EvalTargetTablePropertionTableDef("EvalTargetTablePropertion", name);
             }
             
             /// <summary>
             /// Fill the data.
             /// </summary>
-            public virtual void Fullup(IDataReader reader, EvalTableGroupItem data, bool throwIfValidColumnName) {
-                data.GroupItemId = GroupItemId.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.TableGroupId = TableGroupId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+            public virtual void Fullup(IDataReader reader, EvalTargetTablePropertion data, bool throwIfValidColumnName) {
+                data.PropertionID = PropertionID.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.TableId = TableId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.TargetId = TargetId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.Propertion = Propertion.GetValue<double>(reader, throwIfValidColumnName);
+                data.PeriodId = PeriodId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.GroupId = GroupId.GetValue<System.Guid>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
             /// Fill the data.
             /// </summary>
-            public virtual EvalTableGroupItem Map(IDataReader reader) {
-                EvalTableGroupItem data = new EvalTableGroupItem();
+            public virtual EvalTargetTablePropertion Map(IDataReader reader) {
+                EvalTargetTablePropertion data = new EvalTargetTablePropertion();
                 Fullup(reader, data, true);
                 return data;
             }
@@ -9333,8 +9204,8 @@ namespace Business {
             /// <summary>
             /// Fill the data.
             /// </summary>
-            public virtual EvalTableGroupItem TolerantMap(IDataReader reader) {
-                EvalTableGroupItem data = new EvalTableGroupItem();
+            public virtual EvalTargetTablePropertion TolerantMap(IDataReader reader) {
+                EvalTargetTablePropertion data = new EvalTargetTablePropertion();
                 Fullup(reader, data, false);
                 return data;
             }
@@ -9342,8 +9213,8 @@ namespace Business {
             /// <summary>
             /// Fill the data.
             /// </summary>
-            public virtual List<EvalTableGroupItem> MapList(IDataReader reader) {
-                List<EvalTableGroupItem> list = new List<EvalTableGroupItem>();
+            public virtual List<EvalTargetTablePropertion> MapList(IDataReader reader) {
+                List<EvalTargetTablePropertion> list = new List<EvalTargetTablePropertion>();
                 try {
                     for (; reader.Read(); ) {
                         list.Add(Map(reader));
@@ -9358,8 +9229,8 @@ namespace Business {
             /// <summary>
             /// Fill the data.
             /// </summary>
-            public virtual List<EvalTableGroupItem> TolerantMapList(IDataReader reader) {
-                List<EvalTableGroupItem> list = new List<EvalTableGroupItem>();
+            public virtual List<EvalTargetTablePropertion> TolerantMapList(IDataReader reader) {
+                List<EvalTargetTablePropertion> list = new List<EvalTargetTablePropertion>();
                 try {
                     for (; reader.Read(); ) {
                         list.Add(TolerantMap(reader));
@@ -9379,15 +9250,7 @@ namespace Business {
             
             private StringAPColumnDef _groupName;
             
-            private StringAPColumnDef _groupType;
-            
-            private GuidAPColumnDef _createrId;
-            
             private DateTimeAPColumnDef _createDate;
-            
-            private Int32APColumnDef _accessorCount;
-            
-            private Int32APColumnDef _targetCount;
             
             public EvalGroupTableDef(string tableName) : 
                     base(tableName) {
@@ -9424,32 +9287,6 @@ namespace Business {
             }
             
             /// <summary>
-            /// GroupType ColumnDef
-            /// </summary>
-            public virtual StringAPColumnDef GroupType {
-                get {
-                    if (Object.ReferenceEquals(_groupType, null)) {
-                        _groupType = new StringAPColumnDef(this, "Type", false, 100);
-                        _groupType.Display = "组类型";
-                    }
-                    return _groupType;
-                }
-            }
-            
-            /// <summary>
-            /// CreaterId ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef CreaterId {
-                get {
-                    if (Object.ReferenceEquals(_createrId, null)) {
-                        _createrId = new GuidAPColumnDef(this, "CreaterId", false);
-                        _createrId.Display = "创建者id";
-                    }
-                    return _createrId;
-                }
-            }
-            
-            /// <summary>
             /// CreateDate ColumnDef
             /// </summary>
             public virtual DateTimeAPColumnDef CreateDate {
@@ -9459,32 +9296,6 @@ namespace Business {
                         _createDate.Display = "创建时间";
                     }
                     return _createDate;
-                }
-            }
-            
-            /// <summary>
-            /// AccessorCount ColumnDef
-            /// </summary>
-            public virtual Int32APColumnDef AccessorCount {
-                get {
-                    if (Object.ReferenceEquals(_accessorCount, null)) {
-                        _accessorCount = new Int32APColumnDef(this, "AccessorCount", false);
-                        _accessorCount.Display = "评审人数量";
-                    }
-                    return _accessorCount;
-                }
-            }
-            
-            /// <summary>
-            /// TargetCount ColumnDef
-            /// </summary>
-            public virtual Int32APColumnDef TargetCount {
-                get {
-                    if (Object.ReferenceEquals(_targetCount, null)) {
-                        _targetCount = new Int32APColumnDef(this, "TargetCount", false);
-                        _targetCount.Display = "参与考核人数量";
-                    }
-                    return _targetCount;
                 }
             }
             
@@ -9510,11 +9321,7 @@ namespace Business {
             public virtual void Fullup(IDataReader reader, EvalGroup data, bool throwIfValidColumnName) {
                 data.GroupId = GroupId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.GroupName = GroupName.GetValue<string>(reader, throwIfValidColumnName);
-                data.GroupType = GroupType.GetValue<string>(reader, throwIfValidColumnName);
-                data.CreaterId = CreaterId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.CreateDate = CreateDate.GetValue<System.DateTime>(reader, throwIfValidColumnName, DateTime.Now);
-                data.AccessorCount = AccessorCount.GetValue<int>(reader, throwIfValidColumnName);
-                data.TargetCount = TargetCount.GetValue<int>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -9569,34 +9376,32 @@ namespace Business {
         }
         
         [Serializable()]
-        public partial class EvalGroupTargetTableDef : APTableDef {
+        public partial class EvalGroupMemberTableDef : APTableDef {
             
-            private GuidAPColumnDef _groupTargetId;
+            private GuidAPColumnDef _groupMemberId;
             
             private GuidAPColumnDef _groupId;
             
             private GuidAPColumnDef _memberId;
             
-            private DateTimeAPColumnDef _modifyDate;
-            
-            public EvalGroupTargetTableDef(string tableName) : 
+            public EvalGroupMemberTableDef(string tableName) : 
                     base(tableName) {
             }
             
-            protected EvalGroupTargetTableDef(string tableName, string alias) : 
+            protected EvalGroupMemberTableDef(string tableName, string alias) : 
                     base(tableName, alias) {
             }
             
             /// <summary>
-            /// GroupTargetId ColumnDef
+            /// GroupMemberId ColumnDef
             /// </summary>
-            public virtual GuidAPColumnDef GroupTargetId {
+            public virtual GuidAPColumnDef GroupMemberId {
                 get {
-                    if (Object.ReferenceEquals(_groupTargetId, null)) {
-                        _groupTargetId = new GuidAPColumnDef(this, "ID", false);
-                        _groupTargetId.Display = "考核对象成员ID";
+                    if (Object.ReferenceEquals(_groupMemberId, null)) {
+                        _groupMemberId = new GuidAPColumnDef(this, "ID", false);
+                        _groupMemberId.Display = "ID";
                     }
-                    return _groupTargetId;
+                    return _groupMemberId;
                 }
             }
             
@@ -9607,7 +9412,7 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_groupId, null)) {
                         _groupId = new GuidAPColumnDef(this, "GroupId", false);
-                        _groupId.Display = "考核组ID";
+                        _groupId.Display = "GroupId";
                     }
                     return _groupId;
                 }
@@ -9620,22 +9425,9 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_memberId, null)) {
                         _memberId = new GuidAPColumnDef(this, "MemberId", false);
-                        _memberId.Display = "考核对象ID";
+                        _memberId.Display = "MemberId";
                     }
                     return _memberId;
-                }
-            }
-            
-            /// <summary>
-            /// ModifyDate ColumnDef
-            /// </summary>
-            public virtual DateTimeAPColumnDef ModifyDate {
-                get {
-                    if (Object.ReferenceEquals(_modifyDate, null)) {
-                        _modifyDate = new DateTimeAPColumnDef(this, "ModifyDate", false);
-                        _modifyDate.Display = "修改时间";
-                    }
-                    return _modifyDate;
                 }
             }
             
@@ -9651,25 +9443,24 @@ namespace Business {
             /// <summary>
             /// Create a alias table
             /// </summary>
-            public virtual EvalGroupTargetTableDef As(string name) {
-                return new EvalGroupTargetTableDef("EvalGroupTarget", name);
+            public virtual EvalGroupMemberTableDef As(string name) {
+                return new EvalGroupMemberTableDef("EvalGroupMember", name);
             }
             
             /// <summary>
             /// Fill the data.
             /// </summary>
-            public virtual void Fullup(IDataReader reader, EvalGroupTarget data, bool throwIfValidColumnName) {
-                data.GroupTargetId = GroupTargetId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+            public virtual void Fullup(IDataReader reader, EvalGroupMember data, bool throwIfValidColumnName) {
+                data.GroupMemberId = GroupMemberId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.GroupId = GroupId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.MemberId = MemberId.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.ModifyDate = ModifyDate.GetValue<System.DateTime>(reader, throwIfValidColumnName, DateTime.Now);
             }
             
             /// <summary>
             /// Fill the data.
             /// </summary>
-            public virtual EvalGroupTarget Map(IDataReader reader) {
-                EvalGroupTarget data = new EvalGroupTarget();
+            public virtual EvalGroupMember Map(IDataReader reader) {
+                EvalGroupMember data = new EvalGroupMember();
                 Fullup(reader, data, true);
                 return data;
             }
@@ -9677,8 +9468,8 @@ namespace Business {
             /// <summary>
             /// Fill the data.
             /// </summary>
-            public virtual EvalGroupTarget TolerantMap(IDataReader reader) {
-                EvalGroupTarget data = new EvalGroupTarget();
+            public virtual EvalGroupMember TolerantMap(IDataReader reader) {
+                EvalGroupMember data = new EvalGroupMember();
                 Fullup(reader, data, false);
                 return data;
             }
@@ -9686,8 +9477,8 @@ namespace Business {
             /// <summary>
             /// Fill the data.
             /// </summary>
-            public virtual List<EvalGroupTarget> MapList(IDataReader reader) {
-                List<EvalGroupTarget> list = new List<EvalGroupTarget>();
+            public virtual List<EvalGroupMember> MapList(IDataReader reader) {
+                List<EvalGroupMember> list = new List<EvalGroupMember>();
                 try {
                     for (; reader.Read(); ) {
                         list.Add(Map(reader));
@@ -9702,8 +9493,8 @@ namespace Business {
             /// <summary>
             /// Fill the data.
             /// </summary>
-            public virtual List<EvalGroupTarget> TolerantMapList(IDataReader reader) {
-                List<EvalGroupTarget> list = new List<EvalGroupTarget>();
+            public virtual List<EvalGroupMember> TolerantMapList(IDataReader reader) {
+                List<EvalGroupMember> list = new List<EvalGroupMember>();
                 try {
                     for (; reader.Read(); ) {
                         list.Add(TolerantMap(reader));
@@ -9724,8 +9515,6 @@ namespace Business {
             private GuidAPColumnDef _groupId;
             
             private GuidAPColumnDef _accessorId;
-            
-            private BooleanAPColumnDef _isLeader;
             
             private DateTimeAPColumnDef _modifyDate;
             
@@ -9777,19 +9566,6 @@ namespace Business {
             }
             
             /// <summary>
-            /// IsLeader ColumnDef
-            /// </summary>
-            public virtual BooleanAPColumnDef IsLeader {
-                get {
-                    if (Object.ReferenceEquals(_isLeader, null)) {
-                        _isLeader = new BooleanAPColumnDef(this, "IsLeader", false);
-                        _isLeader.Display = "是否是组长";
-                    }
-                    return _isLeader;
-                }
-            }
-            
-            /// <summary>
             /// ModifyDate ColumnDef
             /// </summary>
             public virtual DateTimeAPColumnDef ModifyDate {
@@ -9825,7 +9601,6 @@ namespace Business {
                 data.GroupAccessorId = GroupAccessorId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.GroupId = GroupId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.AccessorId = AccessorId.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.IsLeader = IsLeader.GetValue<bool>(reader, throwIfValidColumnName);
                 data.ModifyDate = ModifyDate.GetValue<System.DateTime>(reader, throwIfValidColumnName, DateTime.Now);
             }
             
@@ -9898,6 +9673,8 @@ namespace Business {
             private DoubleAPColumnDef _propertion;
             
             private DateTimeAPColumnDef _modifyDate;
+            
+            private GuidAPColumnDef _periodId;
             
             public EvalAccessorTargetTableDef(string tableName) : 
                     base(tableName) {
@@ -10012,6 +9789,19 @@ namespace Business {
             }
             
             /// <summary>
+            /// PeriodId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef PeriodId {
+                get {
+                    if (Object.ReferenceEquals(_periodId, null)) {
+                        _periodId = new GuidAPColumnDef(this, "PeriodId", false);
+                        _periodId.Display = "周期ID";
+                    }
+                    return _periodId;
+                }
+            }
+            
+            /// <summary>
             /// Default Index
             /// </summary>
             public virtual APSqlOrderPhrase DefaultOrder {
@@ -10039,6 +9829,7 @@ namespace Business {
                 data.TableId = TableId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.Propertion = Propertion.GetValue<double>(reader, throwIfValidColumnName);
                 data.ModifyDate = ModifyDate.GetValue<System.DateTime>(reader, throwIfValidColumnName, DateTime.Now);
+                data.PeriodId = PeriodId.GetValue<System.Guid>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -15572,7 +15363,7 @@ namespace Business {
             /// Insert Data.
             /// </summary>
             public virtual void Insert(EvalPeriod data) {
-                var query = APQuery.insert(APDBDef.EvalPeriod).values(APDBDef.EvalPeriod.PeriodId.SetValue(data.PeriodId), APDBDef.EvalPeriod.Name.SetValue(data.Name), APDBDef.EvalPeriod.BeginDate.SetValue(data.BeginDate), APDBDef.EvalPeriod.EndDate.SetValue(data.EndDate), APDBDef.EvalPeriod.AccessBeginDate.SetValue(data.AccessBeginDate), APDBDef.EvalPeriod.AccessEndDate.SetValue(data.AccessEndDate), APDBDef.EvalPeriod.AnalysisName.SetValue(data.AnalysisName), APDBDef.EvalPeriod.AnalysisType.SetValue(data.AnalysisType), APDBDef.EvalPeriod.IsCurrent.SetValue(data.IsCurrent));
+                var query = APQuery.insert(APDBDef.EvalPeriod).values(APDBDef.EvalPeriod.PeriodId.SetValue(data.PeriodId), APDBDef.EvalPeriod.Name.SetValue(data.Name), APDBDef.EvalPeriod.BeginDate.SetValue(data.BeginDate), APDBDef.EvalPeriod.EndDate.SetValue(data.EndDate), APDBDef.EvalPeriod.AccessBeginDate.SetValue(data.AccessBeginDate), APDBDef.EvalPeriod.AccessEndDate.SetValue(data.AccessEndDate), APDBDef.EvalPeriod.AnalysisName.SetValue(data.AnalysisName), APDBDef.EvalPeriod.AnalysisType.SetValue(data.AnalysisType), APDBDef.EvalPeriod.IsCurrent.SetValue(data.IsCurrent), APDBDef.EvalPeriod.CreateDate.SetValue(data.CreateDate));
                 ExecuteNonQuery(query);
             }
             
@@ -15580,7 +15371,7 @@ namespace Business {
             /// Update Data.
             /// </summary>
             public virtual void Update(EvalPeriod data) {
-                var query = APQuery.update(APDBDef.EvalPeriod).values(APDBDef.EvalPeriod.Name.SetValue(data.Name), APDBDef.EvalPeriod.BeginDate.SetValue(data.BeginDate), APDBDef.EvalPeriod.EndDate.SetValue(data.EndDate), APDBDef.EvalPeriod.AccessBeginDate.SetValue(data.AccessBeginDate), APDBDef.EvalPeriod.AccessEndDate.SetValue(data.AccessEndDate), APDBDef.EvalPeriod.AnalysisName.SetValue(data.AnalysisName), APDBDef.EvalPeriod.AnalysisType.SetValue(data.AnalysisType), APDBDef.EvalPeriod.IsCurrent.SetValue(data.IsCurrent)).where((APDBDef.EvalPeriod.PeriodId == data.PeriodId));
+                var query = APQuery.update(APDBDef.EvalPeriod).values(APDBDef.EvalPeriod.Name.SetValue(data.Name), APDBDef.EvalPeriod.BeginDate.SetValue(data.BeginDate), APDBDef.EvalPeriod.EndDate.SetValue(data.EndDate), APDBDef.EvalPeriod.AccessBeginDate.SetValue(data.AccessBeginDate), APDBDef.EvalPeriod.AccessEndDate.SetValue(data.AccessEndDate), APDBDef.EvalPeriod.AnalysisName.SetValue(data.AnalysisName), APDBDef.EvalPeriod.AnalysisType.SetValue(data.AnalysisType), APDBDef.EvalPeriod.IsCurrent.SetValue(data.IsCurrent), APDBDef.EvalPeriod.CreateDate.SetValue(data.CreateDate)).where((APDBDef.EvalPeriod.PeriodId == data.PeriodId));
                 ExecuteNonQuery(query);
             }
             
@@ -15690,46 +15481,46 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核表组 DalBase
+        /// 考核表-比重 DalBase
         /// </summary>
-        public partial class EvalTableGroupDalBase : APDal {
+        public partial class EvalTargetTablePropertionDalBase : APDal {
             
-            public EvalTableGroupDalBase() {
+            public EvalTargetTablePropertionDalBase() {
             }
             
-            public EvalTableGroupDalBase(APDatabase db) : 
+            public EvalTargetTablePropertionDalBase(APDatabase db) : 
                     base(db) {
             }
             
             /// <summary>
             /// Insert Data.
             /// </summary>
-            public virtual void Insert(EvalTableGroup data) {
-                var query = APQuery.insert(APDBDef.EvalTableGroup).values(APDBDef.EvalTableGroup.TableGroupId.SetValue(data.TableGroupId), APDBDef.EvalTableGroup.TableGroupName.SetValue(data.TableGroupName), APDBDef.EvalTableGroup.PeriodId.SetValue(data.PeriodId), APDBDef.EvalTableGroup.TargetRoleId.SetValue(data.TargetRoleId));
+            public virtual void Insert(EvalTargetTablePropertion data) {
+                var query = APQuery.insert(APDBDef.EvalTargetTablePropertion).values(APDBDef.EvalTargetTablePropertion.PropertionID.SetValue(data.PropertionID), APDBDef.EvalTargetTablePropertion.TableId.SetValue(data.TableId), APDBDef.EvalTargetTablePropertion.TargetId.SetValue(data.TargetId), APDBDef.EvalTargetTablePropertion.Propertion.SetValue(data.Propertion), APDBDef.EvalTargetTablePropertion.PeriodId.SetValue(data.PeriodId), APDBDef.EvalTargetTablePropertion.GroupId.SetValue(data.GroupId));
                 ExecuteNonQuery(query);
             }
             
             /// <summary>
             /// Update Data.
             /// </summary>
-            public virtual void Update(EvalTableGroup data) {
-                var query = APQuery.update(APDBDef.EvalTableGroup).values(APDBDef.EvalTableGroup.TableGroupName.SetValue(data.TableGroupName), APDBDef.EvalTableGroup.PeriodId.SetValue(data.PeriodId), APDBDef.EvalTableGroup.TargetRoleId.SetValue(data.TargetRoleId)).where((APDBDef.EvalTableGroup.TableGroupId == data.TableGroupId));
+            public virtual void Update(EvalTargetTablePropertion data) {
+                var query = APQuery.update(APDBDef.EvalTargetTablePropertion).values(APDBDef.EvalTargetTablePropertion.TableId.SetValue(data.TableId), APDBDef.EvalTargetTablePropertion.TargetId.SetValue(data.TargetId), APDBDef.EvalTargetTablePropertion.Propertion.SetValue(data.Propertion), APDBDef.EvalTargetTablePropertion.PeriodId.SetValue(data.PeriodId), APDBDef.EvalTargetTablePropertion.GroupId.SetValue(data.GroupId)).where((APDBDef.EvalTargetTablePropertion.PropertionID == data.PropertionID));
                 ExecuteNonQuery(query);
             }
             
             /// <summary>
             /// Update Data.
             /// </summary>
-            public virtual void UpdatePartial(System.Guid tableGroupId, Object metadata) {
-                var query = APQuery.update(APDBDef.EvalTableGroup).values(APSqlSetPhraseSelector.Select(APDBDef.EvalTableGroup, metadata)).where((APDBDef.EvalTableGroup.TableGroupId == tableGroupId));
+            public virtual void UpdatePartial(System.Guid propertionID, Object metadata) {
+                var query = APQuery.update(APDBDef.EvalTargetTablePropertion).values(APSqlSetPhraseSelector.Select(APDBDef.EvalTargetTablePropertion, metadata)).where((APDBDef.EvalTargetTablePropertion.PropertionID == propertionID));
                 ExecuteNonQuery(query);
             }
             
             /// <summary>
             /// Delete data by primary key.
             /// </summary>
-            public virtual void PrimaryDelete(System.Guid tableGroupId) {
-                var query = APQuery.delete(APDBDef.EvalTableGroup).where((APDBDef.EvalTableGroup.TableGroupId == tableGroupId));
+            public virtual void PrimaryDelete(System.Guid propertionID) {
+                var query = APQuery.delete(APDBDef.EvalTargetTablePropertion).where((APDBDef.EvalTargetTablePropertion.PropertionID == propertionID));
                 ExecuteNonQuery(query);
             }
             
@@ -15737,7 +15528,7 @@ namespace Business {
             /// Delete data by condition.
             /// </summary>
             public virtual void ConditionDelete(APSqlWherePhrase condition) {
-                var query = APQuery.delete(APDBDef.EvalTableGroup).where(condition);
+                var query = APQuery.delete(APDBDef.EvalTargetTablePropertion).where(condition);
                 ExecuteNonQuery(query);
             }
             
@@ -15745,19 +15536,19 @@ namespace Business {
             /// Query count by condition.
             /// </summary>
             public virtual int ConditionQueryCount(APSqlWherePhrase condition) {
-                var query = APQuery.select(APDBDef.EvalTableGroup.Asterisk.Count()).from(APDBDef.EvalTableGroup).where(condition);
+                var query = APQuery.select(APDBDef.EvalTargetTablePropertion.Asterisk.Count()).from(APDBDef.EvalTargetTablePropertion).where(condition);
                 return ExecuteCount(query);
             }
             
             /// <summary>
             /// Get data by PK.
             /// </summary>
-            public virtual EvalTableGroup PrimaryGet(System.Guid tableGroupId) {
-                var query = APQuery.select(APDBDef.EvalTableGroup.Asterisk).from(APDBDef.EvalTableGroup).where((APDBDef.EvalTableGroup.TableGroupId == tableGroupId));
+            public virtual EvalTargetTablePropertion PrimaryGet(System.Guid propertionID) {
+                var query = APQuery.select(APDBDef.EvalTargetTablePropertion.Asterisk).from(APDBDef.EvalTargetTablePropertion).where((APDBDef.EvalTargetTablePropertion.PropertionID == propertionID));
                 IDataReader reader = ExecuteReader(query);
                 try {
                     if (reader.Read()) {
-                        return APDBDef.EvalTableGroup.Map(reader);
+                        return APDBDef.EvalTargetTablePropertion.Map(reader);
                     }
                     return null;
                 }
@@ -15769,8 +15560,8 @@ namespace Business {
             /// <summary>
             /// Query by condition.
             /// </summary>
-            public virtual List<EvalTableGroup> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
-                var query = APQuery.select(APDBDef.EvalTableGroup.Asterisk).from(APDBDef.EvalTableGroup);
+            public virtual List<EvalTargetTablePropertion> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+                var query = APQuery.select(APDBDef.EvalTargetTablePropertion.Asterisk).from(APDBDef.EvalTargetTablePropertion);
                 if ((condition != null)) {
                     query.where(condition);
                 }
@@ -15783,26 +15574,26 @@ namespace Business {
                 if ((skip != null)) {
                     query.skip(skip);
                 }
-                query.primary(APDBDef.EvalTableGroup.TableGroupId);
+                query.primary(APDBDef.EvalTargetTablePropertion.PropertionID);
                 IDataReader reader = ExecuteReader(query);
-                return APDBDef.EvalTableGroup.MapList(reader);
+                return APDBDef.EvalTargetTablePropertion.MapList(reader);
             }
             
             /// <summary>
             /// Get the initial data of the table.
             /// </summary>
-            public virtual List<EvalTableGroup> GetInitData() {
-                return new List<EvalTableGroup>();
+            public virtual List<EvalTargetTablePropertion> GetInitData() {
+                return new List<EvalTargetTablePropertion>();
             }
             
             /// <summary>
             /// Initialize data.
             /// </summary>
             public virtual void InitData(APDBDef db) {
-                List<EvalTableGroup> list = GetInitData();
+                List<EvalTargetTablePropertion> list = GetInitData();
                 for (int i = 0; (i < list.Count); i = (i + 1)) {
-                    EvalTableGroup data = list[i];
-                    if ((PrimaryGet(data.TableGroupId) == null)) {
+                    EvalTargetTablePropertion data = list[i];
+                    if ((PrimaryGet(data.PropertionID) == null)) {
                         Insert(data);
                     }
                 }
@@ -15810,147 +15601,14 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核表组 Dal
+        /// 考核表-比重 Dal
         /// </summary>
-        public partial class EvalTableGroupDal : EvalTableGroupDalBase {
+        public partial class EvalTargetTablePropertionDal : EvalTargetTablePropertionDalBase {
             
-            public EvalTableGroupDal() {
+            public EvalTargetTablePropertionDal() {
             }
             
-            public EvalTableGroupDal(APDatabase db) : 
-                    base(db) {
-            }
-        }
-        
-        /// <summary>
-        ///  DalBase
-        /// </summary>
-        public partial class EvalTableGroupItemDalBase : APDal {
-            
-            public EvalTableGroupItemDalBase() {
-            }
-            
-            public EvalTableGroupItemDalBase(APDatabase db) : 
-                    base(db) {
-            }
-            
-            /// <summary>
-            /// Insert Data.
-            /// </summary>
-            public virtual void Insert(EvalTableGroupItem data) {
-                var query = APQuery.insert(APDBDef.EvalTableGroupItem).values(APDBDef.EvalTableGroupItem.GroupItemId.SetValue(data.GroupItemId), APDBDef.EvalTableGroupItem.TableGroupId.SetValue(data.TableGroupId), APDBDef.EvalTableGroupItem.TableId.SetValue(data.TableId), APDBDef.EvalTableGroupItem.Propertion.SetValue(data.Propertion));
-                ExecuteNonQuery(query);
-            }
-            
-            /// <summary>
-            /// Update Data.
-            /// </summary>
-            public virtual void Update(EvalTableGroupItem data) {
-                var query = APQuery.update(APDBDef.EvalTableGroupItem).values(APDBDef.EvalTableGroupItem.TableGroupId.SetValue(data.TableGroupId), APDBDef.EvalTableGroupItem.TableId.SetValue(data.TableId), APDBDef.EvalTableGroupItem.Propertion.SetValue(data.Propertion)).where((APDBDef.EvalTableGroupItem.GroupItemId == data.GroupItemId));
-                ExecuteNonQuery(query);
-            }
-            
-            /// <summary>
-            /// Update Data.
-            /// </summary>
-            public virtual void UpdatePartial(System.Guid groupItemId, Object metadata) {
-                var query = APQuery.update(APDBDef.EvalTableGroupItem).values(APSqlSetPhraseSelector.Select(APDBDef.EvalTableGroupItem, metadata)).where((APDBDef.EvalTableGroupItem.GroupItemId == groupItemId));
-                ExecuteNonQuery(query);
-            }
-            
-            /// <summary>
-            /// Delete data by primary key.
-            /// </summary>
-            public virtual void PrimaryDelete(System.Guid groupItemId) {
-                var query = APQuery.delete(APDBDef.EvalTableGroupItem).where((APDBDef.EvalTableGroupItem.GroupItemId == groupItemId));
-                ExecuteNonQuery(query);
-            }
-            
-            /// <summary>
-            /// Delete data by condition.
-            /// </summary>
-            public virtual void ConditionDelete(APSqlWherePhrase condition) {
-                var query = APQuery.delete(APDBDef.EvalTableGroupItem).where(condition);
-                ExecuteNonQuery(query);
-            }
-            
-            /// <summary>
-            /// Query count by condition.
-            /// </summary>
-            public virtual int ConditionQueryCount(APSqlWherePhrase condition) {
-                var query = APQuery.select(APDBDef.EvalTableGroupItem.Asterisk.Count()).from(APDBDef.EvalTableGroupItem).where(condition);
-                return ExecuteCount(query);
-            }
-            
-            /// <summary>
-            /// Get data by PK.
-            /// </summary>
-            public virtual EvalTableGroupItem PrimaryGet(System.Guid groupItemId) {
-                var query = APQuery.select(APDBDef.EvalTableGroupItem.Asterisk).from(APDBDef.EvalTableGroupItem).where((APDBDef.EvalTableGroupItem.GroupItemId == groupItemId));
-                IDataReader reader = ExecuteReader(query);
-                try {
-                    if (reader.Read()) {
-                        return APDBDef.EvalTableGroupItem.Map(reader);
-                    }
-                    return null;
-                }
-                finally {
-                    reader.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Query by condition.
-            /// </summary>
-            public virtual List<EvalTableGroupItem> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
-                var query = APQuery.select(APDBDef.EvalTableGroupItem.Asterisk).from(APDBDef.EvalTableGroupItem);
-                if ((condition != null)) {
-                    query.where(condition);
-                }
-                if ((orderBy != null)) {
-                    query.order_by(orderBy);
-                }
-                if ((take != null)) {
-                    query.take(take);
-                }
-                if ((skip != null)) {
-                    query.skip(skip);
-                }
-                query.primary(APDBDef.EvalTableGroupItem.GroupItemId);
-                IDataReader reader = ExecuteReader(query);
-                return APDBDef.EvalTableGroupItem.MapList(reader);
-            }
-            
-            /// <summary>
-            /// Get the initial data of the table.
-            /// </summary>
-            public virtual List<EvalTableGroupItem> GetInitData() {
-                return new List<EvalTableGroupItem>();
-            }
-            
-            /// <summary>
-            /// Initialize data.
-            /// </summary>
-            public virtual void InitData(APDBDef db) {
-                List<EvalTableGroupItem> list = GetInitData();
-                for (int i = 0; (i < list.Count); i = (i + 1)) {
-                    EvalTableGroupItem data = list[i];
-                    if ((PrimaryGet(data.GroupItemId) == null)) {
-                        Insert(data);
-                    }
-                }
-            }
-        }
-        
-        /// <summary>
-        ///  Dal
-        /// </summary>
-        public partial class EvalTableGroupItemDal : EvalTableGroupItemDalBase {
-            
-            public EvalTableGroupItemDal() {
-            }
-            
-            public EvalTableGroupItemDal(APDatabase db) : 
+            public EvalTargetTablePropertionDal(APDatabase db) : 
                     base(db) {
             }
         }
@@ -15971,7 +15629,7 @@ namespace Business {
             /// Insert Data.
             /// </summary>
             public virtual void Insert(EvalGroup data) {
-                var query = APQuery.insert(APDBDef.EvalGroup).values(APDBDef.EvalGroup.GroupId.SetValue(data.GroupId), APDBDef.EvalGroup.GroupName.SetValue(data.GroupName), APDBDef.EvalGroup.GroupType.SetValue(data.GroupType), APDBDef.EvalGroup.CreaterId.SetValue(data.CreaterId), APDBDef.EvalGroup.CreateDate.SetValue(data.CreateDate), APDBDef.EvalGroup.AccessorCount.SetValue(data.AccessorCount), APDBDef.EvalGroup.TargetCount.SetValue(data.TargetCount));
+                var query = APQuery.insert(APDBDef.EvalGroup).values(APDBDef.EvalGroup.GroupId.SetValue(data.GroupId), APDBDef.EvalGroup.GroupName.SetValue(data.GroupName), APDBDef.EvalGroup.CreateDate.SetValue(data.CreateDate));
                 ExecuteNonQuery(query);
             }
             
@@ -15979,7 +15637,7 @@ namespace Business {
             /// Update Data.
             /// </summary>
             public virtual void Update(EvalGroup data) {
-                var query = APQuery.update(APDBDef.EvalGroup).values(APDBDef.EvalGroup.GroupName.SetValue(data.GroupName), APDBDef.EvalGroup.GroupType.SetValue(data.GroupType), APDBDef.EvalGroup.CreaterId.SetValue(data.CreaterId), APDBDef.EvalGroup.CreateDate.SetValue(data.CreateDate), APDBDef.EvalGroup.AccessorCount.SetValue(data.AccessorCount), APDBDef.EvalGroup.TargetCount.SetValue(data.TargetCount)).where((APDBDef.EvalGroup.GroupId == data.GroupId));
+                var query = APQuery.update(APDBDef.EvalGroup).values(APDBDef.EvalGroup.GroupName.SetValue(data.GroupName), APDBDef.EvalGroup.CreateDate.SetValue(data.CreateDate)).where((APDBDef.EvalGroup.GroupId == data.GroupId));
                 ExecuteNonQuery(query);
             }
             
@@ -16089,46 +15747,46 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核组-评审对象 DalBase
+        /// 考核组-成员 DalBase
         /// </summary>
-        public partial class EvalGroupTargetDalBase : APDal {
+        public partial class EvalGroupMemberDalBase : APDal {
             
-            public EvalGroupTargetDalBase() {
+            public EvalGroupMemberDalBase() {
             }
             
-            public EvalGroupTargetDalBase(APDatabase db) : 
+            public EvalGroupMemberDalBase(APDatabase db) : 
                     base(db) {
             }
             
             /// <summary>
             /// Insert Data.
             /// </summary>
-            public virtual void Insert(EvalGroupTarget data) {
-                var query = APQuery.insert(APDBDef.EvalGroupTarget).values(APDBDef.EvalGroupTarget.GroupTargetId.SetValue(data.GroupTargetId), APDBDef.EvalGroupTarget.GroupId.SetValue(data.GroupId), APDBDef.EvalGroupTarget.MemberId.SetValue(data.MemberId), APDBDef.EvalGroupTarget.ModifyDate.SetValue(data.ModifyDate));
+            public virtual void Insert(EvalGroupMember data) {
+                var query = APQuery.insert(APDBDef.EvalGroupMember).values(APDBDef.EvalGroupMember.GroupMemberId.SetValue(data.GroupMemberId), APDBDef.EvalGroupMember.GroupId.SetValue(data.GroupId), APDBDef.EvalGroupMember.MemberId.SetValue(data.MemberId));
                 ExecuteNonQuery(query);
             }
             
             /// <summary>
             /// Update Data.
             /// </summary>
-            public virtual void Update(EvalGroupTarget data) {
-                var query = APQuery.update(APDBDef.EvalGroupTarget).values(APDBDef.EvalGroupTarget.GroupId.SetValue(data.GroupId), APDBDef.EvalGroupTarget.MemberId.SetValue(data.MemberId), APDBDef.EvalGroupTarget.ModifyDate.SetValue(data.ModifyDate)).where((APDBDef.EvalGroupTarget.GroupTargetId == data.GroupTargetId));
+            public virtual void Update(EvalGroupMember data) {
+                var query = APQuery.update(APDBDef.EvalGroupMember).values(APDBDef.EvalGroupMember.GroupId.SetValue(data.GroupId), APDBDef.EvalGroupMember.MemberId.SetValue(data.MemberId)).where((APDBDef.EvalGroupMember.GroupMemberId == data.GroupMemberId));
                 ExecuteNonQuery(query);
             }
             
             /// <summary>
             /// Update Data.
             /// </summary>
-            public virtual void UpdatePartial(System.Guid groupTargetId, Object metadata) {
-                var query = APQuery.update(APDBDef.EvalGroupTarget).values(APSqlSetPhraseSelector.Select(APDBDef.EvalGroupTarget, metadata)).where((APDBDef.EvalGroupTarget.GroupTargetId == groupTargetId));
+            public virtual void UpdatePartial(System.Guid groupMemberId, Object metadata) {
+                var query = APQuery.update(APDBDef.EvalGroupMember).values(APSqlSetPhraseSelector.Select(APDBDef.EvalGroupMember, metadata)).where((APDBDef.EvalGroupMember.GroupMemberId == groupMemberId));
                 ExecuteNonQuery(query);
             }
             
             /// <summary>
             /// Delete data by primary key.
             /// </summary>
-            public virtual void PrimaryDelete(System.Guid groupTargetId) {
-                var query = APQuery.delete(APDBDef.EvalGroupTarget).where((APDBDef.EvalGroupTarget.GroupTargetId == groupTargetId));
+            public virtual void PrimaryDelete(System.Guid groupMemberId) {
+                var query = APQuery.delete(APDBDef.EvalGroupMember).where((APDBDef.EvalGroupMember.GroupMemberId == groupMemberId));
                 ExecuteNonQuery(query);
             }
             
@@ -16136,7 +15794,7 @@ namespace Business {
             /// Delete data by condition.
             /// </summary>
             public virtual void ConditionDelete(APSqlWherePhrase condition) {
-                var query = APQuery.delete(APDBDef.EvalGroupTarget).where(condition);
+                var query = APQuery.delete(APDBDef.EvalGroupMember).where(condition);
                 ExecuteNonQuery(query);
             }
             
@@ -16144,19 +15802,19 @@ namespace Business {
             /// Query count by condition.
             /// </summary>
             public virtual int ConditionQueryCount(APSqlWherePhrase condition) {
-                var query = APQuery.select(APDBDef.EvalGroupTarget.Asterisk.Count()).from(APDBDef.EvalGroupTarget).where(condition);
+                var query = APQuery.select(APDBDef.EvalGroupMember.Asterisk.Count()).from(APDBDef.EvalGroupMember).where(condition);
                 return ExecuteCount(query);
             }
             
             /// <summary>
             /// Get data by PK.
             /// </summary>
-            public virtual EvalGroupTarget PrimaryGet(System.Guid groupTargetId) {
-                var query = APQuery.select(APDBDef.EvalGroupTarget.Asterisk).from(APDBDef.EvalGroupTarget).where((APDBDef.EvalGroupTarget.GroupTargetId == groupTargetId));
+            public virtual EvalGroupMember PrimaryGet(System.Guid groupMemberId) {
+                var query = APQuery.select(APDBDef.EvalGroupMember.Asterisk).from(APDBDef.EvalGroupMember).where((APDBDef.EvalGroupMember.GroupMemberId == groupMemberId));
                 IDataReader reader = ExecuteReader(query);
                 try {
                     if (reader.Read()) {
-                        return APDBDef.EvalGroupTarget.Map(reader);
+                        return APDBDef.EvalGroupMember.Map(reader);
                     }
                     return null;
                 }
@@ -16168,8 +15826,8 @@ namespace Business {
             /// <summary>
             /// Query by condition.
             /// </summary>
-            public virtual List<EvalGroupTarget> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
-                var query = APQuery.select(APDBDef.EvalGroupTarget.Asterisk).from(APDBDef.EvalGroupTarget);
+            public virtual List<EvalGroupMember> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+                var query = APQuery.select(APDBDef.EvalGroupMember.Asterisk).from(APDBDef.EvalGroupMember);
                 if ((condition != null)) {
                     query.where(condition);
                 }
@@ -16182,26 +15840,26 @@ namespace Business {
                 if ((skip != null)) {
                     query.skip(skip);
                 }
-                query.primary(APDBDef.EvalGroupTarget.GroupTargetId);
+                query.primary(APDBDef.EvalGroupMember.GroupMemberId);
                 IDataReader reader = ExecuteReader(query);
-                return APDBDef.EvalGroupTarget.MapList(reader);
+                return APDBDef.EvalGroupMember.MapList(reader);
             }
             
             /// <summary>
             /// Get the initial data of the table.
             /// </summary>
-            public virtual List<EvalGroupTarget> GetInitData() {
-                return new List<EvalGroupTarget>();
+            public virtual List<EvalGroupMember> GetInitData() {
+                return new List<EvalGroupMember>();
             }
             
             /// <summary>
             /// Initialize data.
             /// </summary>
             public virtual void InitData(APDBDef db) {
-                List<EvalGroupTarget> list = GetInitData();
+                List<EvalGroupMember> list = GetInitData();
                 for (int i = 0; (i < list.Count); i = (i + 1)) {
-                    EvalGroupTarget data = list[i];
-                    if ((PrimaryGet(data.GroupTargetId) == null)) {
+                    EvalGroupMember data = list[i];
+                    if ((PrimaryGet(data.GroupMemberId) == null)) {
                         Insert(data);
                     }
                 }
@@ -16209,14 +15867,14 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核组-评审对象 Dal
+        /// 考核组-成员 Dal
         /// </summary>
-        public partial class EvalGroupTargetDal : EvalGroupTargetDalBase {
+        public partial class EvalGroupMemberDal : EvalGroupMemberDalBase {
             
-            public EvalGroupTargetDal() {
+            public EvalGroupMemberDal() {
             }
             
-            public EvalGroupTargetDal(APDatabase db) : 
+            public EvalGroupMemberDal(APDatabase db) : 
                     base(db) {
             }
         }
@@ -16237,7 +15895,7 @@ namespace Business {
             /// Insert Data.
             /// </summary>
             public virtual void Insert(EvalGroupAccessor data) {
-                var query = APQuery.insert(APDBDef.EvalGroupAccessor).values(APDBDef.EvalGroupAccessor.GroupAccessorId.SetValue(data.GroupAccessorId), APDBDef.EvalGroupAccessor.GroupId.SetValue(data.GroupId), APDBDef.EvalGroupAccessor.AccessorId.SetValue(data.AccessorId), APDBDef.EvalGroupAccessor.IsLeader.SetValue(data.IsLeader), APDBDef.EvalGroupAccessor.ModifyDate.SetValue(data.ModifyDate));
+                var query = APQuery.insert(APDBDef.EvalGroupAccessor).values(APDBDef.EvalGroupAccessor.GroupAccessorId.SetValue(data.GroupAccessorId), APDBDef.EvalGroupAccessor.GroupId.SetValue(data.GroupId), APDBDef.EvalGroupAccessor.AccessorId.SetValue(data.AccessorId), APDBDef.EvalGroupAccessor.ModifyDate.SetValue(data.ModifyDate));
                 ExecuteNonQuery(query);
             }
             
@@ -16245,7 +15903,7 @@ namespace Business {
             /// Update Data.
             /// </summary>
             public virtual void Update(EvalGroupAccessor data) {
-                var query = APQuery.update(APDBDef.EvalGroupAccessor).values(APDBDef.EvalGroupAccessor.GroupId.SetValue(data.GroupId), APDBDef.EvalGroupAccessor.AccessorId.SetValue(data.AccessorId), APDBDef.EvalGroupAccessor.IsLeader.SetValue(data.IsLeader), APDBDef.EvalGroupAccessor.ModifyDate.SetValue(data.ModifyDate)).where((APDBDef.EvalGroupAccessor.GroupAccessorId == data.GroupAccessorId));
+                var query = APQuery.update(APDBDef.EvalGroupAccessor).values(APDBDef.EvalGroupAccessor.GroupId.SetValue(data.GroupId), APDBDef.EvalGroupAccessor.AccessorId.SetValue(data.AccessorId), APDBDef.EvalGroupAccessor.ModifyDate.SetValue(data.ModifyDate)).where((APDBDef.EvalGroupAccessor.GroupAccessorId == data.GroupAccessorId));
                 ExecuteNonQuery(query);
             }
             
@@ -16370,7 +16028,7 @@ namespace Business {
             /// Insert Data.
             /// </summary>
             public virtual void Insert(EvalAccessorTarget data) {
-                var query = APQuery.insert(APDBDef.EvalAccessorTarget).values(APDBDef.EvalAccessorTarget.AccessorTargetId.SetValue(data.AccessorTargetId), APDBDef.EvalAccessorTarget.GroupId.SetValue(data.GroupId), APDBDef.EvalAccessorTarget.AccessorId.SetValue(data.AccessorId), APDBDef.EvalAccessorTarget.TargetId.SetValue(data.TargetId), APDBDef.EvalAccessorTarget.EvalType.SetValue(data.EvalType), APDBDef.EvalAccessorTarget.TableId.SetValue(data.TableId), APDBDef.EvalAccessorTarget.Propertion.SetValue(data.Propertion), APDBDef.EvalAccessorTarget.ModifyDate.SetValue(data.ModifyDate));
+                var query = APQuery.insert(APDBDef.EvalAccessorTarget).values(APDBDef.EvalAccessorTarget.AccessorTargetId.SetValue(data.AccessorTargetId), APDBDef.EvalAccessorTarget.GroupId.SetValue(data.GroupId), APDBDef.EvalAccessorTarget.AccessorId.SetValue(data.AccessorId), APDBDef.EvalAccessorTarget.TargetId.SetValue(data.TargetId), APDBDef.EvalAccessorTarget.EvalType.SetValue(data.EvalType), APDBDef.EvalAccessorTarget.TableId.SetValue(data.TableId), APDBDef.EvalAccessorTarget.Propertion.SetValue(data.Propertion), APDBDef.EvalAccessorTarget.ModifyDate.SetValue(data.ModifyDate), APDBDef.EvalAccessorTarget.PeriodId.SetValue(data.PeriodId));
                 ExecuteNonQuery(query);
             }
             
@@ -16378,7 +16036,7 @@ namespace Business {
             /// Update Data.
             /// </summary>
             public virtual void Update(EvalAccessorTarget data) {
-                var query = APQuery.update(APDBDef.EvalAccessorTarget).values(APDBDef.EvalAccessorTarget.GroupId.SetValue(data.GroupId), APDBDef.EvalAccessorTarget.AccessorId.SetValue(data.AccessorId), APDBDef.EvalAccessorTarget.TargetId.SetValue(data.TargetId), APDBDef.EvalAccessorTarget.EvalType.SetValue(data.EvalType), APDBDef.EvalAccessorTarget.TableId.SetValue(data.TableId), APDBDef.EvalAccessorTarget.Propertion.SetValue(data.Propertion), APDBDef.EvalAccessorTarget.ModifyDate.SetValue(data.ModifyDate)).where((APDBDef.EvalAccessorTarget.AccessorTargetId == data.AccessorTargetId));
+                var query = APQuery.update(APDBDef.EvalAccessorTarget).values(APDBDef.EvalAccessorTarget.GroupId.SetValue(data.GroupId), APDBDef.EvalAccessorTarget.AccessorId.SetValue(data.AccessorId), APDBDef.EvalAccessorTarget.TargetId.SetValue(data.TargetId), APDBDef.EvalAccessorTarget.EvalType.SetValue(data.EvalType), APDBDef.EvalAccessorTarget.TableId.SetValue(data.TableId), APDBDef.EvalAccessorTarget.Propertion.SetValue(data.Propertion), APDBDef.EvalAccessorTarget.ModifyDate.SetValue(data.ModifyDate), APDBDef.EvalAccessorTarget.PeriodId.SetValue(data.PeriodId)).where((APDBDef.EvalAccessorTarget.AccessorTargetId == data.AccessorTargetId));
                 ExecuteNonQuery(query);
             }
             
@@ -22044,17 +21702,17 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核表组 BplBase
+        /// 考核表-比重 BplBase
         /// </summary>
-        public partial class EvalTableGroupBplBase {
+        public partial class EvalTargetTablePropertionBplBase {
             
             /// <summary>
             /// Insert Data.
             /// </summary>
-            public static void Insert(EvalTableGroup data) {
+            public static void Insert(EvalTargetTablePropertion data) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.EvalTableGroupDal.Insert(data);
+                    db.EvalTargetTablePropertionDal.Insert(data);
                 }
                 finally {
                     db.Close();
@@ -22064,10 +21722,10 @@ namespace Business {
             /// <summary>
             /// Update Data.
             /// </summary>
-            public static void Update(EvalTableGroup data) {
+            public static void Update(EvalTargetTablePropertion data) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.EvalTableGroupDal.Update(data);
+                    db.EvalTargetTablePropertionDal.Update(data);
                 }
                 finally {
                     db.Close();
@@ -22077,10 +21735,10 @@ namespace Business {
             /// <summary>
             /// Update Data.
             /// </summary>
-            public static void UpdatePartial(System.Guid tableGroupId, Object metadata) {
+            public static void UpdatePartial(System.Guid propertionID, Object metadata) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.EvalTableGroupDal.UpdatePartial(tableGroupId, metadata);
+                    db.EvalTargetTablePropertionDal.UpdatePartial(propertionID, metadata);
                 }
                 finally {
                     db.Close();
@@ -22090,10 +21748,10 @@ namespace Business {
             /// <summary>
             /// Delete data by primary key.
             /// </summary>
-            public static void PrimaryDelete(System.Guid tableGroupId) {
+            public static void PrimaryDelete(System.Guid propertionID) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.EvalTableGroupDal.PrimaryDelete(tableGroupId);
+                    db.EvalTargetTablePropertionDal.PrimaryDelete(propertionID);
                 }
                 finally {
                     db.Close();
@@ -22106,7 +21764,7 @@ namespace Business {
             public static void ConditionDelete(APSqlWherePhrase condition) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.EvalTableGroupDal.ConditionDelete(condition);
+                    db.EvalTargetTablePropertionDal.ConditionDelete(condition);
                 }
                 finally {
                     db.Close();
@@ -22119,7 +21777,7 @@ namespace Business {
             public static int ConditionQueryCount(APSqlWherePhrase condition) {
                 APDBDef db = new APDBDef();
                 try {
-                    return db.EvalTableGroupDal.ConditionQueryCount(condition);
+                    return db.EvalTargetTablePropertionDal.ConditionQueryCount(condition);
                 }
                 finally {
                     db.Close();
@@ -22129,10 +21787,10 @@ namespace Business {
             /// <summary>
             /// Get data by PK.
             /// </summary>
-            public static EvalTableGroup PrimaryGet(System.Guid tableGroupId) {
+            public static EvalTargetTablePropertion PrimaryGet(System.Guid propertionID) {
                 APDBDef db = new APDBDef();
                 try {
-                    return db.EvalTableGroupDal.PrimaryGet(tableGroupId);
+                    return db.EvalTargetTablePropertionDal.PrimaryGet(propertionID);
                 }
                 finally {
                     db.Close();
@@ -22142,10 +21800,10 @@ namespace Business {
             /// <summary>
             /// Query by condition.
             /// </summary>
-            public static List<EvalTableGroup> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+            public static List<EvalTargetTablePropertion> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
                 APDBDef db = new APDBDef();
                 try {
-                    return db.EvalTableGroupDal.ConditionQuery(condition, orderBy, take, skip);
+                    return db.EvalTargetTablePropertionDal.ConditionQuery(condition, orderBy, take, skip);
                 }
                 finally {
                     db.Close();
@@ -22155,10 +21813,10 @@ namespace Business {
             /// <summary>
             /// Query by condition.
             /// </summary>
-            public static List<EvalTableGroup> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take) {
+            public static List<EvalTargetTablePropertion> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take) {
                 APDBDef db = new APDBDef();
                 try {
-                    return db.EvalTableGroupDal.ConditionQuery(condition, orderBy, take, null);
+                    return db.EvalTargetTablePropertionDal.ConditionQuery(condition, orderBy, take, null);
                 }
                 finally {
                     db.Close();
@@ -22168,10 +21826,10 @@ namespace Business {
             /// <summary>
             /// Query by condition.
             /// </summary>
-            public static List<EvalTableGroup> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+            public static List<EvalTargetTablePropertion> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
                 APDBDef db = new APDBDef();
                 try {
-                    return db.EvalTableGroupDal.ConditionQuery(condition, orderBy, null, null);
+                    return db.EvalTargetTablePropertionDal.ConditionQuery(condition, orderBy, null, null);
                 }
                 finally {
                     db.Close();
@@ -22181,164 +21839,15 @@ namespace Business {
             /// <summary>
             /// Get all data.
             /// </summary>
-            public static List<EvalTableGroup> GetAll() {
+            public static List<EvalTargetTablePropertion> GetAll() {
                 return ConditionQuery(null, null);
             }
         }
         
         /// <summary>
-        /// 考核表组 Dal
+        /// 考核表-比重 Dal
         /// </summary>
-        public partial class EvalTableGroupBpl : EvalTableGroupBplBase {
-        }
-        
-        /// <summary>
-        ///  BplBase
-        /// </summary>
-        public partial class EvalTableGroupItemBplBase {
-            
-            /// <summary>
-            /// Insert Data.
-            /// </summary>
-            public static void Insert(EvalTableGroupItem data) {
-                APDBDef db = new APDBDef();
-                try {
-                    db.EvalTableGroupItemDal.Insert(data);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Update Data.
-            /// </summary>
-            public static void Update(EvalTableGroupItem data) {
-                APDBDef db = new APDBDef();
-                try {
-                    db.EvalTableGroupItemDal.Update(data);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Update Data.
-            /// </summary>
-            public static void UpdatePartial(System.Guid groupItemId, Object metadata) {
-                APDBDef db = new APDBDef();
-                try {
-                    db.EvalTableGroupItemDal.UpdatePartial(groupItemId, metadata);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Delete data by primary key.
-            /// </summary>
-            public static void PrimaryDelete(System.Guid groupItemId) {
-                APDBDef db = new APDBDef();
-                try {
-                    db.EvalTableGroupItemDal.PrimaryDelete(groupItemId);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Delete data by condition.
-            /// </summary>
-            public static void ConditionDelete(APSqlWherePhrase condition) {
-                APDBDef db = new APDBDef();
-                try {
-                    db.EvalTableGroupItemDal.ConditionDelete(condition);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Query count by condition.
-            /// </summary>
-            public static int ConditionQueryCount(APSqlWherePhrase condition) {
-                APDBDef db = new APDBDef();
-                try {
-                    return db.EvalTableGroupItemDal.ConditionQueryCount(condition);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Get data by PK.
-            /// </summary>
-            public static EvalTableGroupItem PrimaryGet(System.Guid groupItemId) {
-                APDBDef db = new APDBDef();
-                try {
-                    return db.EvalTableGroupItemDal.PrimaryGet(groupItemId);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Query by condition.
-            /// </summary>
-            public static List<EvalTableGroupItem> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
-                APDBDef db = new APDBDef();
-                try {
-                    return db.EvalTableGroupItemDal.ConditionQuery(condition, orderBy, take, skip);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Query by condition.
-            /// </summary>
-            public static List<EvalTableGroupItem> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take) {
-                APDBDef db = new APDBDef();
-                try {
-                    return db.EvalTableGroupItemDal.ConditionQuery(condition, orderBy, take, null);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Query by condition.
-            /// </summary>
-            public static List<EvalTableGroupItem> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
-                APDBDef db = new APDBDef();
-                try {
-                    return db.EvalTableGroupItemDal.ConditionQuery(condition, orderBy, null, null);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Get all data.
-            /// </summary>
-            public static List<EvalTableGroupItem> GetAll() {
-                return ConditionQuery(null, null);
-            }
-        }
-        
-        /// <summary>
-        ///  Dal
-        /// </summary>
-        public partial class EvalTableGroupItemBpl : EvalTableGroupItemBplBase {
+        public partial class EvalTargetTablePropertionBpl : EvalTargetTablePropertionBplBase {
         }
         
         /// <summary>
@@ -22491,17 +22000,17 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核组-评审对象 BplBase
+        /// 考核组-成员 BplBase
         /// </summary>
-        public partial class EvalGroupTargetBplBase {
+        public partial class EvalGroupMemberBplBase {
             
             /// <summary>
             /// Insert Data.
             /// </summary>
-            public static void Insert(EvalGroupTarget data) {
+            public static void Insert(EvalGroupMember data) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.EvalGroupTargetDal.Insert(data);
+                    db.EvalGroupMemberDal.Insert(data);
                 }
                 finally {
                     db.Close();
@@ -22511,10 +22020,10 @@ namespace Business {
             /// <summary>
             /// Update Data.
             /// </summary>
-            public static void Update(EvalGroupTarget data) {
+            public static void Update(EvalGroupMember data) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.EvalGroupTargetDal.Update(data);
+                    db.EvalGroupMemberDal.Update(data);
                 }
                 finally {
                     db.Close();
@@ -22524,10 +22033,10 @@ namespace Business {
             /// <summary>
             /// Update Data.
             /// </summary>
-            public static void UpdatePartial(System.Guid groupTargetId, Object metadata) {
+            public static void UpdatePartial(System.Guid groupMemberId, Object metadata) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.EvalGroupTargetDal.UpdatePartial(groupTargetId, metadata);
+                    db.EvalGroupMemberDal.UpdatePartial(groupMemberId, metadata);
                 }
                 finally {
                     db.Close();
@@ -22537,10 +22046,10 @@ namespace Business {
             /// <summary>
             /// Delete data by primary key.
             /// </summary>
-            public static void PrimaryDelete(System.Guid groupTargetId) {
+            public static void PrimaryDelete(System.Guid groupMemberId) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.EvalGroupTargetDal.PrimaryDelete(groupTargetId);
+                    db.EvalGroupMemberDal.PrimaryDelete(groupMemberId);
                 }
                 finally {
                     db.Close();
@@ -22553,7 +22062,7 @@ namespace Business {
             public static void ConditionDelete(APSqlWherePhrase condition) {
                 APDBDef db = new APDBDef();
                 try {
-                    db.EvalGroupTargetDal.ConditionDelete(condition);
+                    db.EvalGroupMemberDal.ConditionDelete(condition);
                 }
                 finally {
                     db.Close();
@@ -22566,7 +22075,7 @@ namespace Business {
             public static int ConditionQueryCount(APSqlWherePhrase condition) {
                 APDBDef db = new APDBDef();
                 try {
-                    return db.EvalGroupTargetDal.ConditionQueryCount(condition);
+                    return db.EvalGroupMemberDal.ConditionQueryCount(condition);
                 }
                 finally {
                     db.Close();
@@ -22576,10 +22085,10 @@ namespace Business {
             /// <summary>
             /// Get data by PK.
             /// </summary>
-            public static EvalGroupTarget PrimaryGet(System.Guid groupTargetId) {
+            public static EvalGroupMember PrimaryGet(System.Guid groupMemberId) {
                 APDBDef db = new APDBDef();
                 try {
-                    return db.EvalGroupTargetDal.PrimaryGet(groupTargetId);
+                    return db.EvalGroupMemberDal.PrimaryGet(groupMemberId);
                 }
                 finally {
                     db.Close();
@@ -22589,10 +22098,10 @@ namespace Business {
             /// <summary>
             /// Query by condition.
             /// </summary>
-            public static List<EvalGroupTarget> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+            public static List<EvalGroupMember> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
                 APDBDef db = new APDBDef();
                 try {
-                    return db.EvalGroupTargetDal.ConditionQuery(condition, orderBy, take, skip);
+                    return db.EvalGroupMemberDal.ConditionQuery(condition, orderBy, take, skip);
                 }
                 finally {
                     db.Close();
@@ -22602,10 +22111,10 @@ namespace Business {
             /// <summary>
             /// Query by condition.
             /// </summary>
-            public static List<EvalGroupTarget> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take) {
+            public static List<EvalGroupMember> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take) {
                 APDBDef db = new APDBDef();
                 try {
-                    return db.EvalGroupTargetDal.ConditionQuery(condition, orderBy, take, null);
+                    return db.EvalGroupMemberDal.ConditionQuery(condition, orderBy, take, null);
                 }
                 finally {
                     db.Close();
@@ -22615,10 +22124,10 @@ namespace Business {
             /// <summary>
             /// Query by condition.
             /// </summary>
-            public static List<EvalGroupTarget> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+            public static List<EvalGroupMember> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
                 APDBDef db = new APDBDef();
                 try {
-                    return db.EvalGroupTargetDal.ConditionQuery(condition, orderBy, null, null);
+                    return db.EvalGroupMemberDal.ConditionQuery(condition, orderBy, null, null);
                 }
                 finally {
                     db.Close();
@@ -22628,15 +22137,15 @@ namespace Business {
             /// <summary>
             /// Get all data.
             /// </summary>
-            public static List<EvalGroupTarget> GetAll() {
+            public static List<EvalGroupMember> GetAll() {
                 return ConditionQuery(null, null);
             }
         }
         
         /// <summary>
-        /// 考核组-评审对象 Dal
+        /// 考核组-成员 Dal
         /// </summary>
-        public partial class EvalGroupTargetBpl : EvalGroupTargetBplBase {
+        public partial class EvalGroupMemberBpl : EvalGroupMemberBplBase {
         }
         
         /// <summary>
@@ -38642,6 +38151,11 @@ namespace Business {
         private bool _isCurrent;
         
         /// <summary>
+        /// CreateDate
+        /// </summary>
+        private System.DateTime _createDate = DateTime.Now;
+        
+        /// <summary>
         /// Default constructor.
         /// </summary>
         public EvalPeriodBase() {
@@ -38650,7 +38164,7 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalPeriodBase(System.Guid periodId, string name, System.DateTime beginDate, System.DateTime endDate, System.DateTime accessBeginDate, System.DateTime accessEndDate, string analysisName, string analysisType, bool isCurrent) {
+        public EvalPeriodBase(System.Guid periodId, string name, System.DateTime beginDate, System.DateTime endDate, System.DateTime accessBeginDate, System.DateTime accessEndDate, string analysisName, string analysisType, bool isCurrent, System.DateTime createDate) {
             _periodId = periodId;
             _name = name;
             _beginDate = beginDate;
@@ -38660,6 +38174,7 @@ namespace Business {
             _analysisName = analysisName;
             _analysisType = analysisType;
             _isCurrent = isCurrent;
+            _createDate = createDate;
         }
         
         /// <summary>
@@ -38864,6 +38379,28 @@ namespace Business {
         }
         
         /// <summary>
+        /// CreateDate
+        /// </summary>
+        [Display(Name="创建时间")]
+        public virtual System.DateTime CreateDate {
+            get {
+                return _createDate;
+            }
+            set {
+                _createDate = value;
+            }
+        }
+        
+        /// <summary>
+        /// CreateDate APColumnDef
+        /// </summary>
+        public static DateTimeAPColumnDef CreateDateDef {
+            get {
+                return APDBDef.EvalPeriod.CreateDate;
+            }
+        }
+        
+        /// <summary>
         /// EvalPeriodTableDef APTableDef
         /// </summary>
         public static APDBDef.EvalPeriodTableDef TableDef {
@@ -38894,6 +38431,7 @@ namespace Business {
             AnalysisName = data.AnalysisName;
             AnalysisType = data.AnalysisType;
             IsCurrent = data.IsCurrent;
+            CreateDate = data.CreateDate;
         }
         
         /// <summary>
@@ -38925,6 +38463,9 @@ namespace Business {
                 return false;
             }
             if ((IsCurrent != data.IsCurrent)) {
+                return false;
+            }
+            if ((CreateDate != data.CreateDate)) {
                 return false;
             }
             return true;
@@ -39023,301 +38564,21 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalPeriod(System.Guid periodId, string name, System.DateTime beginDate, System.DateTime endDate, System.DateTime accessBeginDate, System.DateTime accessEndDate, string analysisName, string analysisType, bool isCurrent) : 
-                base(periodId, name, beginDate, endDate, accessBeginDate, accessEndDate, analysisName, analysisType, isCurrent) {
+        public EvalPeriod(System.Guid periodId, string name, System.DateTime beginDate, System.DateTime endDate, System.DateTime accessBeginDate, System.DateTime accessEndDate, string analysisName, string analysisType, bool isCurrent, System.DateTime createDate) : 
+                base(periodId, name, beginDate, endDate, accessBeginDate, accessEndDate, analysisName, analysisType, isCurrent, createDate) {
         }
     }
     
     /// <summary>
-    /// 考核表组 Base
+    /// 考核表-比重 Base
     /// </summary>
     [Serializable()]
-    public abstract partial class EvalTableGroupBase {
+    public abstract partial class EvalTargetTablePropertionBase {
         
         /// <summary>
-        /// TableGroupId
+        /// PropertionID
         /// </summary>
-        private System.Guid _tableGroupId;
-        
-        /// <summary>
-        /// TableGroupName
-        /// </summary>
-        private string _tableGroupName = string.Empty;
-        
-        /// <summary>
-        /// PeriodId
-        /// </summary>
-        private System.Guid _periodId;
-        
-        /// <summary>
-        /// TargetRoleId
-        /// </summary>
-        private System.Guid _targetRoleId;
-        
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        public EvalTableGroupBase() {
-        }
-        
-        /// <summary>
-        /// Constructor with all field values.
-        /// </summary>
-        public EvalTableGroupBase(System.Guid tableGroupId, string tableGroupName, System.Guid periodId, System.Guid targetRoleId) {
-            _tableGroupId = tableGroupId;
-            _tableGroupName = tableGroupName;
-            _periodId = periodId;
-            _targetRoleId = targetRoleId;
-        }
-        
-        /// <summary>
-        /// TableGroupId
-        /// </summary>
-        public virtual System.Guid TableGroupId {
-            get {
-                return _tableGroupId;
-            }
-            set {
-                _tableGroupId = value;
-            }
-        }
-        
-        /// <summary>
-        /// TableGroupId APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef TableGroupIdDef {
-            get {
-                return APDBDef.EvalTableGroup.TableGroupId;
-            }
-        }
-        
-        /// <summary>
-        /// TableGroupName
-        /// </summary>
-        [Display(Name="考核表组名称")]
-        [StringLength(200)]
-        public virtual string TableGroupName {
-            get {
-                return _tableGroupName;
-            }
-            set {
-                _tableGroupName = value;
-            }
-        }
-        
-        /// <summary>
-        /// TableGroupName APColumnDef
-        /// </summary>
-        public static StringAPColumnDef TableGroupNameDef {
-            get {
-                return APDBDef.EvalTableGroup.TableGroupName;
-            }
-        }
-        
-        /// <summary>
-        /// PeriodId
-        /// </summary>
-        [Display(Name="考核周期ID")]
-        public virtual System.Guid PeriodId {
-            get {
-                return _periodId;
-            }
-            set {
-                _periodId = value;
-            }
-        }
-        
-        /// <summary>
-        /// PeriodId APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef PeriodIdDef {
-            get {
-                return APDBDef.EvalTableGroup.PeriodId;
-            }
-        }
-        
-        /// <summary>
-        /// TargetRoleId
-        /// </summary>
-        [Display(Name="考核对象角色")]
-        public virtual System.Guid TargetRoleId {
-            get {
-                return _targetRoleId;
-            }
-            set {
-                _targetRoleId = value;
-            }
-        }
-        
-        /// <summary>
-        /// TargetRoleId APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef TargetRoleIdDef {
-            get {
-                return APDBDef.EvalTableGroup.TargetRoleId;
-            }
-        }
-        
-        /// <summary>
-        /// EvalTableGroupTableDef APTableDef
-        /// </summary>
-        public static APDBDef.EvalTableGroupTableDef TableDef {
-            get {
-                return APDBDef.EvalTableGroup;
-            }
-        }
-        
-        /// <summary>
-        /// EvalTableGroupTableDef APSqlAsteriskExpr
-        /// </summary>
-        public static APSqlAsteriskExpr Asterisk {
-            get {
-                return APDBDef.EvalTableGroup.Asterisk;
-            }
-        }
-        
-        /// <summary>
-        /// Assignment.
-        /// </summary>
-        public virtual void Assignment(EvalTableGroup data) {
-            TableGroupId = data.TableGroupId;
-            TableGroupName = data.TableGroupName;
-            PeriodId = data.PeriodId;
-            TargetRoleId = data.TargetRoleId;
-        }
-        
-        /// <summary>
-        /// Compare equals.
-        /// </summary>
-        public virtual bool CompareEquals(EvalTableGroup data) {
-            if ((TableGroupId != data.TableGroupId)) {
-                return false;
-            }
-            if ((TableGroupName != data.TableGroupName)) {
-                return false;
-            }
-            if ((PeriodId != data.PeriodId)) {
-                return false;
-            }
-            if ((TargetRoleId != data.TargetRoleId)) {
-                return false;
-            }
-            return true;
-        }
-        
-        /// <summary>
-        /// Insert Data.
-        /// </summary>
-        public virtual void Insert() {
-            APBplDef.EvalTableGroupBpl.Insert(((EvalTableGroup)(this)));
-        }
-        
-        /// <summary>
-        /// Update Data.
-        /// </summary>
-        public virtual void Update() {
-            APBplDef.EvalTableGroupBpl.Update(((EvalTableGroup)(this)));
-        }
-        
-        /// <summary>
-        /// Update Data.
-        /// </summary>
-        public static void UpdatePartial(System.Guid tableGroupId, Object metadata) {
-            APBplDef.EvalTableGroupBpl.UpdatePartial(tableGroupId, metadata);
-        }
-        
-        /// <summary>
-        /// Delete data by primary key.
-        /// </summary>
-        public static void PrimaryDelete(System.Guid tableGroupId) {
-            APBplDef.EvalTableGroupBpl.PrimaryDelete(tableGroupId);
-        }
-        
-        /// <summary>
-        /// Delete data by condition.
-        /// </summary>
-        public static void ConditionDelete(APSqlWherePhrase condition) {
-            APBplDef.EvalTableGroupBpl.ConditionDelete(condition);
-        }
-        
-        /// <summary>
-        /// Query count by condition.
-        /// </summary>
-        public static int ConditionQueryCount(APSqlWherePhrase condition) {
-            return APBplDef.EvalTableGroupBpl.ConditionQueryCount(condition);
-        }
-        
-        /// <summary>
-        /// Get data by PK.
-        /// </summary>
-        public static EvalTableGroup PrimaryGet(System.Guid tableGroupId) {
-            return APBplDef.EvalTableGroupBpl.PrimaryGet(tableGroupId);
-        }
-        
-        /// <summary>
-        /// Query by condition.
-        /// </summary>
-        public static List<EvalTableGroup> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take, int skip) {
-            return APBplDef.EvalTableGroupBpl.ConditionQuery(condition, orderBy, take, skip);
-        }
-        
-        /// <summary>
-        /// Query by condition.
-        /// </summary>
-        public static List<EvalTableGroup> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take) {
-            return APBplDef.EvalTableGroupBpl.ConditionQuery(condition, orderBy, take);
-        }
-        
-        /// <summary>
-        /// Query by condition.
-        /// </summary>
-        public static List<EvalTableGroup> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
-            return APBplDef.EvalTableGroupBpl.ConditionQuery(condition, orderBy);
-        }
-        
-        /// <summary>
-        /// Get all data.
-        /// </summary>
-        public static List<EvalTableGroup> GetAll() {
-            return APBplDef.EvalTableGroupBpl.GetAll();
-        }
-    }
-    
-    /// <summary>
-    /// 考核表组
-    /// </summary>
-    [Serializable()]
-    public partial class EvalTableGroup : EvalTableGroupBase {
-        
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        public EvalTableGroup() {
-        }
-        
-        /// <summary>
-        /// Constructor with all field values.
-        /// </summary>
-        public EvalTableGroup(System.Guid tableGroupId, string tableGroupName, System.Guid periodId, System.Guid targetRoleId) : 
-                base(tableGroupId, tableGroupName, periodId, targetRoleId) {
-        }
-    }
-    
-    /// <summary>
-    ///  Base
-    /// </summary>
-    [Serializable()]
-    public abstract partial class EvalTableGroupItemBase {
-        
-        /// <summary>
-        /// GroupItemId
-        /// </summary>
-        private System.Guid _groupItemId;
-        
-        /// <summary>
-        /// TableGroupId
-        /// </summary>
-        private System.Guid _tableGroupId;
+        private System.Guid _propertionID;
         
         /// <summary>
         /// TableId
@@ -39325,65 +38586,61 @@ namespace Business {
         private System.Guid _tableId;
         
         /// <summary>
+        /// 评审对象ID
+        /// </summary>
+        private System.Guid _targetId;
+        
+        /// <summary>
         /// Propertion
         /// </summary>
         private double _propertion;
         
         /// <summary>
+        /// PeriodId
+        /// </summary>
+        private System.Guid _periodId;
+        
+        /// <summary>
+        /// 考核组ID
+        /// </summary>
+        private System.Guid _groupId;
+        
+        /// <summary>
         /// Default constructor.
         /// </summary>
-        public EvalTableGroupItemBase() {
+        public EvalTargetTablePropertionBase() {
         }
         
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalTableGroupItemBase(System.Guid groupItemId, System.Guid tableGroupId, System.Guid tableId, double propertion) {
-            _groupItemId = groupItemId;
-            _tableGroupId = tableGroupId;
+        public EvalTargetTablePropertionBase(System.Guid propertionID, System.Guid tableId, System.Guid targetId, double propertion, System.Guid periodId, System.Guid groupId) {
+            _propertionID = propertionID;
             _tableId = tableId;
+            _targetId = targetId;
             _propertion = propertion;
+            _periodId = periodId;
+            _groupId = groupId;
         }
         
         /// <summary>
-        /// GroupItemId
+        /// PropertionID
         /// </summary>
-        public virtual System.Guid GroupItemId {
+        public virtual System.Guid PropertionID {
             get {
-                return _groupItemId;
+                return _propertionID;
             }
             set {
-                _groupItemId = value;
+                _propertionID = value;
             }
         }
         
         /// <summary>
-        /// GroupItemId APColumnDef
+        /// PropertionID APColumnDef
         /// </summary>
-        public static GuidAPColumnDef GroupItemIdDef {
+        public static GuidAPColumnDef PropertionIDDef {
             get {
-                return APDBDef.EvalTableGroupItem.GroupItemId;
-            }
-        }
-        
-        /// <summary>
-        /// TableGroupId
-        /// </summary>
-        public virtual System.Guid TableGroupId {
-            get {
-                return _tableGroupId;
-            }
-            set {
-                _tableGroupId = value;
-            }
-        }
-        
-        /// <summary>
-        /// TableGroupId APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef TableGroupIdDef {
-            get {
-                return APDBDef.EvalTableGroupItem.TableGroupId;
+                return APDBDef.EvalTargetTablePropertion.PropertionID;
             }
         }
         
@@ -39404,7 +38661,28 @@ namespace Business {
         /// </summary>
         public static GuidAPColumnDef TableIdDef {
             get {
-                return APDBDef.EvalTableGroupItem.TableId;
+                return APDBDef.EvalTargetTablePropertion.TableId;
+            }
+        }
+        
+        /// <summary>
+        /// 评审对象ID
+        /// </summary>
+        public virtual System.Guid TargetId {
+            get {
+                return _targetId;
+            }
+            set {
+                _targetId = value;
+            }
+        }
+        
+        /// <summary>
+        /// 评审对象ID APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef TargetIdDef {
+            get {
+                return APDBDef.EvalTargetTablePropertion.TargetId;
             }
         }
         
@@ -39426,52 +38704,104 @@ namespace Business {
         /// </summary>
         public static DoubleAPColumnDef PropertionDef {
             get {
-                return APDBDef.EvalTableGroupItem.Propertion;
+                return APDBDef.EvalTargetTablePropertion.Propertion;
             }
         }
         
         /// <summary>
-        /// EvalTableGroupItemTableDef APTableDef
+        /// PeriodId
         /// </summary>
-        public static APDBDef.EvalTableGroupItemTableDef TableDef {
+        [Display(Name="周期ID")]
+        public virtual System.Guid PeriodId {
             get {
-                return APDBDef.EvalTableGroupItem;
+                return _periodId;
+            }
+            set {
+                _periodId = value;
             }
         }
         
         /// <summary>
-        /// EvalTableGroupItemTableDef APSqlAsteriskExpr
+        /// PeriodId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef PeriodIdDef {
+            get {
+                return APDBDef.EvalTargetTablePropertion.PeriodId;
+            }
+        }
+        
+        /// <summary>
+        /// 考核组ID
+        /// </summary>
+        [Display(Name="考核组ID")]
+        public virtual System.Guid GroupId {
+            get {
+                return _groupId;
+            }
+            set {
+                _groupId = value;
+            }
+        }
+        
+        /// <summary>
+        /// 考核组ID APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef GroupIdDef {
+            get {
+                return APDBDef.EvalTargetTablePropertion.GroupId;
+            }
+        }
+        
+        /// <summary>
+        /// EvalTargetTablePropertionTableDef APTableDef
+        /// </summary>
+        public static APDBDef.EvalTargetTablePropertionTableDef TableDef {
+            get {
+                return APDBDef.EvalTargetTablePropertion;
+            }
+        }
+        
+        /// <summary>
+        /// EvalTargetTablePropertionTableDef APSqlAsteriskExpr
         /// </summary>
         public static APSqlAsteriskExpr Asterisk {
             get {
-                return APDBDef.EvalTableGroupItem.Asterisk;
+                return APDBDef.EvalTargetTablePropertion.Asterisk;
             }
         }
         
         /// <summary>
         /// Assignment.
         /// </summary>
-        public virtual void Assignment(EvalTableGroupItem data) {
-            GroupItemId = data.GroupItemId;
-            TableGroupId = data.TableGroupId;
+        public virtual void Assignment(EvalTargetTablePropertion data) {
+            PropertionID = data.PropertionID;
             TableId = data.TableId;
+            TargetId = data.TargetId;
             Propertion = data.Propertion;
+            PeriodId = data.PeriodId;
+            GroupId = data.GroupId;
         }
         
         /// <summary>
         /// Compare equals.
         /// </summary>
-        public virtual bool CompareEquals(EvalTableGroupItem data) {
-            if ((GroupItemId != data.GroupItemId)) {
-                return false;
-            }
-            if ((TableGroupId != data.TableGroupId)) {
+        public virtual bool CompareEquals(EvalTargetTablePropertion data) {
+            if ((PropertionID != data.PropertionID)) {
                 return false;
             }
             if ((TableId != data.TableId)) {
                 return false;
             }
+            if ((TargetId != data.TargetId)) {
+                return false;
+            }
             if ((Propertion != data.Propertion)) {
+                return false;
+            }
+            if ((PeriodId != data.PeriodId)) {
+                return false;
+            }
+            if ((GroupId != data.GroupId)) {
                 return false;
             }
             return true;
@@ -39481,97 +38811,97 @@ namespace Business {
         /// Insert Data.
         /// </summary>
         public virtual void Insert() {
-            APBplDef.EvalTableGroupItemBpl.Insert(((EvalTableGroupItem)(this)));
+            APBplDef.EvalTargetTablePropertionBpl.Insert(((EvalTargetTablePropertion)(this)));
         }
         
         /// <summary>
         /// Update Data.
         /// </summary>
         public virtual void Update() {
-            APBplDef.EvalTableGroupItemBpl.Update(((EvalTableGroupItem)(this)));
+            APBplDef.EvalTargetTablePropertionBpl.Update(((EvalTargetTablePropertion)(this)));
         }
         
         /// <summary>
         /// Update Data.
         /// </summary>
-        public static void UpdatePartial(System.Guid groupItemId, Object metadata) {
-            APBplDef.EvalTableGroupItemBpl.UpdatePartial(groupItemId, metadata);
+        public static void UpdatePartial(System.Guid propertionID, Object metadata) {
+            APBplDef.EvalTargetTablePropertionBpl.UpdatePartial(propertionID, metadata);
         }
         
         /// <summary>
         /// Delete data by primary key.
         /// </summary>
-        public static void PrimaryDelete(System.Guid groupItemId) {
-            APBplDef.EvalTableGroupItemBpl.PrimaryDelete(groupItemId);
+        public static void PrimaryDelete(System.Guid propertionID) {
+            APBplDef.EvalTargetTablePropertionBpl.PrimaryDelete(propertionID);
         }
         
         /// <summary>
         /// Delete data by condition.
         /// </summary>
         public static void ConditionDelete(APSqlWherePhrase condition) {
-            APBplDef.EvalTableGroupItemBpl.ConditionDelete(condition);
+            APBplDef.EvalTargetTablePropertionBpl.ConditionDelete(condition);
         }
         
         /// <summary>
         /// Query count by condition.
         /// </summary>
         public static int ConditionQueryCount(APSqlWherePhrase condition) {
-            return APBplDef.EvalTableGroupItemBpl.ConditionQueryCount(condition);
+            return APBplDef.EvalTargetTablePropertionBpl.ConditionQueryCount(condition);
         }
         
         /// <summary>
         /// Get data by PK.
         /// </summary>
-        public static EvalTableGroupItem PrimaryGet(System.Guid groupItemId) {
-            return APBplDef.EvalTableGroupItemBpl.PrimaryGet(groupItemId);
+        public static EvalTargetTablePropertion PrimaryGet(System.Guid propertionID) {
+            return APBplDef.EvalTargetTablePropertionBpl.PrimaryGet(propertionID);
         }
         
         /// <summary>
         /// Query by condition.
         /// </summary>
-        public static List<EvalTableGroupItem> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take, int skip) {
-            return APBplDef.EvalTableGroupItemBpl.ConditionQuery(condition, orderBy, take, skip);
+        public static List<EvalTargetTablePropertion> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take, int skip) {
+            return APBplDef.EvalTargetTablePropertionBpl.ConditionQuery(condition, orderBy, take, skip);
         }
         
         /// <summary>
         /// Query by condition.
         /// </summary>
-        public static List<EvalTableGroupItem> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take) {
-            return APBplDef.EvalTableGroupItemBpl.ConditionQuery(condition, orderBy, take);
+        public static List<EvalTargetTablePropertion> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take) {
+            return APBplDef.EvalTargetTablePropertionBpl.ConditionQuery(condition, orderBy, take);
         }
         
         /// <summary>
         /// Query by condition.
         /// </summary>
-        public static List<EvalTableGroupItem> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
-            return APBplDef.EvalTableGroupItemBpl.ConditionQuery(condition, orderBy);
+        public static List<EvalTargetTablePropertion> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+            return APBplDef.EvalTargetTablePropertionBpl.ConditionQuery(condition, orderBy);
         }
         
         /// <summary>
         /// Get all data.
         /// </summary>
-        public static List<EvalTableGroupItem> GetAll() {
-            return APBplDef.EvalTableGroupItemBpl.GetAll();
+        public static List<EvalTargetTablePropertion> GetAll() {
+            return APBplDef.EvalTargetTablePropertionBpl.GetAll();
         }
     }
     
     /// <summary>
-    /// 
+    /// 考核表-比重
     /// </summary>
     [Serializable()]
-    public partial class EvalTableGroupItem : EvalTableGroupItemBase {
+    public partial class EvalTargetTablePropertion : EvalTargetTablePropertionBase {
         
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public EvalTableGroupItem() {
+        public EvalTargetTablePropertion() {
         }
         
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalTableGroupItem(System.Guid groupItemId, System.Guid tableGroupId, System.Guid tableId, double propertion) : 
-                base(groupItemId, tableGroupId, tableId, propertion) {
+        public EvalTargetTablePropertion(System.Guid propertionID, System.Guid tableId, System.Guid targetId, double propertion, System.Guid periodId, System.Guid groupId) : 
+                base(propertionID, tableId, targetId, propertion, periodId, groupId) {
         }
     }
     
@@ -39592,29 +38922,9 @@ namespace Business {
         private string _groupName = string.Empty;
         
         /// <summary>
-        /// GroupType
-        /// </summary>
-        private string _groupType = string.Empty;
-        
-        /// <summary>
-        /// CreaterId
-        /// </summary>
-        private System.Guid _createrId;
-        
-        /// <summary>
         /// CreateDate
         /// </summary>
         private System.DateTime _createDate = DateTime.Now;
-        
-        /// <summary>
-        /// AccessorCount
-        /// </summary>
-        private int _accessorCount;
-        
-        /// <summary>
-        /// TargetCount
-        /// </summary>
-        private int _targetCount;
         
         /// <summary>
         /// Default constructor.
@@ -39625,14 +38935,10 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalGroupBase(System.Guid groupId, string groupName, string groupType, System.Guid createrId, System.DateTime createDate, int accessorCount, int targetCount) {
+        public EvalGroupBase(System.Guid groupId, string groupName, System.DateTime createDate) {
             _groupId = groupId;
             _groupName = groupName;
-            _groupType = groupType;
-            _createrId = createrId;
             _createDate = createDate;
-            _accessorCount = accessorCount;
-            _targetCount = targetCount;
         }
         
         /// <summary>
@@ -39680,51 +38986,6 @@ namespace Business {
         }
         
         /// <summary>
-        /// GroupType
-        /// </summary>
-        [Display(Name="组类型")]
-        [StringLength(100)]
-        public virtual string GroupType {
-            get {
-                return _groupType;
-            }
-            set {
-                _groupType = value;
-            }
-        }
-        
-        /// <summary>
-        /// GroupType APColumnDef
-        /// </summary>
-        public static StringAPColumnDef GroupTypeDef {
-            get {
-                return APDBDef.EvalGroup.GroupType;
-            }
-        }
-        
-        /// <summary>
-        /// CreaterId
-        /// </summary>
-        [Display(Name="创建者id")]
-        public virtual System.Guid CreaterId {
-            get {
-                return _createrId;
-            }
-            set {
-                _createrId = value;
-            }
-        }
-        
-        /// <summary>
-        /// CreaterId APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef CreaterIdDef {
-            get {
-                return APDBDef.EvalGroup.CreaterId;
-            }
-        }
-        
-        /// <summary>
         /// CreateDate
         /// </summary>
         [Display(Name="创建时间")]
@@ -39743,50 +39004,6 @@ namespace Business {
         public static DateTimeAPColumnDef CreateDateDef {
             get {
                 return APDBDef.EvalGroup.CreateDate;
-            }
-        }
-        
-        /// <summary>
-        /// AccessorCount
-        /// </summary>
-        [Display(Name="评审人数量")]
-        public virtual int AccessorCount {
-            get {
-                return _accessorCount;
-            }
-            set {
-                _accessorCount = value;
-            }
-        }
-        
-        /// <summary>
-        /// AccessorCount APColumnDef
-        /// </summary>
-        public static Int32APColumnDef AccessorCountDef {
-            get {
-                return APDBDef.EvalGroup.AccessorCount;
-            }
-        }
-        
-        /// <summary>
-        /// TargetCount
-        /// </summary>
-        [Display(Name="参与考核人数量")]
-        public virtual int TargetCount {
-            get {
-                return _targetCount;
-            }
-            set {
-                _targetCount = value;
-            }
-        }
-        
-        /// <summary>
-        /// TargetCount APColumnDef
-        /// </summary>
-        public static Int32APColumnDef TargetCountDef {
-            get {
-                return APDBDef.EvalGroup.TargetCount;
             }
         }
         
@@ -39814,11 +39031,7 @@ namespace Business {
         public virtual void Assignment(EvalGroup data) {
             GroupId = data.GroupId;
             GroupName = data.GroupName;
-            GroupType = data.GroupType;
-            CreaterId = data.CreaterId;
             CreateDate = data.CreateDate;
-            AccessorCount = data.AccessorCount;
-            TargetCount = data.TargetCount;
         }
         
         /// <summary>
@@ -39831,19 +39044,7 @@ namespace Business {
             if ((GroupName != data.GroupName)) {
                 return false;
             }
-            if ((GroupType != data.GroupType)) {
-                return false;
-            }
-            if ((CreaterId != data.CreaterId)) {
-                return false;
-            }
             if ((CreateDate != data.CreateDate)) {
-                return false;
-            }
-            if ((AccessorCount != data.AccessorCount)) {
-                return false;
-            }
-            if ((TargetCount != data.TargetCount)) {
                 return false;
             }
             return true;
@@ -39942,21 +39143,21 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalGroup(System.Guid groupId, string groupName, string groupType, System.Guid createrId, System.DateTime createDate, int accessorCount, int targetCount) : 
-                base(groupId, groupName, groupType, createrId, createDate, accessorCount, targetCount) {
+        public EvalGroup(System.Guid groupId, string groupName, System.DateTime createDate) : 
+                base(groupId, groupName, createDate) {
         }
     }
     
     /// <summary>
-    /// 考核组-评审对象 Base
+    /// 考核组-成员 Base
     /// </summary>
     [Serializable()]
-    public abstract partial class EvalGroupTargetBase {
+    public abstract partial class EvalGroupMemberBase {
         
         /// <summary>
-        /// GroupTargetId
+        /// GroupMemberId
         /// </summary>
-        private System.Guid _groupTargetId;
+        private System.Guid _groupMemberId;
         
         /// <summary>
         /// GroupId
@@ -39969,52 +39170,44 @@ namespace Business {
         private System.Guid _memberId;
         
         /// <summary>
-        /// ModifyDate
-        /// </summary>
-        private System.DateTime _modifyDate = DateTime.Now;
-        
-        /// <summary>
         /// Default constructor.
         /// </summary>
-        public EvalGroupTargetBase() {
+        public EvalGroupMemberBase() {
         }
         
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalGroupTargetBase(System.Guid groupTargetId, System.Guid groupId, System.Guid memberId, System.DateTime modifyDate) {
-            _groupTargetId = groupTargetId;
+        public EvalGroupMemberBase(System.Guid groupMemberId, System.Guid groupId, System.Guid memberId) {
+            _groupMemberId = groupMemberId;
             _groupId = groupId;
             _memberId = memberId;
-            _modifyDate = modifyDate;
         }
         
         /// <summary>
-        /// GroupTargetId
+        /// GroupMemberId
         /// </summary>
-        [Display(Name="考核对象成员ID")]
-        public virtual System.Guid GroupTargetId {
+        public virtual System.Guid GroupMemberId {
             get {
-                return _groupTargetId;
+                return _groupMemberId;
             }
             set {
-                _groupTargetId = value;
+                _groupMemberId = value;
             }
         }
         
         /// <summary>
-        /// GroupTargetId APColumnDef
+        /// GroupMemberId APColumnDef
         /// </summary>
-        public static GuidAPColumnDef GroupTargetIdDef {
+        public static GuidAPColumnDef GroupMemberIdDef {
             get {
-                return APDBDef.EvalGroupTarget.GroupTargetId;
+                return APDBDef.EvalGroupMember.GroupMemberId;
             }
         }
         
         /// <summary>
         /// GroupId
         /// </summary>
-        [Display(Name="考核组ID")]
         public virtual System.Guid GroupId {
             get {
                 return _groupId;
@@ -40029,14 +39222,13 @@ namespace Business {
         /// </summary>
         public static GuidAPColumnDef GroupIdDef {
             get {
-                return APDBDef.EvalGroupTarget.GroupId;
+                return APDBDef.EvalGroupMember.GroupId;
             }
         }
         
         /// <summary>
         /// MemberId
         /// </summary>
-        [Display(Name="考核对象ID")]
         public virtual System.Guid MemberId {
             get {
                 return _memberId;
@@ -40051,74 +39243,48 @@ namespace Business {
         /// </summary>
         public static GuidAPColumnDef MemberIdDef {
             get {
-                return APDBDef.EvalGroupTarget.MemberId;
+                return APDBDef.EvalGroupMember.MemberId;
             }
         }
         
         /// <summary>
-        /// ModifyDate
+        /// EvalGroupMemberTableDef APTableDef
         /// </summary>
-        [Display(Name="修改时间")]
-        public virtual System.DateTime ModifyDate {
+        public static APDBDef.EvalGroupMemberTableDef TableDef {
             get {
-                return _modifyDate;
-            }
-            set {
-                _modifyDate = value;
+                return APDBDef.EvalGroupMember;
             }
         }
         
         /// <summary>
-        /// ModifyDate APColumnDef
-        /// </summary>
-        public static DateTimeAPColumnDef ModifyDateDef {
-            get {
-                return APDBDef.EvalGroupTarget.ModifyDate;
-            }
-        }
-        
-        /// <summary>
-        /// EvalGroupTargetTableDef APTableDef
-        /// </summary>
-        public static APDBDef.EvalGroupTargetTableDef TableDef {
-            get {
-                return APDBDef.EvalGroupTarget;
-            }
-        }
-        
-        /// <summary>
-        /// EvalGroupTargetTableDef APSqlAsteriskExpr
+        /// EvalGroupMemberTableDef APSqlAsteriskExpr
         /// </summary>
         public static APSqlAsteriskExpr Asterisk {
             get {
-                return APDBDef.EvalGroupTarget.Asterisk;
+                return APDBDef.EvalGroupMember.Asterisk;
             }
         }
         
         /// <summary>
         /// Assignment.
         /// </summary>
-        public virtual void Assignment(EvalGroupTarget data) {
-            GroupTargetId = data.GroupTargetId;
+        public virtual void Assignment(EvalGroupMember data) {
+            GroupMemberId = data.GroupMemberId;
             GroupId = data.GroupId;
             MemberId = data.MemberId;
-            ModifyDate = data.ModifyDate;
         }
         
         /// <summary>
         /// Compare equals.
         /// </summary>
-        public virtual bool CompareEquals(EvalGroupTarget data) {
-            if ((GroupTargetId != data.GroupTargetId)) {
+        public virtual bool CompareEquals(EvalGroupMember data) {
+            if ((GroupMemberId != data.GroupMemberId)) {
                 return false;
             }
             if ((GroupId != data.GroupId)) {
                 return false;
             }
             if ((MemberId != data.MemberId)) {
-                return false;
-            }
-            if ((ModifyDate != data.ModifyDate)) {
                 return false;
             }
             return true;
@@ -40128,97 +39294,97 @@ namespace Business {
         /// Insert Data.
         /// </summary>
         public virtual void Insert() {
-            APBplDef.EvalGroupTargetBpl.Insert(((EvalGroupTarget)(this)));
+            APBplDef.EvalGroupMemberBpl.Insert(((EvalGroupMember)(this)));
         }
         
         /// <summary>
         /// Update Data.
         /// </summary>
         public virtual void Update() {
-            APBplDef.EvalGroupTargetBpl.Update(((EvalGroupTarget)(this)));
+            APBplDef.EvalGroupMemberBpl.Update(((EvalGroupMember)(this)));
         }
         
         /// <summary>
         /// Update Data.
         /// </summary>
-        public static void UpdatePartial(System.Guid groupTargetId, Object metadata) {
-            APBplDef.EvalGroupTargetBpl.UpdatePartial(groupTargetId, metadata);
+        public static void UpdatePartial(System.Guid groupMemberId, Object metadata) {
+            APBplDef.EvalGroupMemberBpl.UpdatePartial(groupMemberId, metadata);
         }
         
         /// <summary>
         /// Delete data by primary key.
         /// </summary>
-        public static void PrimaryDelete(System.Guid groupTargetId) {
-            APBplDef.EvalGroupTargetBpl.PrimaryDelete(groupTargetId);
+        public static void PrimaryDelete(System.Guid groupMemberId) {
+            APBplDef.EvalGroupMemberBpl.PrimaryDelete(groupMemberId);
         }
         
         /// <summary>
         /// Delete data by condition.
         /// </summary>
         public static void ConditionDelete(APSqlWherePhrase condition) {
-            APBplDef.EvalGroupTargetBpl.ConditionDelete(condition);
+            APBplDef.EvalGroupMemberBpl.ConditionDelete(condition);
         }
         
         /// <summary>
         /// Query count by condition.
         /// </summary>
         public static int ConditionQueryCount(APSqlWherePhrase condition) {
-            return APBplDef.EvalGroupTargetBpl.ConditionQueryCount(condition);
+            return APBplDef.EvalGroupMemberBpl.ConditionQueryCount(condition);
         }
         
         /// <summary>
         /// Get data by PK.
         /// </summary>
-        public static EvalGroupTarget PrimaryGet(System.Guid groupTargetId) {
-            return APBplDef.EvalGroupTargetBpl.PrimaryGet(groupTargetId);
+        public static EvalGroupMember PrimaryGet(System.Guid groupMemberId) {
+            return APBplDef.EvalGroupMemberBpl.PrimaryGet(groupMemberId);
         }
         
         /// <summary>
         /// Query by condition.
         /// </summary>
-        public static List<EvalGroupTarget> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take, int skip) {
-            return APBplDef.EvalGroupTargetBpl.ConditionQuery(condition, orderBy, take, skip);
+        public static List<EvalGroupMember> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take, int skip) {
+            return APBplDef.EvalGroupMemberBpl.ConditionQuery(condition, orderBy, take, skip);
         }
         
         /// <summary>
         /// Query by condition.
         /// </summary>
-        public static List<EvalGroupTarget> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take) {
-            return APBplDef.EvalGroupTargetBpl.ConditionQuery(condition, orderBy, take);
+        public static List<EvalGroupMember> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take) {
+            return APBplDef.EvalGroupMemberBpl.ConditionQuery(condition, orderBy, take);
         }
         
         /// <summary>
         /// Query by condition.
         /// </summary>
-        public static List<EvalGroupTarget> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
-            return APBplDef.EvalGroupTargetBpl.ConditionQuery(condition, orderBy);
+        public static List<EvalGroupMember> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+            return APBplDef.EvalGroupMemberBpl.ConditionQuery(condition, orderBy);
         }
         
         /// <summary>
         /// Get all data.
         /// </summary>
-        public static List<EvalGroupTarget> GetAll() {
-            return APBplDef.EvalGroupTargetBpl.GetAll();
+        public static List<EvalGroupMember> GetAll() {
+            return APBplDef.EvalGroupMemberBpl.GetAll();
         }
     }
     
     /// <summary>
-    /// 考核组-评审对象
+    /// 考核组-成员
     /// </summary>
     [Serializable()]
-    public partial class EvalGroupTarget : EvalGroupTargetBase {
+    public partial class EvalGroupMember : EvalGroupMemberBase {
         
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public EvalGroupTarget() {
+        public EvalGroupMember() {
         }
         
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalGroupTarget(System.Guid groupTargetId, System.Guid groupId, System.Guid memberId, System.DateTime modifyDate) : 
-                base(groupTargetId, groupId, memberId, modifyDate) {
+        public EvalGroupMember(System.Guid groupMemberId, System.Guid groupId, System.Guid memberId) : 
+                base(groupMemberId, groupId, memberId) {
         }
     }
     
@@ -40234,7 +39400,7 @@ namespace Business {
         private System.Guid _groupAccessorId;
         
         /// <summary>
-        /// 考核组ID
+        /// 所属考核组ID
         /// </summary>
         private System.Guid _groupId;
         
@@ -40242,11 +39408,6 @@ namespace Business {
         /// 评审人ID
         /// </summary>
         private System.Guid _accessorId;
-        
-        /// <summary>
-        /// IsLeader
-        /// </summary>
-        private bool _isLeader;
         
         /// <summary>
         /// ModifyDate
@@ -40262,11 +39423,10 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalGroupAccessorBase(System.Guid groupAccessorId, System.Guid groupId, System.Guid accessorId, bool isLeader, System.DateTime modifyDate) {
+        public EvalGroupAccessorBase(System.Guid groupAccessorId, System.Guid groupId, System.Guid accessorId, System.DateTime modifyDate) {
             _groupAccessorId = groupAccessorId;
             _groupId = groupId;
             _accessorId = accessorId;
-            _isLeader = isLeader;
             _modifyDate = modifyDate;
         }
         
@@ -40293,7 +39453,7 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核组ID
+        /// 所属考核组ID
         /// </summary>
         [Display(Name="考核组ID")]
         public virtual System.Guid GroupId {
@@ -40306,7 +39466,7 @@ namespace Business {
         }
         
         /// <summary>
-        /// 考核组ID APColumnDef
+        /// 所属考核组ID APColumnDef
         /// </summary>
         public static GuidAPColumnDef GroupIdDef {
             get {
@@ -40333,28 +39493,6 @@ namespace Business {
         public static GuidAPColumnDef AccessorIdDef {
             get {
                 return APDBDef.EvalGroupAccessor.AccessorId;
-            }
-        }
-        
-        /// <summary>
-        /// IsLeader
-        /// </summary>
-        [Display(Name="是否是组长")]
-        public virtual bool IsLeader {
-            get {
-                return _isLeader;
-            }
-            set {
-                _isLeader = value;
-            }
-        }
-        
-        /// <summary>
-        /// IsLeader APColumnDef
-        /// </summary>
-        public static BooleanAPColumnDef IsLeaderDef {
-            get {
-                return APDBDef.EvalGroupAccessor.IsLeader;
             }
         }
         
@@ -40405,7 +39543,6 @@ namespace Business {
             GroupAccessorId = data.GroupAccessorId;
             GroupId = data.GroupId;
             AccessorId = data.AccessorId;
-            IsLeader = data.IsLeader;
             ModifyDate = data.ModifyDate;
         }
         
@@ -40420,9 +39557,6 @@ namespace Business {
                 return false;
             }
             if ((AccessorId != data.AccessorId)) {
-                return false;
-            }
-            if ((IsLeader != data.IsLeader)) {
                 return false;
             }
             if ((ModifyDate != data.ModifyDate)) {
@@ -40524,8 +39658,8 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalGroupAccessor(System.Guid groupAccessorId, System.Guid groupId, System.Guid accessorId, bool isLeader, System.DateTime modifyDate) : 
-                base(groupAccessorId, groupId, accessorId, isLeader, modifyDate) {
+        public EvalGroupAccessor(System.Guid groupAccessorId, System.Guid groupId, System.Guid accessorId, System.DateTime modifyDate) : 
+                base(groupAccessorId, groupId, accessorId, modifyDate) {
         }
     }
     
@@ -40551,7 +39685,7 @@ namespace Business {
         private System.Guid _accessorId;
         
         /// <summary>
-        /// 评审对象ID
+        /// 评审对象ID，包含个人或者考核组
         /// </summary>
         private System.Guid _targetId;
         
@@ -40576,6 +39710,11 @@ namespace Business {
         private System.DateTime _modifyDate = DateTime.Now;
         
         /// <summary>
+        /// PeriodId
+        /// </summary>
+        private System.Guid _periodId;
+        
+        /// <summary>
         /// Default constructor.
         /// </summary>
         public EvalAccessorTargetBase() {
@@ -40584,7 +39723,7 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalAccessorTargetBase(System.Guid accessorTargetId, System.Guid groupId, System.Guid accessorId, System.Guid targetId, System.Guid evalType, System.Guid tableId, double propertion, System.DateTime modifyDate) {
+        public EvalAccessorTargetBase(System.Guid accessorTargetId, System.Guid groupId, System.Guid accessorId, System.Guid targetId, System.Guid evalType, System.Guid tableId, double propertion, System.DateTime modifyDate, System.Guid periodId) {
             _accessorTargetId = accessorTargetId;
             _groupId = groupId;
             _accessorId = accessorId;
@@ -40593,6 +39732,7 @@ namespace Business {
             _tableId = tableId;
             _propertion = propertion;
             _modifyDate = modifyDate;
+            _periodId = periodId;
         }
         
         /// <summary>
@@ -40661,7 +39801,7 @@ namespace Business {
         }
         
         /// <summary>
-        /// 评审对象ID
+        /// 评审对象ID，包含个人或者考核组
         /// </summary>
         [Display(Name="评审对象ID")]
         public virtual System.Guid TargetId {
@@ -40674,7 +39814,7 @@ namespace Business {
         }
         
         /// <summary>
-        /// 评审对象ID APColumnDef
+        /// 评审对象ID，包含个人或者考核组 APColumnDef
         /// </summary>
         public static GuidAPColumnDef TargetIdDef {
             get {
@@ -40770,6 +39910,28 @@ namespace Business {
         }
         
         /// <summary>
+        /// PeriodId
+        /// </summary>
+        [Display(Name="周期ID")]
+        public virtual System.Guid PeriodId {
+            get {
+                return _periodId;
+            }
+            set {
+                _periodId = value;
+            }
+        }
+        
+        /// <summary>
+        /// PeriodId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef PeriodIdDef {
+            get {
+                return APDBDef.EvalAccessorTarget.PeriodId;
+            }
+        }
+        
+        /// <summary>
         /// EvalAccessorTargetTableDef APTableDef
         /// </summary>
         public static APDBDef.EvalAccessorTargetTableDef TableDef {
@@ -40799,6 +39961,7 @@ namespace Business {
             TableId = data.TableId;
             Propertion = data.Propertion;
             ModifyDate = data.ModifyDate;
+            PeriodId = data.PeriodId;
         }
         
         /// <summary>
@@ -40827,6 +39990,9 @@ namespace Business {
                 return false;
             }
             if ((ModifyDate != data.ModifyDate)) {
+                return false;
+            }
+            if ((PeriodId != data.PeriodId)) {
                 return false;
             }
             return true;
@@ -40925,8 +40091,8 @@ namespace Business {
         /// <summary>
         /// Constructor with all field values.
         /// </summary>
-        public EvalAccessorTarget(System.Guid accessorTargetId, System.Guid groupId, System.Guid accessorId, System.Guid targetId, System.Guid evalType, System.Guid tableId, double propertion, System.DateTime modifyDate) : 
-                base(accessorTargetId, groupId, accessorId, targetId, evalType, tableId, propertion, modifyDate) {
+        public EvalAccessorTarget(System.Guid accessorTargetId, System.Guid groupId, System.Guid accessorId, System.Guid targetId, System.Guid evalType, System.Guid tableId, double propertion, System.DateTime modifyDate, System.Guid periodId) : 
+                base(accessorTargetId, groupId, accessorId, targetId, evalType, tableId, propertion, modifyDate, periodId) {
         }
     }
     

@@ -52,9 +52,6 @@ namespace TheSite.Controllers
       {
          ThrowNotAjax();
 
-
-        // model.AnalysisName = EvalManager.Engines[model.AnalysisType].AnalysisName;
-
          if (!model.PeriodId.IsEmpty())
          {
             db.EvalPeriodDal.UpdatePartial(model.PeriodId, new
@@ -70,10 +67,34 @@ namespace TheSite.Controllers
          }
          else
          {
+            var eat = APDBDef.EvalAccessorTarget;
+            var ettp = APDBDef.EvalTargetTablePropertion;
+
             model.PeriodId = Guid.NewGuid();
+            model.CreateDate = DateTime.Now;
+           
+            var periods = EvalPeriod.GetAll();
+            if (periods.Count > 0)
+            {
+               var lastPeriod = periods.OrderByDescending(x => x.CreateDate).First();
+               var periodAccessorTargets = db.EvalAccessorTargetDal.ConditionQuery(eat.PeriodId==lastPeriod.PeriodId,null,null,null);
+               var evalTablePropertions = db.EvalTargetTablePropertionDal.ConditionQuery(ettp.PeriodId == lastPeriod.PeriodId, null, null, null);
+               foreach(var item in periodAccessorTargets)
+               {
+                  item.AccessorTargetId = Guid.NewGuid();
+                  item.PeriodId = model.PeriodId;
+                  db.EvalAccessorTargetDal.Insert(item);
+               }
+               foreach (var item in evalTablePropertions)
+               {
+                  item.PropertionID = Guid.NewGuid();
+                  item.PeriodId = model.PeriodId;
+                  db.EvalTargetTablePropertionDal.Insert(item);
+               }
+            }
+
             db.EvalPeriodDal.Insert(model);
          }
-
 
          return Json(new
          {
@@ -96,73 +117,6 @@ namespace TheSite.Controllers
          {
             result = AjaxResults.Success,
             msg = "信息已删除"
-         });
-      }
-
-
-      //	GET: EvalPeriod/BindTables
-      //	POST-Ajax: EvalPeriod/BindTables
-
-      public ActionResult BindTables(Guid? id)
-      {
-         //var ept = APDBDef.EvalPeriodTable;
-         //var evt = APDBDef.EvalTable;
-
-         //var result = APQuery.select(evt.TableId, evt.TableName, ept.TableId)
-         //   .from(evt, ept.JoinLeft(ept.TableId == evt.TableId & ept.PeriodId == id))
-         //   .where(evt.TableStatus == EvalTableKeys.DoneStatus)
-         //   .query(db, r =>
-         //   {
-         //      return new EvalTable
-         //      {
-         //         TableId = evt.TableId.GetValue(r),
-         //         TableName = evt.TableName.GetValue(r),
-         //         IsSelected = !ept.TableId.GetValue(r).IsEmpty()
-         //      };
-         //   }).ToList();
-
-         //ViewBag.PeriodId = id;
-
-         return PartialView(null);
-      }
-
-      [HttpPost]
-      public ActionResult BindTables(Guid id, string tableIds)
-      {
-         //var ept = APDBDef.EvalPeriodTable;
-
-         //db.BeginTrans();
-
-         //try
-         //{
-         //   db.EvalPeriodTableDal.ConditionDelete(ept.PeriodId == id);
-
-         //   if (!string.IsNullOrEmpty(tableIds) && !string.Equals("null", tableIds))
-         //   {
-         //      tableIds.Split(',').ToList().ForEach(tableId =>
-         //      {
-         //         db.EvalPeriodTableDal.Insert(new EvalPeriodTable
-         //         {
-         //            PeriodId = id,
-         //            PeriodTableId = Guid.NewGuid(),
-         //            TableId = tableId.ToGuid(Guid.Empty)
-         //         });
-         //      });
-         //   }
-
-         //   db.Commit();
-         //}
-         //catch
-         //{
-         //   db.Rollback();
-         //}
-
-         //EvalManager.RefreshEngines();
-
-         return Json(new
-         {
-            result = AjaxResults.Success,
-            msg = "操作成功！"
          });
       }
 

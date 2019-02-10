@@ -58,7 +58,7 @@ namespace TheSite.Models
       public string IndicationDescription { get; set; }
       public bool IsShowOthersEvalResult { get; set; }
 
-      public List<EvalPeriodTable> PeriodTables = new List<EvalPeriodTable>();
+      public List<EvalTable> PeriodTables = new List<EvalTable>();
       public Dictionary<Guid, List<EvalResultItem>> TableResultItems = new Dictionary<Guid, List<EvalResultItem>>();
    }
 

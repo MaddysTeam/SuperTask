@@ -1,81 +1,196 @@
-﻿@model EvalGroupTarget
-<div class="modal-dialog modal-lg">
+﻿@model EvalTargetEditViewModels
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Css{
+	<link href="~/assets/plugins/dragula-master/dist/dragula.min.css" rel="stylesheet" />
+	<style>
+		.itemTitle {
+			font-size: 18px;
+			margin: 10px 5px;
+		}
 
-	<!-- widget -->
-	<div class="widget">
-		<div class="widget-header">
-			<h3><i class="fa fa-edit"></i> 编辑考评对象</h3>
-			<div class="btn-group widget-header-toolbar">
-				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+		.subItem {
+			margin: 5px 2px;
+		}
+
+		.important {
+			color: red;
+		}
+
+		input:read-only {
+			background-color: #E0E0E0;
+		}
+	</style>
+}
+<div class="content-wrapper">
+	<!-- main -->
+	<div class="content">
+		<div class="row">
+
+			<div class="col-md-3">
+				<div class="widget" style="height:1000px; overflow:auto">
+					<div class="widget-header">
+						<h3><i class="fa fa-paperclip"></i>考核量表</h3>
+					</div>
+
+					<div id="left-events" class="widget-content" style="overflow: hidden; width: auto;">
+						@Html.Partial("_evalTables", Model)
+					</div>
+
+				</div>
+			</div>
+
+			<div class="row col-md-6">
+
+				<div>
+					<div class="widget" style="height:1000px; overflow:auto">
+						<div class="widget-header">
+							@*<h3><i class="fa fa-paperclip"></i>被考核人：@Model.CurrentTarget.TargetName</h3>
+								<div class="btn-group widget-header-toolbar">
+								</div>*@
+						</div>
+
+						<div id="right-events" class="widget-content" style="overflow: hidden; width: auto;">
+
+							<div class="alert alert-danger empty row">
+								<div class="col-md-7"><h3>被考核对象：</h3></div>
+								@*<div><h3>满分：@Model.EvalTable.FullScore</h3></div>*@
+							</div>
+
+							@Html.Partial("_evalTables_accessor_weight", Model)
+
+						</div>
+
+					</div>
+				</div>
+
 			</div>
 		</div>
-		<div class="widget-content">
-
-			<form class="form-horizontal" action="@Url.Action("TargetMemberEdit", "EvalGroup")" role="form" data-after-success="afterDialogSuccess()">
-				<div class="row">
-					<fieldset class="col-sm-12">
-						@Html.HiddenFor(a => a.GroupTargetId)
-						@Html.HiddenFor(a => a.GroupId)
-						@Html.HiddenFor(a => a.TableIds)
-						<div class="form-group">
-							@Html.Label("选择人员", new { @class = "control-label col-md-3" })
-							<div class="col-md-9">
-								@Html.DropDownListFor(a => a.MemberId, ViewBag.Users as List<SelectListItem>, new { @class = "form-control" })
-							</div>
-						</div>
-						<div class="form-group">
-							@Html.LabelFor(a => a.TableIds, new { @class = "control-label col-md-3" })
-							<div class="col-md-9">
-								@Html.DropDownList("EvalTables",
-															ViewBag.EvalTables as List<SelectListItem>,
-															  new { @class = "form-control dropdown-EvalTables", @multiple = "multiple" })
-							</div>
-						</div>
-
-						<div class="form-group">
-							<div class="col-sm-9 col-lg-offset-3">
-								<button type="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 保存</button>
-								<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
-							</div>
-						</div>
-					</fieldset>
-				</div>
-			</form>
-
-		</div>
 	</div>
-	<!-- end widget -->
+	<!-- /main -->
+	@*<input type="hidden" id="tableId" value="@Model.EvalTable.TableId" />*@
+
 </div>
-<script>
 
-	$(function () {
+@section Plugins{
+	<script src="~/assets/plugins/dragula-master/dist/dragula.min.js"></script>
+}
+@section Scripts{
+	<script>
+		$(function () {
 
-		var $form = $('.modal-dialog form');
-		$.validator.unobtrusive.parse($form);
+			$('#left-events').find('.subItem').hide();
 
-		$form.submit(function () {
-			$('#TableIds').val($('.dropdown-EvalTables').val());
+			dragula([document.getElementById('left-events'), document.getElementById('right-events')])
+						.on('drop', function (el, container, source) {
+							if (container.id == 'left-events' && source.id == 'right-events') {
+								$(el).find('.subItem').hide();
 
-			var $form = $(this);
+								removeTargetEvalTable($(el));
+							}
+							else if (container.id == 'right-events') {
+								$(el).find('.subItem').show();
+							}
+						});
 
-			$form.valid() && $.post($form.attr('action'), $form.serialize(), function (data, status) {
-				popupMessage(data, {
-					success: function () { commitedNotice(); }
+			@*$('.score').change(function () {
+				var $this = $(this);
+				var score = $this.val();
+				checkScore(score);
+				showScore($this, score);
+
+			});*@
+
+			$('.btn-ok').on('click', function () {
+				var $this = $(this);
+				var $currentEvalTable = $this.parent().parent();
+				var tableId = $currentEvalTable.find('#TableId').val();
+				var targetId = $currentEvalTable.find('#TargetId').val();
+				var propertion = $currentEvalTable.find('#TablePropertion').val();
+				var propertionID = $currentEvalTable.find('#PropertionID').val();
+				var accessorTargets = [];
+				var tablePropetions = [{ propertionID: propertionID, tableId: tableId, targetId: targetId, propertion: propertion }];
+
+				$currentEvalTable.find('.accessor').each(function () {
+					var $that = $(this);
+					var accessorTarget = {
+						accessorTargetId: $that.find('#AccessorTargetId').val(),
+						tableId: tableId,
+						accessorId: $that.find('#AccessorId').val(),
+						targetId: targetId,
+						propertion: $that.find('#AccessorPropertion').val()
+					};
+					accessorTargets.push(accessorTarget);
+				});
+
+
+				var $btnModify = $currentEvalTable.find('.btn-modify');
+				$btnModify.hide();
+
+				//if (!checkScore(score)) {
+				//	return false;
+				//}
+
+				var viewModel = { AccessorsAndTargets: accessorTargets, TablePropertion: tablePropetions }
+				$.post('@Url.Action("TargetMemberEdit", "EvalGroup")', { model: viewModel }, function (data) {
+					popupMessage(data, {
+						success: function () {
+							$currentEvalTable.find('input').attr('readonly', 'readonly');
+							$this.hide();
+							$btnModify.removeClass('hidden').show();
+						}
+					});
 				});
 			});
 
-			return false;
+			$('.btn-modify').on('click', function () {
+				var $this = $(this).hide();
+				var $currentEvalTable = $this.parent().parent();
+				$currentEvalTable.find('input').removeAttr('readonly');
+				$currentEvalTable.find('.btn-ok').removeClass('hidden').show();
+			});
+
+			@*	$('.btn-modifyAll,.btn-preview').click(function () {
+				location.href = $(this).data('url')
+			});
+
+			function checkScore(score) {
+				if (isNaN(score)) {
+					popupMessage({ msg: '@Errors.EvalTable.NOT_ALLOWED_SCORE_LESS_THAN_ZERO', result: 'error' });
+					return false;
+				}
+				else if (score <= 0) {
+					popupMessage({ msg: '@Errors.EvalTable.NOT_ALLOWED_SCORE_LESS_THAN_ZERO', result: 'error' });
+					return false;
+				}
+
+				return true;
+			}
+
+			function showScore(container, score) {
+				$(container).html(score);
+			}*@
+
+			function removeTargetEvalTable(ele) {
+				var $currentEvalTable = ele;
+				var tableId = $currentEvalTable.find('#TableId').val();
+				var targetId = $currentEvalTable.find('#TargetId').val();
+
+				$.post('@Url.Action("RemoveTargetTable", "EvalGroup")', { tableId: tableId, targetId: targetId }, function (data) {
+					popupMessage(data, {
+						success: function () {
+							$currentEvalTable.find('input').removeAttr('readonly');
+							$currentEvalTable.find('.btn-modify').hide();
+							$currentEvalTable.find('.btn-ok').removeClass('hidden').show();
+						}
+					});
+				});
+
+				return;
+			}
+
 		});
 
-
-		var evalTables = '@Model.TableIds'.split(',');
-		$('.dropdown-EvalTables').multiselect('select', evalTables);
-
-	})
-
-	function commitedNotice() {
-		$('#firstModal').modal('hide');
-		$('#bootgrid').bootgrid('reload');
-	}
-
-</script>
+	</script>
+}

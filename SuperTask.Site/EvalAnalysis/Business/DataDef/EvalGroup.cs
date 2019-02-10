@@ -21,10 +21,16 @@ namespace Business
    }
 
 
-   public partial class EvalGroupTarget
+   public partial class EvalAccessorTarget
    {
+      [Display(Name = "考评人")]
+      public string AccessorName { get; set; }
+
       [Display(Name = "考评对象")]
       public string TargetName { get; set; }
+
+      [Display(Name = "考核表")]
+      public string TableName { get; set; }
    }
 
 }

@@ -57,7 +57,6 @@
 						var id = row.id;
 						var accessorId = row.accessorId;
 						return '<div class="btn-group btn-group-xs pull-right" data-accessor-id="' + accessorId + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
-												 '<button class="btn btn-success btn-edit">编辑</button>' +
 												 '<button class="btn btn-info btn-editTargets">选择考核对象</button>' +
 												 '<button class="btn btn-danger btn-remove">移除</button>'
 						'</div>';
@@ -70,13 +69,6 @@
 		$(function () {
 
 			$('#bootgrid').bootgrid(getGridOptions()).on('loaded.rs.jquery.bootgrid', function () {
-				$(this).find('.btn-edit').on('click', function (e) {
-					var id = $(this).parent().data('rowId');
-					$('#modelProxy')
-						.data('url', '@Url.Action("AccessorEdit", "EvalGroup")?groupAccessorId=' + id)
-						.trigger('click');
-});
-
 				$(this).find('.btn-editTargets').on('click', function (e) {
 					var id = $(this).parent().data('accessorId');
 					$('#modelProxy')

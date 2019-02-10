@@ -25,7 +25,7 @@
 				<div class="row" style="margin-bottom:20px; margin-top:10px;">
 
 					<!-- 考核表执行角色筛选下拉框 -->
-					<div class="col-sm-4">
+					@*<div class="col-sm-4">
 						<div class="form-horizontal">
 							<div class="FormGroup">
 								<label class="col-md-4 control-label">选择您的考评者角色</label>
@@ -35,7 +35,7 @@
 								<input type="hidden" class="accessorRoleId" />
 							</div>
 						</div>
-					</div>
+					</div>*@
 
 				</div>
 
@@ -45,7 +45,6 @@
 						<thead>
 							<tr>
 								<th data-column-id="MemberName">考核对象</th>
-								<th data-column-id="TargetRoleName">考核对象角色</th>
 								<th data-column-id="PeriodNames">当前考核周期</th>
 								<th data-column-id="AccessorName">考评者</th>
 								<th data-column-id="EvalStatus">考评状态</th>
@@ -66,7 +65,7 @@
 	<script>
 		function getGlobalRequest() {
 			return {
-				roleId: $('.dp-accessorRoles').val()
+				evalType: '@EvalTableKeys.SubjectType'
 			};
 		}
 
@@ -80,18 +79,14 @@
 				formatters: {
 					'commands': function (column, row) {
 						var id = row.id;
-						var tableIds = row.TableIds;
 						var targetId = row.MemberId;
 						var isEvaled = row.IsEvaled;
-						var hasTable = row.HasTable;
-						var targetRoleId = row.TargetRoleId;
-						var evalbutton = '<div class="btn-group btn-group-xs pull-right"  data-role-id="' + targetRoleId + '" data-target-id="' + targetId + '" data-table-ids="' + tableIds + '" data-row-active="' + row.actived + '">' +
-							'<button class="btn btn-lg btn-success btn-eval">考核</button> ';
-						if (isEvaled)
-							return evalbutton +
-							'<button class="btn btn-lg btn-info btn-result">查看结果</button></div>';
+						var evalbutton = '<div class="btn-group btn-group-xs pull-right"  data-target-id="' + targetId + '" data-row-active="' + row.actived + '">';
+						if (!isEvaled)
+						  evalbutton += '<button class="btn btn-lg btn-success btn-eval">考核</button>';
 						else
-							return evalbutton + '</div>';
+							return evalbutton += '<button class="btn btn-lg btn-info btn-eval">继续考核</button>';
+						return evalbutton += '</div>';
 					},
 				},
 			});
@@ -102,21 +97,11 @@
 			$('#bootgrid').bootgrid(getGridOptions()).on('loaded.rs.jquery.bootgrid', function () {
 				var evalUrl = '@Url.Action("SubjectEvalView", "EvalManage")';
 				$(this).find('.btn-eval').on('click', function (e) {
-					var tableIds = $(this).parent().data('tableIds');
 					var targetId = $(this).parent().data('targetId');
-					var accessorRoleId = $('.dp-accessorRoles').val();
-					var targetRoleId = $(this).parent().data('roleId');
-					location.href = evalUrl + '?targetId=' + targetId + '&accessorRoleId=' + accessorRoleId + '&tableIds=' + tableIds + '&targetRoleId=' + targetRoleId;
+					location.href = evalUrl + '?targetId=' + targetId 
 				});
 
 				var evalResultUrl = '@Url.Action("SubjectEvalResult", "EvalManage")';
-				$(this).find('.btn-result').on('click', function (e) {
-					var tableIds = $(this).parent().data('tableIds');
-					var targetId = $(this).parent().data('targetId');
-					var accessorRoleId = $('.dp-accessorRoles').val();
-					var targetRoleId = $(this).parent().data('roleId');
-					location.href = evalResultUrl + '?targetId=' + targetId + '&accessorRoleId=' + accessorRoleId + '&tableIds=' + tableIds + '&targetRoleId=' + targetRoleId;
-				});
 
 			});
 

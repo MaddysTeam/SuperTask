@@ -589,7 +589,7 @@
 				</columns>
 			</table>
 
-			<!--<table name="EvalIndicationItem" tableName="EvalIndicationItem" comment="考核-指标-指标项">
+			<table name="EvalIndicationItem" tableName="EvalIndicationItem" comment="考核-指标-指标项">
 				<columns>
 
 					<add name="ItemId" columnName="ID" type="Guid" primaryKey="true" ></add>
@@ -599,7 +599,7 @@
 					<add name="ItemValue" columnName="Value" type="string"  dataLength="200" required="true" display="指标项值"/>
 
 				</columns>
-			</table>-->
+			</table>
 
 			<table name="EvalTable" tableName="EvalTable" comment="考核表">
 				<columns>
@@ -615,8 +615,6 @@
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
 					<add name="ModifierId" columnName="ModifierId" type="Guid"  display="修改人"></add>
 					<add name="UseCount" columnName="UseCount" type="Guid" display="使用次数"></add>
-					<!--<add name="AccessorRoleIds" columnName="AccessorRoleIds" type="string" dataLength="1000" display="考核者角色" comment="用逗号分开(需要手动改成nvarcharMax)"></add>
-					<add name="MemberRoleIds" columnName="MemberRoleIds" type="string" dataLength="1000" display="被考核者角色" comment="用逗号分开(需要手动改成nvarcharMax)"></add>-->
 					<add name="PerviouslyTableStatus" columnName="PerviouslyTableStatus" type="Guid" isNullable="true" display="考核表先前状态" comment="用于状态还原"></add>
 
 				</columns>
@@ -636,66 +634,45 @@
 					<add name="AnalysisName" type="String" dataLength="100" display="算法模型名称"/>
 					<add name="AnalysisType" type="String" dataLength="100" display="算法模型类型"/>
 					<add name="IsCurrent" type="bool" display="是否当前考核期"/>
-
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  isNullable="true" display="创建时间" />
+					
 				</columns>
 			</table>
 
-			<table name="EvalTableGroup" tableName="EvalTableGroup" comment="考核表组">
+			<table name="EvalTargetTablePropertion" comment="考核表-比重">
 				<columns>
 
-					<add name="TableGroupId" columnName="ID" type="Guid" primaryKey="true" ></add>
-					<add name="TableGroupName" columnName="Name" type="string"  dataLength="200" display="考核表组名称"/>
-					<add name="PeriodId" type="Guid"  display="考核周期ID"/>
-					<add name="TargetRoleId" type="Guid" display="考核对象角色"></add>
-
-				</columns>
-			</table>
-
-			<table name="EvalTableGroupItem">
-				<columns>
-
-					<add name="GroupItemId" columnName="ID" type="Guid" primaryKey="true" ></add>
-					<add name="TableGroupId" columnName="TableGroupId" type="Guid" ></add>
+					<add name="PropertionID" columnName="ID" type="Guid" primaryKey="true" ></add>
 					<add name="TableId" columnName="TableId" type="Guid"></add>
+					<add name="TargetId" type="Guid" comment="评审对象ID"/>
 					<add name="Propertion"  columnName="Propertion" type="double" display="分值权重" />
-
+					<add name="PeriodId" columnName="PeriodId"  type="Guid" display="周期ID"/>
+					<add name="GroupId" type="Guid" display="考核组ID"  isNullable="true" comment="考核组ID"/>
 				</columns>
 			</table>
 
 			<table name="EvalGroup" tableName="EvalGroup" comment="考核组">
 				<columns>
-
 					<add name="GroupId" columnName="ID" type="Guid" primaryKey="true" ></add>
 					<add name="GroupName" columnName="Name" type="string" dataLength="100"  display="组名称"></add>
-					<add name="GroupType" columnName="Type"  display="组类型" type="string" dataLength="100" ></add>
-					<add name="CreaterId" columnName="CreaterId" type="Guid"  display="创建者id" ></add>
 					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
-					<add name="AccessorCount" columnName="AccessorCount" type="int" display="评审人数量"></add>
-					<add name="TargetCount" columnName="TargetCount" type="int" display="参与考核人数量"></add>
-
 				</columns>
 			</table>
-
-			<table name="EvalGroupTarget" comment="考核组-评审对象">
-				<columns>
-
-					<add name="GroupTargetId" columnName="ID" type="Guid" primaryKey="true" display="考核对象成员ID" />
-					<add name="GroupId" type="Guid" display="考核组ID" />
-					<add name="MemberId" type="Guid" display="考核对象ID" />
-					<!--<add name="TableIds" columnName="TableIds" type="string" dataLength="1000"  display="考核表" comment="考核表id,评审对象可能对应不同的考核表"></add>-->
-					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  display="修改时间" />
-
+			
+			<table name="EvalGroupMember" comment="考核组-成员">
+				<columns>					
+					<add name="GroupMemberId" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="GroupId" columnName="GroupId" type="Guid" ></add>
+					<add name="MemberId" columnName="MemberId" type="Guid" ></add>
 				</columns>
 			</table>
-
+				
 			<table name="EvalGroupAccessor" comment="考核组-评审人">
 				<columns>
 
 					<add name="GroupAccessorId" columnName="ID" type="Guid"  primaryKey="true" display="评审人组成员ID" />
-					<add name="GroupId" type="Guid" display="考核组ID" comment="考核组ID"/>
+					<add name="GroupId" type="Guid" display="考核组ID" comment="所属考核组ID"/>
 					<add name="AccessorId" type="Guid" display="评审人" comment="评审人ID"/>
-					<!--<add name="TableIds" columnName="TableIds" type="string" dataLength="1000"  display="选择考核表" comment="考核表id,评审人可能评审不同的考核表"></add>-->
-					<add name="IsLeader" columnName="IsLeader" type="bool" display="是否是组长"></add>
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  display="修改时间" />
 
 				</columns>
@@ -707,14 +684,16 @@
 					<add name="AccessorTargetId" columnName="ID" type="Guid"  primaryKey="true" />
 					<add name="GroupId" type="Guid" display="考核组ID" comment="考核组ID"/>
 					<add name="AccessorId" type="Guid" display="评审人ID" comment="评审人ID"/>
-					<add name="TargetId" type="Guid" display="评审对象ID" comment="评审对象ID"/>
+					<add name="TargetId" type="Guid" display="评审对象ID" comment="评审对象ID，包含个人或者考核组"/>
 					<add name="EvalType"   type="Guid"  isNullable="false" display="考核类型" />
 					<add name="TableId" columnName="TableId" type="Guid"></add>
 					<add name="Propertion"  columnName="Propertion" type="double" display="分值权重" />
 					<add name="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  display="修改时间" />
-
+					<add name="PeriodId" columnName="PeriodId" type="Guid" display="周期ID"/>
+					
 				</columns>
 			</table>
+
 
 			<!--<table name="EvalPeriodTable" comment="考核-周期-考核表">
 				<columns>

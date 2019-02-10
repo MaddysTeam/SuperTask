@@ -26,8 +26,8 @@
 							@foreach (var item in Model.PeriodTables)
 							{
 								<tr>
-									<th>@(item.TableName)得分：</th>
-									<td>@item.Score</td>
+									<th>@(item.TableName)</th>
+									<td>@*@item.Score*@</td>
 									<td>
 										@if (item.TableType!=EvalKeys.AutoType && Model.IsShowOthersEvalResult)
 										{
@@ -43,7 +43,7 @@
 			<div class="col-md-8">
 				@foreach (var item in Model.PeriodTables)
 				{
-					var period = EvalPeriod.PrimaryGet(item.PeriodId);
+					var period = EvalPeriod.PrimaryGet(Model.PeriodId);
 					var engine = item.TableType==EvalTableKeys.AutoType?
 						  EvalManager.Engines[period.AnalysisType].AutoEvals[item.TableId]
 						: EvalManager.Engines[period.AnalysisType].SubjectEvals[item.TableId];

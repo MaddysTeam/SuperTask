@@ -2,6 +2,8 @@
 @{
 	ViewBag.Title = "主观考核";
 	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var evalTables = Model.EvalTables.Where(x => x.TableType == EvalTableKeys.SubjectType);
 }
 @section Css{
 <link href="~/assets/plugins/raty/lib/jquery.raty.css" rel="stylesheet" />
@@ -18,21 +20,17 @@
 						<table class="table table-condensed">
 							<tr>
 								<th>考核对象</th>
-								<td>@Model.TargetName</td>
+								<td>@Model.Target.UserName</td>
 							</tr>
 							<tr>
 								<th>考评人</th>
-								<td>@Model.AccessorName</td>
+								<td>@Model.Accessor.UserName</td>
 							</tr>
-							<tr>
-								<th>考评人角色</th>
-								<td>@Model.AccessorRole.RoleName</td>
-							</tr>
-							@foreach (var item in Model.PeriodTables)
+							@foreach (var item in evalTables)
 							{
 								<tr>
 									<th>@(item.TableName)得分：</th>
-									<td>@item.Score</td>
+									@*<td>@item.Score</td>*@
 								</tr>
 							}
 							<tr>
@@ -44,37 +42,23 @@
 				</div>
 			</div>
 			<div class="col-md-9">
-				@foreach (var item in Model.PeriodTables)
+				@foreach (var item in evalTables)
 				{
-					var period = EvalPeriod.PrimaryGet(item.PeriodId);
-					var engine = EvalManager.Engines[period.AnalysisType].SubjectEvals[item.TableId];
-					var resultItems = EvalManager.GetEvalReultItems(
-						new SubjectEvalParams
-						{
-							AccessorId = Model.AccessorId,
-							AccessorRoleId = Model.AccessorRole.RoleId,
-							CurrentTableId = item.TableId,
-							PeriodId = item.PeriodId,
-							TargetId = Model.TargetId,
-							TargetRoleId=Model.TargetRoleId
-						});
-
+					var engine = EvalManager.Engines[Model.Period.AnalysisType].SubjectEvals[item.TableId];
 					<div class="evaltable">
-						<input type="hidden" class="periodId" value="@item.PeriodId" />
-						<input type="hidden" class="tableId" value="@item.TableId" />
-						<input type="hidden" class="targetRoleId" value="@item.CurrentTargetRoleId" />
-						@if (resultItems != null)
+						@Html.Hidden("TableId", item.TableId)
+						@if (Model.EvalResultItems.ContainsKey(item.TableId))
 						{
-						@Html.Partial(engine.ViewPath + engine.EvalView, resultItems)
+						@Html.Partial(engine.ViewPath + engine.EvalView, Model.EvalResultItems[item.TableId])
 						}	
 
 					</div>
 				}
 
-				@Html.HiddenFor(x => x.AccessorId, new { @class = "AccessorId" })
-				@Html.HiddenFor(x => x.AccessorRole.RoleId,new {@class= "AccessorRoleId" })
-				@Html.HiddenFor(x => x.TargetId, new { @class = "TargetId" })
-				@Html.HiddenFor(x => x.TargetName)
+				@Html.Hidden("PeriodId", Model.Period.PeriodId, new { @class = "PeriodId" })
+				@Html.Hidden("AccessorId", Model.Accessor.UserId, new { @class = "AccessorId" })
+				@Html.Hidden("TargetId", Model.Target.UserId, new { @class = "TargetId" })
+
 			</div>
 		</div>
 			
@@ -139,15 +123,13 @@
 			this.indicationId = indicationId;
 		}
 
-		var result=function(id,periodId,tableId,accessorId,accessorRoleId,targetId,items,targetRoleId){
+		var result=function(id,periodId,tableId,accessorId,targetId,items){
 			this.id=id;
 			this.periodId=periodId;
 			this.tableId=tableId;
 			this.accessorId=accessorId;
-			this.accessorRoleId=accessorRoleId;
 			this.targetId=targetId;
 			this.items = items;
-			this.targetRoleId = targetRoleId;
 		}
 
 		var results=[];
@@ -159,25 +141,23 @@
 				var $this = $(this);
 				$this.find('.evalItem').each(function () {
 					var $this=$(this);
-					var id = $this.find('.evalItemId').val(),
-						 value = $this.find('.resultValue').val(),
-						 score = $this.find('.realScore').val(),
-						 key = $this.find('.evalItemKey').val(),
-						 resultId = $this.find('.resultId').val(),
-						 indicationId = $this.find('.indicatioId').val();
+					var id = $this.find('#EvalItemId').val(),
+						 value = $this.find('#ResultValue').val(),
+						 score = $this.find('#RealScore').val(),
+						 key = $this.find('#EvalItemKey').val(),
+						 resultId = $this.find('#ResultId').val(),
+						 indicationId = $this.find('#IndicatioId').val();
 
 					items.push(new resultItems(id, resultId, value, score, key, indicationId));
 				});
 				
 				
 				var resultId=items[0].resultId;
-				var accessorId=$('.AccessorId').val();
-				var targetId = $('.TargetId').val();
-				var accessorRoleId = $('.AccessorRoleId').val();
-				var periodId = $this.find('.periodId').val();
-				var tableId = $this.find('.tableId').val();
-				var targetRoleId = $this.find('.targetRoleId').val();
-				results.push(new result(resultId, periodId, tableId, accessorId, accessorRoleId, targetId, items, targetRoleId));
+				var accessorId=$('#AccessorId').val();
+				var targetId = $('#TargetId').val();
+				var periodId = $('#PeriodId').val();
+				var tableId = $this.find('#TableId').val();
+				results.push(new result(resultId, periodId, tableId, accessorId, targetId, items));
 			});
 
 			$.post('@Url.Action("SubjectEval", "EvalManage")', { evalResults: results }, function (data) {

@@ -12,10 +12,6 @@ namespace Business.Helper
       //指标项类型组ID
       public static Guid IndicaitonTypeKeyGuid = Guid.Parse("94decd1d-8c60-4c85-8f00-e740c1d6869b");
 
-      //public static Guid SubjectTypeGuid => Guid.Parse("94DECD1D-8C60-4C85-8F00-E740C1D7980B");
-
-      //public static Guid AutoTypeGuid => Guid.Parse("94DECD1D-8C60-4C85-8F00-E740C1D9960C");
-
       public static Guid SubjectType => Guid.Parse("94DECD1D-8C60-4C85-8F00-E740C1D7980B");
 
       public static Guid AutoType => Guid.Parse("94DECD1D-8C60-4C85-8F00-E740C1D9960C");

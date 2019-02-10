@@ -63,9 +63,7 @@
 									<td>@(item.IsCurrent ? "当期" : "")</td>
 									<td>
 										<div class="btn-group btn-group-xs pull-right">
-											<button class="btn btn-success btn-edit" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "EvalPeriod", new { id = item.PeriodId })" data-target="#firstModal" title="编辑">编辑</button>
-											@*<button class="btn btn-warning btn-remove" data-url="@Url.Action("Remove", "EvalPeriod", new { id = item.PeriodId })" title="删除">删除</button>*@
-											<button class="btn btn-warning btn-set" data-toggle="ajax-modal" data-url="@Url.Action("BindTables", "EvalPeriod", new { id = item.PeriodId })" data-target="#firstModal" title="选择考核表">选择考核表</button>
+											<button class="btn btn-success btn-edit" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "EvalPeriod", new { id = item.PeriodId })" data-target="#firstModal" title="编辑">编辑</button>										
 										</div>
 									</td>
 								</tr>

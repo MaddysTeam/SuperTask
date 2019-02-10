@@ -1,0 +1,39 @@
+﻿@model EvalTargetEditViewModels
+@foreach (var item in Model.Tables)
+{
+	<div class="alert alert-info">
+		<div class="row itemTitle">
+			<div class="col-sm-10">
+				<i class="fa fa-star"></i>	@item.TableName
+			</div>
+			@*<div class="important  subItem">分值：<label class="fullScore">0</label></div>*@
+		</div>
+		<div class="row subItem">
+			<div class="col-sm-2 important">考卷权重(%):</div>
+			<div class="col-sm-4"><input placeholder="输入占比" class="score form-control" id="TablePropertion" value="0" /></div>
+		</div>
+		<hr class="subItem" />
+		@{
+			foreach (var subItem in Model.AccessorsAndTargets.Where(x => x.TableId.IsEmpty())) // tableid 为空表示 被考核人-考核人之间的绑定关系
+			{
+				<div class="row subItem accessor">
+					<div class="col-sm-2">考核人：@(subItem.AccessorName)权重(%):</div>
+					<div class="col-sm-4">
+						<input placeholder="输入权重" class="weight form-control" id="AccessorPropertion" />
+					</div>
+					<input type="hidden" id="AccessorTargetId" value="@subItem.AccessorTargetId" />
+					<input type="hidden" id="AccessorId" value="@subItem.AccessorId" />
+				</div>
+			}
+		}
+		<div class="text-right subItem">
+			<button class="btn btn-success btn-ok">确定</button>
+			<button class="btn btn-info btn-modify hidden">修改</button>
+		</div>
+
+		<input type="hidden" id="TableId" value="@item.TableId" />
+		<input type="hidden" id="TargetId" value="@Model.AccessorsAndTargets[0].TargetId" />
+		<input type="hidden" id="PropertionID" value="@Guid.NewGuid()" />
+
+	</div>
+			}

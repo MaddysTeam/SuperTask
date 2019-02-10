@@ -2,6 +2,8 @@
 @{
 	ViewBag.Title = "";
 	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var evalTables = Model.EvalTables.Where(x => x.TableType == EvalTableKeys.AutoType);
 }
 @section Css{
 <link href="~/assets/plugins/raty/lib/jquery.raty.css" rel="stylesheet" />
@@ -20,21 +22,21 @@
 						<table class="table table-condensed">
 							<tr>
 								<th>考核对象</th>
-								<td>@Model.TargetName</td>
+								<td>@Model.Target.UserName</td>
 							</tr>
 							<tr>
 								<th>考评人</th>
-								<td>@Model.AccessorName</td>
+								<td>@Model.Accessor.UserName</td>
 							</tr>
 							<tr>
 								<th>考评人角色</th>
 								<td>考评管理员</td>
 							</tr>
-							@foreach (var item in Model.PeriodTables)
+							@foreach (var item in evalTables)
 							{
 								<tr>
 									<th>@(item.TableName)得分：</th>
-									<td>@item.Score.ToString("0.00")</td>
+									@*<td>@item.Score.ToString("0.00")</td>*@
 								</tr>
 							}
 						</table>
@@ -42,31 +44,24 @@
 				</div>
 			</div>
 			<div class="col-md-9">
-				@foreach (var item in Model.PeriodTables)
+				@foreach (var item in evalTables)
 				{
-					var period = EvalPeriod.PrimaryGet(item.PeriodId);
-					var engine = EvalManager.Engines[period.AnalysisType].AutoEvals[item.TableId];
-					var resultItems = engine.GetEvalResultItems(
-						new EvalParams
-						{
-							AccessorId = Model.AccessorId,
-							AccessorRoleId = Model.AccessorRole.RoleId,
-							CurrentTableId = item.TableId,
-							PeriodId = item.PeriodId,
-							TargetId = Model.TargetId,
-							TargetRoleId=Model.TargetRoleId
-						});
+					var engine = EvalManager.Engines[Model.Period.AnalysisType].AutoEvals[item.TableId];
 
 					<div class="evaltable">
-						<input type="hidden" class="periodId" value="@item.PeriodId" />
-						<input type="hidden" class="tableId" value="@item.TableId" />
-						@if (resultItems != null)
+						@Html.Hidden("TableId", item.TableId)
+
+						@if (Model.EvalResultItems.ContainsKey(item.TableId))
 						{
-							@Html.Partial(engine.ViewPath + engine.ResultView, resultItems)
-						}	
+							@Html.Partial(engine.ViewPath + engine.ResultView, Model.EvalResultItems[item.TableId])
+						}
 
 					</div>
 				}
+
+				@Html.Hidden("PeriodId", Model.Period.PeriodId, new { @class = "PeriodId" })
+				@Html.Hidden("AccessorId", Model.Accessor.UserId, new { @class = "AccessorId" })
+				@Html.Hidden("TargetId", Model.Target.UserId, new { @class = "TargetId" })
 			</div>
 		</div>
 			

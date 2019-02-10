@@ -373,25 +373,28 @@ namespace TheSite.Controllers
          }
 
          var subQuery = APQuery.select(evi.IndicationId).from(evi).where(evi.TableId == id);
+         var indicationType = table.TableType == EvalTableKeys.SubjectType ? IndicationKeys.SubjectType : IndicationKeys.AutoType;
+         // 左侧指标选择
          var indications = db.IndicationDal.ConditionQuery(
-            i.IndicationType == IndicationKeys.SubjectType &
+            i.IndicationType == indicationType &
             i.IndicationStatus == IndicationKeys.EnabelStatus &
             i.IndicationId.NotIn(subQuery), null, null, null);
 
-         var evalIndications = APQuery.select(evi.Asterisk,i.IndicationName.As("IndicationName"),i.IndicationType)
-                                      .from(evi, i.JoinInner(i.IndicationId==evi.IndicationId))
+         //右侧该表考核指标
+         var evalIndications = APQuery.select(evi.Asterisk, i.IndicationName.As("IndicationName"), i.IndicationType.As("IndicationType"))
+                                      .from(evi, i.JoinInner(i.IndicationId == evi.IndicationId))
                                       .where(evi.TableId == id)
                                       .query(db, rd =>
                                        {
                                           var ev = new EvalIndication();
-                                          evi.Fullup(rd, ev, false);                                        
+                                          evi.Fullup(rd, ev, false);
                                           ev.IndicationName = i.IndicationName.GetValue(rd, "IndicationName");
-                                          ev.IndicationType = i.IndicationType.GetValue(rd);
+                                          ev.IndicationType = i.IndicationType.GetValue(rd, "IndicationType");
                                           return ev;
                                        })
                                       .ToList();
 
-         var models = new EvalBuilderViewModel() { EvalTable = table, Indications = indications,EvalIndications=evalIndications };
+         var models = new EvalBuilderViewModel() { EvalTable = table, Indications = indications, EvalIndications = evalIndications };
 
          return View(models);
       }
@@ -417,6 +420,8 @@ namespace TheSite.Controllers
          {
             db.EvalIndicationDal.Update(item);
          }
+
+         BuildEvalIndicationItems(item);
 
          return Json(new
          {
@@ -467,19 +472,17 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult EvalTableDone(Guid id)
       {
-         //var evalIndications = db.EvalIndicationDal.ConditionQuery(evi.TableId == id, null, null, null);
-         //var table = db.EvalTableDal.PrimaryGet(id);
-         //var sumScore = BuilderManager.Builders[table.TableType].GetFullScore(evalIndications);
-
-         //if (table.FullScore != sumScore)
-         //{
-         //   return Json(new
-         //   {
-         //      result = AjaxResults.Error,
-         //      msg = Errors.EvalTable.EVALINDICATION_SUMSCORE_SHOULD_SAME_WITH_TABLE_SCORE
-         //   });
-         //}
-
+         var evalIndications = db.EvalIndicationDal.ConditionQuery(evi.TableId == id, null, null, null);
+         var table = db.EvalTableDal.PrimaryGet(id);
+         var sumScore = BuilderManager.Builders[table.TableType].GetFullScore(evalIndications);
+         if (sumScore != table.FullScore)
+         {
+            return Json(new
+            {
+               result = AjaxResults.Error,
+               msg = Errors.EvalTable.EVALINDICATION_SUMSCORE_SHOULD_SAME_WITH_TABLE_SCORE
+            });
+         }
 
          db.EvalTableDal.UpdatePartial(id, new { TableStatus = EvalTableKeys.DoneStatus });
 
@@ -498,65 +501,80 @@ namespace TheSite.Controllers
          return RedirectToAction("EvalTableBuild", new { id = id });
       }
 
-      public ActionResult EvalTablePreview(Guid id, Guid roleId)
+      public ActionResult EvalTablePreview(Guid id)
       {
-         //var r = APDBDef.Role;
+         var table = db.EvalTableDal.PrimaryGet(id);
+         if (table == null) throw new NullReferenceException();
 
-         //var roles = db.RoleDal.ConditionQuery(r.RoleType == RoleKeys.SystemType, null, null, null);
-         //var table = db.EvalTableDal.PrimaryGet(id);
+         var result = APQuery
+            .select(evi.Asterisk, evii.Asterisk, i.IndicationName.As("IndicationName"), i.Description)
+            .from(evii,
+                  evi.JoinInner(evi.Id == evii.EvalIndicationId & evi.TableId == id),
+                  i.JoinInner(evi.IndicationId == i.IndicationId))
+                  .query(db, rd =>
+                   {
+                      var item = new EvalIndicationItem();
+                      evii.Fullup(rd, item, false);
+                      var evalIndication = new EvalIndication();
+                      evi.Fullup(rd, evalIndication, false);
+                      evalIndication.IndicationName = i.IndicationName.GetValue(rd, "IndicationName");
 
-         //if (roles == null || roles.Count <= 0) throw new NullReferenceException();
-         //if (table == null || string.IsNullOrEmpty(table.AccessorRoleIds)) throw new NullReferenceException();
+                      return new
+                      {
+                         EvalIndication = evalIndication,
+                         EvalIndicationItem = item
+                      };
+                   }).ToList();
 
-         //table.BuildAccessorRoles(roles);
+         var temp = new List<EvalIndication>();
 
-         //roleId = roleId.IsEmpty() ? table.AccessorRoleIds.Split(',').First().ToGuid(Guid.Empty) : roleId;
+         foreach (var item in result)
+         {
+            var evalIndication = item.EvalIndication;
 
-         //var result = APQuery
-         //   .select(evi.Asterisk, evii.Asterisk, i.IndicationName.As("IndicationName"), i.Description)
-         //   .from(evii,
-         //         evi.JoinInner(evi.Id == evii.EvalIndicationId & evi.TableId == id & evi.AccessorRoleId == roleId),
-         //         i.JoinInner(evi.IndicationId == i.IndicationId))
-         //         .query(db, rd =>
-         //          {
-         //             var item = new EvalIndicationItem();
-         //             evii.Fullup(rd, item, false);
-         //             var evalIndication = new EvalIndication();
-         //             evi.Fullup(rd, evalIndication, false);
-         //             evalIndication.IndicationName = i.IndicationName.GetValue(rd, "IndicationName");
+            if (!temp.Contains(evalIndication))
+               temp.Add(evalIndication);
+            else
+               evalIndication = temp.Find(x => x.Id == evalIndication.Id);
 
-         //             return new
-         //             {
-         //                EvalIndication = evalIndication,
-         //                EvalIndicationItem = item
-         //             };
-         //          }).ToList();
+            if (evalIndication.Items == null)
+               evalIndication.Items = new List<EvalIndicationItem>();
+            evalIndication.Items.Add(item.EvalIndicationItem);
+         }
 
-         //var temp = new List<EvalIndication>();
+         return View(new PreviewViewModel
+         {
+            EvalTable = table,
+            EvalIndications = temp,
+         });
 
-         //foreach (var item in result)
-         //{
-         //   var evalIndication = item.EvalIndication;
+      }
 
-         //   if (!temp.Contains(evalIndication))
-         //      temp.Add(evalIndication);
-         //   else
-         //      evalIndication = temp.Find(x => x.Id == evalIndication.Id);
 
-         //   if (evalIndication.Items == null)
-         //      evalIndication.Items = new List<EvalIndicationItem>();
-         //   evalIndication.Items.Add(item.EvalIndicationItem);
-         //}
+      private void BuildEvalIndicationItems(EvalIndication item)
+      {
+         IEnumerable<EvalIndicationItem> indicationItems = null;
+         var builders = BuilderManager.Builders;
 
-         //return View(new PreviewViewModel
-         //{
-         //   AccessorRoles = table.AccessorRoles,
-         //   EvalTable = table,
-         //   EvalIndications = temp,
-         //   CurrentAccessorRole = roles.Find(role => role.RoleId == roleId)
-         //});
 
-         return null;
+         if (item.Id.IsEmpty())
+            item.Id = Guid.NewGuid();
+
+         if (builders.Count > 0 && builders.ContainsKey(item.IndicationType))
+         {
+            indicationItems = builders[item.IndicationType].AutoBuildEvalItem(item.Id, string.Empty, item.FullScore, EvalBuilderConfig.AutoEvalIndicationItemCount);
+         }
+
+         if (indicationItems != null && indicationItems.Count() > 0)
+         {
+            db.EvalIndicationItemDal.ConditionDelete(evii.EvalIndicationId == item.Id);
+
+            foreach (var subItem in indicationItems)
+            {
+               db.EvalIndicationItemDal.Insert(subItem);
+            }
+         }
+
       }
 
    }

@@ -1,8 +1,8 @@
 ﻿@model List<EvalAccessorTarget>
 @{
-	var allSelectItems = Model.Select(x => new SelectListItem { Text = x.TargetName, Value = x.TargetId.ToString(), Selected = !x.AccessorTargetId.IsEmpty() }).ToList();
-	var selectTargetIds = string.Join(",", Model.Where(x => !x.AccessorTargetId.IsEmpty()).Select(y => y.TargetId).ToArray());
-	var accessorId = Request["accessorId"].ToGuid(Guid.Empty);
+	var groupId = Request["groupId"].ToGuid(Guid.Empty);
+	var allSelectItems = Model.Select(x => new SelectListItem { Text = x.AccessorName, Value = x.AccessorId.ToString(), Selected = !x.AccessorTargetId.IsEmpty() }).ToList();
+	var selectAccessorIds = string.Join(",", Model.Where(x => !x.AccessorTargetId.IsEmpty()).Select(y => y.AccessorId).ToArray());
 }
 <div class="modal-dialog modal-lg">
 
@@ -16,14 +16,14 @@
 		</div>
 		<div class="widget-content">
 
-			<form class="form-horizontal" action="@Url.Action("BindTargets", "EvalGroup")" method="post" role="form" data-after-success="afterDialogSuccess()">
+			<form class="form-horizontal" action="@Url.Action("BindGroupAccessors", "EvalGroup")" method="post" role="form" data-after-success="afterDialogSuccess()">
 				<div class="row">
 					<fieldset class="col-sm-12">
 
 						<div class="form-group">
-							@Html.Label("选择考核对象", new { @class = "control-label col-md-3" })
+							@Html.Label("选择考核人", new { @class = "control-label col-md-3" })
 							<div class="col-md-6">
-								@Html.DropDownList("AccessorRoles",
+								@Html.DropDownList("Accessors",
 															allSelectItems,
 															  new { @class = "form-control dropdown-Targets col-md-6", @multiple = "multiple" })
 							</div>
@@ -43,16 +43,16 @@
 <script>
 	$(function () {
 
-		var ids = '@selectTargetIds'.split(',');
+		var ids = '@selectAccessorIds'.split(',');
 		$('.dropdown-Targets').multiselect('select', ids);
 
 		var $form = $('.modal-dialog form');
 		$.validator.unobtrusive.parse($form);
 
-		$form.submit(function (e) {	
+		$form.submit(function (e) {
 			e.preventDefault();
 			var $form = $(this);
-			$form.valid() && $.post($form.attr('action'), { accessorId: '@accessorId', targetIds: ''+$('#AccessorRoles').val() }, function (data, status) {
+			$form.valid() && $.post($form.attr('action'), { groupId: '@groupId', accessorIds: '' + $('#Accessors').val() }, function (data, status) {
 				popupMessage(data, {
 					success: function () { commitedNotice(); }
 				});

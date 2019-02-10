@@ -11,21 +11,15 @@ namespace TheSite.Models
 
    public class EvalViewModel
    {
-      public Guid AccessorId { get; set; }
+      public EvalPeriod Period { get; set; }
 
-      //public Guid AccessorRoleId { get; set; }
+      public UserInfo Accessor { get; set; }
 
-      public Role AccessorRole { get; set; }
+      public UserInfo Target { get; set; }
 
-      public Guid TargetRoleId { get; set; }
+      public List<EvalTable> EvalTables { get; set; }
 
-      public Guid TargetId { get; set; }
-
-      public string TargetName { get; set; }
-
-      public string AccessorName { get; set; }
-
-      public List<EvalPeriodTable> PeriodTables { get; set; }
+      public Dictionary<Guid,List<EvalResultItem>> EvalResultItems { get; set; }
 
    }
 

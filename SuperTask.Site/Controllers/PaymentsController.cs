@@ -54,8 +54,15 @@ namespace TheSite.Controllers
               DateTime.Now,
               TaskKeys.NodeTaskType,
               project.ManagerId,
-              project.ReviewerId 
+              project.ReviewerId
               ));
+         }
+         else
+         {
+            APQuery
+              .update(pst)
+              .set(pst.EndDate.SetValue(payments.InvoiceDate), pst.StartDate.SetValue(payments.InvoiceDate), pst.TaskName.SetValue(payments.PayName))
+              .where(pst.PmsId == payments.PayId).execute(db);
          }
 
          return Json(new

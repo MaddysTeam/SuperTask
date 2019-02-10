@@ -11,14 +11,6 @@ namespace Business
    public partial class EvalTable
    {
 
-      //public Dictionary<Indication, List<EvalIndication>> EvalIndications { get; set; }
-
-      //public List<Role> AccessorRoles { get; protected set; }
-
-      //public List<Role> MemberRoles { get; set; }
-
-      //public string AccessorRoleNames { get; set; }
-
       public bool IsSelected { get; set; }
 
       public Result Validate()
@@ -48,15 +40,6 @@ namespace Business
 
          return EvalResult.ConditionQueryCount(er.TableId==TableId)>0;
       }
-
-      //public static List<EvalIndication> GetEvalIndications(Guid tableId,APDBDef db=null)
-      //{
-      //   var ei = APDBDef.EvalIndication;
-
-      //   db = db ?? new APDBDef();
-
-      //   return EvalIndication.ConditionQuery(ei.TableId == tableId, null);
-      //}
 
    }
 

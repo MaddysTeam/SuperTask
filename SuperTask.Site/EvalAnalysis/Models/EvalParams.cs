@@ -16,10 +16,8 @@ namespace TheSite.Models
       public Guid PeriodId { get; set; }
       public APDBDef db { get; set; } = new APDBDef();
       public Guid CurrentTableId { get; set; }
-      public Guid AccessorRoleId { get; set; }
-      public Guid TargetRoleId { get; set; }
       public Guid GroupId => EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty);
-      public string TableIds { get; set; }
+      public Guid TableType { get; set; }
    }
 
    public class AutoEvalParams : EvalParams
@@ -29,7 +27,7 @@ namespace TheSite.Models
 
       public AutoEvalParams()
       {
-         AccessorRoleId=AccessorRoleId.IsEmpty() ? EvalConfig.AutoAccessorRoleId.ToGuid(Guid.Empty) : AccessorRoleId;
+        // AccessorRoleId=AccessorRoleId.IsEmpty() ? EvalConfig.AutoAccessorRoleId.ToGuid(Guid.Empty) : AccessorRoleId;
       }
    }
 

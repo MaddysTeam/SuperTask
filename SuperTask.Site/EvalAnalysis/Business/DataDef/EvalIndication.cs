@@ -11,7 +11,7 @@ namespace Business
    public partial class EvalIndication
    {
 
-      //public List<EvalIndicationItem> Items { get; set; }
+      public List<EvalIndicationItem> Items { get; set; }
 
       public string IndicationName { get; set; }
 

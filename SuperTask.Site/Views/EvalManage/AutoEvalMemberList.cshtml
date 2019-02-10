@@ -55,14 +55,14 @@
 <script>
 	function getGlobalRequest() {
 		return {
-			periodId: $('#periodId').val(),
+			evalType: '@EvalTableKeys.AutoType'
 		};
 	}
 
 	function getGridOptions() {
 		return $.extend(true, {}, gridOptions, {
 
-			url: window.location.href,
+			url: '@Url.Action("EvalMemberList", "EvalManage")',// window.location.href,
 
 			requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
 
@@ -89,10 +89,8 @@
 
 		$('#bootgrid').bootgrid(getGridOptions()).on('loaded.rs.jquery.bootgrid', function () {
 			$(this).find('.btn-eval').on('click', function (e) {
-				var tableIds = $(this).parent().data('tableIds');
 				var targetId = $(this).parent().data('targetId');
-				var targetRoleId = $(this).parent().data('roleId');
-				$.post('@Url.Action("AutoEval", "EvalManage")', { targetId: targetId, tableIds: tableIds, targetRoleId:targetRoleId }, function (data) {
+				$.post('@Url.Action("AutoEval", "EvalManage")', { targetId: targetId}, function (data) {
 					popupMessage(data, {
 						success: function () { $('#bootgrid').bootgrid('reload'); }
 					});
@@ -100,11 +98,10 @@
 			});
 
 			$(this).find('.btn-result').on('click', function (e) {
-				var tableIds = $(this).parent().data('tableIds');
+				//var tableIds = $(this).parent().data('tableIds');
 				var targetId = $(this).parent().data('targetId');
 				var manUrl = '@Url.Action("AutoEvalResult", "EvalManage")';
-				var targetRoleId = $(this).parent().data('roleId');
-				location.href = manUrl + '?targetId=' + targetId + '&tableIds=' + tableIds + '&targetRoleId=' + targetRoleId;
+				location.href = manUrl + '?targetId=' + targetId ;
 			});
 		});
 

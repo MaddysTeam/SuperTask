@@ -368,8 +368,7 @@
     <Compile Include="EvalAnalysis\Business\DataDef\EvalResultItem.cs" />
     <Compile Include="EvalAnalysis\Business\DataDef\EvalPeriod.cs" />
     <Compile Include="EvalAnalysis\Business\DataDef\EvalGroup.cs" />
-    <Compile Include="EvalAnalysis\Business\Handlers\EvalMemberHandler.cs" />
-    <Compile Include="EvalAnalysis\Business\Handlers\EvalGroupHandler.cs" />
+    <Compile Include="EvalAnalysis\Business\Helper\EvalGroupKeys.cs" />
     <Compile Include="EvalAnalysis\Business\Helper\EvalKeys.cs" />
     <Compile Include="EvalAnalysis\EvalConfig.cs" />
     <Compile Include="EvalAnalysis\AnalysisUnit.cs" />
@@ -379,6 +378,7 @@
     <Compile Include="EvalAnalysis\Business\Helper\EvalTableKeys.cs" />
     <Compile Include="EvalAnalysis\Business\Helper\IndicationKeys.cs" />
     <Compile Include="EvalAnalysis\Business\Helper\AlterKeys.cs" />
+    <Compile Include="EvalAnalysis\Models\EvalTargetEditViewModels.cs" />
     <Compile Include="EvalAnalysis\Models\EvalMembers.cs" />
     <Compile Include="EvalAnalysis\Models\EvalViewModels.cs" />
     <Compile Include="EvalAnalysis\Models\PreviewViewModel.cs" />
@@ -1540,7 +1540,6 @@
     <Content Include="Views\EvalGroup\AccessorList.cshtml" />
     <Content Include="Views\EvalPeriod\BindTables.cshtml" />
     <Content Include="Views\EvalModels\Monthly\SubjectEvalView.cshtml" />
-    <Content Include="Views\EvalGroup\AccessorEdit.cshtml" />
     <Content Include="Views\EvalGroup\TargetMemberEdit.cshtml" />
     <Content Include="Views\EvalManage\EvalMemberList.cshtml" />
     <Content Include="Views\EvalManage\SubjectEvalResult.cshtml" />
@@ -1598,11 +1597,18 @@
     <Content Include="Views\Payments\_projectPayments.cshtml" />
     <Content Include="Views\Payments\Details.cshtml" />
     <Content Include="Views\Payments\_venderPayments.cshtml" />
+    <Content Include="Views\EvalGroup\_evalTables.cshtml" />
+    <Content Include="Views\EvalGroup\_evalTables_accessor_weight.cshtml" />
+    <Content Include="Views\EvalGroup\AccessorEdit.cshtml" />
+    <Content Include="Views\EvalGroup\List.cshtml" />
+    <Content Include="Views\EvalGroup\Edit.cshtml" />
+    <Content Include="Views\EvalGroup\BindGroupAccessors.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="assets\plugins\kindeditor\asp.net\bin\" />
     <Folder Include="Business\Attachments\" />
+    <Folder Include="EvalAnalysis\Business\Handlers\" />
     <Folder Include="Models\SearchOptions\" />
     <Folder Include="Views\Designer\" />
     <Folder Include="Views\EvalUtil\" />

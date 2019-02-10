@@ -7,8 +7,7 @@
 		<table class="table table-bordered table-striped">
 			<thead>
 				<tr>
-					<th 	style="width:150px">考核指标</th>
-					<th style="width:150px">指标说明</th>
+					<th style="width:150px">考核指标</th>
 					<th  style="width:50px">指标满分</th>
 					<th  style="width:100px">得分</th>
 				</tr>
@@ -23,7 +22,6 @@
 							<td style="width:150px">
 								@item.EvalIndication.IndicationName
 							</td>
-							<td style="width:150px">@item.EvalIndication.IndicationDescription</td>
 							<td style="width:50px"><input name="fullScore" class="form-control fullScore" value="@item.EvalIndication.FullScore" readonly/></td>
 							<td style="width:100px"><input name="realScore" id="hint" type="text" class="form-control score" value="@item.Score.ToString("0.00")" readonly /></td>
 							

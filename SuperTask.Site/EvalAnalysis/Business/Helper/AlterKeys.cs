@@ -40,6 +40,7 @@ namespace Business.Helper
 
       public class EvalGroup
       {
+         public const string BIND_TARGET_FAIL = "绑定被考核人失败";
          public const string ACCESSOR_ISEXISTS = "考核者已经存在";
          public const string NOT_ALLOWED_ACCESSOR_NULL = "考核者不能为空";
          public const string NOT_ALLOWED_NAME_NULL = "考核表名称不能为空";
@@ -50,6 +51,7 @@ namespace Business.Helper
       {
          public const string NOT_IN_PERIOD = "当前不再考核期!";
          public const string NOT_FOUND_TABLE = "当前考核对象没有考核表";
+         public const string NOT_ANY_PERIOD = "没有任何考核周期，请设置当前考核周期!";
       }
 
    }
@@ -66,9 +68,11 @@ namespace Business.Helper
       public class EvalGroup
       {
          public const string EDIT_SUCCESS = "考核组编辑成功";
-         public const string Accessor_EDIT_SUCCESS = "编辑成功";
-         public const string Target_EDIT_SUCCESS = "编辑成功";
-         public const string Bind_Target_SUCCESS = "成功绑定考核对象";
+         public const string BIND_MEMBER_SUCCESS = "成功绑定组成员";
+         public const string REMOVE_TARGET_TABLE_SUCCESS = "删除成功";
+         public const string ACCESSOR_EDIT_SUCCESS = "编辑成功";
+         public const string TARGET_EDIT_SUCCESS = "编辑成功";
+         public const string BIND_TARGET_SUCCESS = "成功绑定考核对象";
       }
 
       public class EvalResult

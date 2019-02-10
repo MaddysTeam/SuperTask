@@ -59,7 +59,7 @@
 				</a>
 			</li>*@
 		
-			@*<li>
+			<li>
 					<a href="#" class="js-sub-menu-toggle">
 						<i class="fa fa-pencil-square-o"></i>
 						<span class="text">主观考管理</span>
@@ -71,34 +71,34 @@
 								<span class="text">执行考评</span>
 							</a>
 						</li>
-						<li>
+						@*<li>
 							<a href="@Url.Action("PeriodEvalMemberList", "EvalManage")">
 								<i class="fa fa-gear fa-fw"></i>
 								<span class="text">查看往期考评结果</span>
 							</a>
-						</li>
+						</li>*@
 					</ul>
 				</li>
+	<li>
+		<a href="#" class="js-sub-menu-toggle">
+			<i class="fa fa-pencil-square-o"></i>
+			<span class="text">量考管理</span>
+		</a>
+		<ul class="sub-menu">
 			<li>
-				<a href="#" class="js-sub-menu-toggle">
-					<i class="fa fa-pencil-square-o"></i>
-					<span class="text">量考管理</span>
+				<a href="@Url.Action("AutoEvalMemberList", "EvalManage")">
+					<i class="fa fa-gear fa-fw"></i>
+					<span class="text">执行量考</span>
 				</a>
-				<ul class="sub-menu">
-					<li>
-						<a href="@Url.Action("AutoEvalMemberList", "EvalManage")">
-							<i class="fa fa-gear fa-fw"></i>
-							<span class="text">执行量考</span>
-						</a>
-					</li>
-					<li>
-						<a href="@Url.Action("PeriodAutoEvalMemberList", "EvalManage")">
-							<i class="fa fa-gear fa-fw"></i>
-							<span class="text">查看往期量考结果</span>
-						</a>
-					</li>
-				</ul>
+			</li>
+			@*<li>
+				<a href="@Url.Action("PeriodAutoEvalMemberList", "EvalManage")">
+					<i class="fa fa-gear fa-fw"></i>
+					<span class="text">查看往期量考结果</span>
+				</a>
 			</li>*@
+		</ul>
+	</li>
 			@if (isEvalManger && isLeader)
 			{
 			<li>
@@ -125,12 +125,12 @@
 							<span class="text">周期管理</span>
 						</a>
 					</li>
-					<li>
+					@*<li>
 						<a href="@Url.Action("Index", "EvalTableGroup", new { periodId = Guid.Empty })">
 							<i class="fa fa-gear fa-fw"></i>
 							<span class="text">考核表组管理</span>
 						</a>
-					</li>
+					</li>*@
 				</ul>
 			</li>
 			<li>
@@ -139,6 +139,12 @@
 					<span class="text">考核组管理</span>
 				</a>
 				<ul class="sub-menu">
+					<li>
+						<a href="@Url.Action("List", "EvalGroup")">
+							<i class="fa fa-gear fa-fw"></i>
+							<span class="text">小组管理</span>
+						</a>
+					</li>
 					<li>
 						<a href="@Url.Action("AccessorList", "EvalGroup", new { groupId = EvalGroupConfig.DefaultGroupId })">
 							<i class="fa fa-gear fa-fw"></i>
@@ -151,6 +157,7 @@
 							<span class="text">考评对象管理</span>
 						</a>
 					</li>
+					
 				</ul>
 			</li>
 			}

@@ -80,8 +80,12 @@ namespace TheSite.Controllers
          {
             var pst = APDBDef.ProjectStoneTask;
             db.ProjectMileStoneDal.Update(projectMileStone);
-            APQuery.update(pst).set(pst.EndDate.SetValue(projectMileStone.EndDate), pst.StartDate.SetValue(projectMileStone.StartDate)).where(pst.PmsId== projectMileStone.PmsId).execute(db); 
+            APQuery
+               .update(pst)
+               .set(pst.EndDate.SetValue(projectMileStone.EndDate), pst.StartDate.SetValue(projectMileStone.StartDate),pst.TaskName.SetValue(projectMileStone.StoneName))
+               .where(pst.PmsId== projectMileStone.PmsId).execute(db); 
          }
+
 
          return Json(new
          {

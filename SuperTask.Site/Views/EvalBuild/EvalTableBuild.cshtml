@@ -61,7 +61,7 @@
 								{
 									<button data-url="@Url.Action("EvalTableBuildEdit","EvalBuild",new {id=Model.EvalTable.TableId})" class="btn btn-sm btn-danger btn-modifyAll"><i class="fa fa-pencil"></i>修改</button>
 								}
-								<button data-url="@Url.Action("EvalTablePreview","EvalBuild",new {id=Model.EvalTable.TableId,roleId=Guid.Empty})" target="_blank" class="btn btn-sm btn-info  btn-preview"><i class="fa fa-eye"></i>预览量表</button>
+								<button data-url="@Url.Action("EvalTablePreview","EvalBuild",new {id=Model.EvalTable.TableId})" target="_blank" class="btn btn-sm btn-info  btn-preview"><i class="fa fa-eye"></i>预览量表</button>
 							</div>
 						</div>
 
@@ -121,10 +121,10 @@
 				var score = $currentIndication.find('#Score').val();
 				var evalIndicationId = $currentIndication.find('#EvalIndicationId').val();
 				var indicationId = $currentIndication.find('#IndicationId').val();
-				var evalType = $currentIndication.find('#EvalType').val();
+				var indicationType = $currentIndication.find('#IndicationType').val();
 				var tableId = $('#tableId').val();
 
-				var evalIndication = { id: evalIndicationId, indicationId: indicationId, fullScore: score, evalType: evalType, tableId: tableId };
+				var evalIndication = { id: evalIndicationId, indicationId: indicationId, fullScore: score, indicationType: indicationType, tableId: tableId };
 				console.log(evalIndication);
 
 				var $btnModify = $currentIndication.find('.btn-modify');
@@ -188,7 +188,7 @@
 
 			function removeEvalIndication(ele) {
 				var $currentIndication = ele;
-				var indicationId = $currentIndication.find('.indicationId').val();
+				var indicationId = $currentIndication.find('#IndicationId').val();
 
 				$.post('@Url.Action("EvalIndicationRemove", "EvalBuild")', { tableId: $('#tableId').val(), indicationId: indicationId }, function (data) {
 					popupMessage(data, {

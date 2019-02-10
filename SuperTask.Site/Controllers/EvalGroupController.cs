@@ -1,438 +1,570 @@
-﻿//using Business;
-//using Business.Helper;
-//using Symber.Web.Data;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Web.Mvc;
-//using TheSite.EvalAnalysis;
-//using TheSite.Models;
-
-//namespace TheSite.Controllers
-//{
-
-//   public class EvalGroupController : BaseController
-//   {
-
-//      static APDBDef.EvalGroupTableDef eg = APDBDef.EvalGroup;
-//      static APDBDef.UserInfoTableDef u = APDBDef.UserInfo;
-//      static APDBDef.EvalTableTableDef et = APDBDef.EvalTable;
-//      static APDBDef.EvalGroupAccessorTableDef ega = APDBDef.EvalGroupAccessor;
-//      static APDBDef.EvalGroupTargetTableDef egt = APDBDef.EvalGroupTarget;
-//      static APDBDef.EvalAccessorTargetTableDef eat = APDBDef.EvalAccessorTarget;
-
-
-//      //	GET: EvalGroup/AccessorList
-//      //	POST-Ajax: EvalGroup/AccessorList
-
-//      public ActionResult AccessorList(Guid groupId)
-//      {
-//         return View();
-//      }
-
-//      [HttpPost]
-//      public ActionResult AccessorList(Guid groupId, int current, int rowCount, AjaxOrder sort, string searchPhrase)
-//      {
-//         var query = APQuery.select(ega.GroupAccessorId, ega.IsLeader, ega.GroupId, ega.ModifyDate, ega.AccessorId, u.UserName.As("UserName"))
-//                            .from(ega
-//                                  , u.JoinInner(u.UserId == ega.AccessorId))
-//                            .where(ega.GroupId == groupId);
-
-//         query.primary(ega.AccessorId)
-//            //.order_by(ega.CreateDate.Desc)
-//            .skip((current - 1) * rowCount)
-//             .take(rowCount);
-
-
-//         //获得查询的总数量
-
-//         var total = db.ExecuteSizeOfSelect(query);
-
-
-//         var result = query.query(db,
-//            rd => new
-//            {
-
-//               id = ega.GroupAccessorId.GetValue(rd),
-//               name = u.UserName.GetValue(rd, "UserName"),
-//               //role=r.RoleName.GetValue(rd, "RoleName"),
-//               modifyDate = ega.ModifyDate.GetValue(rd),
-//               isLeader = ega.IsLeader.GetValue(rd) ? "是" : "否",
-//               accessorId = ega.AccessorId.GetValue(rd),
-
-//            });
-
-
-//         return Json(new
-//         {
-//            rows = result,
-//            current,
-//            rowCount,
-//            total
-//         });
-//      }
-
-
-//      //	GET: EvalGroup/TargetMemberList
-//      //	POST-Ajax: EvalGroup/TargetMemberList
-
-//      public ActionResult TargetMemberList(Guid groupId)
-//      {
-//         return View();
-//      }
-
-//      [HttpPost]
-//      public ActionResult TargetMemberList(Guid groupId, int current, int rowCount, AjaxOrder sort, string searchPhrase)
-//      {
-//         var query = APQuery.select(egt.GroupTargetId, egt.GroupId, egt.ModifyDate, u.UserName.As("UserName"))
-//                   .from(egt
-//                         , u.JoinInner(u.UserId == egt.MemberId))
-//                   .where(egt.GroupId == groupId);
-
-//         query.primary(egt.MemberId)
-//            .skip((current - 1) * rowCount)
-//             .take(rowCount);
-
-
-//         //获得查询的总数量
-
-//         var total = db.ExecuteSizeOfSelect(query);
-
-
-//         var result = query.query(db, rd => new
-//         {
-
-//            id = egt.GroupTargetId.GetValue(rd),
-//            name = u.UserName.GetValue(rd, "UserName"),
-//            modifyDate = egt.ModifyDate.GetValue(rd),
-
-//         });
-
-
-//         return Json(new
-//         {
-//            rows = result,
-//            current,
-//            rowCount,
-//            total
-//         });
-
-//      }
-
-
-//      //	GET: EvalGroup/AccessorEdit
-//      //	POST-Ajax: EvalGroup/AccessorEdit
-
-//      public ActionResult AccessorEdit(Guid groupAccessorId)
-//      {
-//         var tables = db.EvalTableDal.ConditionQuery(et.TableStatus != EvalTableKeys.DisableStatus, null, null, null);
-//         var users = db.UserInfoDal.ConditionQuery(null, null, null, null);
-//         var accessor = new EvalGroupAccessor() { GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty) };
-
-//         if (!groupAccessorId.IsEmpty())
-//         {
-//            accessor = APQuery.select(ega.Asterisk, u.UserName)
-//                                  .from(ega, u.JoinInner(u.UserId == ega.AccessorId))
-//                                  .where(ega.GroupAccessorId == groupAccessorId)
-//                                  .query(db, rd =>
-//                                  {
-//                                     var acser = new EvalGroupAccessor();
-//                                     ega.Fullup(rd, acser, false);
-//                                     return acser;
-//                                  }
-//                                  ).FirstOrDefault();
-
-//            ViewBag.EvalTables = GetSelectTableItem(tables, accessor.TableIds);
-//         }
-//         else
-//         {
-//            ViewBag.EvalTables = GetSelectTableItem(tables, string.Empty).ToList();
-//         }
-
-//         ViewBag.Users = SelectListHelper.GetSelectItems(users, "UserName", "UserId");
-
-
-//         return PartialView(accessor);
-//      }
-
-//      [HttpPost]
-//      public ActionResult AccessorEdit(EvalGroupAccessor accessor)
-//      {
-//         if (accessor == null)
-//            return Json(new
-//            {
-//               result = AjaxResults.Error,
-//               msg = Errors.EvalGroup.NOT_ALLOWED_ACCESSOR_NULL
-//            });
-
-//         var isExists = db.EvalGroupAccessorDal.ConditionQueryCount(ega.AccessorId == accessor.AccessorId) > 0;
-//         if(isExists)
-//            return Json(new
-//            {
-//               result = AjaxResults.Error,
-//               msg = Errors.EvalGroup.ACCESSOR_ISEXISTS
-//            });
-
-//         accessor.ModifyDate = DateTime.Now;
-//         if (accessor.GroupAccessorId.IsEmpty() && !isExists)
-//         {
-//            accessor.GroupAccessorId = Guid.NewGuid();
-
-//            db.EvalGroupAccessorDal.Insert(accessor);
-//         }
-//         else
-//         {
-//            db.EvalGroupAccessorDal.Update(accessor);
-//         }
-
-//         return Json(new
-//         {
-//            result = AjaxResults.Success,
-//            msg = Success.EvalGroup.Accessor_EDIT_SUCCESS
-//         });
-//      }
-
-
-//      //	GET: EvalGroup/BindTargets
-//      //	POST-Ajax: EvalGroup/BindTargets
-
-//      public ActionResult BindTargets(Guid accessorId)
-//      {
-//         if (accessorId.IsEmpty())
-//            throw new ApplicationException();
-
-//         var at = APDBDef.EvalAccessorTarget;
-
-//         var reuslts = APQuery.select(at.TargetId, u.UserName)
-//            .from(at, u.JoinInner(at.TargetId == u.UserId))
-//            .where(at.AccessorId == accessorId & at.GroupId == EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty))
-//            .query(db, r => new EvalGroupTarget { MemberId = at.TargetId.GetValue(r), TargetName = u.UserName.GetValue(r) })
-//            .ToList();
-
-//         ViewBag.AllUsers = UserInfo.GetAll().Select(x => new EvalGroupTarget { MemberId = x.UserId, TargetName = x.UserName }).ToList();
-
-//         ViewBag.SelectUsers = reuslts;
-
-//         return PartialView();
-//      }
-
-//      [HttpPost]
-//      public ActionResult BindTargets(Guid accessorId, string targetIds)
-//      {
-//         var at = APDBDef.EvalAccessorTarget;
-
-//         if (string.IsNullOrEmpty(targetIds))
-//            return Json(new
-//            {
-//               result = AjaxResults.Success,
-//               msg = Success.EvalGroup.Bind_Target_SUCCESS
-//            });
-
-
-//         var targets = EvalGroupTarget.GetAll();
-//         var accessorTargets = EvalAccessorTarget.ConditionQuery(at.AccessorId == accessorId, null);
-
-
-//         db.BeginTrans();
-
-//         try
-//         {
-//            if (accessorTargets.Count > 0)
-//               EvalAccessorTarget.ConditionDelete(at.AccessorId == accessorId);
-
-//            foreach (var item in targetIds.Split(','))
-//            {
-//               var targetId = item.ToGuid(Guid.Empty);
-//               db.EvalAccessorTargetDal.Insert(
-//                 new EvalAccessorTarget
-//                 {
-//                    AccessorId = accessorId,
-//                    AccessorTargetId = Guid.NewGuid(),
-//                    GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty),
-//                    EvalType = EvalKeys.SubjectType,
-//                    ModifyDate = DateTime.Now,
-//                    TargetId = targetId
-//                 });
-
-//               if (targets.Find(x => x.MemberId == targetId) == null)
-//                  db.EvalGroupTargetDal.Insert(new EvalGroupTarget
-//                  {
-//                     GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty),
-//                     GroupTargetId = Guid.NewGuid(),
-//                     MemberId = targetId,
-//                     TableIds = string.Empty,
-//                     ModifyDate = DateTime.Now,
-//                  });
-
-//            }
-
-//            db.Commit();
-//         }
-//         catch
-//         {
-//            db.Rollback();
-//         }
-
-
-//         return Json(new
-//         {
-//            result = AjaxResults.Success,
-//            msg = Success.EvalGroup.Bind_Target_SUCCESS
-//         });
-//      }
-
-
-//      //	POST-Ajax: EvalGroup/RemoveAccessor
-
-//      [HttpPost]
-//      public ActionResult RemoveAccessor(Guid groupAccessorId)
-//      {
-//         var groupAccessor = EvalGroupAccessor.PrimaryGet(groupAccessorId);
-//         if (groupAccessor != null)
-//         {
-//            db.EvalAccessorTargetDal.ConditionDelete(eat.AccessorId == groupAccessor.AccessorId);
-//            db.EvalGroupAccessorDal.ConditionDelete(ega.GroupAccessorId == groupAccessorId);
-//         }
-
-//         return Json(new
-//         {
-//            result = AjaxResults.Success,
-//            msg = Success.EvalGroup.Accessor_EDIT_SUCCESS
-//         });
-//      }
-
-
-//      //	GET: EvalGroup/TargetMemberEdit
-//      //	POST-Ajax: EvalGroup/TargetMemberEdit
-
-//      public ActionResult TargetMemberEdit(Guid groupTargetId)
-//      {
-//         var tables = db.EvalTableDal.ConditionQuery(et.TableStatus != EvalTableKeys.DisableStatus, null, null, null);
-//         var users = db.UserInfoDal.ConditionQuery(null, null, null, null);
-//         var target = new EvalGroupTarget() { GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty) };
-
-//         if (!groupTargetId.IsEmpty())
-//         {
-//            target = APQuery.select(egt.Asterisk, u.UserName)
-//                                  .from(egt, u.JoinInner(u.UserId == egt.MemberId))
-//                                  .where(egt.GroupTargetId == groupTargetId)
-//                                  .query(db, rd =>
-//                                  {
-//                                     var tgt = new EvalGroupTarget();
-//                                     egt.Fullup(rd, tgt, false);
-//                                     return tgt;
-//                                  }
-//                                  ).FirstOrDefault();
-
-//            ViewBag.EvalTables = GetSelectTableItem(tables, target.TableIds);
-//         }
-//         else
-//         {
-//            ViewBag.EvalTables = GetSelectTableItem(tables, string.Empty).ToList();
-//         }
-
-//         ViewBag.Users = SelectListHelper.GetSelectItems(users, "UserName", "UserId");
-
-
-//         return PartialView(target);
-//      }
-
-//      [HttpPost]
-//      public ActionResult TargetMemberEdit(EvalGroupTarget target)
-//      {
-//         target.ModifyDate = DateTime.Now;
-
-//         var existTargets = EvalGroupTarget.ConditionQuery(egt.MemberId == target.MemberId, null);
-
-//         if (target.GroupTargetId.IsEmpty()
-//            && existTargets.Count <= 0)
-//         {
-//            target.GroupTargetId = Guid.NewGuid();
-
-//            //如果是新的考核对象，根据角色自动默认选择考核表
-//            if (string.IsNullOrEmpty(target.TableIds))
-//            {
-//               //根据角色自动默认选择考核表
-//               var tables = db.EvalTableDal.ConditionQuery(et.TableStatus != EvalTableKeys.DisableStatus, null, null, null);
-//               var roles = RoleHelper.GetUserRoles(target.MemberId, db);
-//               var targetTables = GetTablesByRoles(roles, tables);
-
-//               if (targetTables.Count > 0)
-//                  target.TableIds = string.Join(",", targetTables.Select(x => x.TableId).ToArray());
-//            }
-
-//            db.EvalGroupTargetDal.Insert(target);
-//         }
-//         else
-//         {
-//            db.EvalGroupTargetDal.Update(target);
-//         }
-
-
-//         return Json(new
-//         {
-//            result = AjaxResults.Success,
-//            msg = Success.EvalGroup.Target_EDIT_SUCCESS
-//         });
-//      }
-
-
-//      //	GET: EvalGroup/RemoveTargetMember
-//      //	POST-Ajax: EvalGroup/RemoveTargetMember
-
-//      [HttpPost]
-//      public ActionResult RemoveTargetMember(Guid groupTargetId)
-//      {
-//         var groupTarget = EvalGroupTarget.PrimaryGet(groupTargetId);
-//         if (groupTarget != null)
-//         {
-//            db.EvalAccessorTargetDal.ConditionDelete(eat.TargetId == groupTarget.MemberId);
-//            db.EvalGroupTargetDal.ConditionDelete(egt.GroupTargetId == groupTargetId);
-//         }
-//         return Json(new
-//         {
-//            result = AjaxResults.Success,
-//            msg = Success.EvalGroup.Accessor_EDIT_SUCCESS
-//         });
-//      }
-
-
-//      private IEnumerable<SelectListItem> GetSelectTableItem(List<EvalTable> tables, string tableIdStr)
-//      {
-//         if (tables == null && tables.Count <= 0)
-//         {
-//            return null;
-//         }
-
-//         var evalTableItems = tables.Select(item => new SelectListItem { Text = item.TableName, Value = item.TableId.ToString() });
-
-//         var evalTables = string.IsNullOrEmpty(tableIdStr) ? null : tableIdStr.Split(',');
-
-//         if (evalTables != null && evalTables.Count() > 0)
-//         {
-//            foreach (var item in evalTableItems)
-//               item.Selected = evalTables.Contains(item.Value, StringComparison.InvariantCultureIgnoreCase);
-//         }
-
-//         return evalTableItems;
-//      }
-
-
-//      private List<EvalTable> GetTablesByRoles(List<Role> roles, List<EvalTable> allTables)
-//      {
-//         var tempTables = new List<EvalTable>();
-//         foreach (var item in roles)
-//         {
-//            foreach (var subItem in allTables)
-//            {
-//               if (subItem.MemberRoleIds.Contains(item.RoleId.ToString()))
-//                  tempTables.Add(subItem);
-//            }
-//         }
-
-//         return tempTables;
-//      }
-
-//   }
-
-//}
+﻿using Business;
+using Business.Helper;
+using Symber.Web.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using TheSite.EvalAnalysis;
+using TheSite.Models;
+
+namespace TheSite.Controllers
+{
+
+   public class EvalGroupController : BaseController
+   {
+
+      static APDBDef.EvalGroupTableDef eg = APDBDef.EvalGroup;
+      static APDBDef.UserInfoTableDef u = APDBDef.UserInfo;
+      static APDBDef.EvalTableTableDef et = APDBDef.EvalTable;
+      static APDBDef.EvalGroupAccessorTableDef ega = APDBDef.EvalGroupAccessor;
+      static APDBDef.EvalAccessorTargetTableDef eat = APDBDef.EvalAccessorTarget;
+      static APDBDef.EvalTargetTablePropertionTableDef ettp = APDBDef.EvalTargetTablePropertion;
+      static APDBDef.EvalGroupMemberTableDef egm = APDBDef.EvalGroupMember;
+
+      //	GET: EvalGroup/List
+      //	POST-Ajax: EvalGroup/List
+
+      public ActionResult List()
+      {
+         return View();
+      }
+
+      [HttpPost]
+      public ActionResult List(int current, int rowCount, AjaxOrder sort, string searchPhrase)
+      {
+         var result = EvalGroup.GetAll();
+
+         if (result.Count > 0)
+            result = result.Skip((current - 1) * (rowCount - 1)).Take(rowCount).ToList();
+
+
+         return Json(new
+         {
+            rows = result,
+            current,
+            rowCount,
+            total = result.Count
+         });
+      }
+
+
+      //	GET: EvalGroup/Edit
+      //	POST-Ajax: EvalGroup/Edit
+
+      public ActionResult Edit(Guid? id)
+      {
+         var group = EvalGroup.PrimaryGet(id.Value);
+
+         return PartialView(group);
+      }
+
+      [HttpPost]
+      public ActionResult Edit(EvalGroup group)
+      {
+         if (group.GroupId.IsEmpty())
+         {
+            group.GroupId = Guid.NewGuid();
+
+            db.EvalGroupDal.Insert(group);
+         }
+         else
+         {
+            db.EvalGroupDal.Update(group);
+         }
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.EvalGroup.EDIT_SUCCESS
+         });
+      }
+
+      [HttpPost]
+      public ActionResult BindGroupMember(Guid groupId, string userIds)
+      {
+         var memberIds = userIds.Split(',').Cast<Guid>().ToArray();
+
+         if (!string.IsNullOrEmpty(userIds))
+         {
+            db.EvalGroupMemberDal.ConditionDelete(egm.GroupId == groupId & egm.MemberId.In(memberIds));
+         }
+
+         foreach (var item in memberIds)
+         {
+            db.EvalGroupMemberDal.Insert(new EvalGroupMember { GroupMemberId = Guid.NewGuid(), MemberId = item, GroupId = groupId });
+         }
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.EvalGroup.BIND_MEMBER_SUCCESS
+         });
+      }
+
+      //	GET: EvalGroup/Edit
+      //	POST-Ajax: EvalGroup/Edit
+
+      public ActionResult BindGroupAccessors(Guid groupId)
+      {
+         var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
+         if (groupId.IsEmpty())
+            throw new ApplicationException();
+
+         var at = APDBDef.EvalAccessorTarget;
+
+         var reuslts = APQuery.select(at.AccessorTargetId, u.UserName, u.UserId.As("userId"))
+            .from(u, at.JoinLeft(at.AccessorId == u.UserId
+                               & at.TargetId == groupId   // 这里targetid 为 当前groupid 表示考核人考核该组所有成员
+                               & at.PeriodId == period.PeriodId
+                               & at.TableId == Guid.Empty // table id 为空 表示 accessor 和 target 之间的关系
+                               ))
+            .query(db, r => new EvalAccessorTarget { AccessorTargetId = at.AccessorTargetId.GetValue(r), AccessorId = u.UserId.GetValue(r, "userId"), AccessorName = u.UserName.GetValue(r) })
+            .ToList();
+
+         return PartialView(reuslts);
+      }
+
+      [HttpPost]
+      public ActionResult BindGroupAccessors(Guid groupId, string accessorIds)
+      {
+         var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
+         var allAccessors = EvalGroupAccessor.GetAll();
+         var ids = new List<Guid>();
+         var members = db.EvalGroupMemberDal.ConditionQuery(egm.GroupId == groupId, null, null, null);
+
+         if (!string.IsNullOrEmpty(accessorIds))
+         {
+            foreach (var id in accessorIds.Split(','))
+            {
+               ids.Add(id.ToGuid(Guid.Empty));
+            }
+            db.EvalAccessorTargetDal.ConditionDelete(eat.TargetId == groupId & eat.AccessorId.In(ids.ToArray()) & eat.PeriodId == period.PeriodId);
+         }
+
+         foreach (var accessorId in ids)
+         {
+            var accessor = allAccessors.Find(x => x.AccessorId == accessorId);
+            if (accessor == null)
+               db.EvalGroupAccessorDal.Insert(new EvalGroupAccessor { GroupAccessorId = Guid.NewGuid(), AccessorId = accessorId, GroupId = groupId });
+
+            // 考核人和组之间的绑定
+            db.EvalAccessorTargetDal.Insert(new EvalAccessorTarget { AccessorTargetId = Guid.NewGuid(), TargetId = groupId, AccessorId = accessorId, PeriodId = period.PeriodId });
+
+            // 考核人和被考核人的关系
+            foreach (var member in members)
+            {
+               db.EvalAccessorTargetDal.Insert(new EvalAccessorTarget { AccessorTargetId = Guid.NewGuid(), TargetId = member.MemberId, AccessorId = accessorId, PeriodId = period.PeriodId, GroupId = groupId });
+            }
+         }
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.EvalGroup.BIND_MEMBER_SUCCESS
+         });
+      }
+
+
+      //	GET: EvalGroup/BindGroupTablesWeightAndPropertion
+
+      public ActionResult BindGroupTablesWeightAndPropertion(Guid groupId)
+      {
+         var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
+
+         var subquery = APQuery.select(eat.TableId).from(eat).where(eat.TargetId == groupId);
+         var tables = db.EvalTableDal.ConditionQuery(et.TableStatus != EvalTableKeys.DisableStatus & et.TableId.NotIn(subquery), null, null, null); //左侧可用考核列表
+         var tablePropertion = db.EvalTargetTablePropertionDal.ConditionQuery(ettp.TargetId == groupId, null, null, null);
+         var accessorTargets = APQuery.select(eat.Asterisk, u.UserName.As("accessor"), eg.GroupName.As("target"), et.TableId.As("tableId"), et.TableName.As("tableName")) 
+                               .from(eat,
+                                       et.JoinLeft(et.TableId == eat.TableId),
+                                       u.JoinInner(u.UserId == eat.AccessorId),
+                                       eg.JoinInner(eg.GroupId == eat.TargetId)
+                                       )
+                               .where(eat.TargetId == groupId & eat.PeriodId == period.PeriodId)
+                               .query(db, r =>
+                               {
+                                  var tgt = new EvalAccessorTarget();
+                                  eat.Fullup(r, tgt, false);
+                                  tgt.TargetName = eg.GroupName.GetValue(r, "target");
+                                  tgt.AccessorName = u.UserName.GetValue(r, "accessor");
+                                  tgt.TableName = et.TableName.GetValue(r, "tableName");
+                                  return tgt;
+                               }).ToList();
+
+         return View("TargetMemberEdit", new EvalTargetEditViewModels { Tables = tables, AccessorsAndTargets = accessorTargets, TablePropertion = tablePropertion });
+      }
+
+
+      //	GET: EvalGroup/AccessorList
+      //	POST-Ajax: EvalGroup/AccessorList
+
+      public ActionResult AccessorList()
+      {
+         return View();
+      }
+
+      [HttpPost]
+      public ActionResult AccessorList(int current, int rowCount, AjaxOrder sort, string searchPhrase)
+      {
+         var query = APQuery.select(ega.GroupAccessorId, ega.GroupId, ega.ModifyDate, ega.AccessorId, u.UserName.As("UserName"))
+                            .from(ega
+                                  , u.JoinInner(u.UserId == ega.AccessorId));
+         //.where(ega.GroupId);
+
+         query.primary(ega.AccessorId)
+            //.order_by(ega.CreateDate.Desc)
+            .skip((current - 1) * rowCount)
+             .take(rowCount);
+
+
+         //获得查询的总数量
+
+         var total = db.ExecuteSizeOfSelect(query);
+
+
+         var result = query.query(db,
+            rd => new
+            {
+
+               id = ega.GroupAccessorId.GetValue(rd),
+               name = u.UserName.GetValue(rd, "UserName"),
+               modifyDate = ega.ModifyDate.GetValue(rd),
+               accessorId = ega.AccessorId.GetValue(rd),
+
+            }).ToList();
+
+
+         return Json(new
+         {
+            rows = result,
+            current,
+            rowCount,
+            total
+         });
+      }
+
+
+      //	GET: EvalGroup/TargetMemberList
+      //	POST-Ajax: EvalGroup/TargetMemberList
+
+      public ActionResult TargetMemberList(Guid groupId)
+      {
+         return View();
+      }
+
+      [HttpPost]
+      public ActionResult TargetMemberList(Guid groupId, int current, int rowCount, AjaxOrder sort, string searchPhrase)
+      {
+         var query = APQuery.select(eat.GroupId, eat.TargetId, u.UserName.As("UserName"))
+                   .from(eat
+                         , u.JoinInner(u.UserId == eat.TargetId))
+                   .group_by(eat.GroupId, eat.TargetId, u.UserName)
+                   .where(eat.GroupId == groupId);
+
+         query.primary(eat.AccessorTargetId)
+            .skip((current - 1) * rowCount)
+             .take(rowCount);
+
+
+         //获得查询的总数量
+
+         var total = db.ExecuteSizeOfSelect(query);
+
+
+         var result = query.query(db, rd => new
+         {
+            id = eat.TargetId.GetValue(rd),
+            name = u.UserName.GetValue(rd, "UserName"),
+         });
+
+
+         return Json(new
+         {
+            rows = result,
+            current,
+            rowCount,
+            total
+         });
+
+      }
+
+
+      //	GET: EvalGroup/AccessorEdit
+      //	POST-Ajax: EvalGroup/AccessorEdit
+
+      public ActionResult AccessorEdit(Guid groupAccessorId)
+      {
+         var tables = db.EvalTableDal.ConditionQuery(et.TableStatus != EvalTableKeys.DisableStatus, null, null, null);
+         var users = db.UserInfoDal.ConditionQuery(null, null, null, null);
+         var accessor = new EvalGroupAccessor() { GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty) };
+
+         if (!groupAccessorId.IsEmpty())
+         {
+            accessor = APQuery.select(ega.Asterisk, u.UserName)
+                                  .from(ega, u.JoinInner(u.UserId == ega.AccessorId))
+                                  .where(ega.GroupAccessorId == groupAccessorId)
+                                  .query(db, rd =>
+                                  {
+                                     var acser = new EvalGroupAccessor();
+                                     ega.Fullup(rd, acser, false);
+                                     return acser;
+                                  }
+                                  ).FirstOrDefault();
+         }
+
+         ViewBag.Users = SelectListHelper.GetSelectItems(users, "UserName", "UserId");
+
+         return PartialView(accessor);
+      }
+
+      [HttpPost]
+      public ActionResult AccessorEdit(EvalGroupAccessor accessor)
+      {
+         if (accessor == null)
+            return Json(new
+            {
+               result = AjaxResults.Error,
+               msg = Errors.EvalGroup.NOT_ALLOWED_ACCESSOR_NULL
+            });
+
+         var isExists = db.EvalGroupAccessorDal.ConditionQueryCount(ega.AccessorId == accessor.AccessorId) > 0;
+         if (isExists)
+            return Json(new
+            {
+               result = AjaxResults.Error,
+               msg = Errors.EvalGroup.ACCESSOR_ISEXISTS
+            });
+
+         accessor.ModifyDate = DateTime.Now;
+         if (accessor.GroupAccessorId.IsEmpty() && !isExists)
+         {
+            accessor.GroupAccessorId = Guid.NewGuid();
+
+            db.EvalGroupAccessorDal.Insert(accessor);
+         }
+         else
+         {
+            db.EvalGroupAccessorDal.Update(accessor);
+         }
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.EvalGroup.ACCESSOR_EDIT_SUCCESS
+         });
+      }
+
+
+      //	GET: EvalGroup/BindTargets
+      //	POST-Ajax: EvalGroup/BindTargets
+
+      public ActionResult BindTargets(Guid accessorId)
+      {
+         var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
+         if (accessorId.IsEmpty())
+            throw new ApplicationException();
+
+         var at = APDBDef.EvalAccessorTarget;
+
+         var reuslts = APQuery.select(at.AccessorTargetId, at.TargetId, u.UserName, u.UserId.As("userId"))
+            .from(u, at.JoinLeft(at.TargetId == u.UserId
+                               & at.AccessorId == accessorId
+                               & at.PeriodId == period.PeriodId
+                               & at.TableId == Guid.Empty // table id 为空 表示 accessor 和 target 之间的关系
+                                                          // & at.GroupId == EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty)
+                               ))
+            .query(db, r => new EvalAccessorTarget { AccessorTargetId = at.AccessorTargetId.GetValue(r), TargetId = u.UserId.GetValue(r, "userId"), TargetName = u.UserName.GetValue(r) })
+            .ToList();
+
+         return PartialView(reuslts);
+      }
+
+      [HttpPost]
+      public ActionResult BindTargets(Guid accessorId, string targetIds)
+      {
+         var at = APDBDef.EvalAccessorTarget;
+         var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
+
+         if (string.IsNullOrEmpty(targetIds))
+            return Json(new
+            {
+               result = AjaxResults.Success,
+               msg = Errors.EvalGroup.BIND_TARGET_FAIL
+            });
+
+
+         var accessorTargets = EvalAccessorTarget.ConditionQuery(at.AccessorId == accessorId, null);
+
+         db.BeginTrans();
+
+         try
+         {
+            if (accessorTargets.Count > 0)
+               EvalAccessorTarget.ConditionDelete(at.AccessorId == accessorId);
+
+            foreach (var item in targetIds.Split(','))
+            {
+               var targetId = item.ToGuid(Guid.Empty);
+               db.EvalAccessorTargetDal.Insert(
+                 new EvalAccessorTarget
+                 {
+                    AccessorId = accessorId,
+                    AccessorTargetId = Guid.NewGuid(),
+                    GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty),
+                    EvalType = EvalKeys.SubjectType,
+                    ModifyDate = DateTime.Now,
+                    PeriodId = period.PeriodId,
+                    TargetId = targetId
+                 });
+            }
+
+            db.Commit();
+         }
+         catch
+         {
+            db.Rollback();
+         }
+
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.EvalGroup.BIND_TARGET_SUCCESS
+         });
+      }
+
+
+      //	POST-Ajax: EvalGroup/RemoveAccessor
+
+      [HttpPost]
+      public ActionResult RemoveAccessor(Guid groupAccessorId)
+      {
+         var groupAccessor = EvalGroupAccessor.PrimaryGet(groupAccessorId);
+         if (groupAccessor != null)
+         {
+            db.EvalAccessorTargetDal.ConditionDelete(eat.AccessorId == groupAccessor.AccessorId);
+            db.EvalGroupAccessorDal.ConditionDelete(ega.GroupAccessorId == groupAccessorId);
+         }
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.EvalGroup.ACCESSOR_EDIT_SUCCESS
+         });
+      }
+
+
+      //	GET: EvalGroup/TargetMemberEdit
+      //	POST-Ajax: EvalGroup/TargetMemberEdit
+
+      public ActionResult TargetMemberEdit(Guid targetId)
+      {
+         var tu = APDBDef.UserInfo.As("targetUserInfo");
+         var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
+
+         var subquery = APQuery.select(eat.TableId).from(eat).where(eat.TargetId == targetId);
+         var tables = db.EvalTableDal.ConditionQuery(et.TableStatus != EvalTableKeys.DisableStatus & et.TableId.NotIn(subquery), null, null, null); //左侧可用考核列表
+         var tablePropertion = db.EvalTargetTablePropertionDal.ConditionQuery(ettp.TargetId == targetId & ettp.PeriodId == period.PeriodId, null, null, null);
+         var accessorTargets = APQuery.select(eat.Asterisk, u.UserName.As("accessor"), tu.UserName.As("target"), et.TableId.As("tableId"), et.TableName.As("tableName")) // 评审人
+                               .from(eat,
+                                       et.JoinLeft(et.TableId == eat.TableId),
+                                       u.JoinInner(u.UserId == eat.AccessorId),
+                                       tu.JoinInner(tu.UserId == eat.TargetId)
+                                       )
+                               .where(eat.TargetId == targetId & eat.PeriodId == period.PeriodId)
+                               .query(db, r =>
+                               {
+                                  var tgt = new EvalAccessorTarget();
+                                  eat.Fullup(r, tgt, false);
+                                  tgt.TargetName = tu.UserName.GetValue(r, "target");
+                                  tgt.AccessorName = u.UserName.GetValue(r, "accessor");
+                                  tgt.TableName = et.TableName.GetValue(r, "tableName");
+                                  return tgt;
+                               }).ToList();
+
+         return View(new EvalTargetEditViewModels { Tables = tables, AccessorsAndTargets = accessorTargets, TablePropertion = tablePropertion });
+      }
+
+      [HttpPost]
+      public ActionResult TargetMemberEdit(EvalTargetEditViewModels model)
+      {
+         //当前周期
+         var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
+
+         // 考核人-考核对象列表
+         var accessorTargetList = model.AccessorsAndTargets;
+         // 被考核人-考核表之间的权重
+         var targetTablePropertions = model.TablePropertion;
+
+         if (accessorTargetList.Count > 0)
+         {
+            var ids = accessorTargetList.Select(x => x.AccessorTargetId).ToArray();
+            // tableid 为空表示 被考核人-考核人之间关系的数据，所以排除在外，不能删除
+            db.EvalAccessorTargetDal.ConditionDelete(eat.AccessorTargetId.In(ids) & eat.TableId != Guid.Empty);
+
+         }
+         if (targetTablePropertions.Count > 0)
+         {
+            var ids = targetTablePropertions.Select(x => x.PropertionID).ToArray();
+            db.EvalTargetTablePropertionDal.ConditionDelete(ettp.PropertionID.In(ids));
+         }
+
+         foreach (var item in accessorTargetList)
+         {
+            item.GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty);
+            item.AccessorTargetId = Guid.NewGuid();
+            item.PeriodId = period.PeriodId;
+            // tableid 为空表示 被考核人-考核人之间关系的数据，所以排除在外，不用添加
+            if (!item.TableId.IsEmpty())
+               db.EvalAccessorTargetDal.Insert(item);
+         }
+         foreach (var item in targetTablePropertions)
+         {
+            item.PropertionID = Guid.NewGuid();
+            item.PeriodId = period.PeriodId;
+            db.EvalTargetTablePropertionDal.Insert(item);
+         }
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.EvalGroup.TARGET_EDIT_SUCCESS
+         });
+      }
+
+
+      //	POST-Ajax: EvalGroup/RemoveTargetTable
+
+      public ActionResult RemoveTargetTable(Guid targetId, Guid tableId)
+      {
+         var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
+
+         db.EvalAccessorTargetDal.ConditionDelete(eat.TableId == tableId & eat.TargetId == targetId & eat.PeriodId == period.PeriodId);
+
+         db.EvalTargetTablePropertionDal.ConditionDelete(ettp.PeriodId == period.PeriodId & ettp.TargetId == targetId & ettp.TableId == tableId);
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.EvalGroup.REMOVE_TARGET_TABLE_SUCCESS
+         });
+      }
+
+      //	POST-Ajax: EvalGroup/RemoveTargetMember
+
+      [HttpPost]
+      public ActionResult RemoveTargetMember(Guid evalAccessorTargetId)
+      {
+         db.EvalAccessorTargetDal.PrimaryDelete(evalAccessorTargetId);
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.EvalGroup.ACCESSOR_EDIT_SUCCESS
+         });
+      }
+
+   }
+
+}

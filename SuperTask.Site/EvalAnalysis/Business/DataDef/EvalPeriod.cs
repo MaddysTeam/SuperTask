@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Business.Helper;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace Business
 {
@@ -13,10 +11,12 @@ namespace Business
       public static List<EvalPeriod> GetCurrentPeriod(APDBDef db)
       {
          var p = APDBDef.EvalPeriod;
-
          var current = DateTime.Now;
+         var result= db.EvalPeriodDal.ConditionQuery(current <= p.AccessEndDate & current>=p.AccessBeginDate,p.BeginDate.Asc,null,null);
+         if(result.Count<=0)
+            throw new ApplicationException(Errors.Eval.NOT_ANY_PERIOD);
 
-         return db.EvalPeriodDal.ConditionQuery(current <= p.AccessEndDate & current>=p.AccessBeginDate,p.BeginDate.Asc,null,null);
+         return result;
       }
 
    }
