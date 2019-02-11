@@ -35,6 +35,8 @@ namespace Business
       [Display(Name = "项目进度")]
       public double ProjectProgress { get; set; }
 
+      public bool IsInReview { get; set; }
+
       public Attachment Attachment { get; set; }
 
       public bool IsPlanStatus => this.ProjectStatus == ProjectKeys.PlanStatus;

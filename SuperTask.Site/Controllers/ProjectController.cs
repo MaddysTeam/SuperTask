@@ -47,14 +47,14 @@ namespace TheSite.Controllers
       {
          ThrowNotAjax();
 
-        // var o = APDBDef.Organize;
+         // var o = APDBDef.Organize;
          var u = APDBDef.UserInfo;
          var r = APDBDef.Resource;
          var user = GetUserInfo();
 
          var query = APQuery.select(p.ProjectId, p.RealCode, p.ProjectType, p.ProjectExecutor, p.ProjectName, p.RateOfProgress,
                                     p.ProjectOwner, p.ProjectStatus, p.OrgId, u.UserName.As("managerName")
-                                   // o.Name.As("orgName")
+                                    // o.Name.As("orgName")
                                     )
             .from(p,
                   //o.JoinLeft(o.ID == p.OrgId),
@@ -193,6 +193,7 @@ namespace TheSite.Controllers
          var ru = APDBDef.UserInfo.As("Reviewer");
          //var o = APDBDef.Organize;
          var re = APDBDef.Resource;
+         var rev = APDBDef.Review;
 
          var project = APQuery.select(p.Asterisk, he.UserName.As("Header"), cu.UserName, pu.UserName.As("Manager"), ru.UserName.As("ReviewerName")
             //o.Name.As("OrgName")
@@ -202,7 +203,7 @@ namespace TheSite.Controllers
             pu.JoinLeft(pu.UserId == p.ManagerId),//项目经理
             he.JoinLeft(he.UserId == p.PMId),//项目负责人
             ru.JoinLeft(ru.UserId == p.ReviewerId)
-           // o.JoinLeft(o.ID == p.OrgId)
+            // o.JoinLeft(o.ID == p.OrgId)
             )
             .where(p.ProjectId == id)
             .query(db, r =>
@@ -211,7 +212,7 @@ namespace TheSite.Controllers
                p.Fullup(r, proj, false);
 
                proj.Creator = cu.UserName.GetValue(r);
-              // proj.OrgName = o.Name.GetValue(r, "OrgName");
+               // proj.OrgName = o.Name.GetValue(r, "OrgName");
                proj.Reviewer = ru.UserName.GetValue(r, "ReviewerName");
                proj.Manager = pu.UserName.GetValue(r, "Manager");
                proj.Header = he.UserName.GetValue(r, "Header");
@@ -221,13 +222,14 @@ namespace TheSite.Controllers
 
          project.Resources = db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
          project.ProjectProgress = ProjectrHelper.GetProcessByNodeTasks(id, db);
+         project.IsInReview = db.ReviewDal.ConditionQueryCount(rev.ProjectId == id & rev.ReceiverID == GetUserInfo().UserId) > 0;
 
          return View(project);
       }
 
 
       // Post-ajax: Project/EditEestimateMoney
-      // Post-ajax: Project/EditEestimateMoney
+
       [HttpPost]
       public ActionResult EditEestimateMoney(Guid id, double emoney)
       {
@@ -257,57 +259,119 @@ namespace TheSite.Controllers
       }
 
 
+      public ActionResult ReviewRequet()
+      {
+         return PartialView();
+      }
+
+      [HttpPost]
+      public ActionResult ReviewRequet(Guid id, Review review)
+      {
+         var r = APDBDef.Review;
+
+         var isRequest = db.ReviewDal.ConditionQueryCount(r.ProjectId == id & r.Result != Guid.Empty) > 0;
+         if (isRequest)
+         {
+            return Json(new
+            {
+               result = AjaxResults.Error,
+               msg = Errors.Review.HAS_IN_REVIEW
+            });
+         }
+         else
+         {
+            var project = db.ProjectDal.PrimaryGet(id);
+            project.SetStatus(ProjectKeys.ReviewStatus);
+            db.ProjectDal.Update(project);
+         }
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.Review.REQUEST_SEND_SUCCESS
+         });
+      }
+
+      [HttpPost]
+      public ActionResult SubmitReview(Guid id)
+      {
+         var project = db.ProjectDal.PrimaryGet(id);
+         project.SetStatus(ProjectKeys.ProcessStatus);
+         db.ProjectDal.Update(project);
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.Review.REQUEST_SUBMIT
+         });
+      }
+
+      [HttpPost]
+      public ActionResult ReviewFail(Guid id)
+      {
+         var project = db.ProjectDal.PrimaryGet(id);
+         project.SetStatus(ProjectKeys.PlanStatus);
+         db.ProjectDal.Update(project);
+
+         return Json(new
+         {
+            result = AjaxResults.Error,
+            msg = Errors.Review.REVIEW_FAILURE
+         });
+      }
+
+
       // GET: Project/ReviewRequest
       // GET: Project/AfterProjectStartReviewSend
       // GET: Project/AfterProjectStartSubimitReview
       // GET: Project/AfterReviewFail
 
-      public ActionResult ReviewRequest(Guid id, Guid reviewType)
-      {
-         if (id.IsEmpty())
-            throw new ArgumentException(Errors.Task.NOT_ALLOWED_ID_NULL);
+      //public ActionResult ReviewRequest(Guid id, Guid reviewType)
+      //{
+      //   if (id.IsEmpty())
+      //      throw new ArgumentException(Errors.Task.NOT_ALLOWED_ID_NULL);
 
-         var project = db.ProjectDal.PrimaryGet(id);
+      //   var project = db.ProjectDal.PrimaryGet(id);
 
-         var requestOption = new ReviewRequestOption
-         {
-            Project = project,
-            User = GetUserInfo(),
-            ReviewType = reviewType,
-            db = db,
-            Result = Result.Initial()
-         };
+      //   var requestOption = new ReviewRequestOption
+      //   {
+      //      Project = project,
+      //      User = GetUserInfo(),
+      //      ReviewType = reviewType,
+      //      db = db,
+      //      Result = Result.Initial()
+      //   };
 
-         HandleManager.ProjectReviewHandlers[reviewType].Handle(project, requestOption);
+      //   HandleManager.ProjectReviewHandlers[reviewType].Handle(project, requestOption);
 
-         if (!requestOption.Result.IsSuccess)
-            throw new ApplicationException(requestOption.Result.Msg);
+      //   if (!requestOption.Result.IsSuccess)
+      //      throw new ApplicationException(requestOption.Result.Msg);
 
 
-         return RedirectToAction("FlowIndex", "WorkFlowRun", requestOption.RunParams);
-      }
+      //   return RedirectToAction("FlowIndex", "WorkFlowRun", requestOption.RunParams);
+      //}
 
-      public ActionResult AfterProjectStartReviewSend(Guid instanceId)
-         => AfterReviewSendOrSubmit(instanceId, ProjectKeys.ReviewStatus);
+      //public ActionResult AfterProjectStartReviewSend(Guid instanceId)
+      //   => AfterReviewSendOrSubmit(instanceId, ProjectKeys.ReviewStatus);
 
-      public ActionResult AfterProjectStartSubimitReview(Guid instanceId)
-      {
-         if (instanceId.IsEmpty())
-            throw new NullReferenceException("instance id 不能为空！");
+      //public ActionResult AfterProjectStartSubimitReview(Guid instanceId)
+      //{
+      //   if (instanceId.IsEmpty())
+      //      throw new NullReferenceException("instance id 不能为空！");
 
-         var review = db.ReviewDal.PrimaryGet(instanceId);
-         var project = db.ProjectDal.PrimaryGet(review.ProjectId);
+      //   var review = db.ReviewDal.PrimaryGet(instanceId);
+      //   var project = db.ProjectDal.PrimaryGet(review.ProjectId);
 
-         project.SetStatus(ProjectKeys.ProcessStatus);
+      //   project.SetStatus(ProjectKeys.ProcessStatus);
 
-         Edit(project);
+      //   Edit(project);
 
-         return RedirectToAction("Details", "Project", new { id = project.ProjectId });
+      //   return RedirectToAction("Details", "Project", new { id = project.ProjectId });
 
-      }
+      //}
 
-      public ActionResult AfterReviewFail(Guid instanceId)
-         => AfterReviewSendOrSubmit(instanceId, ProjectKeys.ProcessStatus);
+      //public ActionResult AfterReviewFail(Guid instanceId)
+      //   => AfterReviewSendOrSubmit(instanceId, ProjectKeys.ProcessStatus);
 
 
       #region [ private ]

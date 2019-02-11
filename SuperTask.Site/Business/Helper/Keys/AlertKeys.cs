@@ -100,6 +100,7 @@ namespace Business.Helper
       public class Review
       {
          public const string HAS_IN_REVIEW = "该任务已提交审核申请，无法重复提交申请";
+         public const string REVIEW_FAILURE = "审核失败";
       }
 
 
@@ -200,7 +201,10 @@ namespace Business.Helper
       }
 
 
-      public class Review { }
+      public class Review {
+         public const string REQUEST_SEND_SUCCESS = "审核请求已发送！";
+         public const string REQUEST_SUBMIT = "审核通过！";
+      }
 
 
       public class Role

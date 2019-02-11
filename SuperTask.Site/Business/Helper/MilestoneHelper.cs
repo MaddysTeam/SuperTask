@@ -96,6 +96,8 @@ namespace Business.Helper
                project.ManagerId,
                project.ReviewerId
                ));
+
+            db.WorkTaskDal.Insert(new WorkTask { });
          }
       }
 
