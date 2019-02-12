@@ -2,6 +2,7 @@
 @using Business
 @{
 	var resourceSelectList = SelectListHelper.GetSelectItems(Model.Resources, "ResourceName", "UserId", null, SelectListHelper.Default);
+	var isLeader = Html.HasInRole(RoleKeys.ADMIN) || Html.HasInRole(RoleKeys.LEADER);
 }
 <style>
 	input[disabled] {
@@ -31,7 +32,6 @@
 					if (Model.IsPlanStatus || Model.IsEditStatus)
 					{
 						<button class="btn btn-info btn-sm btn-milestone" id="milestones" data-toggle="ajax-modal" data-url="@Url.Action("ReviewRequest", "Project",new { id= Model.ProjectId})" data-target="#firstModal">提交审核申请</button>
-						@*<a class="btn btn-danger" href="@Url.Action("ReviewRequest", "Project", new { id = Model.ProjectId, reviewType = ReviewKeys.ReviewTypeForPjStart })">申请审核</a>*@
 }
 					if (Model.IsReviewStatus)
 					{
@@ -203,7 +203,7 @@
 		</div>
 	</form>
 </div>
-@if (Html.HasPermission(Model.ProjectId.ToString(), "P_10002"))
+@if (Html.HasPermission(Model.ProjectId.ToString(), "P_10002") || isLeader)
 {
 	<div id="paymentsArea" class="widget"></div>
 
@@ -244,5 +244,8 @@
 		</div>
 	</div>
 
-	<div id="reviewArea"></div>
+	<div id="reviewArea">
+
+
+	</div>
 }

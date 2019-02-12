@@ -1604,6 +1604,7 @@
     <Content Include="Views\EvalGroup\Edit.cshtml" />
     <Content Include="Views\EvalGroup\BindGroupAccessors.cshtml" />
     <Content Include="Views\Project\ReviewRequest.cshtml" />
+    <Content Include="Views\Project\_submitReview.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

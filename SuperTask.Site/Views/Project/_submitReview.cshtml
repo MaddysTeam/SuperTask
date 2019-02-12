@@ -1,0 +1,31 @@
+﻿@model Review
+@if (Model != null)
+{
+<form id="SubmitReview" class="form-horizontal details" action="@Url.Action("SubmitReviewAction", "Project")" role="form" data-after-success="afterReviewSubmitSuccess()">
+	<div class="row">
+		@Html.HiddenFor(r => r.ReviewId)
+		@Html.HiddenFor(r => r.ProjectId)
+		@Html.HiddenFor(r => r.SendDate)
+		@Html.HiddenFor(r => r.SenderID)
+		@Html.HiddenFor(r => r.ReceiverID)
+
+		<div class="form-group">
+			@Html.LabelFor(r => r.Comment, new { @class = "control-label col-md-4" })
+			<div class="col-md-4">
+				@Html.TextAreaFor(r => r.Comment, 5, 5, new { @class = "form-control plan" })
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-md-4 col-md-offset-5">
+				<button class="btn btn-success ">审核通过</button>
+				<button class="btn btn-success ">审核不通过</button>
+			</div>
+		</div>
+	</div>
+</form>
+
+<script>
+	ajaxSubmitForm($('#SubmitReview'));
+	function afterReviewSubmitSuccess() { location.href = location.href;}
+</script>
+}

@@ -89,6 +89,11 @@ namespace Business
             message = Errors.Review.REVIEW_TYPE_CANNOT_BE_NULL;
             result = false;
          }
+         else if (ReceiverID == Guid.Empty)
+         {
+            message = Errors.Review.RECEIVER_ID_CANNOT_BE_NULL;
+            result = false;
+         }
 
          return new Result { IsSuccess = result, Msg = message };
       }

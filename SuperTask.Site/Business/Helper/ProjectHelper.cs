@@ -9,7 +9,12 @@ namespace Business.Helper
 
    public static class ProjectrHelper
    {
-
+      /// <summary>
+      /// 某用户参与的所有项目
+      /// </summary>
+      /// <param name="userId">用户id</param>
+      /// <param name="db"></param>
+      /// <returns></returns>
       public static List<Project> UserJoinedProjects(Guid userId, APDBDef db)
       {
          var p = APDBDef.Project;
@@ -30,7 +35,7 @@ namespace Business.Helper
       /// <summary>
       /// 通过项目id获取当前的项目数据
       /// </summary>
-      /// <param name="projectid"></param>
+      /// <param name="projectid">项目id</param>
       /// <param name="db"></param>
       /// <param name="isforceClear"></param>
       /// <returns></returns>
@@ -41,11 +46,17 @@ namespace Business.Helper
       }
 
 
-      public static  double GetProcessByNodeTasks(Guid id,APDBDef db)
+      /// <summary>
+      /// 通过项目节点任务的完成率来得到项目进度
+      /// </summary>
+      /// <param name="projectId">项目id</param>
+      /// <param name="db"></param>
+      /// <returns></returns>
+      public static  double GetProcessByNodeTasks(Guid projectId,APDBDef db)
       {
          var pst = APDBDef.ProjectStoneTask;
-         var all = db.ProjectStoneTaskDal.ConditionQueryCount(pst.ProjectId==id);
-         var completed = db.ProjectStoneTaskDal.ConditionQueryCount(pst.ProjectId == id & pst.TaskStatus == TaskKeys.CompleteStatus);
+         var all = db.ProjectStoneTaskDal.ConditionQueryCount(pst.ProjectId== projectId);
+         var completed = db.ProjectStoneTaskDal.ConditionQueryCount(pst.ProjectId == projectId & pst.TaskStatus == TaskKeys.CompleteStatus);
 
          return all <= 0 ? 0 : ((double)(completed * 100 / all)).Round(2);
       }

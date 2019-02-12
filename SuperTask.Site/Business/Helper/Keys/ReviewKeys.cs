@@ -14,6 +14,8 @@ namespace Business.Helper
 
       public static Guid ReviewTypeForPjStart => Guid.Parse("E98894E6-1DA1-3BCC-2E03-AF0BAAA4C62F");
 
+      public static Guid ReviewTypeForPjChanged => Guid.Parse("E96894E6-1DA1-3BCC-2E03-AF0BAAA4D62F"); //TODO:暂时作为项目计划审核
+
       public static Guid ReviewTypeForTkChanged => Guid.Parse("26999EA8-3BDD-A4FB-495B-E440B6FF7408");
 
       public static Guid ReviewTypeForTkSubmit => Guid.Parse("88B7B73E-630B-B338-C4B9-6F4870DB1A7F");

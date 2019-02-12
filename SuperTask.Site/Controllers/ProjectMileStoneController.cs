@@ -82,7 +82,7 @@ namespace TheSite.Controllers
             db.ProjectMileStoneDal.Update(projectMileStone);
             APQuery
                .update(pst)
-               .set(pst.EndDate.SetValue(projectMileStone.EndDate), pst.StartDate.SetValue(projectMileStone.StartDate),pst.TaskName.SetValue(projectMileStone.StoneName))
+               .set(pst.EndDate.SetValue(projectMileStone.EndDate), pst.StartDate.SetValue(projectMileStone.StartDate))
                .where(pst.PmsId== projectMileStone.PmsId).execute(db); 
          }
 

@@ -178,7 +178,9 @@
 						Projectid: projectId,
 						FolderId: $stoneContainer.find('#FolderId').val(),
 						Status: $stoneContainer.find('#Status').val(),
-						Content: $stoneContainer.find('#Content').val()
+						Content: $stoneContainer.find('#Content').val(),
+						StartDate: $stoneContainer.find('#StartDate').val(),
+						EndDate: $stoneContainer.find('#EndDate').val(),
 					}
 
 					$.post('@Url.Action("Edit", "ProjectMileStone")', { projectMileStone: projectMileStone }, function (data) {
@@ -194,6 +196,12 @@
 			var currentTabId = 'moneyTab';
 			loadPayments(currentTabId);
 
+			// load submit review
+			$.post('@Url.Action("SubmitReview", "Project")', { id: projectId }, function (data) {
+				$('#reviewArea').html(data);
+			})
+
+	
 			function loadPayments(currentTabId) {
 				$.post('@Url.Action("Details", "Payments")', { projectId: projectId, tabId: currentTabId }, function (data) {
 					$('#paymentsArea').html(data);

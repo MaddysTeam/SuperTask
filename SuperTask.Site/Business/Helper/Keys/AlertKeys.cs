@@ -103,6 +103,7 @@ namespace Business.Helper
          public const string PROJECT_ID_CANNOT_BE_NULL = "项目id 不能为空";
          public const string REVIEW_FAILURE = "审核失败";
          public const string REVIEW_TYPE_CANNOT_BE_NULL = "审核类型不能为空";
+         public const string RECEIVER_ID_CANNOT_BE_NULL = "审核人id不能为空";
       }
 
 
@@ -165,7 +166,7 @@ namespace Business.Helper
       public class StoneTask
       {
          public const string EDIT_FAIL = "编辑失败！";
-         public const string NOT_ALLOWED_START_DUE_TO_PROJECT_NOT_START = "该任务所属项目还未启动";
+         public const string NOT_ALLOWED_START_DUE_TO_PROJECT_NOT_START = "该项目还未提交审核";
          public const string NOT_ALLOWED_EDIT_TASK_WHEN_PROJECT_COMPELETE = "任务所属项目已经完成，无法编辑！";
          public const string TASKS_OUT_OF_PROJECT_RANGE = "任务时间范围不能超过项目时间范围";
       }

@@ -130,7 +130,7 @@ namespace TheSite.Controllers
          var pj = ProjectrHelper.GetCurrentProject(task.ProjectId);
          Result re = new Result { IsSuccess = true, Msg = Success.StoneTask.EDITSUCCESS };
 
-         if (pj.IsPlanStatus)
+         if (pj.IsPlanStatus || pj.IsEditStatus)
          {
             re.IsSuccess = false;
             re.Msg = Errors.StoneTask.NOT_ALLOWED_START_DUE_TO_PROJECT_NOT_START;

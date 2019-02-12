@@ -1,9 +1,7 @@
 ﻿using Business;
-using Business.Config;
 using Business.Helper;
 using Symber.Web.Data;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using TheSite.Models;
@@ -26,7 +24,7 @@ namespace TheSite.Controllers
       }
 
       [HttpPost]
-      public ActionResult Search(Guid searchTypeId, int current, int rowCount, AjaxOrder sort, string searchPhrase)
+      public ActionResult Search( int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
          ThrowNotAjax();
 
@@ -44,25 +42,28 @@ namespace TheSite.Controllers
                   )
             .where(p.ProjectStatus.NotIn(ProjectKeys.DeleteStatus, ProjectKeys.CompleteStatus));
 
-         if(searchTypeId==ProjectKeys.SearchMyProject)
-            query.where_and(p.ManagerId == user.UserId);
+         //if (searchTypeId == ProjectKeys.SearchMyProject)
+         //   query.where_and(p.ManagerId == user.UserId);
 
-         if (searchTypeId == ProjectKeys.SearchMyJoinedProject)
-         {
-            var subquery = APQuery.select(r.Projectid).from(r).where(r.UserId == user.UserId );
-            query.where_and(p.ProjectId.In(subquery) & p.ManagerId!=user.UserId);
-         }
-            //if (owner != ThisApp.SelectAll)
-            //   query.where_and(p.ProjectOwner == owner);
+         //if (searchTypeId == ProjectKeys.SearchMyJoinedProject)
+         //{
+         //   var subquery = APQuery.select(r.Projectid).from(r).where(r.UserId == user.UserId);
+         //   query.where_and(p.ProjectId.In(subquery) & p.ManagerId != user.UserId);
+         //}
 
-            //if (executor != ThisApp.SelectAll)
-            //   query.where_and(p.ProjectExecutor == executor);
+         query.where_and(p.ManagerId == user.UserId | p.PMId==user.UserId); //TODO:will delete
+
+         //if (owner != ThisApp.SelectAll)
+         //   query.where_and(p.ProjectOwner == owner);
+
+         //if (executor != ThisApp.SelectAll)
+         //   query.where_and(p.ProjectExecutor == executor);
 
 
-            query.primary(p.ProjectId)
-            .order_by(p.CreateDate.Desc)
-            .skip((current - 1) * rowCount)
-             .take(rowCount);
+         query.primary(p.ProjectId)
+         .order_by(p.CreateDate.Desc)
+         .skip((current - 1) * rowCount)
+          .take(rowCount);
 
 
          //过滤条件
@@ -136,7 +137,7 @@ namespace TheSite.Controllers
 
       // GET: Project/Edit
       // Post-ajax: Project/Edit
-    
+
       public ActionResult Edit(Guid id)
       {
          var userId = GetUserInfo().UserId;
@@ -181,19 +182,16 @@ namespace TheSite.Controllers
          var pu = APDBDef.UserInfo.As("Manager");//项目经理
          var he = APDBDef.UserInfo.As("Header");//项目负责人
          var ru = APDBDef.UserInfo.As("Reviewer");
-         //var o = APDBDef.Organize;
          var re = APDBDef.Resource;
          var rev = APDBDef.Review;
 
          var project = APQuery.select(p.Asterisk, he.UserName.As("Header"), cu.UserName, pu.UserName.As("Manager"), ru.UserName.As("ReviewerName")
-            //o.Name.As("OrgName")
             )
             .from(p,
             cu.JoinLeft(cu.UserId == p.CreatorId),
             pu.JoinLeft(pu.UserId == p.ManagerId),//项目经理
             he.JoinLeft(he.UserId == p.PMId),//项目负责人
             ru.JoinLeft(ru.UserId == p.ReviewerId)
-            // o.JoinLeft(o.ID == p.OrgId)
             )
             .where(p.ProjectId == id)
             .query(db, r =>
@@ -210,12 +208,11 @@ namespace TheSite.Controllers
                return proj;
             }).FirstOrDefault();
 
+         //项目资源
          project.Resources = db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
-         project.ProjectProgress = ProjectrHelper.GetProcessByNodeTasks(id, db);
-         project.CurrentReview = db.ReviewDal.ConditionQuery(rev.ProjectId == id
-                                                             & rev.ReviewType == ReviewKeys.ReviewTypeForPjStart
-                                                             & rev.Result == Guid.Empty
-                                                             & rev.ReceiverID == GetUserInfo().UserId , null, null, null).FirstOrDefault();
+               
+         //项目进度
+         project.ProjectProgress = ProjectrHelper.GetProcessByNodeTasks(id, db);  
 
          return View(project);
       }
@@ -258,7 +255,16 @@ namespace TheSite.Controllers
       public ActionResult ReviewRequest(Guid id)
       {
          var project = ProjectrHelper.GetCurrentProject(id);
-         var review = new Review { ProjectId = project.ProjectId, ProjectName= project.ProjectName ,ReviewType=ReviewKeys.ReviewTypeForPjStart};
+         var review = new Review
+         {
+            ProjectId = project.ProjectId,
+            ProjectName = project.ProjectName,
+            ReviewType = ReviewKeys.ReviewTypeForPjChanged,
+            ReceiverID = project.ReviewerId,
+            SenderID = GetUserInfo().UserId,
+            SendDate = DateTime.Now,
+            Title = ReviewKeys.GetTypeKeyByValue(ReviewKeys.ReviewTypeForPjChanged)
+         };
 
          return PartialView(review);
       }
@@ -278,7 +284,7 @@ namespace TheSite.Controllers
 
          var r = APDBDef.Review;
 
-         var hasRequest = db.ReviewDal.ConditionQueryCount(r.ProjectId == review.ProjectId & r.ReviewType == ReviewKeys.ReviewTypeForPjStart & r.Result != Guid.Empty) > 0;
+         var hasRequest = db.ReviewDal.ConditionQueryCount(r.ProjectId == review.ProjectId & r.ReviewType == ReviewKeys.ReviewTypeForPjChanged & r.Result != Guid.Empty) > 0;
          if (hasRequest)
          {
             return Json(new
@@ -293,6 +299,7 @@ namespace TheSite.Controllers
             project.SetStatus(ProjectKeys.ReviewStatus);
             db.ProjectDal.Update(project);
 
+            review.ReviewId = Guid.NewGuid();
             db.ReviewDal.Insert(review);
          }
 
@@ -303,12 +310,47 @@ namespace TheSite.Controllers
          });
       }
 
+
+      // Post-ajax:  Project/SubmitReview
+      // Post-ajax:  Project/SubmitReviewAction
+
       [HttpPost]
       public ActionResult SubmitReview(Guid id)
       {
-         var project = db.ProjectDal.PrimaryGet(id);
-         project.SetStatus(ProjectKeys.ProcessStatus);
-         db.ProjectDal.Update(project);
+         var rev = APDBDef.Review;
+
+         //当前项目审核请求， receiverId是审核者，只有审核者才能操作
+         var reviewRequest = db.ReviewDal.ConditionQuery(rev.ProjectId == id
+                                                             & rev.ReviewType == ReviewKeys.ReviewTypeForPjChanged
+                                                             & rev.Result == Guid.Empty
+                                                             & rev.ReceiverID == GetUserInfo().UserId, null, null, null).FirstOrDefault();
+         return PartialView("_submitReview",reviewRequest);
+      }
+
+      [HttpPost]
+      public ActionResult SubmitReviewAction(Review review)
+      {
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = ""
+         });
+      }
+
+
+      #region [ private ]
+
+      private ActionResult ReviewSuccess(Guid id, Guid reviewId)
+      {
+         var r = APDBDef.Review;
+
+         APQuery.update(r)
+                .set(r.Result.SetValue(ReviewKeys.ResultSuccess), r.ReviewDate.SetValue(DateTime.Now))
+                .where(r.ReviewId == reviewId);
+
+         APQuery.update(p)
+                .set(p.ProjectStatus.SetValue(ProjectKeys.ProcessStatus))
+                .where(p.ProjectId == id);
 
          return Json(new
          {
@@ -317,89 +359,19 @@ namespace TheSite.Controllers
          });
       }
 
-      [HttpPost]
-      public ActionResult ReviewFail(Guid id)
+      private ActionResult ReviewFail(Guid id, Guid reviewId)
       {
-         var project = db.ProjectDal.PrimaryGet(id);
-         project.SetStatus(ProjectKeys.PlanStatus);
-         db.ProjectDal.Update(project);
+         var r = APDBDef.Review;
+
+         APQuery.update(r)
+                .set(r.Result.SetValue(ReviewKeys.ResultSuccess), r.ReviewDate.SetValue(DateTime.Now))
+                .where(r.ReviewId == reviewId);
 
          return Json(new
          {
             result = AjaxResults.Error,
             msg = Errors.Review.REVIEW_FAILURE
          });
-      }
-
-
-      // GET: Project/ReviewRequest
-      // GET: Project/AfterProjectStartReviewSend
-      // GET: Project/AfterProjectStartSubimitReview
-      // GET: Project/AfterReviewFail
-
-      //public ActionResult ReviewRequest(Guid id, Guid reviewType)
-      //{
-      //   if (id.IsEmpty())
-      //      throw new ArgumentException(Errors.Task.NOT_ALLOWED_ID_NULL);
-
-      //   var project = db.ProjectDal.PrimaryGet(id);
-
-      //   var requestOption = new ReviewRequestOption
-      //   {
-      //      Project = project,
-      //      User = GetUserInfo(),
-      //      ReviewType = reviewType,
-      //      db = db,
-      //      Result = Result.Initial()
-      //   };
-
-      //   HandleManager.ProjectReviewHandlers[reviewType].Handle(project, requestOption);
-
-      //   if (!requestOption.Result.IsSuccess)
-      //      throw new ApplicationException(requestOption.Result.Msg);
-
-
-      //   return RedirectToAction("FlowIndex", "WorkFlowRun", requestOption.RunParams);
-      //}
-
-      //public ActionResult AfterProjectStartReviewSend(Guid instanceId)
-      //   => AfterReviewSendOrSubmit(instanceId, ProjectKeys.ReviewStatus);
-
-      //public ActionResult AfterProjectStartSubimitReview(Guid instanceId)
-      //{
-      //   if (instanceId.IsEmpty())
-      //      throw new NullReferenceException("instance id 不能为空！");
-
-      //   var review = db.ReviewDal.PrimaryGet(instanceId);
-      //   var project = db.ProjectDal.PrimaryGet(review.ProjectId);
-
-      //   project.SetStatus(ProjectKeys.ProcessStatus);
-
-      //   Edit(project);
-
-      //   return RedirectToAction("Details", "Project", new { id = project.ProjectId });
-
-      //}
-
-      //public ActionResult AfterReviewFail(Guid instanceId)
-      //   => AfterReviewSendOrSubmit(instanceId, ProjectKeys.ProcessStatus);
-
-
-      #region [ private ]
-
-      private ActionResult AfterReviewSendOrSubmit(Guid instanceId, Guid status)
-      {
-         if (instanceId.IsEmpty())
-            throw new NullReferenceException("instance id 不能为空！");
-
-         var review = db.ReviewDal.PrimaryGet(instanceId);
-         var project = db.ProjectDal.PrimaryGet(review.ProjectId);
-
-         project.SetStatus(status);
-
-         db.ProjectDal.Update(project);
-
-         return RedirectToAction("Details", "Project", new { id = project.ProjectId });
       }
 
       #endregion
