@@ -441,24 +441,14 @@ namespace TheSite.Controllers
 
          foreach (var item in projects)
          {
-            // MilestoneHelper.AddDefaultMileStones(item, db);
+            MilestoneHelper.AddDefaultMileStones(item, db);
+            PaymentsHelper.AddDefaultPayments(item, db);
             var sharefolderId = Guid.NewGuid();
             item.FolderId = sharefolderId;
             var folder = ShareFolderHelper.CreateFolder(sharefolderId, item.ProjectName, ShareFolderKeys.RootProjectFolderId, item.ManagerId, db);
             db.ProjectDal.Update(item);
          }
       }
-
-      //public void InitialProjectPayments()
-      //{
-      //   var projects = Project.GetAll();
-      //   var db = new APDBDef();
-
-      //   foreach (var item in projects)
-      //   {
-      //      PaymentsHelper.AddDefaultPayments(item, db);
-      //   }
-      //}
 
    }
 

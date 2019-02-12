@@ -2,19 +2,15 @@
 @{
 	var pageTitle = ViewBag.Title = "我的项目";
 	var isLeader = Html.HasInRole(RoleKeys.ADMIN) || Html.HasInRole(RoleKeys.LEADER) || Html.HasInRole(RoleKeys.PROGRAME_MANAGER);
-	var owners = ViewBag.Owners as List<SelectListItem>;
-	var executors = ViewBag.Executors as List<SelectListItem>;
-	owners.Insert(0, new SelectListItem { Text = "全部", Value = ThisApp.SelectAll });
-	executors.Insert(0, new SelectListItem { Text = "全部", Value = ThisApp.SelectAll });
-
-
+	//var owners = ViewBag.Owners as List<SelectListItem>;
+	//var executors = ViewBag.Executors as List<SelectListItem>;
+	//owners.Insert(0, new SelectListItem { Text = "全部", Value = ThisApp.SelectAll });
+	//executors.Insert(0, new SelectListItem { Text = "全部", Value = ThisApp.SelectAll });
 }
 @section Css{
 	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
 }
-
 <div class="content-wrapper">
-
 	<div class="main-content">
 		<!-- widget -->
 		<div class="widget">
@@ -25,51 +21,49 @@
 					{
 						<button class="btn btn-sm btn-custom-primary" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Project",new { id=Guid.Empty})" data-target="#firstModal"><i class="fa fa-plus-square"></i> <span>新增</span></button>
 
+
+
 						@*<button class="btn btn-sm btn-info btn-template" ><i class="fa fa-file-text"></i> <span>开发类模板（试用）</span></button>*@
 					}
 					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
 				</div>
 			</div>
-
 			<div class="widget-content">
 				<div class="row">
-
-					<div class="col-sm-4">
-						<div class="form-group">
-							<label class="col-md-4 control-label">项目甲方</label>
-							<div class="col-md-4">
-								@Html.DropDownList("dropdown_owner", owners, new { @class = "dropdown_owner" })
+					@*<div class="col-sm-4">
+							<div class="form-group">
+								<label class="col-md-4 control-label">项目甲方</label>
+								<div class="col-md-4">
+									@Html.DropDownList("dropdown_owner", owners, new { @class = "dropdown_owner" })
+								</div>
 							</div>
 						</div>
-					</div>
 
-					<div class="col-sm-4">
-						<div class="form-group">
-							<label class="col-md-4 control-label">项目乙方</label>
-							<div class="col-md-4">
-								@Html.DropDownList("dropdown_executor", executors, new { @class = "dropdown_executor" })
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label class="col-md-4 control-label">项目乙方</label>
+								<div class="col-md-4">
+									@Html.DropDownList("dropdown_executor", executors, new { @class = "dropdown_executor" })
+								</div>
 							</div>
-						</div>
-					</div>
-
+						</div>*@
 					<div class="col-sm-4">
 						<div class="form-group">
 							<label class="col-md-4 control-label">项目范围</label>
 							<div class="col-md-4">
-								@*@Html.DropDownList("dropdown_executor", executors, new { @class = "dropdown_executor" })*@
+								@Html.DropDownList("SearchType", DictionaryCache.Cached(ProjectKeys.SearcType)
+							 .GetSelectListById(ProjectKeys.SearchMyProject), new { @class = "dropdown_search_type" })
 							</div>
 						</div>
 					</div>
-
-					<div class="col-sm-4">
+					@*<div class="col-sm-4">
 						<div class="form-group">
 							<label class="col-md-4 control-label">项目状态</label>
 							<div class="col-md-4">
-								@*@Html.DropDownList("dropdown_executor", executors, new { @class = "dropdown_executor" })*@
+								@Html.DropDownList("dropdown_executor", executors, new { @class = "dropdown_executor" })
 							</div>
 						</div>
-					</div>
-
+					</div>*@
 				</div>
 				<!-- Grid -->
 				<div class="table-responsive">
@@ -97,7 +91,6 @@
 		<input type="hidden" id="Executor" value="@ThisApp.SelectAll" />
 	</div>
 </div>
-
 @section Modals{
 	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
 	<!-- Modal start -->
@@ -112,9 +105,9 @@
 	<script>
 		function getGlobalRequest() {
 			return {
-				//searchType: $('#SearchType').val(),
-				owner: $('#Owner').val(),
-				executor: $('#Executor').val(),
+				searchTypeId: $('#SearchType').val(),
+				//owner: $('#Owner').val(),
+				//executor: $('#Executor').val(),
 			};
 		}
 
@@ -151,7 +144,7 @@
 				grid.find('.btn-details').on('click', function (e) {
 					var id = $(this).parent().data('rowId');
 					//var name = $(this).parent().data('name');
-					location.href = manUrl + '?id=' + id ;
+					location.href = manUrl + '?id=' + id;
 				});
 
 				var tasksUrl = '@Url.Action("TaskArrangement", "ProjectManage")'
@@ -163,21 +156,28 @@
 				door = true;
 			});
 
-			$('.dropdown_executor').searchableSelect({
+			$('#SearchType').searchableSelect({
 				afterSelectItem: function (v) {
-					$('#Executor').val(v);
 					if (door)
 						$('#bootgrid').bootgrid('reload');
 				}
 			});
 
-			$('.dropdown_owner').searchableSelect({
-				afterSelectItem: function (v) {
-					$('#Owner').val(v)
-					if (door)
-						$('#bootgrid').bootgrid('reload');
-				}
-			});
+			//$('.dropdown_executor').searchableSelect({
+			//	afterSelectItem: function (v) {
+			//		$('#Executor').val(v);
+			//		if (door)
+			//			$('#bootgrid').bootgrid('reload');
+			//	}
+			//});
+
+			//$('.dropdown_owner').searchableSelect({
+			//	afterSelectItem: function (v) {
+			//		$('#Owner').val(v)
+			//		if (door)
+			//			$('#bootgrid').bootgrid('reload');
+			//	}
+			//});
 
 			$('.btn-template').click(function () {
 				if (confirm("确定通过模板创建项目？")) {

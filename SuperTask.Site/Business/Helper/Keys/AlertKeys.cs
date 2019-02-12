@@ -100,7 +100,9 @@ namespace Business.Helper
       public class Review
       {
          public const string HAS_IN_REVIEW = "该任务已提交审核申请，无法重复提交申请";
+         public const string PROJECT_ID_CANNOT_BE_NULL = "项目id 不能为空";
          public const string REVIEW_FAILURE = "审核失败";
+         public const string REVIEW_TYPE_CANNOT_BE_NULL = "审核类型不能为空";
       }
 
 

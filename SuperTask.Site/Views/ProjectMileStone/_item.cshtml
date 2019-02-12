@@ -40,7 +40,7 @@
 			@Html.Label("EndDate", Model.EndDate.ToString("yyyy-MM-dd"), new { @class = "form-control" ,@readonly="readonly" })
 		}
 	</div>
-	<div class="col-md-3">备注:@Html.TextAreaFor(s => s.Content, new { @class = "form-control stoneContent" ,@readonly=canEdit? "":"readonly" })</div>
+	<div class="col-md-3">备注:@Html.TextAreaFor(s => s.Content, new { @class = "form-control stoneContent" })</div>
 	<div class="col-md-2">
 		@if (canEdit)
 		{

@@ -524,7 +524,7 @@
 					<add name="SendDate" columnName="SendDate" type="DateTime" defaultValue="DateTime.Now"></add>
 					<add name="ReviewDate" columnName="ReviewDate" type="DateTime"  isNullable="true" defaultValue="DateTime.Now"></add>
 					<add name="AttachmentUrl" columnName="AttachmentId" type="string" dataLength="1000" isNullable="true"></add>
-					<add name="Comment"  columnName="Comment" type="string" dataLength="1000"></add>
+					<add name="Comment"  columnName="Comment" type="string" dataLength="1000" display="填写说明" ></add>
 					<add name="Title"  columnName="Title" type="string" dataLength="50" isNullable="true"></add>
 
 				</columns>
@@ -534,29 +534,36 @@
 				<columns>
 
 					<add name="TaskId" columnName="ID" type="Guid" primaryKey="true" ></add>
-					<add name="FlowId" columnName="FlowID" type="Guid" ></add>
-					<add name="StepID" columnName="StepID" type="Guid" ></add>
-					<add name="StepName"  columnName="StepName" type="string" dataLength="500"	></add>
-					<add name="SenderName"  columnName="SenderName" type="string" dataLength="50"	></add>
-					<add name="ReceiveName"  columnName="ReceiveName" type="string" dataLength="50"></add>
-					<add name="InstanceID" columnName="InstanceID"  type="string" dataLength="50"></add>
-					<add name="GroupID" columnName="GroupID" type="Guid" ></add>
-					<add name="Type" columnName="Type" type="int" ></add>
+					<add name="PrevID" columnName="PrevID" isNullable="true"  type="Guid" ></add>
+					<add name="PrevStepID" columnName="PrevStepID" isNullable="true"  type="Guid" ></add>
+					<add name="FlowId" columnName="FlowID" isNullable="true"  type="Guid" ></add>
+					<add name="StepID" columnName="StepID" isNullable="true"  type="Guid" ></add>
+					<add name="StepName"  columnName="StepName" isNullable="true"  type="string" dataLength="500"	></add>
+					<add name="SenderName"  columnName="SenderName" isNullable="true"  type="string" dataLength="50"	></add>
+					<add name="ReceiveName"  columnName="ReceiveName" isNullable="true"  type="string" dataLength="50"></add>
+					<add name="InstanceID" columnName="InstanceID" isNullable="true"   type="string" dataLength="50"></add>
+					<add name="GroupID" columnName="GroupID" isNullable="true"  type="Guid" ></add>
+					<add name="Type" columnName="Type" isNullable="true"  type="int" ></add>
 					<add name="Title"  type="string" isNullable="true"  dataLength="200"></add>
-					<add name="SenderID" columnName="SenderID" type="Guid" ></add>
-					<add name="ReceiveID" columnName="ReceiveID" type="Guid" ></add>
-					<add name="SenderTime" columnName="SenderTime" type="DateTime" ></add>
-					<add name="ReceiveTime" columnName="ReceiveTime" type="DateTime" ></add>
+					<add name="SenderID" columnName="SenderID" type="Guid" isNullable="true" ></add>
+					<add name="SenderName"  columnName="SenderName" type="string" dataLength="50"	isNullable="true" ></add>
+					<add name="ReceiveID" columnName="ReceiveID" type="Guid" isNullable="true" ></add>
+					<add name="ReceiveName"  columnName="ReceiveName" type="string" dataLength="50"	isNullable="true" ></add>
+					<add name="SenderTime" columnName="SenderTime" type="DateTime" isNullable="true" ></add>
+					<add name="ReceiveTime" columnName="ReceiveTime" type="DateTime" isNullable="true" ></add>
+					<add name="OpenTime" columnName="OpenTime" type="DateTime" isNullable="true" ></add>
 					<add name="CompletedTime" columnName="CompletedTime" type="DateTime" isNullable="true"></add>
 					<add name="CompletedTime1" columnName="CompletedTime1" type="DateTime" isNullable="true"></add>
 					<add name="Comment"  columnName="Comment" type="string" dataLength="1000"	 isNullable="true"></add>
 					<add name="IsSign" columnName="IsSign" type="int" isNullable="true" ></add>
-					<add name="Status" columnName="Status" type="int"></add>
+					<add name="Status" columnName="Status" type="int" isNullable="true" ></add>
 					<add name="Note"  columnName="Note" type="string" dataLength="1000"	  isNullable="true"></add>
-					<add name="Sort" columnName="Sort" type="int" ></add>
+					<add name="Sort" columnName="Sort" type="int" isNullable="true" ></add>
+					<add name="SubFlowGroupID" columnName="SubFlowGroupID" type="Guid" isNullable="true" ></add>
 
 				</columns>
 			</table>
+
 
 			<!-- Eval 2017-08 build-->
 
@@ -762,14 +769,15 @@
 				<columns>
 
 					<add name="FolderId"  columnName="ID" type="Guid" primaryKey="true" display="文件夹ID" />
-					<add name="ParentId"  columnName="ParentId"  type="Guid" />
-					<add name="SortId"   columnName="SortId"   type="int" />
+					<add name="ParentId"  type="Guid" />
+					<add name="SortId"     type="int" />
 					<add name="FolderName" type="string"  dataLength="200"  display="文件夹名称" />
-					<add name="FolderType" type="int" />
+					<add name="FolderType" isNullable="true"  type="Guid" />
+					<add name="OperatorId" type="Guid"/>
 					<add name="FolderPath" type="string" dataLength="1000"  />
 					<add name="FileCount"  type="int" />
 					<add name="FolderCount" type="int" />
-					<add name="OperatorId" type="Guid"/>
+			
 
 				</columns>
 			</table>

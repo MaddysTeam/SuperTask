@@ -125,14 +125,10 @@
 
 			var projectId = '@Model.ProjectId';
 
-			$('.btn-start').on('click', function () {
-				if (confirm('@Confirm.Project.PROJECT_CONFIRM_START')) {
-					$('#ProjectStatus').val('@ProjectKeys.ProcessStatus');
-				}
-				else {
-					return false;
-				}
-			});
+			@*$('.btn-review').on('click', function () {
+				alert();
+				$('#modelProxy').data('url', '@Url.Action("ReviewRequest","Project")').trggier('click');
+			})*@
 
 			$('.btn-forceClose').on('click', function () {
 				if (confirm('@Confirm.Project.PROJECT_FORCE_CLOSE')) {

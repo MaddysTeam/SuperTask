@@ -22,28 +22,11 @@ namespace TheSite.Controllers
 
       public ActionResult Search()
       {
-         //TODO: 稍晚要修改从 company 表读取
-
-         var all = db.ProjectDal.ConditionQuery(null, null, null, null)
-            .ToDictionary(x => x.ProjectId, v => new { owner = v.ProjectOwner, executor = v.ProjectExecutor });
-
-         var executors = new List<SelectListItem>();
-         var owners = new List<SelectListItem>();
-
-         if (all != null && all.Count > 0)
-         {
-            executors = all.Values.GroupBy(x => x.executor).Select(v => new SelectListItem { Text = v.Key, Value = v.Key }).ToList();
-            owners = all.Values.GroupBy(x => x.owner).Select(v => new SelectListItem { Text = v.Key, Value = v.Key }).ToList();
-         }
-
-         ViewBag.Owners = owners;
-         ViewBag.Executors = executors;
-
          return View();
       }
 
       [HttpPost]
-      public ActionResult Search(string owner, string executor, int current, int rowCount, AjaxOrder sort, string searchPhrase)
+      public ActionResult Search(Guid searchTypeId, int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
          ThrowNotAjax();
 
@@ -54,23 +37,29 @@ namespace TheSite.Controllers
 
          var query = APQuery.select(p.ProjectId, p.RealCode, p.ProjectType, p.ProjectExecutor, p.ProjectName, p.RateOfProgress,
                                     p.ProjectOwner, p.ProjectStatus, p.OrgId, u.UserName.As("managerName")
-                                    // o.Name.As("orgName")
                                     )
             .from(p,
-                  //o.JoinLeft(o.ID == p.OrgId),
-                  u.JoinLeft(u.UserId == p.ManagerId),
-                  r.JoinInner((r.Projectid == p.ProjectId & r.UserId == user.UserId))
+                  u.JoinLeft(u.UserId == p.ManagerId)
+                  //r.JoinInner((r.Projectid == p.ProjectId & r.UserId == user.UserId))
                   )
             .where(p.ProjectStatus.NotIn(ProjectKeys.DeleteStatus, ProjectKeys.CompleteStatus));
 
-         if (owner != ThisApp.SelectAll)
-            query.where_and(p.ProjectOwner == owner);
+         if(searchTypeId==ProjectKeys.SearchMyProject)
+            query.where_and(p.ManagerId == user.UserId);
 
-         if (executor != ThisApp.SelectAll)
-            query.where_and(p.ProjectExecutor == executor);
+         if (searchTypeId == ProjectKeys.SearchMyJoinedProject)
+         {
+            var subquery = APQuery.select(r.Projectid).from(r).where(r.UserId == user.UserId );
+            query.where_and(p.ProjectId.In(subquery) & p.ManagerId!=user.UserId);
+         }
+            //if (owner != ThisApp.SelectAll)
+            //   query.where_and(p.ProjectOwner == owner);
+
+            //if (executor != ThisApp.SelectAll)
+            //   query.where_and(p.ProjectExecutor == executor);
 
 
-         query.primary(p.ProjectId)
+            query.primary(p.ProjectId)
             .order_by(p.CreateDate.Desc)
             .skip((current - 1) * rowCount)
              .take(rowCount);
@@ -147,8 +136,7 @@ namespace TheSite.Controllers
 
       // GET: Project/Edit
       // Post-ajax: Project/Edit
-      // Post-ajax: Project/Details
-
+    
       public ActionResult Edit(Guid id)
       {
          var userId = GetUserInfo().UserId;
@@ -180,6 +168,8 @@ namespace TheSite.Controllers
          });
       }
 
+
+      // Post-ajax: Project/Details
 
       [HttpGet]
       public ActionResult Details(Guid id)
@@ -222,7 +212,10 @@ namespace TheSite.Controllers
 
          project.Resources = db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
          project.ProjectProgress = ProjectrHelper.GetProcessByNodeTasks(id, db);
-         project.IsInReview = db.ReviewDal.ConditionQueryCount(rev.ProjectId == id & rev.ReceiverID == GetUserInfo().UserId) > 0;
+         project.CurrentReview = db.ReviewDal.ConditionQuery(rev.ProjectId == id
+                                                             & rev.ReviewType == ReviewKeys.ReviewTypeForPjStart
+                                                             & rev.Result == Guid.Empty
+                                                             & rev.ReceiverID == GetUserInfo().UserId , null, null, null).FirstOrDefault();
 
          return View(project);
       }
@@ -259,18 +252,34 @@ namespace TheSite.Controllers
       }
 
 
-      public ActionResult ReviewRequet()
+      // GET: Project/ReviewRequest
+      // Post-ajax: Project/ReviewRequest
+
+      public ActionResult ReviewRequest(Guid id)
       {
-         return PartialView();
+         var project = ProjectrHelper.GetCurrentProject(id);
+         var review = new Review { ProjectId = project.ProjectId, ProjectName= project.ProjectName ,ReviewType=ReviewKeys.ReviewTypeForPjStart};
+
+         return PartialView(review);
       }
 
       [HttpPost]
-      public ActionResult ReviewRequet(Guid id, Review review)
+      public ActionResult ReviewRequest(Review review)
       {
+         var validateResult = review.Validate();
+         if (!validateResult.IsSuccess)
+         {
+            return Json(new
+            {
+               result = AjaxResults.Error,
+               msg = validateResult.Msg
+            });
+         }
+
          var r = APDBDef.Review;
 
-         var isRequest = db.ReviewDal.ConditionQueryCount(r.ProjectId == id & r.Result != Guid.Empty) > 0;
-         if (isRequest)
+         var hasRequest = db.ReviewDal.ConditionQueryCount(r.ProjectId == review.ProjectId & r.ReviewType == ReviewKeys.ReviewTypeForPjStart & r.Result != Guid.Empty) > 0;
+         if (hasRequest)
          {
             return Json(new
             {
@@ -280,9 +289,11 @@ namespace TheSite.Controllers
          }
          else
          {
-            var project = db.ProjectDal.PrimaryGet(id);
+            var project = db.ProjectDal.PrimaryGet(review.ProjectId);
             project.SetStatus(ProjectKeys.ReviewStatus);
             db.ProjectDal.Update(project);
+
+            db.ReviewDal.Insert(review);
          }
 
          return Json(new

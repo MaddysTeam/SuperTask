@@ -3,16 +3,18 @@
 	var tabId = ViewBag.TabId;
 	var project = ViewData["project"] as Project;
 	var venderPayments = PaymentsHelper.GetVenderPaymentsFromProjectPayments(Model);
-	var canEdit = project.IsPlanStatus || project.IsEditStatus || project.CreateDate < DateTime.Parse("2019-02-01");
-	var projectPaymentCanEditOnly = !Model.Where(x => x.PayType == PaymentsKeys.ProjectPaymentsType).All(x => x.IsConfirm == true);
+	var canEdit = project.IsPlanStatus || project.IsEditStatus;
+	var projectPaymentCanEditOnly = !Model.Where(x => x.PayType == PaymentsKeys.ProjectPaymentsType).All(x => x.IsConfirm == true);
 }
+
 <div class="widget-header">
 	<ul class="nav nav-tabs">
 		<li class="@(tabId=="moneytab" ? "active":string.Empty)"><a href="#moneyTab" data-toggle="tab"><i class="fa fa-get-pocket"></i> 款项管理</a></li>
 		<li class="@(tabId=="vendertab" ? "active":string.Empty)"><a href="#venderTab" data-toggle="tab"><i class="fa fa-bookmark"></i> 外包管理</a></li>
-		<li class="@(tabId=="deliverytab" ? "active":string.Empty)"><a href="#deliveryTab" data-toggle="tab"><i class="fa fa-check-circle"></i> 验收管理</a></li>
+		@*<li class="@(tabId=="deliverytab" ? "active":string.Empty)"><a href="#deliveryTab" data-toggle="tab"><i class="fa fa-check-circle"></i> 验收管理</a></li>*@
 	</ul>
 </div>
+
 <div class="widget-content">
 	<div class="tab-content no-padding">
 		<div class="tab-pane fade in  @(tabId=="moneytab" ? "active":string.Empty)" id="moneyTab" data-id="moneyTab">
@@ -59,6 +61,12 @@
 			{
 				Html.RenderPartial("_projectPayments", item, ViewData);
 			}
+			<hr />
+			@foreach (var item in Model.FindAll(p => p.IsDeliveryType) ?? new List<Payments>())
+			{
+				Html.RenderPartial("_deliveryPayments", item, ViewData);
+			}
+			
 		</div>
 		<div class="tab-pane fade in  @(tabId=="vendertab" ? "active":string.Empty)" id="venderTab" data-id="venderTab">
 				@if (canEdit)
@@ -74,14 +82,6 @@
 					Html.RenderPartial("_venderPayments", item, ViewData);
 				}
 			</div>
-		</div>
-		<div class="tab-pane fade in @(tabId=="deliverytab" ?"active":string.Empty)" id="deliveryTab" data-id="deliveryTab">
-			@{
-				foreach (var item in Model.FindAll(p => p.IsDeliveryType) ?? new List<Payments>())
-				{
-					Html.RenderPartial("_deliveryPayments", item, ViewData);
-				}
-			}
 		</div>
 	</div>
 </div>

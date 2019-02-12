@@ -1,8 +1,8 @@
 ﻿@model Payments
 @{
 	var project = ViewData["project"] as Project;
-	var canEdit = project.IsPlanStatus || project.IsEditStatus || project.CreateDate < DateTime.Parse("2019-02-01");
-}
+	var canEdit = !project.IsCompleteStatus && !Model.IsConfirm;
+} 
 <div class="row form-group">
 	@Html.HiddenFor(p => p.PayId, new { @class = "payId" })
 	@Html.HiddenFor(p => p.ProjectId, new { @class = "projectId" })
@@ -16,7 +16,7 @@
 	<div class="col-md-1">回收金额:</div>
 	<div class="col-md-1">@Html.TextBoxFor(p => p.Money, new { @class = "form-control money" })</div>
 	<div class="col-md-1">预计回收时间:</div>
-	<div class="col-md-3">
+	<div class="col-md-2">
 		@if (canEdit)
 		{
 			<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
@@ -32,7 +32,11 @@
 	<div class="col-md-2">
 		@if (canEdit)
 		{
-			<a class="btn-pay" title="保存"><i class="fa fa-save"></i></a>
+			<a class="btn btn-pay" title="保存"><i class="fa fa-save"></i></a>
+			if (project.IsProcessStatus && !Model.IsConfirm)
+			{
+				<a class="btn btn-danger btn-confirm-pay" title="最终确认" data-confirm="true" hidden><i class="fa fa-"></i>最终确认</a>
+			}
 			if (Model.Valiedate().IsSuccess)
 			{
 				<a class="btn btn-clear" title="清除并删除节点任务"> <font color="red"><i class="fa fa-times-circle-o"></i></font></a>

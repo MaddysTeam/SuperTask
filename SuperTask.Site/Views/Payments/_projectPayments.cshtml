@@ -61,7 +61,7 @@
 		@if (canEdit)
 		{
 			<a class="btn btn-pay" title="保存"> <i class="fa fa-save"></i></a>
-			if (!project.IsPlanStatus && !project.IsCompleteStatus)
+			if (project.IsProcessStatus && !Model.IsConfirm)
 			{
 				<a class="btn btn-danger btn-confirm-pay" title="最终确认" data-confirm="true" hidden><i class="fa fa-"></i>最终确认</a>
 			}

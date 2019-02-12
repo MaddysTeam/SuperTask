@@ -39,6 +39,8 @@ namespace Business
 
       public Attachment Attachment { get; set; }
 
+      public Review CurrentReview { get; set; }
+
       public bool IsPlanStatus => this.ProjectStatus == ProjectKeys.PlanStatus;
 
       public bool IsProcessStatus => this.ProjectStatus == ProjectKeys.ProcessStatus;

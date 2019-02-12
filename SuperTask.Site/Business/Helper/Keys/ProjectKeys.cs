@@ -43,6 +43,11 @@ namespace Business.Helper
       public const int DefaultDateRange = 10;
 
 
+      //列表查询类型
+      public static Guid SearcType = Guid.Parse("efaae6de-c996-4987-8768-7a76f2355a97");
+      public static Guid SearchMyProject = Guid.Parse("f23636ce-8963-46c4-a467-c395c4d818e4");
+      public static Guid SearchMyJoinedProject = Guid.Parse("98a332ce-1ae7-46ec-b32b-d4fc0bd0c5ec");
+
       /// <summary>
       /// 获取项目状态名称
       /// </summary>
