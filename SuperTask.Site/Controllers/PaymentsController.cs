@@ -17,6 +17,8 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult Edit(Payments payments)
       {
+         var t = APDBDef.WorkTask;
+
          var validateResult = payments.Valiedate();
          if (!validateResult.IsSuccess)
             return Json(new
@@ -36,10 +38,10 @@ namespace TheSite.Controllers
             db.PaymentsDal.Update(payments);
          }
 
+         //新增项目节点任务
          var pst = APDBDef.ProjectStoneTask;
-         var taskExists = db.ProjectStoneTaskDal.ConditionQueryCount(pst.PmsId == payments.PayId & pst.ProjectId == payments.ProjectId) > 0;
-
-         if (!taskExists)
+         var stonetaskExists = db.ProjectStoneTaskDal.ConditionQueryCount(pst.PmsId == payments.PayId & pst.ProjectId == payments.ProjectId) > 0;
+         if (!stonetaskExists)
          {
             db.ProjectStoneTaskDal.Insert(new ProjectStoneTask(
               Guid.NewGuid(),
@@ -54,7 +56,8 @@ namespace TheSite.Controllers
               DateTime.Now,
               TaskKeys.NodeTaskType,
               project.ManagerId,
-              project.ReviewerId
+              project.ReviewerId,
+              DateTime.MinValue
               ));
          }
          else
@@ -63,6 +66,32 @@ namespace TheSite.Controllers
               .update(pst)
               .set(pst.EndDate.SetValue(payments.InvoiceDate), pst.StartDate.SetValue(payments.InvoiceDate), pst.TaskName.SetValue(payments.PayName))
               .where(pst.PmsId == payments.PayId).execute(db);
+         }
+
+         //新增项目任务
+         var taskIsExists = db.WorkTaskDal.ConditionQueryCount(t.Projectid == project.ProjectId & t.TaskName == payments.PayName) > 0;
+         if (!taskIsExists)
+         {
+            var tasks = db.WorkTaskDal.ConditionQuery(t.Projectid == project.ProjectId, null, null, null);
+            var root = tasks.Find(x => x.ParentId == Guid.Empty);
+            db.WorkTaskDal.Insert(new WorkTask
+            {
+               TaskId = Guid.NewGuid(),
+               Projectid = project.ProjectId,
+               CreateDate = DateTime.Now,
+               CreatorId = project.ManagerId,
+               StartDate = project.StartDate,
+               EndDate = project.EndDate,
+               ManagerId = project.ManagerId,
+               ReviewerID = project.ReviewerId,
+               TaskStatus = project.IsPlanStatus ? TaskKeys.PlanStatus : TaskKeys.ProcessStatus,
+               IsParent = false,
+               ParentId = root.TaskId,
+               TaskName = payments.PayName,
+               TaskType = TaskKeys.ProjectTaskType,
+               TaskLevel = 2,
+               SortId = tasks.Count + 1
+            });
          }
 
          return Json(new

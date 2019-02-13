@@ -96,8 +96,10 @@ namespace TheSite.Controllers
          {
             if (task.IsTempEditStatus)
             {
+               task.UpgradeEndDate = task.EndDate;
                task.SetStatus(TaskKeys.ProcessStatus);
             }
+
             db.ProjectStoneTaskDal.Update(task);
          }
 

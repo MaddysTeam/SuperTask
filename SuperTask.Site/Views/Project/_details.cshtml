@@ -3,6 +3,9 @@
 @{
 	var resourceSelectList = SelectListHelper.GetSelectItems(Model.Resources, "ResourceName", "UserId", null, SelectListHelper.Default);
 	var isLeader = Html.HasInRole(RoleKeys.ADMIN) || Html.HasInRole(RoleKeys.LEADER);
+	var isReviewer = Model.ReviewerId == Html.GetUserProfile().UserId;
+	var isMe = Model.ManagerId == Html.GetUserProfile().UserId;
+	var canEditDetails = (Html.HasPermission(Model.ProjectId.ToString(), "P_10002") && Model.ManagerId == Html.GetUserProfile().UserId) || isLeader;
 }
 <style>
 	input[disabled] {
@@ -26,22 +29,23 @@
 		<div class="widget-header">
 			<h3><i class="fa fa-info"></i>项目信息</h3>
 			<div class="btn-group widget-header-toolbar">
-				@if (Html.HasPermission(Model.ProjectId.ToString(), "P_10002"))
+				@if (isMe || isReviewer || isLeader)
 				{
 					<button type="submit" class="btn btn-danger btn-sm btn-save">保存</button>
-					if (Model.IsPlanStatus || Model.IsEditStatus)
-					{
-						<button class="btn btn-info btn-sm btn-milestone" id="milestones" data-toggle="ajax-modal" data-url="@Url.Action("ReviewRequest", "Project",new { id= Model.ProjectId})" data-target="#firstModal">提交审核申请</button>
-}
-					if (Model.IsReviewStatus)
-					{
-						<button class="btn btn-success btn-sm btn-start" disabled>审核中</button>
-}
-					if (Model.IsProcessStatus)
-					{
-						<button type="submit" class="btn btn-info btn-sm btn-forceClose" title="注意：强制关闭后，项目所有任务都关闭，项目状态也为关闭状态"><i class="fa fa-question-circle"></i>强制关闭</button>
-					}
 				}
+				@if ((Model.IsPlanStatus || Model.IsEditStatus) && isMe)
+				{
+				<a class="btn btn-info btn-sm btn-milestone" style="color:white; padding-top:3%" id="milestones" data-toggle="ajax-modal" data-url="@Url.Action("ReviewRequest", "Project",new { id= Model.ProjectId})" data-target="#firstModal">提交审核</a>
+				}
+				@if (Model.IsReviewStatus)
+				{
+				<button class="btn btn-success btn-sm btn-start" disabled>审核中</button>
+				}
+				@if (Model.IsProcessStatus && isMe)
+				{
+				<button type="submit" class="btn btn-info btn-sm btn-forceClose" title="注意：强制关闭后，项目所有任务都关闭，项目状态也为关闭状态"><i class="fa fa-question-circle"></i>强制关闭</button>
+				}
+
 			</div>
 		</div>
 		<div class="widget-content">
@@ -81,21 +85,6 @@
 							@Html.ValidationMessageFor(p => p.ProjectOwner)
 						</div>
 					</div>
-					@*<div class="form-group">
-							@Html.LabelFor(p => p.Header, new { @class = "control-label col-md-3" })
-							<div class="col-md-9">
-								@Html.DropDownListFor(p => p.PMId,
-										resourceSelectList,
-										new { @class = "form-control dropdown-header" })
-							</div>
-						</div>*@
-					@*<div class="form-group">
-							@Html.LabelFor(p => p.Description, new { @class = "control-label col-md-3" })
-							<div class="col-md-9">
-								@Html.TextAreaFor(p => p.Description, new { @class = "form-control plan" })
-								@Html.ValidationMessageFor(p => p.Description)
-							</div>
-						</div>*@
 					@if (Model.IsPlanStatus)
 					{
 						<div class="form-group">
@@ -116,7 +105,7 @@
 								</div>
 							</div>
 						</div>
-}
+					}
 					else
 					{
 						@Html.HiddenFor(x => x.StartDate)
@@ -133,7 +122,7 @@
 								@Html.Label("预估结束", Model.StartDate.ToString("yyyy-MM-dd"), new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue, @readonly = "readonly" })
 							</div>
 						</div>
-}
+					}
 					<div class="form-group">
 						@Html.LabelFor(p => p.ProjectProgress, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
@@ -142,13 +131,6 @@
 					</div>
 				</fieldset>
 				<fieldset class="col-sm-6">
-					@*<div class="form-group">
-							@Html.LabelFor(p => p.Code, new { @class = "control-label col-md-3" })
-							<div class="col-md-9">
-								@Html.TextBoxFor(p => p.Code, new { @class = "form-control plan" })
-								@Html.ValidationMessageFor(p => p.Code)
-							</div>
-						</div>*@
 					<div class="form-group">
 						@Html.LabelFor(p => p.RealCode, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
@@ -189,27 +171,15 @@
 					</div>
 				</fieldset>
 			</div>
-			@*<div class="row projectEstimateEdit">
-					<fieldset class="col-sm-6">
-
-
-
-					</fieldset>
-					<fieldset class="col-sm-6"></fieldset>
-					<fieldset class="col-sm-6">
-
-					</fieldset>
-				</div>*@
 		</div>
 	</form>
 </div>
-@if (Html.HasPermission(Model.ProjectId.ToString(), "P_10002") || isLeader)
+@if (canEditDetails)
 {
 	<div id="paymentsArea" class="widget"></div>
 
 	<div id="nodes" class="widget">
 		<div class="widget-header">
-
 			@if (Model.IsPlanStatus || Model.IsEditStatus)
 			{
 				<div class="btn-group widget-header-toolbar pull-right">
@@ -244,8 +214,9 @@
 		</div>
 	</div>
 
-	<div id="reviewArea">
+	if (Model.IsReviewStatus)
+	{
+		<div id="reviewArea"></div>
+	}
 
-
-	</div>
 }

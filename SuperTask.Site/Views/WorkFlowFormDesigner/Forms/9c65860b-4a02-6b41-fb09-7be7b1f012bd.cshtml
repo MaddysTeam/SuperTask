@@ -156,8 +156,19 @@
 		maxFilesize: 200,
 		init: function () {
 						this.on('success', function (file, data) {
-				$('.attachmentUrl').val(data.url);
+							$('.attachmentUrl').val(data.url);
 							setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
+
+							$.post('@Url.Action("SaveFile", "ProjectStoneTask")',
+							{
+								projectId:'@review.ProjectId',
+								taskId:'@review.TaskId',
+								fileName: data.filename,
+								filePath:data.url,
+								fileExt:data.ext
+							},function(){
+
+							});
 						});
 						this.on('error', function (file, message) {
 							popupMessage({ result: 'error', msg: message });

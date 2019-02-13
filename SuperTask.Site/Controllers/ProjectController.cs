@@ -2,6 +2,7 @@
 using Business.Helper;
 using Symber.Web.Data;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using TheSite.Models;
@@ -24,11 +25,10 @@ namespace TheSite.Controllers
       }
 
       [HttpPost]
-      public ActionResult Search( int current, int rowCount, AjaxOrder sort, string searchPhrase)
+      public ActionResult Search(Guid searchTypeId, string statusIds, int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
          ThrowNotAjax();
 
-         // var o = APDBDef.Organize;
          var u = APDBDef.UserInfo;
          var r = APDBDef.Resource;
          var user = GetUserInfo();
@@ -38,27 +38,31 @@ namespace TheSite.Controllers
                                     )
             .from(p,
                   u.JoinLeft(u.UserId == p.ManagerId)
-                  //r.JoinInner((r.Projectid == p.ProjectId & r.UserId == user.UserId))
                   )
             .where(p.ProjectStatus.NotIn(ProjectKeys.DeleteStatus, ProjectKeys.CompleteStatus));
 
-         //if (searchTypeId == ProjectKeys.SearchMyProject)
-         //   query.where_and(p.ManagerId == user.UserId);
+         if (searchTypeId == ProjectKeys.SearchMyProject)
+            query.where_and(p.ManagerId == user.UserId);
 
-         //if (searchTypeId == ProjectKeys.SearchMyJoinedProject)
-         //{
-         //   var subquery = APQuery.select(r.Projectid).from(r).where(r.UserId == user.UserId);
-         //   query.where_and(p.ProjectId.In(subquery) & p.ManagerId != user.UserId);
-         //}
+         if (searchTypeId == ProjectKeys.SearchMyJoinedProject)
+         {
+            var subquery = APQuery.select(r.Projectid).from(r).where(r.UserId == user.UserId);
+            query.where_and(p.ProjectId.In(subquery) & p.ManagerId != user.UserId);
+         }
 
-         query.where_and(p.ManagerId == user.UserId | p.PMId==user.UserId); //TODO:will delete
+         if (!string.IsNullOrEmpty(statusIds))
+         {
+            List<Guid> idList = new List<Guid>();
+            statusIds.Split(',').ToList().ForEach(x => { idList.Add(Guid.Parse(x)); });
+
+            query.where_and(p.ProjectStatus.In(idList.ToArray()));
+         }
 
          //if (owner != ThisApp.SelectAll)
          //   query.where_and(p.ProjectOwner == owner);
 
          //if (executor != ThisApp.SelectAll)
          //   query.where_and(p.ProjectExecutor == executor);
-
 
          query.primary(p.ProjectId)
          .order_by(p.CreateDate.Desc)
@@ -210,9 +214,9 @@ namespace TheSite.Controllers
 
          //项目资源
          project.Resources = db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
-               
+
          //项目进度
-         project.ProjectProgress = ProjectrHelper.GetProcessByNodeTasks(id, db);  
+         project.ProjectProgress = ProjectrHelper.GetProcessByNodeTasks(id, db);
 
          return View(project);
       }
@@ -324,16 +328,24 @@ namespace TheSite.Controllers
                                                              & rev.ReviewType == ReviewKeys.ReviewTypeForPjChanged
                                                              & rev.Result == Guid.Empty
                                                              & rev.ReceiverID == GetUserInfo().UserId, null, null, null).FirstOrDefault();
-         return PartialView("_submitReview",reviewRequest);
+         return PartialView("_submitReview", reviewRequest);
       }
 
       [HttpPost]
       public ActionResult SubmitReviewAction(Review review)
       {
+         if (review.Result == ReviewKeys.ResultSuccess)
+         {
+            return ReviewSuccess(review.ProjectId, review.ReviewId);
+         }
+         else if (review.Result == ReviewKeys.ResultFailed)
+         {
+            return ReviewFail(review.ReviewId);
+         }
          return Json(new
          {
             result = AjaxResults.Success,
-            msg = ""
+            msg = Errors.Review.REVIEW_FAILURE
          });
       }
 
@@ -346,31 +358,34 @@ namespace TheSite.Controllers
 
          APQuery.update(r)
                 .set(r.Result.SetValue(ReviewKeys.ResultSuccess), r.ReviewDate.SetValue(DateTime.Now))
-                .where(r.ReviewId == reviewId);
+                .where(r.ReviewId == reviewId)
+                .execute(db);
 
          APQuery.update(p)
                 .set(p.ProjectStatus.SetValue(ProjectKeys.ProcessStatus))
-                .where(p.ProjectId == id);
+                .where(p.ProjectId == id)
+                .execute(db);
 
          return Json(new
          {
             result = AjaxResults.Success,
-            msg = Success.Review.REQUEST_SUBMIT
+            msg = Success.Review.OPERATION_SUCCESS
          });
       }
 
-      private ActionResult ReviewFail(Guid id, Guid reviewId)
+      private ActionResult ReviewFail(Guid reviewId)
       {
          var r = APDBDef.Review;
 
          APQuery.update(r)
                 .set(r.Result.SetValue(ReviewKeys.ResultSuccess), r.ReviewDate.SetValue(DateTime.Now))
-                .where(r.ReviewId == reviewId);
+                .where(r.ReviewId == reviewId)
+                .execute(db);
 
          return Json(new
          {
             result = AjaxResults.Error,
-            msg = Errors.Review.REVIEW_FAILURE
+            msg = Success.Review.OPERATION_SUCCESS
          });
       }
 

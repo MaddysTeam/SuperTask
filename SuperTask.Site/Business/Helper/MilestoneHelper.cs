@@ -35,7 +35,7 @@ namespace Business.Helper
          var result = query.query(db, r =>
          {
             var stoneName = ms.StoneName.GetValue(r);
-            stoneName = string.IsNullOrEmpty(stoneName) ? p.PayName.GetValue(r) : stoneName ;
+            stoneName = string.IsNullOrEmpty(stoneName) ? p.PayName.GetValue(r) : stoneName;
             return new ProjectMileStone
             {
                PmsId = pms.PmsId.GetValue(r),
@@ -63,7 +63,9 @@ namespace Business.Helper
       {
          var f = APDBDef.Folder;
          var pm = APDBDef.ProjectMileStone;
+         var t = APDBDef.WorkTask;
 
+         var taskIsExists = db.WorkTaskDal.ConditionQueryCount(t.Projectid == project.ProjectId & t.TaskName == mileStone.StoneName) > 0;
          var isExists = db.ProjectMileStoneDal.ConditionQueryCount(pm.Projectid == project.ProjectId & pm.StoneId == mileStone.StoneId) > 0;
          if (!isExists)
          {
@@ -94,10 +96,33 @@ namespace Business.Helper
                DateTime.Now,
                TaskKeys.NodeTaskType,
                project.ManagerId,
-               project.ReviewerId
+               project.ReviewerId,
+               DateTime.MinValue
                ));
+         }
 
-           // db.WorkTaskDal.Insert(new WorkTask { });
+         if (!taskIsExists)
+         {
+            var tasks= db.WorkTaskDal.ConditionQuery(t.Projectid == project.ProjectId,null,null,null);
+            var root = tasks.Find(x => x.ParentId == Guid.Empty);
+            db.WorkTaskDal.Insert(new WorkTask
+            {
+               TaskId = Guid.NewGuid(),
+               Projectid=project.ProjectId,
+               CreateDate = DateTime.Now,
+               CreatorId = project.ManagerId,
+               StartDate = project.StartDate,
+               EndDate = project.EndDate,
+               ManagerId = project.ManagerId,
+               ReviewerID= project.ReviewerId,
+               TaskStatus = project.IsPlanStatus ? TaskKeys.PlanStatus : TaskKeys.ProcessStatus,
+               IsParent = false,
+               ParentId = root.TaskId,
+               TaskName = mileStone.StoneName,
+               TaskType = TaskKeys.ProjectTaskType,
+               TaskLevel = 2,
+               SortId = tasks.Count+1
+            });
          }
       }
 

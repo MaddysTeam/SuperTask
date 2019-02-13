@@ -207,6 +207,7 @@ namespace Business.Helper
       public class Review {
          public const string REQUEST_SEND_SUCCESS = "审核请求已发送！";
          public const string REQUEST_SUBMIT = "审核通过！";
+         public const string OPERATION_SUCCESS = "操作成功！";
       }
 
 

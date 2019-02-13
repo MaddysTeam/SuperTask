@@ -144,6 +144,22 @@ namespace Business
       }
 
 
+      public static IEnumerable<SelectListItem> GetSelectListById(this CacheUnit unit, string ids)
+      {
+         foreach (var key in unit.GuidDicItems.Keys)
+         {
+            var dictionary = unit.GuidDicItems[key];
+
+            yield return new SelectListItem()
+            {
+               Value = dictionary.ID.ToString(),
+               Text = unit.GuidDicItems[key].Title,
+               Selected = ids.IndexOf(dictionary.ID.ToString())>=0
+            };
+         }
+      }
+
+
       public static IEnumerable<SelectListItem> GetSelectListById(this CacheUnit unit, Guid id)
       {
          foreach (var key in unit.GuidDicItems.Keys)

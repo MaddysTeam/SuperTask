@@ -78,7 +78,7 @@
 							<div class="col-md-7">
 
 								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-									@Html.TextBox("Start", DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd"), new { @class = "form-control startDate" })
+									@Html.TextBox("Start", DateTime.Now.AddDays(-200).ToString("yyyy-MM-dd"), new { @class = "form-control startDate" })
 									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 								</div>
 
@@ -110,6 +110,7 @@
 								<th data-column-id="taskType">任务类型</th>
 								<th data-column-id="start" data-formatter="DateOnly">预估开始</th>
 								<th data-column-id="end" data-formatter="DateOnly">预估结束</th>
+								<th data-column-id="upgradeString" >预估结束变更</th>
 								<th data-column-id="realEndString" >实际结束</th>
 								<th data-column-id="status">任务状态</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
@@ -172,14 +173,14 @@
 
 						var denyUrl = isPlan ? '@Url.Action("PlanTaskDeny", "Task")?id=' + id  : '@Url.Action("Deny", "ProjectStoneTask")?id=' + id ; // post 
 						var reviewUrl = '@Url.Action("Search", "WorkFlowTask")';
-						var edit = isPlan ? "编辑" : "上传文件";
+						//var edit = isPlan ? "编辑" : "上传文件";
 
 						if (isMe && row.statusId == '@TaskKeys.PlanStatus') {
 							buttons += '<button class="btn btn-lg btn-danger btn-start" data-url="' + startUrl + '">启动</button>';
-							buttons += '<button class="btn btn-lg btn-success btn-edit" data-url="' + editUrl + '">' + edit + '</button>';
+							buttons += '<button class="btn btn-lg btn-success btn-edit" data-url="' + editUrl + '">编辑</button>';
 						}
 						else if (isMe && row.statusId == '@TaskKeys.TaskTempEditStatus') {
-							buttons += '<button class="btn btn-lg btn-success btn-edit"  data-url="' + editUrl + '">' + edit + '</button>';
+							buttons += '<button class="btn btn-lg btn-success btn-edit"  data-url="' + editUrl + '">编辑</button>';
 						}
 						else if (isMe && row.statusId == '@TaskKeys.ProcessStatus') {
 							buttons += '<button class="btn btn-lg btn-info btn-editReq"   data-url="' + editReqeustUrl + '">修改申请</button>';

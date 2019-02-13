@@ -615,6 +615,7 @@ namespace TheSite.Controllers
                   reviewerId,
                   start,
                   [end],
+                  upgradeEndDate,
                   statusId,
                   isParent,
                   realEnd,
@@ -629,6 +630,7 @@ namespace TheSite.Controllers
                    t.ReviewerId,
                    t.StartDate as start,
                    t.EndDate as [end],
+                    null as upgradeEndDate,
                    t.Status as statusId,
                    t.IsParent,
                    t.ManagerId,
@@ -652,6 +654,7 @@ namespace TheSite.Controllers
                    t.ReviewerId,
                    t.StartDate,
                    t.EndDate,
+                   t.upgradeEndDate,
                    t.Status, 
                    0,
                    p.ManagerId,
@@ -721,6 +724,10 @@ namespace TheSite.Controllers
                default: builder.Append($" order by s.start desc "); break;
             }
          }
+         else
+         {
+            builder.Append($" order by s.[end] desc ");
+         }
 
          var result = DapperHelper.QueryBySQL<PlanAndNodeTaskViewModel>(builder.ToString(), new
          {
@@ -745,7 +752,8 @@ namespace TheSite.Controllers
                                                       TaskKeys.GetTypeKeyByValue(item.taskTypeId);
             item.isMe = user.UserId == item.managerId;
             item.reviewerIsMe = user.UserId == item.reviewerId;
-            item.realEndString = item.realEnd.IsEmpty() ? "-" : item.realEnd.ToString();
+            item.realEndString = item.realEnd.IsEmpty() ? "-" : item.realEnd.ToString("yyyy-MM-dd");
+            item.upgradeString = item.UpgradeEndDate.IsEmpty() ? "-" : item.UpgradeEndDate.ToString("yyyy-MM-dd");
          }
 
          result = result.Skip(rowCount * (current - 1)).Take(rowCount).ToList();

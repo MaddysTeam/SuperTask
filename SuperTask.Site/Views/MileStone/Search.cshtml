@@ -1,6 +1,6 @@
 ﻿@using Business.Config
 @{
-	var pageTitle = ViewBag.Title = "里程碑管理";
+	var pageTitle = ViewBag.Title = "节点管理";
 }
 @section Css{
 	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
@@ -12,7 +12,7 @@
 		<!-- widget -->
 		<div class="widget">
 			<div class="widget-header">
-				<h3>项目列表</h3>
+				<h3>节点列表</h3>
 				<div class="btn-group widget-header-toolbar">
 					<button class="btn btn-sm btn-custom-primary" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "MileStone",new { id=Guid.Empty})" data-target="#firstModal"><i class="fa fa-plus-square"></i> <span>新增</span></button>
 					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
@@ -28,9 +28,9 @@
 					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
 						<thead>
 							<tr>
-								<th data-column-id="name">里程碑名称</th>
-								<th data-column-id="type">里程碑类型</th>
-								<th data-column-id="projectStatus">里程碑状态</th>
+								<th data-column-id="name">节点名称</th>
+								<th data-column-id="type">节点类型</th>
+								<th data-column-id="projectStatus">节点状态</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
 							</tr>
 						</thead>

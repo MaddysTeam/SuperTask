@@ -3456,7 +3456,7 @@ namespace Business {
             public virtual StringAPColumnDef AppIds {
                 get {
                     if (Object.ReferenceEquals(_appIds, null)) {
-                        _appIds = new StringAPColumnDef(this, "AppIds", true, 200);
+                        _appIds = new StringAPColumnDef(this, "AppIds", true, 2000);
                         _appIds.Display = "项目角色权限";
                     }
                     return _appIds;
@@ -4482,6 +4482,8 @@ namespace Business {
             
             private GuidAPColumnDef _reviewerID;
             
+            private DateTimeAPColumnDef _upgradeEndDate;
+            
             public ProjectStoneTaskTableDef(string tableName) : 
                     base(tableName) {
             }
@@ -4661,6 +4663,19 @@ namespace Business {
             }
             
             /// <summary>
+            /// UpgradeEndDate ColumnDef
+            /// </summary>
+            public virtual DateTimeAPColumnDef UpgradeEndDate {
+                get {
+                    if (Object.ReferenceEquals(_upgradeEndDate, null)) {
+                        _upgradeEndDate = new DateTimeAPColumnDef(this, "UpgradeEndDate", true);
+                        _upgradeEndDate.Display = "变更结束时间";
+                    }
+                    return _upgradeEndDate;
+                }
+            }
+            
+            /// <summary>
             /// Default Index
             /// </summary>
             public virtual APSqlOrderPhrase DefaultOrder {
@@ -4693,6 +4708,7 @@ namespace Business {
                 data.TaskType = TaskType.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.ManagerId = ManagerId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.ReviewerID = ReviewerID.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.UpgradeEndDate = UpgradeEndDate.GetValue<System.DateTime>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -7330,6 +7346,8 @@ namespace Business {
             
             private StringAPColumnDef _title;
             
+            private StringAPColumnDef _reviewComment;
+            
             public ReviewTableDef(string tableName) : 
                     base(tableName) {
             }
@@ -7475,7 +7493,7 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_comment, null)) {
                         _comment = new StringAPColumnDef(this, "Comment", false, 1000);
-                        _comment.Display = "Comment";
+                        _comment.Display = "填写说明";
                     }
                     return _comment;
                 }
@@ -7491,6 +7509,19 @@ namespace Business {
                         _title.Display = "Title";
                     }
                     return _title;
+                }
+            }
+            
+            /// <summary>
+            /// ReviewComment ColumnDef
+            /// </summary>
+            public virtual StringAPColumnDef ReviewComment {
+                get {
+                    if (Object.ReferenceEquals(_reviewComment, null)) {
+                        _reviewComment = new StringAPColumnDef(this, "ReviewComment", true, 1000);
+                        _reviewComment.Display = "审核说明";
+                    }
+                    return _reviewComment;
                 }
             }
             
@@ -7526,6 +7557,7 @@ namespace Business {
                 data.AttachmentUrl = AttachmentUrl.GetValue<string>(reader, throwIfValidColumnName);
                 data.Comment = Comment.GetValue<string>(reader, throwIfValidColumnName);
                 data.Title = Title.GetValue<string>(reader, throwIfValidColumnName);
+                data.ReviewComment = ReviewComment.GetValue<string>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -13166,7 +13198,7 @@ namespace Business {
             /// 添加数据。
             /// </summary>
             public virtual void Insert(ProjectStoneTask data) {
-                var query = APQuery.insert(APDBDef.ProjectStoneTask).values(APDBDef.ProjectStoneTask.PstId.SetValue(data.PstId), APDBDef.ProjectStoneTask.PmsId.SetValue(data.PmsId), APDBDef.ProjectStoneTask.ProjectId.SetValue(data.ProjectId), APDBDef.ProjectStoneTask.TaskName.SetValue(data.TaskName), APDBDef.ProjectStoneTask.StartDate.SetValue(data.StartDate), APDBDef.ProjectStoneTask.EndDate.SetValue(data.EndDate), APDBDef.ProjectStoneTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.ProjectStoneTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.ProjectStoneTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.ProjectStoneTask.CreateDate.SetValue(data.CreateDate), APDBDef.ProjectStoneTask.TaskType.SetValue(data.TaskType), APDBDef.ProjectStoneTask.ManagerId.SetValue(data.ManagerId), APDBDef.ProjectStoneTask.ReviewerID.SetValue(data.ReviewerID));
+                var query = APQuery.insert(APDBDef.ProjectStoneTask).values(APDBDef.ProjectStoneTask.PstId.SetValue(data.PstId), APDBDef.ProjectStoneTask.PmsId.SetValue(data.PmsId), APDBDef.ProjectStoneTask.ProjectId.SetValue(data.ProjectId), APDBDef.ProjectStoneTask.TaskName.SetValue(data.TaskName), APDBDef.ProjectStoneTask.StartDate.SetValue(data.StartDate), APDBDef.ProjectStoneTask.EndDate.SetValue(data.EndDate), APDBDef.ProjectStoneTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.ProjectStoneTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.ProjectStoneTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.ProjectStoneTask.CreateDate.SetValue(data.CreateDate), APDBDef.ProjectStoneTask.TaskType.SetValue(data.TaskType), APDBDef.ProjectStoneTask.ManagerId.SetValue(data.ManagerId), APDBDef.ProjectStoneTask.ReviewerID.SetValue(data.ReviewerID), APDBDef.ProjectStoneTask.UpgradeEndDate.SetValue(data.UpgradeEndDate));
                 ExecuteNonQuery(query);
             }
             
@@ -13174,7 +13206,7 @@ namespace Business {
             /// 更新数据。
             /// </summary>
             public virtual void Update(ProjectStoneTask data) {
-                var query = APQuery.update(APDBDef.ProjectStoneTask).values(APDBDef.ProjectStoneTask.PmsId.SetValue(data.PmsId), APDBDef.ProjectStoneTask.ProjectId.SetValue(data.ProjectId), APDBDef.ProjectStoneTask.TaskName.SetValue(data.TaskName), APDBDef.ProjectStoneTask.StartDate.SetValue(data.StartDate), APDBDef.ProjectStoneTask.EndDate.SetValue(data.EndDate), APDBDef.ProjectStoneTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.ProjectStoneTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.ProjectStoneTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.ProjectStoneTask.CreateDate.SetValue(data.CreateDate), APDBDef.ProjectStoneTask.TaskType.SetValue(data.TaskType), APDBDef.ProjectStoneTask.ManagerId.SetValue(data.ManagerId), APDBDef.ProjectStoneTask.ReviewerID.SetValue(data.ReviewerID)).where((APDBDef.ProjectStoneTask.PstId == data.PstId));
+                var query = APQuery.update(APDBDef.ProjectStoneTask).values(APDBDef.ProjectStoneTask.PmsId.SetValue(data.PmsId), APDBDef.ProjectStoneTask.ProjectId.SetValue(data.ProjectId), APDBDef.ProjectStoneTask.TaskName.SetValue(data.TaskName), APDBDef.ProjectStoneTask.StartDate.SetValue(data.StartDate), APDBDef.ProjectStoneTask.EndDate.SetValue(data.EndDate), APDBDef.ProjectStoneTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.ProjectStoneTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.ProjectStoneTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.ProjectStoneTask.CreateDate.SetValue(data.CreateDate), APDBDef.ProjectStoneTask.TaskType.SetValue(data.TaskType), APDBDef.ProjectStoneTask.ManagerId.SetValue(data.ManagerId), APDBDef.ProjectStoneTask.ReviewerID.SetValue(data.ReviewerID), APDBDef.ProjectStoneTask.UpgradeEndDate.SetValue(data.UpgradeEndDate)).where((APDBDef.ProjectStoneTask.PstId == data.PstId));
                 ExecuteNonQuery(query);
             }
             
@@ -14629,7 +14661,7 @@ namespace Business {
             /// 添加数据。
             /// </summary>
             public virtual void Insert(Review data) {
-                var query = APQuery.insert(APDBDef.Review).values(APDBDef.Review.ReviewId.SetValue(data.ReviewId), APDBDef.Review.SenderID.SetValue(data.SenderID), APDBDef.Review.ReceiverID.SetValue(data.ReceiverID), APDBDef.Review.TaskId.SetValue(data.TaskId), APDBDef.Review.ProjectId.SetValue(data.ProjectId), APDBDef.Review.ReviewType.SetValue(data.ReviewType), APDBDef.Review.Result.SetValue(data.Result), APDBDef.Review.SendDate.SetValue(data.SendDate), APDBDef.Review.ReviewDate.SetValue(data.ReviewDate), APDBDef.Review.AttachmentUrl.SetValue(data.AttachmentUrl), APDBDef.Review.Comment.SetValue(data.Comment), APDBDef.Review.Title.SetValue(data.Title));
+                var query = APQuery.insert(APDBDef.Review).values(APDBDef.Review.ReviewId.SetValue(data.ReviewId), APDBDef.Review.SenderID.SetValue(data.SenderID), APDBDef.Review.ReceiverID.SetValue(data.ReceiverID), APDBDef.Review.TaskId.SetValue(data.TaskId), APDBDef.Review.ProjectId.SetValue(data.ProjectId), APDBDef.Review.ReviewType.SetValue(data.ReviewType), APDBDef.Review.Result.SetValue(data.Result), APDBDef.Review.SendDate.SetValue(data.SendDate), APDBDef.Review.ReviewDate.SetValue(data.ReviewDate), APDBDef.Review.AttachmentUrl.SetValue(data.AttachmentUrl), APDBDef.Review.Comment.SetValue(data.Comment), APDBDef.Review.Title.SetValue(data.Title), APDBDef.Review.ReviewComment.SetValue(data.ReviewComment));
                 ExecuteNonQuery(query);
             }
             
@@ -14637,7 +14669,7 @@ namespace Business {
             /// 更新数据。
             /// </summary>
             public virtual void Update(Review data) {
-                var query = APQuery.update(APDBDef.Review).values(APDBDef.Review.SenderID.SetValue(data.SenderID), APDBDef.Review.ReceiverID.SetValue(data.ReceiverID), APDBDef.Review.TaskId.SetValue(data.TaskId), APDBDef.Review.ProjectId.SetValue(data.ProjectId), APDBDef.Review.ReviewType.SetValue(data.ReviewType), APDBDef.Review.Result.SetValue(data.Result), APDBDef.Review.SendDate.SetValue(data.SendDate), APDBDef.Review.ReviewDate.SetValue(data.ReviewDate), APDBDef.Review.AttachmentUrl.SetValue(data.AttachmentUrl), APDBDef.Review.Comment.SetValue(data.Comment), APDBDef.Review.Title.SetValue(data.Title)).where((APDBDef.Review.ReviewId == data.ReviewId));
+                var query = APQuery.update(APDBDef.Review).values(APDBDef.Review.SenderID.SetValue(data.SenderID), APDBDef.Review.ReceiverID.SetValue(data.ReceiverID), APDBDef.Review.TaskId.SetValue(data.TaskId), APDBDef.Review.ProjectId.SetValue(data.ProjectId), APDBDef.Review.ReviewType.SetValue(data.ReviewType), APDBDef.Review.Result.SetValue(data.Result), APDBDef.Review.SendDate.SetValue(data.SendDate), APDBDef.Review.ReviewDate.SetValue(data.ReviewDate), APDBDef.Review.AttachmentUrl.SetValue(data.AttachmentUrl), APDBDef.Review.Comment.SetValue(data.Comment), APDBDef.Review.Title.SetValue(data.Title), APDBDef.Review.ReviewComment.SetValue(data.ReviewComment)).where((APDBDef.Review.ReviewId == data.ReviewId));
                 ExecuteNonQuery(query);
             }
             
@@ -27765,7 +27797,7 @@ namespace Business {
         /// 权限Id用逗号分开
         /// </summary>
         [Display(Name="项目角色权限")]
-        [StringLength(200)]
+        [StringLength(2000)]
         public virtual string AppIds {
             get {
                 return _appIds;
@@ -29736,6 +29768,11 @@ namespace Business {
         private System.Guid _reviewerID;
         
         /// <summary>
+        /// UpgradeEndDate
+        /// </summary>
+        private System.DateTime _upgradeEndDate;
+        
+        /// <summary>
         /// 默认构造函数。
         /// </summary>
         public ProjectStoneTaskBase() {
@@ -29744,7 +29781,7 @@ namespace Business {
         /// <summary>
         /// 初始化所有字段的构造函数。
         /// </summary>
-        public ProjectStoneTaskBase(System.Guid pstId, System.Guid pmsId, System.Guid projectId, string taskName, System.DateTime startDate, System.DateTime endDate, System.DateTime realStartDate, System.DateTime realEndDate, System.Guid taskStatus, System.DateTime createDate, System.Guid taskType, System.Guid managerId, System.Guid reviewerID) {
+        public ProjectStoneTaskBase(System.Guid pstId, System.Guid pmsId, System.Guid projectId, string taskName, System.DateTime startDate, System.DateTime endDate, System.DateTime realStartDate, System.DateTime realEndDate, System.Guid taskStatus, System.DateTime createDate, System.Guid taskType, System.Guid managerId, System.Guid reviewerID, System.DateTime upgradeEndDate) {
             _pstId = pstId;
             _pmsId = pmsId;
             _projectId = projectId;
@@ -29758,6 +29795,7 @@ namespace Business {
             _taskType = taskType;
             _managerId = managerId;
             _reviewerID = reviewerID;
+            _upgradeEndDate = upgradeEndDate;
         }
         
         /// <summary>
@@ -30046,6 +30084,28 @@ namespace Business {
         }
         
         /// <summary>
+        /// UpgradeEndDate
+        /// </summary>
+        [Display(Name="变更结束时间")]
+        public virtual System.DateTime UpgradeEndDate {
+            get {
+                return _upgradeEndDate;
+            }
+            set {
+                _upgradeEndDate = value;
+            }
+        }
+        
+        /// <summary>
+        /// UpgradeEndDate APColumnDef
+        /// </summary>
+        public static DateTimeAPColumnDef UpgradeEndDateDef {
+            get {
+                return APDBDef.ProjectStoneTask.UpgradeEndDate;
+            }
+        }
+        
+        /// <summary>
         /// ProjectStoneTaskTableDef APTableDef
         /// </summary>
         public static APDBDef.ProjectStoneTaskTableDef TableDef {
@@ -30080,6 +30140,7 @@ namespace Business {
             TaskType = data.TaskType;
             ManagerId = data.ManagerId;
             ReviewerID = data.ReviewerID;
+            UpgradeEndDate = data.UpgradeEndDate;
         }
         
         /// <summary>
@@ -30123,6 +30184,9 @@ namespace Business {
                 return false;
             }
             if ((ReviewerID != data.ReviewerID)) {
+                return false;
+            }
+            if ((UpgradeEndDate != data.UpgradeEndDate)) {
                 return false;
             }
             return true;
@@ -30221,8 +30285,8 @@ namespace Business {
         /// <summary>
         /// 初始化所有字段的构造函数。
         /// </summary>
-        public ProjectStoneTask(System.Guid pstId, System.Guid pmsId, System.Guid projectId, string taskName, System.DateTime startDate, System.DateTime endDate, System.DateTime realStartDate, System.DateTime realEndDate, System.Guid taskStatus, System.DateTime createDate, System.Guid taskType, System.Guid managerId, System.Guid reviewerID) : 
-                base(pstId, pmsId, projectId, taskName, startDate, endDate, realStartDate, realEndDate, taskStatus, createDate, taskType, managerId, reviewerID) {
+        public ProjectStoneTask(System.Guid pstId, System.Guid pmsId, System.Guid projectId, string taskName, System.DateTime startDate, System.DateTime endDate, System.DateTime realStartDate, System.DateTime realEndDate, System.Guid taskStatus, System.DateTime createDate, System.Guid taskType, System.Guid managerId, System.Guid reviewerID, System.DateTime upgradeEndDate) : 
+                base(pstId, pmsId, projectId, taskName, startDate, endDate, realStartDate, realEndDate, taskStatus, createDate, taskType, managerId, reviewerID, upgradeEndDate) {
         }
     }
     
@@ -35313,6 +35377,11 @@ namespace Business {
         private string _title;
         
         /// <summary>
+        /// ReviewComment
+        /// </summary>
+        private string _reviewComment;
+        
+        /// <summary>
         /// 默认构造函数。
         /// </summary>
         public ReviewBase() {
@@ -35321,7 +35390,7 @@ namespace Business {
         /// <summary>
         /// 初始化所有字段的构造函数。
         /// </summary>
-        public ReviewBase(System.Guid reviewId, System.Guid senderID, System.Guid receiverID, System.Guid taskId, System.Guid projectId, System.Guid reviewType, System.Guid result, System.DateTime sendDate, System.DateTime reviewDate, string attachmentUrl, string comment, string title) {
+        public ReviewBase(System.Guid reviewId, System.Guid senderID, System.Guid receiverID, System.Guid taskId, System.Guid projectId, System.Guid reviewType, System.Guid result, System.DateTime sendDate, System.DateTime reviewDate, string attachmentUrl, string comment, string title, string reviewComment) {
             _reviewId = reviewId;
             _senderID = senderID;
             _receiverID = receiverID;
@@ -35334,6 +35403,7 @@ namespace Business {
             _attachmentUrl = attachmentUrl;
             _comment = comment;
             _title = title;
+            _reviewComment = reviewComment;
         }
         
         /// <summary>
@@ -35550,6 +35620,7 @@ namespace Business {
         /// <summary>
         /// Comment
         /// </summary>
+        [Display(Name="填写说明")]
         [StringLength(1000)]
         public virtual string Comment {
             get {
@@ -35592,6 +35663,29 @@ namespace Business {
         }
         
         /// <summary>
+        /// ReviewComment
+        /// </summary>
+        [Display(Name="审核说明")]
+        [StringLength(1000)]
+        public virtual string ReviewComment {
+            get {
+                return _reviewComment;
+            }
+            set {
+                _reviewComment = value;
+            }
+        }
+        
+        /// <summary>
+        /// ReviewComment APColumnDef
+        /// </summary>
+        public static StringAPColumnDef ReviewCommentDef {
+            get {
+                return APDBDef.Review.ReviewComment;
+            }
+        }
+        
+        /// <summary>
         /// ReviewTableDef APTableDef
         /// </summary>
         public static APDBDef.ReviewTableDef TableDef {
@@ -35625,6 +35719,7 @@ namespace Business {
             AttachmentUrl = data.AttachmentUrl;
             Comment = data.Comment;
             Title = data.Title;
+            ReviewComment = data.ReviewComment;
         }
         
         /// <summary>
@@ -35665,6 +35760,9 @@ namespace Business {
                 return false;
             }
             if ((Title != data.Title)) {
+                return false;
+            }
+            if ((ReviewComment != data.ReviewComment)) {
                 return false;
             }
             return true;
@@ -35763,8 +35861,8 @@ namespace Business {
         /// <summary>
         /// 初始化所有字段的构造函数。
         /// </summary>
-        public Review(System.Guid reviewId, System.Guid senderID, System.Guid receiverID, System.Guid taskId, System.Guid projectId, System.Guid reviewType, System.Guid result, System.DateTime sendDate, System.DateTime reviewDate, string attachmentUrl, string comment, string title) : 
-                base(reviewId, senderID, receiverID, taskId, projectId, reviewType, result, sendDate, reviewDate, attachmentUrl, comment, title) {
+        public Review(System.Guid reviewId, System.Guid senderID, System.Guid receiverID, System.Guid taskId, System.Guid projectId, System.Guid reviewType, System.Guid result, System.DateTime sendDate, System.DateTime reviewDate, string attachmentUrl, string comment, string title, string reviewComment) : 
+                base(reviewId, senderID, receiverID, taskId, projectId, reviewType, result, sendDate, reviewDate, attachmentUrl, comment, title, reviewComment) {
         }
     }
     

@@ -59,6 +59,9 @@ namespace TheSite.Models
       public DateTime realEnd { get; set; }
       public string realEndString { get; set; }
 
+      public DateTime UpgradeEndDate { get; set; }
+      public string upgradeString { get; set; }
+
       public bool isMe { get; set; }
       public bool isParent { get; set; }
       public bool reviewerIsMe { get; set; }

@@ -222,7 +222,7 @@
 					<add name="ProjectId" columnName="ProjectID" type="Guid" ></add>
 					<add name="RoleId" columnName="RoleID" type="Guid"  ></add>
 					<add name="IsDefault" type="int" dataLength="1" defaultValue="1" comment="是否是默认角色 1:是 0 否" ></add>
-					<add name="AppIds"  columnName="AppIds" type="string" dataLength="200" isNullable="true"  display="项目角色权限" comment="权限Id用逗号分开"></add>
+					<add name="AppIds"  columnName="AppIds" type="string" dataLength="2000" isNullable="true"  display="项目角色权限" comment="权限Id用逗号分开"></add>
 
 				</columns>
 			</table>
@@ -303,7 +303,8 @@
 					<add name="TaskType"  columnName="Type" type="Guid"  isNullable="true"  display="任务类型" />
 					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true"  display="任务负责人ID" />
 					<add name="ReviewerID" columnName="ReviewerId" type="Guid"   isNullable="true" display="任务审核者ID" />
-					
+
+					<add name="UpgradeEndDate"  columnName="UpgradeEndDate" type="DateTime" isNullable="true" display="变更结束时间" />
 				</columns>
 			</table>
 
@@ -526,6 +527,7 @@
 					<add name="AttachmentUrl" columnName="AttachmentId" type="string" dataLength="1000" isNullable="true"></add>
 					<add name="Comment"  columnName="Comment" type="string" dataLength="1000" display="填写说明" ></add>
 					<add name="Title"  columnName="Title" type="string" dataLength="50" isNullable="true"></add>
+					<add name="ReviewComment"  columnName="ReviewComment" type="string" dataLength="1000" display="审核说明"  isNullable="true"></add>
 
 				</columns>
 			</table>

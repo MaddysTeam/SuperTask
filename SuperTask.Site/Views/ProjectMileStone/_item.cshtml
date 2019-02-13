@@ -1,7 +1,7 @@
 ﻿@model ProjectMileStone
 @{
 	var project = ViewData["Project"] as Project;
-	var canEdit = project.IsPlanStatus || project.IsEditStatus || project.CreateDate < DateTime.Parse("2019-02-01");
+	var canEdit = project.IsPlanStatus || project.IsEditStatus;
 }
 <div class="row form-group">
 	@Html.HiddenFor(s => s.PmsId)
@@ -40,7 +40,14 @@
 			@Html.Label("EndDate", Model.EndDate.ToString("yyyy-MM-dd"), new { @class = "form-control" ,@readonly="readonly" })
 		}
 	</div>
-	<div class="col-md-3">备注:@Html.TextAreaFor(s => s.Content, new { @class = "form-control stoneContent" })</div>
+	@if (canEdit)
+	{
+		<div class="col-md-3">备注:@Html.TextAreaFor(s => s.Content, new { @class = "form-control stoneContent" })</div>
+		}
+	else
+	{
+		<div class="col-md-3">备注:@Html.TextAreaFor(s => s.Content, new { @class = "form-control stoneContent" ,@readonly="readonly"})</div>
+	}
 	<div class="col-md-2">
 		@if (canEdit)
 		{

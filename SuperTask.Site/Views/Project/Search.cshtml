@@ -2,6 +2,8 @@
 @{
 	var pageTitle = ViewBag.Title = "我的项目";
 	var isLeader = Html.HasInRole(RoleKeys.ADMIN) || Html.HasInRole(RoleKeys.LEADER) || Html.HasInRole(RoleKeys.PROGRAME_MANAGER);
+	var idArray = new string[] { ProjectKeys.PlanStatus.ToString(), ProjectKeys.ProcessStatus.ToString(),ProjectKeys.ReviewStatus.ToString() , ProjectKeys.EditStatus.ToString()};
+	var ids = string.Join(",",idArray);
 	//var owners = ViewBag.Owners as List<SelectListItem>;
 	//var executors = ViewBag.Executors as List<SelectListItem>;
 	//owners.Insert(0, new SelectListItem { Text = "全部", Value = ThisApp.SelectAll });
@@ -56,14 +58,17 @@
 							</div>
 						</div>
 					</div>
-					@*<div class="col-sm-4">
+					<div class="col-sm-4">
 						<div class="form-group">
 							<label class="col-md-4 control-label">项目状态</label>
 							<div class="col-md-4">
-								@Html.DropDownList("dropdown_executor", executors, new { @class = "dropdown_executor" })
+								@Html.DropDownList("StatusIds",
+															DictionaryCache.Cached(ProjectKeys.ProjectStatusKeyGuid).GetSelectListById(ids),
+															  new { @class = "form-control", @multiple = "multiple" })
+								@Html.Hidden("StatusIdStr", ids)
 							</div>
 						</div>
-					</div>*@
+					</div>
 				</div>
 				<!-- Grid -->
 				<div class="table-responsive">
@@ -106,6 +111,7 @@
 		function getGlobalRequest() {
 			return {
 				searchTypeId: $('#SearchType').val(),
+				statusIds: $('#StatusIdStr').val()
 				//owner: $('#Owner').val(),
 				//executor: $('#Executor').val(),
 			};
@@ -124,7 +130,6 @@
 						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
 							'<button class="btn btn-lg btn-success btn-details">明细</button> ' +
 							'<button class="btn btn-lg btn-info btn-tasks">任务分配</button> ' +
-							//'<button class="btn btn-lg btn-danger btn-resources">资源</button> ' +
                                      '</div>';
 					},
 				},
@@ -134,6 +139,8 @@
 		$(function () {
 
 			var door;
+
+
 
 			var userId = '@Html.GetUserProfile().UserId';
 			var grid = $('#bootgrid');
@@ -160,6 +167,18 @@
 				afterSelectItem: function (v) {
 					if (door)
 						$('#bootgrid').bootgrid('reload');
+				}
+			});
+
+			$('#StatusIds').multiselect({
+				selectAllText: "全部",
+				buttonWidth: "100%",
+				onChange: function (element, checked) {
+					//alert($('#StatusIds').val());
+					var o = $('#StatusIds').val();
+					$('#StatusIdStr').val(o);
+
+					$('#bootgrid').bootgrid('reload');
 				}
 			});
 
@@ -190,6 +209,11 @@
 					});
 				}
 			});
+
+
+			function reload() {
+
+			}
 
 		});
 	</script>
