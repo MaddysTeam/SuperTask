@@ -6,18 +6,17 @@
 			<div class="col-sm-10">
 				<i class="fa fa-star"></i>	@item.TableName
 			</div>
-			@*<div class="important  subItem">分值：<label class="fullScore">0</label></div>*@
 		</div>
 		<div class="row subItem">
-			<div class="col-sm-2 important">考卷权重(%):</div>
+			<div class="col-sm-4 important">考核表权重(%):</div>
 			<div class="col-sm-4"><input placeholder="输入占比" class="score form-control" id="TablePropertion" value="0" /></div>
 		</div>
 		<hr class="subItem" />
 		@{
-			foreach (var subItem in Model.AccessorsAndTargets.Where(x => x.TableId.IsEmpty())) // tableid 为空表示 被考核人-考核人之间的绑定关系
+			foreach (var subItem in Model.AccessorsAndTargets.Where(x => x.TableId.IsEmpty())) // tableid 为空表示 被考核人-考核对象之间的绑定关系
 			{
 				<div class="row subItem accessor">
-					<div class="col-sm-2">考核人：@(subItem.AccessorName)权重(%):</div>
+					<div class="col-sm-4">考核人：@(subItem.AccessorName)权重(%):</div>
 					<div class="col-sm-4">
 						<input placeholder="输入权重" class="weight form-control" id="AccessorPropertion" />
 					</div>

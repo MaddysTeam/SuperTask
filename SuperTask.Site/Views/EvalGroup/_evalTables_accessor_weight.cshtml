@@ -14,14 +14,14 @@
 			</div>
 		</div>
 		<div class="row subItem">
-			<div class="col-sm-2 important">考卷权重	:</div>
+			<div class="col-sm-4 important">考核表权重(%)	:</div>
 			<div class="col-sm-4"><input placeholder="输入占比" class="score form-control" id="TablePropertion" value="@item.Propertion"  readonly/></div>
 		</div>
 		<hr class="subItem" />
 		@foreach (var subItem in accessorTargets.Where(x => x.TableId == item.TableId))
 		{
 			<div class="row subItem accessor">
-				<div class="col-sm-2">考核人：@(subItem.AccessorName)权重(%):</div>
+				<div class="col-sm-4">考核人：@(subItem.AccessorName)权重(%):</div>
 				<div class="col-sm-4">
 					<input id="AccessorPropertion" placeholder="输入权重" class="weight form-control" value="@subItem.Propertion" readonly />
 				</div>

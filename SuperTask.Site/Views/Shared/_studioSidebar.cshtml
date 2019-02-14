@@ -146,13 +146,13 @@
 						</a>
 					</li>
 					<li>
-						<a href="@Url.Action("AccessorList", "EvalGroup", new { groupId = EvalGroupConfig.DefaultGroupId })">
+						<a href="@Url.Action("AccessorList", "EvalGroup", new { groupId = Guid.Empty })">
 							<i class="fa fa-gear fa-fw"></i>
 							<span class="text">考评人管理</span>
 						</a>
 					</li>
 					<li>
-						<a href="@Url.Action("TargetMemberList", "EvalGroup", new { groupId = EvalGroupConfig.DefaultGroupId })">
+						<a href="@Url.Action("TargetMemberList", "EvalGroup", new { groupId = Guid.Empty })">
 							<i class="fa fa-gear fa-fw"></i>
 							<span class="text">考评对象管理</span>
 						</a>

@@ -1,8 +1,8 @@
-﻿@model List<EvalAccessorTarget>
+﻿@model List<EvalGroupAccessor>
 @{
 	var groupId = Request["groupId"].ToGuid(Guid.Empty);
-	var allSelectItems = Model.Select(x => new SelectListItem { Text = x.AccessorName, Value = x.AccessorId.ToString(), Selected = !x.AccessorTargetId.IsEmpty() }).ToList();
-	var selectAccessorIds = string.Join(",", Model.Where(x => !x.AccessorTargetId.IsEmpty()).Select(y => y.AccessorId).ToArray());
+	var allSelectItems = Model.Select(x => new SelectListItem { Text = x.AccessorName, Value = x.AccessorId.ToString(), Selected = !x.GroupAccessorId.IsEmpty() }).ToList();
+	var selectAccessorIds = string.Join(",", Model.Where(x => !x.GroupAccessorId.IsEmpty()).Select(y => y.AccessorId).ToArray());
 }
 <div class="modal-dialog modal-lg">
 
@@ -17,6 +17,7 @@
 		<div class="widget-content">
 
 			<form class="form-horizontal" action="@Url.Action("BindGroupAccessors", "EvalGroup")" method="post" role="form" data-after-success="afterDialogSuccess()">
+				@Html.Hidden("groupId", groupId)
 				<div class="row">
 					<fieldset class="col-sm-12">
 

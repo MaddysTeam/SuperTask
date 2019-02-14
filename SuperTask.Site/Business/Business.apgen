@@ -691,7 +691,7 @@
 				<columns>
 
 					<add name="AccessorTargetId" columnName="ID" type="Guid"  primaryKey="true" />
-					<add name="GroupId" type="Guid" display="考核组ID" comment="考核组ID"/>
+					<!--<add name="GroupId" type="Guid" display="考核组ID" comment="考核组ID"/>-->
 					<add name="AccessorId" type="Guid" display="评审人ID" comment="评审人ID"/>
 					<add name="TargetId" type="Guid" display="评审对象ID" comment="评审对象ID，包含个人或者考核组"/>
 					<add name="EvalType"   type="Guid"  isNullable="false" display="考核类型" />

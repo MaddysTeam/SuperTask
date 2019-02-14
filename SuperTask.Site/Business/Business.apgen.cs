@@ -9756,8 +9756,6 @@ namespace Business {
             
             private GuidAPColumnDef _accessorTargetId;
             
-            private GuidAPColumnDef _groupId;
-            
             private GuidAPColumnDef _accessorId;
             
             private GuidAPColumnDef _targetId;
@@ -9790,19 +9788,6 @@ namespace Business {
                         _accessorTargetId.Display = "ID";
                     }
                     return _accessorTargetId;
-                }
-            }
-            
-            /// <summary>
-            /// GroupId ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef GroupId {
-                get {
-                    if (Object.ReferenceEquals(_groupId, null)) {
-                        _groupId = new GuidAPColumnDef(this, "GroupId", false);
-                        _groupId.Display = "考核组ID";
-                    }
-                    return _groupId;
                 }
             }
             
@@ -9918,7 +9903,6 @@ namespace Business {
             /// </summary>
             public virtual void Fullup(IDataReader reader, EvalAccessorTarget data, bool throwIfValidColumnName) {
                 data.AccessorTargetId = AccessorTargetId.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.GroupId = GroupId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.AccessorId = AccessorId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.TargetId = TargetId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.EvalType = EvalType.GetValue<System.Guid>(reader, throwIfValidColumnName);
@@ -16124,7 +16108,7 @@ namespace Business {
             /// 添加数据。
             /// </summary>
             public virtual void Insert(EvalAccessorTarget data) {
-                var query = APQuery.insert(APDBDef.EvalAccessorTarget).values(APDBDef.EvalAccessorTarget.AccessorTargetId.SetValue(data.AccessorTargetId), APDBDef.EvalAccessorTarget.GroupId.SetValue(data.GroupId), APDBDef.EvalAccessorTarget.AccessorId.SetValue(data.AccessorId), APDBDef.EvalAccessorTarget.TargetId.SetValue(data.TargetId), APDBDef.EvalAccessorTarget.EvalType.SetValue(data.EvalType), APDBDef.EvalAccessorTarget.TableId.SetValue(data.TableId), APDBDef.EvalAccessorTarget.Propertion.SetValue(data.Propertion), APDBDef.EvalAccessorTarget.ModifyDate.SetValue(data.ModifyDate), APDBDef.EvalAccessorTarget.PeriodId.SetValue(data.PeriodId));
+                var query = APQuery.insert(APDBDef.EvalAccessorTarget).values(APDBDef.EvalAccessorTarget.AccessorTargetId.SetValue(data.AccessorTargetId), APDBDef.EvalAccessorTarget.AccessorId.SetValue(data.AccessorId), APDBDef.EvalAccessorTarget.TargetId.SetValue(data.TargetId), APDBDef.EvalAccessorTarget.EvalType.SetValue(data.EvalType), APDBDef.EvalAccessorTarget.TableId.SetValue(data.TableId), APDBDef.EvalAccessorTarget.Propertion.SetValue(data.Propertion), APDBDef.EvalAccessorTarget.ModifyDate.SetValue(data.ModifyDate), APDBDef.EvalAccessorTarget.PeriodId.SetValue(data.PeriodId));
                 ExecuteNonQuery(query);
             }
             
@@ -16132,7 +16116,7 @@ namespace Business {
             /// 更新数据。
             /// </summary>
             public virtual void Update(EvalAccessorTarget data) {
-                var query = APQuery.update(APDBDef.EvalAccessorTarget).values(APDBDef.EvalAccessorTarget.GroupId.SetValue(data.GroupId), APDBDef.EvalAccessorTarget.AccessorId.SetValue(data.AccessorId), APDBDef.EvalAccessorTarget.TargetId.SetValue(data.TargetId), APDBDef.EvalAccessorTarget.EvalType.SetValue(data.EvalType), APDBDef.EvalAccessorTarget.TableId.SetValue(data.TableId), APDBDef.EvalAccessorTarget.Propertion.SetValue(data.Propertion), APDBDef.EvalAccessorTarget.ModifyDate.SetValue(data.ModifyDate), APDBDef.EvalAccessorTarget.PeriodId.SetValue(data.PeriodId)).where((APDBDef.EvalAccessorTarget.AccessorTargetId == data.AccessorTargetId));
+                var query = APQuery.update(APDBDef.EvalAccessorTarget).values(APDBDef.EvalAccessorTarget.AccessorId.SetValue(data.AccessorId), APDBDef.EvalAccessorTarget.TargetId.SetValue(data.TargetId), APDBDef.EvalAccessorTarget.EvalType.SetValue(data.EvalType), APDBDef.EvalAccessorTarget.TableId.SetValue(data.TableId), APDBDef.EvalAccessorTarget.Propertion.SetValue(data.Propertion), APDBDef.EvalAccessorTarget.ModifyDate.SetValue(data.ModifyDate), APDBDef.EvalAccessorTarget.PeriodId.SetValue(data.PeriodId)).where((APDBDef.EvalAccessorTarget.AccessorTargetId == data.AccessorTargetId));
                 ExecuteNonQuery(query);
             }
             
@@ -39969,11 +39953,6 @@ namespace Business {
         private System.Guid _accessorTargetId;
         
         /// <summary>
-        /// 考核组ID
-        /// </summary>
-        private System.Guid _groupId;
-        
-        /// <summary>
         /// 评审人ID
         /// </summary>
         private System.Guid _accessorId;
@@ -40017,9 +39996,8 @@ namespace Business {
         /// <summary>
         /// 初始化所有字段的构造函数。
         /// </summary>
-        public EvalAccessorTargetBase(System.Guid accessorTargetId, System.Guid groupId, System.Guid accessorId, System.Guid targetId, System.Guid evalType, System.Guid tableId, double propertion, System.DateTime modifyDate, System.Guid periodId) {
+        public EvalAccessorTargetBase(System.Guid accessorTargetId, System.Guid accessorId, System.Guid targetId, System.Guid evalType, System.Guid tableId, double propertion, System.DateTime modifyDate, System.Guid periodId) {
             _accessorTargetId = accessorTargetId;
-            _groupId = groupId;
             _accessorId = accessorId;
             _targetId = targetId;
             _evalType = evalType;
@@ -40047,28 +40025,6 @@ namespace Business {
         public static GuidAPColumnDef AccessorTargetIdDef {
             get {
                 return APDBDef.EvalAccessorTarget.AccessorTargetId;
-            }
-        }
-        
-        /// <summary>
-        /// 考核组ID
-        /// </summary>
-        [Display(Name="考核组ID")]
-        public virtual System.Guid GroupId {
-            get {
-                return _groupId;
-            }
-            set {
-                _groupId = value;
-            }
-        }
-        
-        /// <summary>
-        /// 考核组ID APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef GroupIdDef {
-            get {
-                return APDBDef.EvalAccessorTarget.GroupId;
             }
         }
         
@@ -40248,7 +40204,6 @@ namespace Business {
         /// </summary>
         public virtual void Assignment(EvalAccessorTarget data) {
             AccessorTargetId = data.AccessorTargetId;
-            GroupId = data.GroupId;
             AccessorId = data.AccessorId;
             TargetId = data.TargetId;
             EvalType = data.EvalType;
@@ -40263,9 +40218,6 @@ namespace Business {
         /// </summary>
         public virtual bool CompareEquals(EvalAccessorTarget data) {
             if ((AccessorTargetId != data.AccessorTargetId)) {
-                return false;
-            }
-            if ((GroupId != data.GroupId)) {
                 return false;
             }
             if ((AccessorId != data.AccessorId)) {
@@ -40385,8 +40337,8 @@ namespace Business {
         /// <summary>
         /// 初始化所有字段的构造函数。
         /// </summary>
-        public EvalAccessorTarget(System.Guid accessorTargetId, System.Guid groupId, System.Guid accessorId, System.Guid targetId, System.Guid evalType, System.Guid tableId, double propertion, System.DateTime modifyDate, System.Guid periodId) : 
-                base(accessorTargetId, groupId, accessorId, targetId, evalType, tableId, propertion, modifyDate, periodId) {
+        public EvalAccessorTarget(System.Guid accessorTargetId, System.Guid accessorId, System.Guid targetId, System.Guid evalType, System.Guid tableId, double propertion, System.DateTime modifyDate, System.Guid periodId) : 
+                base(accessorTargetId, accessorId, targetId, evalType, tableId, propertion, modifyDate, periodId) {
         }
     }
     

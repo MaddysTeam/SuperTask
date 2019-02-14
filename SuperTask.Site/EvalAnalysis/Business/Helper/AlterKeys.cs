@@ -40,6 +40,7 @@ namespace Business.Helper
 
       public class EvalGroup
       {
+         public const string BIND_ACCESSOR_FAIL = "绑定考核人失败";
          public const string BIND_TARGET_FAIL = "绑定被考核人失败";
          public const string ACCESSOR_ISEXISTS = "考核者已经存在";
          public const string NOT_ALLOWED_ACCESSOR_NULL = "考核者不能为空";

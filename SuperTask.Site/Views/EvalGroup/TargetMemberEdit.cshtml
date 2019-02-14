@@ -54,7 +54,7 @@
 						<div id="right-events" class="widget-content" style="overflow: hidden; width: auto;">
 
 							<div class="alert alert-danger empty row">
-								<div class="col-md-7"><h3>被考核对象：</h3></div>
+								<div class="col-md-7"><h3>被考核对象：@Model.CurrentTarget.TargetName</h3></div>
 								@*<div><h3>满分：@Model.EvalTable.FullScore</h3></div>*@
 							</div>
 
@@ -91,6 +91,7 @@
 							}
 							else if (container.id == 'right-events') {
 								$(el).find('.subItem').show();
+								$(el).find('.btn-ok').trigger('click');
 							}
 						});
 
@@ -139,6 +140,7 @@
 							$currentEvalTable.find('input').attr('readonly', 'readonly');
 							$this.hide();
 							$btnModify.removeClass('hidden').show();
+							location.href = location.href;
 						}
 					});
 				});

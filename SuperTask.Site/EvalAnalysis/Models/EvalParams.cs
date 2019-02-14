@@ -16,7 +16,7 @@ namespace TheSite.Models
       public Guid PeriodId { get; set; }
       public APDBDef db { get; set; } = new APDBDef();
       public Guid CurrentTableId { get; set; }
-      public Guid GroupId => EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty);
+      public Guid GroupId { get; set; }
       public Guid TableType { get; set; }
    }
 

@@ -54,7 +54,7 @@ namespace TheSite.Controllers
 
       public ActionResult Edit(Guid? id)
       {
-         var group = EvalGroup.PrimaryGet(id.Value);
+         var group = id == null ? null : EvalGroup.PrimaryGet(id.Value);
 
          return PartialView(group);
       }
@@ -102,60 +102,71 @@ namespace TheSite.Controllers
          });
       }
 
-      //	GET: EvalGroup/Edit
-      //	POST-Ajax: EvalGroup/Edit
+
+      //	GET: EvalGroup/BindGroupAccessors
+      //	POST-Ajax: EvalGroup/BindGroupAccessors
 
       public ActionResult BindGroupAccessors(Guid groupId)
       {
          var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
-         if (groupId.IsEmpty())
-            throw new ApplicationException();
 
-         var at = APDBDef.EvalAccessorTarget;
+         var results = APQuery.select(ega.GroupAccessorId, u.UserId.As("userId"), u.UserName).from(u, ega.JoinLeft(u.UserId == ega.AccessorId & ega.GroupId == groupId))
+            .query(db, r => new EvalGroupAccessor
+            {
+               GroupAccessorId = ega.GroupAccessorId.GetValue(r),
+               AccessorId = u.UserId.GetValue(r, "userId"),
+               AccessorName = u.UserName.GetValue(r),
+               GroupId = groupId
+            }).ToList();
 
-         var reuslts = APQuery.select(at.AccessorTargetId, u.UserName, u.UserId.As("userId"))
-            .from(u, at.JoinLeft(at.AccessorId == u.UserId
-                               & at.TargetId == groupId   // 这里targetid 为 当前groupid 表示考核人考核该组所有成员
-                               & at.PeriodId == period.PeriodId
-                               & at.TableId == Guid.Empty // table id 为空 表示 accessor 和 target 之间的关系
-                               ))
-            .query(db, r => new EvalAccessorTarget { AccessorTargetId = at.AccessorTargetId.GetValue(r), AccessorId = u.UserId.GetValue(r, "userId"), AccessorName = u.UserName.GetValue(r) })
-            .ToList();
-
-         return PartialView(reuslts);
+         return PartialView(results);
       }
 
       [HttpPost]
       public ActionResult BindGroupAccessors(Guid groupId, string accessorIds)
       {
+         if (string.IsNullOrEmpty(accessorIds))
+         {
+            return Json(new
+            {
+               result = AjaxResults.Success,
+               msg = Errors.EvalGroup.BIND_ACCESSOR_FAIL
+            });
+         }
+
          var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
          var allAccessors = EvalGroupAccessor.GetAll();
          var ids = new List<Guid>();
-         var members = db.EvalGroupMemberDal.ConditionQuery(egm.GroupId == groupId, null, null, null);
 
-         if (!string.IsNullOrEmpty(accessorIds))
+         foreach (var id in accessorIds.Split(','))
          {
-            foreach (var id in accessorIds.Split(','))
-            {
-               ids.Add(id.ToGuid(Guid.Empty));
-            }
-            db.EvalAccessorTargetDal.ConditionDelete(eat.TargetId == groupId & eat.AccessorId.In(ids.ToArray()) & eat.PeriodId == period.PeriodId);
+            ids.Add(id.ToGuid(Guid.Empty));
          }
+
+         var subquery = APQuery.select(eat.TargetId).from(eat).where(eat.AccessorId.In(ids.ToArray()));
+         var members = db.EvalGroupMemberDal.ConditionQuery(egm.GroupId == groupId & egm.MemberId.NotIn(subquery), null, null, null);
+         var groupAccessorTargets = db.EvalAccessorTargetDal.ConditionQuery(eat.TargetId == groupId & eat.PeriodId == period.PeriodId, null, null, null);
+
+         db.EvalGroupAccessorDal.ConditionDelete(ega.GroupId == groupId);
 
          foreach (var accessorId in ids)
          {
-            var accessor = allAccessors.Find(x => x.AccessorId == accessorId);
-            if (accessor == null)
+            if (!allAccessors.Exists(a => a.AccessorId == accessorId & a.GroupId == groupId))
                db.EvalGroupAccessorDal.Insert(new EvalGroupAccessor { GroupAccessorId = Guid.NewGuid(), AccessorId = accessorId, GroupId = groupId });
 
-            // 考核人和组之间的绑定
-            db.EvalAccessorTargetDal.Insert(new EvalAccessorTarget { AccessorTargetId = Guid.NewGuid(), TargetId = groupId, AccessorId = accessorId, PeriodId = period.PeriodId });
+            //放入大组
+            if (!allAccessors.Exists(a => a.AccessorId == accessorId & a.GroupId == Guid.Empty))
+               db.EvalGroupAccessorDal.Insert(new EvalGroupAccessor { GroupAccessorId = Guid.NewGuid(), AccessorId = accessorId });
 
-            // 考核人和被考核人的关系
-            foreach (var member in members)
-            {
-               db.EvalAccessorTargetDal.Insert(new EvalAccessorTarget { AccessorTargetId = Guid.NewGuid(), TargetId = member.MemberId, AccessorId = accessorId, PeriodId = period.PeriodId, GroupId = groupId });
-            }
+            // 新增考核人和组之间的绑定
+            if (!groupAccessorTargets.Exists(e => e.AccessorId == accessorId))
+               db.EvalAccessorTargetDal.Insert(new EvalAccessorTarget { AccessorTargetId = Guid.NewGuid(), TargetId = groupId, AccessorId = accessorId, PeriodId = period.PeriodId });
+
+            // 新增考核人和被考核人的关系
+            //foreach (var member in members)
+            //{
+            //   db.EvalAccessorTargetDal.Insert(new EvalAccessorTarget { AccessorTargetId = Guid.NewGuid(), TargetId = member.MemberId, AccessorId = accessorId, PeriodId = period.PeriodId });
+            //}
          }
 
          return Json(new
@@ -175,7 +186,7 @@ namespace TheSite.Controllers
          var subquery = APQuery.select(eat.TableId).from(eat).where(eat.TargetId == groupId);
          var tables = db.EvalTableDal.ConditionQuery(et.TableStatus != EvalTableKeys.DisableStatus & et.TableId.NotIn(subquery), null, null, null); //左侧可用考核列表
          var tablePropertion = db.EvalTargetTablePropertionDal.ConditionQuery(ettp.TargetId == groupId, null, null, null);
-         var accessorTargets = APQuery.select(eat.Asterisk, u.UserName.As("accessor"), eg.GroupName.As("target"), et.TableId.As("tableId"), et.TableName.As("tableName")) 
+         var accessorTargets = APQuery.select(eat.Asterisk, u.UserName.As("accessor"), eg.GroupName.As("target"), et.TableId.As("tableId"), et.TableName.As("tableName"))
                                .from(eat,
                                        et.JoinLeft(et.TableId == eat.TableId),
                                        u.JoinInner(u.UserId == eat.AccessorId),
@@ -192,7 +203,9 @@ namespace TheSite.Controllers
                                   return tgt;
                                }).ToList();
 
-         return View("TargetMemberEdit", new EvalTargetEditViewModels { Tables = tables, AccessorsAndTargets = accessorTargets, TablePropertion = tablePropertion });
+         var currentTarget = accessorTargets.Find(x => x.TargetId == groupId);
+
+         return View("TargetMemberEdit", new EvalTargetEditViewModels { Tables = tables, AccessorsAndTargets = accessorTargets, TablePropertion = tablePropertion, CurrentTarget = currentTarget });
       }
 
 
@@ -209,8 +222,8 @@ namespace TheSite.Controllers
       {
          var query = APQuery.select(ega.GroupAccessorId, ega.GroupId, ega.ModifyDate, ega.AccessorId, u.UserName.As("UserName"))
                             .from(ega
-                                  , u.JoinInner(u.UserId == ega.AccessorId));
-         //.where(ega.GroupId);
+                                  , u.JoinInner(u.UserId == ega.AccessorId))
+                            .where(ega.GroupId == Guid.Empty); //默认查看大组内的考核人
 
          query.primary(ega.AccessorId)
             //.order_by(ega.CreateDate.Desc)
@@ -256,11 +269,10 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult TargetMemberList(Guid groupId, int current, int rowCount, AjaxOrder sort, string searchPhrase)
       {
-         var query = APQuery.select(eat.GroupId, eat.TargetId, u.UserName.As("UserName"))
+         var query = APQuery.select(eat.TargetId, u.UserName.As("UserName"))
                    .from(eat
                          , u.JoinInner(u.UserId == eat.TargetId))
-                   .group_by(eat.GroupId, eat.TargetId, u.UserName)
-                   .where(eat.GroupId == groupId);
+                   .group_by(eat.TargetId, u.UserName);
 
          query.primary(eat.AccessorTargetId)
             .skip((current - 1) * rowCount)
@@ -297,7 +309,7 @@ namespace TheSite.Controllers
       {
          var tables = db.EvalTableDal.ConditionQuery(et.TableStatus != EvalTableKeys.DisableStatus, null, null, null);
          var users = db.UserInfoDal.ConditionQuery(null, null, null, null);
-         var accessor = new EvalGroupAccessor() { GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty) };
+         var accessor = new EvalGroupAccessor();
 
          if (!groupAccessorId.IsEmpty())
          {
@@ -411,7 +423,7 @@ namespace TheSite.Controllers
                  {
                     AccessorId = accessorId,
                     AccessorTargetId = Guid.NewGuid(),
-                    GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty),
+                    //GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty),
                     EvalType = EvalKeys.SubjectType,
                     ModifyDate = DateTime.Now,
                     PeriodId = period.PeriodId,
@@ -483,7 +495,9 @@ namespace TheSite.Controllers
                                   return tgt;
                                }).ToList();
 
-         return View(new EvalTargetEditViewModels { Tables = tables, AccessorsAndTargets = accessorTargets, TablePropertion = tablePropertion });
+         var currentTarget = accessorTargets.Find(x => x.TargetId == targetId);
+
+         return View(new EvalTargetEditViewModels { Tables = tables, AccessorsAndTargets = accessorTargets, TablePropertion = tablePropertion, CurrentTarget = currentTarget });
       }
 
       [HttpPost]
@@ -512,7 +526,7 @@ namespace TheSite.Controllers
 
          foreach (var item in accessorTargetList)
          {
-            item.GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty);
+            //item.GroupId = EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty);
             item.AccessorTargetId = Guid.NewGuid();
             item.PeriodId = period.PeriodId;
             // tableid 为空表示 被考核人-考核人之间关系的数据，所以排除在外，不用添加

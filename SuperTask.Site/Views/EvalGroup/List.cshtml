@@ -63,8 +63,8 @@
 						var url = '@Url.Action("BindGroupTablesWeightAndPropertion", "EvalGroup")?groupId='+id;
 						return '<div class="btn-group btn-group-xs pull-right" data-row-id="' + id + '">' +
                                      '<button class="btn btn-success btn-edit">编辑</button>' +
-							                '<button class="btn btn-info btn-members">选择组成员</button>' +
-							                '<button class="btn btn-info btn-accessors">选择考核人</button>' +
+							                '<button class="btn btn-warning btn-members">选择组成员</button>' +
+							                '<button class="btn btn-danger btn-accessors">选择考核人</button>' +
 												 '<a class="btn btn-info btn-details" href="' + url + '" target="_blank">详细</a>' +
 						'</div>';
 					},
