@@ -18,5 +18,7 @@ namespace TheSite.Models
 
       public EvalAccessorTarget CurrentTarget { get; set; }
 
+      public bool TargetIsGroup { get; set; }
+
    }
 }

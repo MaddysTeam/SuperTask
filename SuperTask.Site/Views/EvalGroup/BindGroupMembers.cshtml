@@ -1,0 +1,71 @@
+﻿@model List<EvalGroupMember>
+@{
+	var groupId = Request["groupId"].ToGuid(Guid.Empty);
+	var allSelectItems = Model.Select(x => new SelectListItem { Text = x.MemberName, Value = x.MemberId.ToString(), Selected = !x.GroupMemberId.IsEmpty() }).ToList();
+	var selectMembersIds = string.Join(",", Model.Where(x => !x.GroupMemberId.IsEmpty()).Select(y => y.MemberId).ToArray());
+}
+<div class="modal-dialog modal-lg">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 选择组成员</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("BindGroupMembers", "EvalGroup")" method="post" role="form" data-after-success="afterDialogSuccess()">
+				@Html.Hidden("groupId", groupId)
+				<div class="row">
+					<fieldset class="col-sm-12">
+
+						<div class="form-group">
+							@Html.Label("选择组成员", new { @class = "control-label col-md-3" })
+							<div class="col-md-6">
+								@Html.DropDownList("Members",
+															allSelectItems,
+															  new { @class = "form-control dropdown-Targets col-md-6", @multiple = "multiple" })
+							</div>
+							<div class="col-md-3">
+								<input type="submit" class="btn btn-primary" value="确定" />
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+			@*<input type="hidden" id="targetIds" value="@selectTargetIds" />*@
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+
+<script>
+	$(function () {
+
+		var ids = '@selectMembersIds'.split(',');
+		$('.dropdown-Targets').multiselect('select', ids);
+
+		var $form = $('.modal-dialog form');
+		$.validator.unobtrusive.parse($form);
+
+		$form.submit(function (e) {
+			e.preventDefault();
+			var $form = $(this);
+			$form.valid() && $.post($form.attr('action'), { groupId: '@groupId', memberIds: '' + $('#Members').val() }, function (data, status) {
+				popupMessage(data, {
+					success: function () { commitedNotice(); }
+				});
+			});
+
+			return false;
+		});
+
+	})
+
+	function commitedNotice() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+</script>

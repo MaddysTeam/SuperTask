@@ -40,6 +40,7 @@ namespace Business.Helper
 
       public class EvalGroup
       {
+         public const string BIND_MEMBER_FAIL = "绑定小组成员失败";
          public const string BIND_ACCESSOR_FAIL = "绑定考核人失败";
          public const string BIND_TARGET_FAIL = "绑定被考核人失败";
          public const string ACCESSOR_ISEXISTS = "考核者已经存在";
@@ -53,6 +54,12 @@ namespace Business.Helper
          public const string NOT_IN_PERIOD = "当前不再考核期!";
          public const string NOT_FOUND_TABLE = "当前考核对象没有考核表";
          public const string NOT_ANY_PERIOD = "没有任何考核周期，请设置当前考核周期!";
+      }
+
+      public class EvalTargetTablePropertion
+      {
+         public const string NOT_ALLOWED_WEIGHT_LESS_THAN_ZERO = "权重设置不能为0";
+         public const string WEIGHT_MUST_GREATER_THAN_ZERO = "权重必须输入数字";
       }
 
    }
@@ -78,6 +85,7 @@ namespace Business.Helper
 
       public class EvalResult
       {
+         public const string EDIT_SUCCESS = "操作成功";
          public const string Adjust_SUCCESS = "调整分成功";
       }
 

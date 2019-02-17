@@ -65,7 +65,7 @@
                                      '<button class="btn btn-success btn-edit">编辑</button>' +
 							                '<button class="btn btn-warning btn-members">选择组成员</button>' +
 							                '<button class="btn btn-danger btn-accessors">选择考核人</button>' +
-												 '<a class="btn btn-info btn-details" href="' + url + '" target="_blank">详细</a>' +
+												 '<a class="btn btn-info btn-details" href="' + url + '" target="_blank">考核表权重设置</a>' +
 						'</div>';
 					},
 				},
@@ -86,13 +86,19 @@
 						.trigger('click');
 				});
 
+				grid.find('.btn-members').on('click', function (e) {
+					var id = $(this).parent().data('rowId');
+					$('#modelProxy')
+					.data('url', '/EvalGroup/BindGroupMembers?groupId=' + id)
+					.trigger('click');
+				});
+
 				grid.find('.btn-accessors').on('click', function (e) {
 					var id = $(this).parent().data('rowId');
 					$('#modelProxy')
 					.data('url', '/EvalGroup/BindGroupAccessors?groupId=' + id)
 					.trigger('click');
 				});
-
 
 				//delete
 				grid.find('.btn-delete').on('click', function (e) {

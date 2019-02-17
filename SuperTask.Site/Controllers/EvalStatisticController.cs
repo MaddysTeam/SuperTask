@@ -21,7 +21,8 @@ namespace TheSite.Controllers
 
       public ActionResult EvalResultReport(Guid? targetId)
       {
-         ViewBag.Periods = EvalPeriod.GetAll();
+         var ep = APDBDef.EvalPeriod;
+         ViewBag.Periods = EvalPeriod.ConditionQuery(null, ep.CreateDate.Desc);
 
          return View();
       }

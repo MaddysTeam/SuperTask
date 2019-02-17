@@ -46,16 +46,12 @@
 				<div>
 					<div class="widget" style="height:1000px; overflow:auto">
 						<div class="widget-header">
-							@*<h3><i class="fa fa-paperclip"></i>被考核人：@Model.CurrentTarget.TargetName</h3>
-								<div class="btn-group widget-header-toolbar">
-								</div>*@
 						</div>
 
 						<div id="right-events" class="widget-content" style="overflow: hidden; width: auto;">
 
 							<div class="alert alert-danger empty row">
 								<div class="col-md-7"><h3>被考核对象：@Model.CurrentTarget.TargetName</h3></div>
-								@*<div><h3>满分：@Model.EvalTable.FullScore</h3></div>*@
 							</div>
 
 							@Html.Partial("_evalTables_accessor_weight", Model)
@@ -91,7 +87,6 @@
 							}
 							else if (container.id == 'right-events') {
 								$(el).find('.subItem').show();
-								$(el).find('.btn-ok').trigger('click');
 							}
 						});
 
@@ -129,7 +124,7 @@
 				var $btnModify = $currentEvalTable.find('.btn-modify');
 				$btnModify.hide();
 
-				//if (!checkScore(score)) {
+				//if (!checkWeight(score)) {
 				//	return false;
 				//}
 
@@ -140,7 +135,6 @@
 							$currentEvalTable.find('input').attr('readonly', 'readonly');
 							$this.hide();
 							$btnModify.removeClass('hidden').show();
-							location.href = location.href;
 						}
 					});
 				});
@@ -152,26 +146,19 @@
 				$currentEvalTable.find('input').removeAttr('readonly');
 				$currentEvalTable.find('.btn-ok').removeClass('hidden').show();
 			});
+		
 
-			@*	$('.btn-modifyAll,.btn-preview').click(function () {
-				location.href = $(this).data('url')
-			});
-
-			function checkScore(score) {
-				if (isNaN(score)) {
-					popupMessage({ msg: '@Errors.EvalTable.NOT_ALLOWED_SCORE_LESS_THAN_ZERO', result: 'error' });
+			@*function checkWeight(weight) {
+				if (isNaN(weight)) {
+					popupMessage({ msg: '@Errors.EvalTargetTablePropertion.NOT_ALLOWED_WEIGHT_LESS_THAN_ZERO', result: 'error' });
 					return false;
 				}
-				else if (score <= 0) {
-					popupMessage({ msg: '@Errors.EvalTable.NOT_ALLOWED_SCORE_LESS_THAN_ZERO', result: 'error' });
+				else if (weight <= 0) {
+					popupMessage({ msg: '@Errors.EvalTargetTablePropertion.WEIGHT_MUST_GREATER_THAN_ZERO', result: 'error' });
 					return false;
 				}
 
 				return true;
-			}
-
-			function showScore(container, score) {
-				$(container).html(score);
 			}*@
 
 			function removeTargetEvalTable(ele) {

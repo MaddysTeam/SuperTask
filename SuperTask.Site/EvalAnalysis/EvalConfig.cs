@@ -20,11 +20,11 @@ namespace TheSite.EvalAnalysis
    //}
 
 
-   //public static class EvalConfig
-   //{
-   //   public const int DefaultStarCount = 5;
+   public static class EvalConfig
+   {
+      public const int DefaultStarCount = 5;
 
-   //   public const string AutoAccessorRoleId ="42E3876A-CE07-4704-89F6-B50DE951BB92";
-   //}
+   //   public const string AutoAccessorRoleId = "42E3876A-CE07-4704-89F6-B50DE951BB92";
+   }
 
 }

@@ -13,6 +13,11 @@ namespace Business
       public List<UserInfo> TargetMembers { get; set; }
    }
 
+   public partial class EvalGroupMember
+   {
+      [Display(Name = "组成员")]
+      public string MemberName { get; set; }
+   }
 
    public partial class EvalGroupAccessor
    {
