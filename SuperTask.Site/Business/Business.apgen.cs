@@ -1531,6 +1531,8 @@ namespace Business {
             
             private StringAPColumnDef _introduce;
             
+            private BooleanAPColumnDef _isDelete;
+            
             public UserInfoTableDef(string tableName) : 
                     base(tableName) {
             }
@@ -1697,6 +1699,19 @@ namespace Business {
             }
             
             /// <summary>
+            /// IsDelete ColumnDef
+            /// </summary>
+            public virtual BooleanAPColumnDef IsDelete {
+                get {
+                    if (Object.ReferenceEquals(_isDelete, null)) {
+                        _isDelete = new BooleanAPColumnDef(this, "IsDelete", true);
+                        _isDelete.Display = "IsDelete";
+                    }
+                    return _isDelete;
+                }
+            }
+            
+            /// <summary>
             /// Default Index
             /// </summary>
             public virtual APSqlOrderPhrase DefaultOrder {
@@ -1728,6 +1743,7 @@ namespace Business {
                 data.Email = Email.GetValue<string>(reader, throwIfValidColumnName);
                 data.Birthday = Birthday.GetValue<System.Nullable<System.DateTime>>(reader, throwIfValidColumnName);
                 data.Introduce = Introduce.GetValue<string>(reader, throwIfValidColumnName);
+                data.IsDelete = IsDelete.GetValue<bool>(reader, throwIfValidColumnName);
             }
             
             /// <summary>
@@ -3892,7 +3908,7 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_invoiceDate, null)) {
                         _invoiceDate = new DateTimeAPColumnDef(this, "InvoiceDate", true);
-                        _invoiceDate.Display = "开票时间";
+                        _invoiceDate.Display = "开始时间";
                     }
                     return _invoiceDate;
                 }
@@ -3905,7 +3921,7 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_payDate, null)) {
                         _payDate = new DateTimeAPColumnDef(this, "PayDate", true);
-                        _payDate.Display = "收款时间";
+                        _payDate.Display = "结束时间";
                     }
                     return _payDate;
                 }
@@ -7493,7 +7509,7 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_comment, null)) {
                         _comment = new StringAPColumnDef(this, "Comment", false, 1000);
-                        _comment.Display = "填写说明";
+                        _comment.Display = "签字意见";
                     }
                     return _comment;
                 }
@@ -7519,7 +7535,7 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_reviewComment, null)) {
                         _reviewComment = new StringAPColumnDef(this, "ReviewComment", true, 1000);
-                        _reviewComment.Display = "审核说明";
+                        _reviewComment.Display = "审核意见";
                     }
                     return _reviewComment;
                 }
@@ -11586,7 +11602,7 @@ namespace Business {
             /// 添加数据。
             /// </summary>
             public virtual void Insert(UserInfo data) {
-                var query = APQuery.insert(APDBDef.UserInfo).values(APDBDef.UserInfo.UserId.SetValue(data.UserId), APDBDef.UserInfo.UserName.SetValue(data.UserName), APDBDef.UserInfo.RealName.SetValue(data.RealName), APDBDef.UserInfo.NickName.SetValue(data.NickName), APDBDef.UserInfo.Gender.SetValue(data.Gender), APDBDef.UserInfo.Department.SetValue(data.Department), APDBDef.UserInfo.Position.SetValue(data.Position), APDBDef.UserInfo.Phone.SetValue(data.Phone), APDBDef.UserInfo.Mobile.SetValue(data.Mobile), APDBDef.UserInfo.Email.SetValue(data.Email), APDBDef.UserInfo.Birthday.SetValue(data.Birthday), APDBDef.UserInfo.Introduce.SetValue(data.Introduce));
+                var query = APQuery.insert(APDBDef.UserInfo).values(APDBDef.UserInfo.UserId.SetValue(data.UserId), APDBDef.UserInfo.UserName.SetValue(data.UserName), APDBDef.UserInfo.RealName.SetValue(data.RealName), APDBDef.UserInfo.NickName.SetValue(data.NickName), APDBDef.UserInfo.Gender.SetValue(data.Gender), APDBDef.UserInfo.Department.SetValue(data.Department), APDBDef.UserInfo.Position.SetValue(data.Position), APDBDef.UserInfo.Phone.SetValue(data.Phone), APDBDef.UserInfo.Mobile.SetValue(data.Mobile), APDBDef.UserInfo.Email.SetValue(data.Email), APDBDef.UserInfo.Birthday.SetValue(data.Birthday), APDBDef.UserInfo.Introduce.SetValue(data.Introduce), APDBDef.UserInfo.IsDelete.SetValue(data.IsDelete));
                 ExecuteNonQuery(query);
             }
             
@@ -11594,7 +11610,7 @@ namespace Business {
             /// 更新数据。
             /// </summary>
             public virtual void Update(UserInfo data) {
-                var query = APQuery.update(APDBDef.UserInfo).values(APDBDef.UserInfo.UserName.SetValue(data.UserName), APDBDef.UserInfo.RealName.SetValue(data.RealName), APDBDef.UserInfo.NickName.SetValue(data.NickName), APDBDef.UserInfo.Gender.SetValue(data.Gender), APDBDef.UserInfo.Department.SetValue(data.Department), APDBDef.UserInfo.Position.SetValue(data.Position), APDBDef.UserInfo.Phone.SetValue(data.Phone), APDBDef.UserInfo.Mobile.SetValue(data.Mobile), APDBDef.UserInfo.Email.SetValue(data.Email), APDBDef.UserInfo.Birthday.SetValue(data.Birthday), APDBDef.UserInfo.Introduce.SetValue(data.Introduce)).where((APDBDef.UserInfo.UserId == data.UserId));
+                var query = APQuery.update(APDBDef.UserInfo).values(APDBDef.UserInfo.UserName.SetValue(data.UserName), APDBDef.UserInfo.RealName.SetValue(data.RealName), APDBDef.UserInfo.NickName.SetValue(data.NickName), APDBDef.UserInfo.Gender.SetValue(data.Gender), APDBDef.UserInfo.Department.SetValue(data.Department), APDBDef.UserInfo.Position.SetValue(data.Position), APDBDef.UserInfo.Phone.SetValue(data.Phone), APDBDef.UserInfo.Mobile.SetValue(data.Mobile), APDBDef.UserInfo.Email.SetValue(data.Email), APDBDef.UserInfo.Birthday.SetValue(data.Birthday), APDBDef.UserInfo.Introduce.SetValue(data.Introduce), APDBDef.UserInfo.IsDelete.SetValue(data.IsDelete)).where((APDBDef.UserInfo.UserId == data.UserId));
                 ExecuteNonQuery(query);
             }
             
@@ -24014,6 +24030,11 @@ namespace Business {
         private string _introduce;
         
         /// <summary>
+        /// IsDelete
+        /// </summary>
+        private bool _isDelete;
+        
+        /// <summary>
         /// 默认构造函数。
         /// </summary>
         public UserInfoBase() {
@@ -24022,7 +24043,7 @@ namespace Business {
         /// <summary>
         /// 初始化所有字段的构造函数。
         /// </summary>
-        public UserInfoBase(System.Guid userId, string userName, string realName, string nickName, int gender, string department, string position, string phone, string mobile, string email, System.Nullable<System.DateTime> birthday, string introduce) {
+        public UserInfoBase(System.Guid userId, string userName, string realName, string nickName, int gender, string department, string position, string phone, string mobile, string email, System.Nullable<System.DateTime> birthday, string introduce, bool isDelete) {
             _userId = userId;
             _userName = userName;
             _realName = realName;
@@ -24035,6 +24056,7 @@ namespace Business {
             _email = email;
             _birthday = birthday;
             _introduce = introduce;
+            _isDelete = isDelete;
         }
         
         /// <summary>
@@ -24311,6 +24333,27 @@ namespace Business {
         }
         
         /// <summary>
+        /// IsDelete
+        /// </summary>
+        public virtual bool IsDelete {
+            get {
+                return _isDelete;
+            }
+            set {
+                _isDelete = value;
+            }
+        }
+        
+        /// <summary>
+        /// IsDelete APColumnDef
+        /// </summary>
+        public static BooleanAPColumnDef IsDeleteDef {
+            get {
+                return APDBDef.UserInfo.IsDelete;
+            }
+        }
+        
+        /// <summary>
         /// UserInfoTableDef APTableDef
         /// </summary>
         public static APDBDef.UserInfoTableDef TableDef {
@@ -24344,6 +24387,7 @@ namespace Business {
             Email = data.Email;
             Birthday = data.Birthday;
             Introduce = data.Introduce;
+            IsDelete = data.IsDelete;
         }
         
         /// <summary>
@@ -24384,6 +24428,9 @@ namespace Business {
                 return false;
             }
             if ((Introduce != data.Introduce)) {
+                return false;
+            }
+            if ((IsDelete != data.IsDelete)) {
                 return false;
             }
             return true;
@@ -24482,8 +24529,8 @@ namespace Business {
         /// <summary>
         /// 初始化所有字段的构造函数。
         /// </summary>
-        public UserInfo(System.Guid userId, string userName, string realName, string nickName, int gender, string department, string position, string phone, string mobile, string email, System.Nullable<System.DateTime> birthday, string introduce) : 
-                base(userId, userName, realName, nickName, gender, department, position, phone, mobile, email, birthday, introduce) {
+        public UserInfo(System.Guid userId, string userName, string realName, string nickName, int gender, string department, string position, string phone, string mobile, string email, System.Nullable<System.DateTime> birthday, string introduce, bool isDelete) : 
+                base(userId, userName, realName, nickName, gender, department, position, phone, mobile, email, birthday, introduce, isDelete) {
         }
     }
     
@@ -28617,7 +28664,7 @@ namespace Business {
         /// <summary>
         /// InvoiceDate
         /// </summary>
-        [Display(Name="开票时间")]
+        [Display(Name="开始时间")]
         public virtual System.DateTime InvoiceDate {
             get {
                 return _invoiceDate;
@@ -28639,7 +28686,7 @@ namespace Business {
         /// <summary>
         /// PayDate
         /// </summary>
-        [Display(Name="收款时间")]
+        [Display(Name="结束时间")]
         public virtual System.DateTime PayDate {
             get {
                 return _payDate;
@@ -35604,7 +35651,7 @@ namespace Business {
         /// <summary>
         /// Comment
         /// </summary>
-        [Display(Name="填写说明")]
+        [Display(Name="签字意见")]
         [StringLength(1000)]
         public virtual string Comment {
             get {
@@ -35649,7 +35696,7 @@ namespace Business {
         /// <summary>
         /// ReviewComment
         /// </summary>
-        [Display(Name="审核说明")]
+        [Display(Name="审核意见")]
         [StringLength(1000)]
         public virtual string ReviewComment {
             get {

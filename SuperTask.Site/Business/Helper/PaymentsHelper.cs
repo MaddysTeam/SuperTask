@@ -44,7 +44,7 @@ namespace Business.Helper
 
 
       /// <summary>
-      /// 得到项目下所有的款项，同时计算百分比
+      /// 得到项目下所有的合同款项，同时计算百分比
       /// </summary>
       /// <param name="projectId"></param>
       /// <param name="db"></param>
@@ -52,12 +52,12 @@ namespace Business.Helper
       public static List<Payments> GetProjectPayments(Guid projectId, APDBDef db)
       {
          var project = db.ProjectDal.PrimaryGet(projectId);
-         var money = project.Money;
+         var cmoney = project.CMoney;
 
          var result = db.PaymentsDal.ConditionQuery(p.ProjectId == projectId, null, null, null);
          foreach (var item in result)
          {
-            double r = money <= 0 ? 0 : (double)(item.Money / money).Round(2);
+            double r = cmoney <= 0 ? 0 : (double)(item.Money / cmoney).Round(2);
             item.Ratio = r.ToString("P");
          }
 

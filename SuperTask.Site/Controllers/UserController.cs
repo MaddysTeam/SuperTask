@@ -32,6 +32,7 @@ namespace TheSite.Controllers
 
          var query = APQuery.select(u.UserId, u.UserName, u.RealName,u.Department,u.Email)
             .from(u)
+             .where(u.IsDelete==false)
             .primary(u.UserId)
             .skip((current - 1) * rowCount)
             .take(rowCount);

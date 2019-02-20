@@ -256,8 +256,9 @@ namespace TheSite.Controllers
 
          db.ProjectStoneTaskDal.Update(pst);
 
-         //重定向到项目明细
-         return RedirectToAction("Details", "Project", new { id = pst.ProjectId });
+         db.ProjectDal.UpdatePartial(pst.ProjectId, new { RateOfProgress = ProjectrHelper.GetProcessByNodeTasks(pst.ProjectId, db) });
+
+         return RedirectToAction("Search", "WorkFlowTask");
       }
 
       public ActionResult AfterEditReviewSend(Guid instanceId)
@@ -288,7 +289,7 @@ namespace TheSite.Controllers
 
          db.ProjectStoneTaskDal.Update(pst);
 
-         return RedirectToAction("Details", "Project", new { id = pst.ProjectId });
+         return RedirectToAction("Search", "WorkFlowTask");
       }
 
    }

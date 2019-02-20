@@ -50,6 +50,7 @@
 					<add name="Email" type="string" dataLength="50" isNullable="true" display="邮箱" />
 					<add name="Birthday" type="DateTime?"  isNullable="true" display="生日" />
 					<add name="Introduce" type="string" dataLength="500" isNullable="true" display="自我介绍"/>
+					<add name="IsDelete" type="bool" isNullable="true" />
 
 				</columns>
 			</table>
@@ -251,8 +252,8 @@
 					<add name="ProjectId" columnName="ProjectId" type="Guid" isNullable="true" comment="项目id"/>
 					<add name="Money" columnName="Money" type="double" defaultValue="0"  display="总金额"/>
 					<add name="RateOfProgress" columnName="Progress" type="double" defaultValue="0"  display="付款进度"/>
-					<add name="InvoiceDate" columnName="InvoiceDate" type="DateTime" isNullable="true"  display="开票时间"/>
-					<add name="PayDate" columnName="PayDate" type="DateTime" isNullable="true"  display="收款时间"/>
+					<add name="InvoiceDate" columnName="InvoiceDate" type="DateTime" isNullable="true"  display="开始时间"/>
+					<add name="PayDate" columnName="PayDate" type="DateTime" isNullable="true"  display="结束时间"/>
 					<add name="PayType" columnName="PayType" type="Guid"   display="付款类型"/>
 					<add name="ResourceId" columnName="ResourceId" type="Guid" comment="冗余字段，备用" />
 					<add name="Sort"  type="double" isNullable="true"  comment="排序"/>
@@ -525,9 +526,9 @@
 					<add name="SendDate" columnName="SendDate" type="DateTime" defaultValue="DateTime.Now"></add>
 					<add name="ReviewDate" columnName="ReviewDate" type="DateTime"  isNullable="true" defaultValue="DateTime.Now"></add>
 					<add name="AttachmentUrl" columnName="AttachmentId" type="string" dataLength="1000" isNullable="true"></add>
-					<add name="Comment"  columnName="Comment" type="string" dataLength="1000" display="填写说明" ></add>
+					<add name="Comment"  columnName="Comment" type="string" dataLength="1000" display="签字意见" ></add>
 					<add name="Title"  columnName="Title" type="string" dataLength="50" isNullable="true"></add>
-					<add name="ReviewComment"  columnName="ReviewComment" type="string" dataLength="1000" display="审核说明"  isNullable="true"></add>
+					<add name="ReviewComment"  columnName="ReviewComment" type="string" dataLength="1000" display="审核意见"  isNullable="true"></add>
 
 				</columns>
 			</table>

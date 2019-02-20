@@ -62,13 +62,22 @@
 				}
 
 				$.post('@Url.Action("Edit", "Payments")', { payments: payments }, function (data) {
-					popupMessage(data);
 					if (func) func();
+					popupMessage(data);
+					if ($this.hasClass('btn-confirm-pay') && data.result=='@AjaxResults.Success') {
+						$this.remove();
+						$payContainer.find('.btn-clear').hide();
+						$payContainer.find('.btn-pay').hide();
+					}
+					else {
+						$payContainer.find('.btn-clear').show();
+						$payContainer.find('#Ratio').html(data.payments.Ratio);
+					}
 				});
 			});
 		}
 
-		function bindRemovePay(func) {
+		function bindRemoveVender(func) {
 			$('.btn-removePay').off('click').on('click', function () {
 				var $this = $(this);
 				var $payContainer = $this.parents('.form-group');
@@ -78,9 +87,9 @@
 				}
 				else {
 					$.post('@Url.Action("Remove", "Payments")', { id: payId }, function (data) {
-						popupMessage(data);
-
 						if (func) func();
+						popupMessage(data);
+						$payContainer.remove();
 					})
 				}
 			});
@@ -95,6 +104,9 @@
 				$.post('@Url.Action("Clare", "Payments")', { id: payId, projectId: projectId }, function (data) {
 					popupMessage(data);
 					if (func) func();
+					$this.hide();
+					$payContainer.find('#Money').val(0);
+					$payContainer.find('#Ratio').html("0");
 				})
 			});
 		}
@@ -112,7 +124,7 @@
 						$('.' + paymentId).after($(html));
 					bindAddVender(func);
 					bindPay(func);
-					bindRemovePay(func);
+					bindRemoveVender(func);
 				});
 
 			});
@@ -207,33 +219,42 @@
 					$('#paymentsArea').html(data);
 
 					// save current tabId to aviod it being change after loading payments
-					$('.nav-tabs li a').click(function () { currentTabId = $(this).attr('href').replace('#', ''); });
+					$('.nav-tabs li a').off('click').on('click', function () { currentTabId = $(this).attr('href').replace('#', ''); });
 
 					// call back
-					var callback = function () { grid.bootgrid('reload'); loadPayments(currentTabId); };
+					var callback = function () { grid.bootgrid('reload'); };
 					// bind payment
 					bindPay(callback);
 					// bind remove payment
-					bindRemovePay(callback);
+					bindRemoveVender(callback);
 					// bind clear payment
 					bindClarePayment(callback);
 					// add vender payment by ajax
 					bindAddVender(callback);
 
-					$('.btn-emoney').on('click', function () {
+					$('.btn-emoney').off('click').on('click', function () {
 						var money = $('#EsitimateMoney').val();
 						$.post('@Url.Action("EditEestimateMoney", "Project")', { id: projectId, emoney: money }, function (data) {
-							popupMessage(data);
 							callback();
+							popupMessage(data);
 						})
 					});
 
-					$('.btn-cmoney').on('click', function () {
+					$('.btn-cmoney').off('click').on('click', function () {
 						var money = $('#ContractMoney').val();
 						$.post('@Url.Action("EditConstractMoney", "Project")', { id: projectId, cmoney: money }, function (data) {
+							loadPayments(currentTabId);
 							popupMessage(data);
 						})
 					});
+
+					$('.btn-clear').each(function () {
+						var $this = $(this);
+						var $payContainer = $this.parents('.form-group');
+						var money = $payContainer.find('#Money').val();
+						if (money <= 0)
+							$this.hide();
+					})
 
 				});
 			}

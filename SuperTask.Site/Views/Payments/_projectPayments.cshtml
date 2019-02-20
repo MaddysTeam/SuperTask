@@ -23,7 +23,7 @@
 		}
 
 	</div>
-	<div class="col-md-1">@Html.Label("radio", Model.Ratio, new { @class = "form-control" , @readonly = "readonly" })</div>
+	<div class="col-md-1">@Html.Label("Ratio", Model.Ratio, new { @id= "Ratio", @class = "form-control" , @readonly = "readonly" })</div>
 	<div class="col-md-1">@Html.LabelFor(p => p.InvoiceDate, new { @class = "control-label" })</div>
 	<div class="col-md-2">
 			@if (canEdit)
@@ -65,10 +65,10 @@
 			{
 				<a class="btn btn-danger btn-confirm-pay" title="最终确认" data-confirm="true" hidden><i class="fa fa-"></i>最终确认</a>
 			}
-			if (Model.Valiedate().IsSuccess)
-			{
+			//if (Model.Valiedate().IsSuccess)
+			//{
 				<a class="btn btn-clear" title="清除并删除节点任务"> <font color="red"><i class="fa fa-times-circle-o"></i></font></a>
-			}
+			//}
 		}
 
 	</div>

@@ -91,6 +91,7 @@ namespace TheSite.Controllers
 
          var results = APQuery.select(egm.GroupMemberId, u.UserId.As("userId"), u.UserName)
                               .from(u, egm.JoinLeft(u.UserId == egm.MemberId & egm.GroupId == groupId))
+                              .where(u.IsDelete==false)
             .query(db, r => new EvalGroupMember
             {
                GroupMemberId = egm.GroupMemberId.GetValue(r),
@@ -113,6 +114,8 @@ namespace TheSite.Controllers
                msg = Errors.EvalGroup.BIND_MEMBER_FAIL
             });
          }
+
+         //TODO: 如果accessorTarget  表中的targetId 已经绑定了memberId 则不能加入任何组
 
          var ids = new List<Guid>();
          foreach (var id in memberIds.Split(','))
@@ -149,6 +152,7 @@ namespace TheSite.Controllers
 
          var results = APQuery.select(ega.GroupAccessorId, u.UserId.As("userId"), u.UserName)
                               .from(u, ega.JoinLeft(u.UserId == ega.AccessorId & ega.GroupId == groupId))
+                              .where(u.IsDelete == false)
             .query(db, r => new EvalGroupAccessor
             {
                GroupAccessorId = ega.GroupAccessorId.GetValue(r),
@@ -239,7 +243,7 @@ namespace TheSite.Controllers
                                        u.JoinInner(u.UserId == eat.AccessorId),
                                        eg.JoinInner(eg.GroupId == eat.TargetId)
                                        )
-                               .where(eat.TargetId == groupId & eat.PeriodId == period.PeriodId)
+                               .where(eat.TargetId == groupId & eat.PeriodId == period.PeriodId & u.IsDelete==false)
                                .query(db, r =>
                                {
                                   var tgt = new EvalAccessorTarget();
@@ -354,8 +358,9 @@ namespace TheSite.Controllers
 
       public ActionResult AccessorEdit(Guid groupAccessorId)
       {
+         var u = APDBDef.UserInfo;
          var tables = db.EvalTableDal.ConditionQuery(et.TableStatus != EvalTableKeys.DisableStatus, null, null, null);
-         var users = db.UserInfoDal.ConditionQuery(null, null, null, null);
+         var users = db.UserInfoDal.ConditionQuery(u.IsDelete==false, null, null, null);
          var accessor = new EvalGroupAccessor();
 
          if (!groupAccessorId.IsEmpty())
@@ -433,6 +438,7 @@ namespace TheSite.Controllers
                                & at.TableId == Guid.Empty // table id 为空 表示 accessor 和 target 之间的关系
                                                           // & at.GroupId == EvalGroupConfig.DefaultGroupId.ToGuid(Guid.Empty)
                                ))
+            .where(u.IsDelete==false)
             .query(db, r => new EvalAccessorTarget { AccessorTargetId = at.AccessorTargetId.GetValue(r), TargetId = u.UserId.GetValue(r, "userId"), TargetName = u.UserName.GetValue(r) })
             .ToList();
 
@@ -551,7 +557,7 @@ namespace TheSite.Controllers
                                        u.JoinInner(u.UserId == eat.AccessorId),
                                        tu.JoinInner(tu.UserId == eat.TargetId)
                                        )
-                               .where(eat.TargetId == targetId & eat.PeriodId == period.PeriodId)
+                               .where(eat.TargetId == targetId & eat.PeriodId == period.PeriodId & u.IsDelete==false)
                                .query(db, r =>
                                {
                                   var tgt = new EvalAccessorTarget();
@@ -608,11 +614,11 @@ namespace TheSite.Controllers
          }
 
          // TODO: 如果targetId 是小组id则需要递归添加组内成员的考核表权重绑定信息
-         //if (model.TargetIsGroup)
-         //{
-         //   var members =
-         //   TargetMemberEdit(new EvalTargetEditViewModels { Tables = model.Tables, TargetIsGroup = false, });
-         //}
+         if (model.TargetIsGroup)
+         {
+            var members =
+            TargetMemberEdit(new EvalTargetEditViewModels { Tables = model.Tables, TargetIsGroup = false, });
+         }
 
          return Json(new
          {

@@ -27,6 +27,7 @@ namespace Business.Helper
          public const string NOT_ALLOWED_OPERATOR_NULL = "当前操作者不能为空";
          public const string NOT_ALLOWED_ORIGNAL_NULL = "项目不存在";
          public const string NOT_ALLOWED_BOTH_CODE = "只能填写一个编号";
+         public const string NOT_ALLOWED_VISIT_FOLDER = "没有权限访问文件夹";
       }
 
       public class Task
@@ -156,6 +157,7 @@ namespace Business.Helper
          public const string NOT_ALLOWED_Money_ZERO = "请填写金额！";
          public const string NOT_ALLOWED_TIME_NULL = "请填写时间！";
          public const string NOT_ALLOWED_TYPE_WHEN_DELIVERY = "必须选择交付凭证";
+         public const string START_MUST_BE_EARLIER_THAN_END = "开始时间必须晚于结束时间";
       }
 
       public class MileStone

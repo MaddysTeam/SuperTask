@@ -30,7 +30,7 @@ namespace Business
       {  
          base.Handle(command, option);
 
-         command.where(re.Projectid == option.ProjectId)
+         command.where(re.Projectid == option.ProjectId & u.IsDelete==false)
                 .order_by(re.CreateDate.Desc);
       }
    }

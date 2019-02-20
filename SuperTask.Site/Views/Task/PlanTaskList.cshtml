@@ -78,7 +78,7 @@
 							<div class="col-md-7">
 
 								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-									@Html.TextBox("Start", DateTime.Now.AddDays(-200).ToString("yyyy-MM-dd"), new { @class = "form-control startDate" })
+									@Html.TextBox("Start", DateTime.Now.AddDays(-1200).ToString("yyyy-MM-dd"), new { @class = "form-control startDate" })
 									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 								</div>
 
@@ -92,7 +92,7 @@
 							<label class="col-md-4 control-label">结束时间</label>
 							<div class="col-md-7">
 								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-									@Html.TextBox("End", DateTime.Now.AddDays(30).ToString("yyyy-MM-dd"), new { @class = "form-control plan endDate" })
+									@Html.TextBox("End", DateTime.Now.AddDays(1200).ToString("yyyy-MM-dd"), new { @class = "form-control plan endDate" })
 									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 								</div>
 							</div>

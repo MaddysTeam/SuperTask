@@ -31,7 +31,7 @@
 			<div class="btn-group widget-header-toolbar">
 				@if (isMe || isReviewer || isLeader)
 				{
-					<button type="submit" class="btn btn-danger btn-sm btn-save">保存</button>
+					<button type="submit" class="btn btn-danger btn-sm btn-save">保存项目信息</button>
 				}
 				@if ((Model.IsPlanStatus || Model.IsEditStatus) && isMe)
 				{
@@ -41,10 +41,10 @@
 				{
 				<button class="btn btn-success btn-sm btn-start" disabled>审核中</button>
 				}
-				@if (Model.IsProcessStatus && isMe)
+				@*@if (Model.IsProcessStatus && isMe)
 				{
 				<button type="submit" class="btn btn-info btn-sm btn-forceClose" title="注意：强制关闭后，项目所有任务都关闭，项目状态也为关闭状态"><i class="fa fa-question-circle"></i>强制关闭</button>
-				}
+				}*@
 
 			</div>
 		</div>
@@ -82,7 +82,7 @@
 						@Html.LabelFor(p => p.ProjectExecutor, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
 							@Html.TextBoxFor(p => p.ProjectExecutor, new { @class = "form-control plan" })
-							@Html.ValidationMessageFor(p => p.ProjectOwner)
+							@Html.ValidationMessageFor(p => p.ProjectExecutor)
 						</div>
 					</div>
 					@if (Model.IsPlanStatus)
@@ -126,7 +126,7 @@
 					<div class="form-group">
 						@Html.LabelFor(p => p.ProjectProgress, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
-							<span class="form-control">@Model.ProjectProgress%</span>
+							<span class="form-control">@Model.RateOfProgress%</span>
 						</div>
 					</div>
 				</fieldset>
@@ -214,7 +214,7 @@
 		</div>
 	</div>
 
-	if (Model.IsReviewStatus)
+	if (Model.IsReviewStatus || Model.IsEditStatus)
 	{
 		<div id="reviewArea"></div>
 	}

@@ -17,7 +17,9 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult Edit(Payments payments)
       {
+         var pst = APDBDef.ProjectStoneTask;
          var t = APDBDef.WorkTask;
+         var project = db.ProjectDal.PrimaryGet(payments.ProjectId);
 
          var validateResult = payments.Valiedate();
          if (!validateResult.IsSuccess)
@@ -27,7 +29,8 @@ namespace TheSite.Controllers
                msg = validateResult.Msg
             });
 
-         var project = db.ProjectDal.PrimaryGet(payments.ProjectId);
+         payments.Money = payments.PayType == PaymentsKeys.NothingType ? 0 : payments.Money;
+
          if (payments.PayId.IsEmpty())
          {
             payments.PayId = Guid.NewGuid();
@@ -35,11 +38,29 @@ namespace TheSite.Controllers
          }
          else
          {
+            var cmoney = project.CMoney;
+            var ratio = cmoney <= 0 ? 0 : (double)(payments.Money / cmoney).Round(2);
+            payments.Ratio = ratio.ToString("P");
+
             db.PaymentsDal.Update(payments);
          }
 
-         //新增项目节点任务
-         var pst = APDBDef.ProjectStoneTask;
+
+         // 如果是nothingType 则 删除节点任务
+         if (payments.PayType == PaymentsKeys.NothingType)
+         {
+            db.ProjectStoneTaskDal.ConditionDelete(pst.PmsId == payments.PayId & pst.ProjectId == payments.ProjectId);
+            return Json(new
+            {
+               result = AjaxResults.Success,
+               msg = Success.Payments.EDITSUCCESS
+            });
+         }
+
+         var startDate = payments.InvoiceDate.IsEmpty() ? project.StartDate : payments.InvoiceDate;
+         var endDate = payments.PayDate.IsEmpty() ? project.EndDate : payments.PayDate;
+
+         //新增项目节点任务      
          var stonetaskExists = db.ProjectStoneTaskDal.ConditionQueryCount(pst.PmsId == payments.PayId & pst.ProjectId == payments.ProjectId) > 0;
          if (!stonetaskExists)
          {
@@ -48,8 +69,8 @@ namespace TheSite.Controllers
               payments.PayId,
               project.ProjectId,
               payments.PayName,
-              project.StartDate,
-              project.EndDate,
+              startDate,
+              endDate,
               DateTime.MinValue,
               DateTime.MinValue,
               TaskKeys.PlanStatus,
@@ -64,40 +85,44 @@ namespace TheSite.Controllers
          {
             APQuery
               .update(pst)
-              .set(pst.EndDate.SetValue(payments.InvoiceDate), pst.StartDate.SetValue(payments.InvoiceDate), pst.TaskName.SetValue(payments.PayName))
+              .set(pst.EndDate.SetValue(endDate), pst.StartDate.SetValue(startDate), pst.TaskName.SetValue(payments.PayName))
               .where(pst.PmsId == payments.PayId).execute(db);
          }
 
-         //新增项目任务
-         var taskIsExists = db.WorkTaskDal.ConditionQueryCount(t.Projectid == project.ProjectId & t.TaskName == payments.PayName) > 0;
-         if (!taskIsExists)
+         // 只有在【最终确认】后而且填写过【预估金额】的款项才会添加实际项目任务
+         if (payments.IsConfirm && payments.Money > 0)
          {
-            var tasks = db.WorkTaskDal.ConditionQuery(t.Projectid == project.ProjectId, null, null, null);
-            var root = tasks.Find(x => x.ParentId == Guid.Empty);
-            db.WorkTaskDal.Insert(new WorkTask
+            var taskIsExists = db.WorkTaskDal.ConditionQueryCount(t.Projectid == project.ProjectId & t.TaskName == payments.PayName) > 0;
+            if (!taskIsExists)
             {
-               TaskId = Guid.NewGuid(),
-               Projectid = project.ProjectId,
-               CreateDate = DateTime.Now,
-               CreatorId = project.ManagerId,
-               StartDate = project.StartDate,
-               EndDate = project.EndDate,
-               ManagerId = project.ManagerId,
-               ReviewerID = project.ReviewerId,
-               TaskStatus = project.IsPlanStatus ? TaskKeys.PlanStatus : TaskKeys.ProcessStatus,
-               IsParent = false,
-               ParentId = root.TaskId,
-               TaskName = payments.PayName,
-               TaskType = TaskKeys.ProjectTaskType,
-               TaskLevel = 2,
-               SortId = tasks.Count + 1
-            });
+               var tasks = db.WorkTaskDal.ConditionQuery(t.Projectid == project.ProjectId, null, null, null);
+               var root = tasks.Find(x => x.ParentId == Guid.Empty);
+               db.WorkTaskDal.Insert(new WorkTask
+               {
+                  TaskId = Guid.NewGuid(),
+                  Projectid = project.ProjectId,
+                  CreateDate = DateTime.Now,
+                  CreatorId = project.ManagerId,
+                  StartDate = startDate,
+                  EndDate = endDate,
+                  ManagerId = project.ManagerId,
+                  ReviewerID = project.ReviewerId,
+                  TaskStatus = project.IsPlanStatus ? TaskKeys.PlanStatus : TaskKeys.ProcessStatus,
+                  IsParent = false,
+                  ParentId = root.TaskId,
+                  TaskName = payments.PayName,
+                  TaskType = TaskKeys.ProjectTaskType,
+                  TaskLevel = 2,
+                  SortId = tasks.Count + 1
+               });
+            }
          }
 
          return Json(new
          {
             result = AjaxResults.Success,
-            msg = Success.Payments.EDITSUCCESS
+            msg = Success.Payments.EDITSUCCESS,
+            payments
          });
       }
 
@@ -177,7 +202,7 @@ namespace TheSite.Controllers
       public ActionResult Details(Guid projectId, string tabId)
       {
          ViewData["project"] = ProjectrHelper.GetCurrentProject(projectId);
-         ViewBag.TabId = tabId;
+         ViewBag.TabId = string.IsNullOrEmpty(tabId) ? "moneyTab" : tabId;
 
          return PartialView("Details", PaymentsHelper.GetProjectPayments(projectId, db));
       }
@@ -191,9 +216,7 @@ namespace TheSite.Controllers
          var pst = APDBDef.ProjectStoneTask;
 
          APQuery.update(p).set(
-            p.Money.SetValue(0),
-            p.PayDate.SetValue(DateTime.MinValue),
-            p.InvoiceDate.SetValue(DateTime.MinValue)
+            p.Money.SetValue(0)
             )
             .where(p.PayId == id)
             .execute(db);
@@ -203,7 +226,7 @@ namespace TheSite.Controllers
          return Json(new
          {
             result = AjaxResults.Success,
-            msg = Success.Payments.EDITSUCCESS
+            msg = Success.Payments.EDITSUCCESS,
          });
       }
 

@@ -21,7 +21,9 @@ namespace Business
          {
             return new Result { IsSuccess = false, Msg = Errors.Payments.NOT_ALLOWED_TYPE_NULL };
          }
-         else if(Money<=0 && !IsDeliveryType)
+         else if(Money<=0 && PayType!=PaymentsKeys.NothingType
+            //&& !IsDeliveryType
+            )
          {
             return new Result { IsSuccess = false, Msg = Errors.Payments.NOT_ALLOWED_Money_ZERO };
          }
@@ -36,6 +38,10 @@ namespace Business
          else if (PayType == PaymentsKeys.CheckBeforeDeliveryType)
          {
             return new Result { IsSuccess = false, Msg = Errors.Payments.NOT_ALLOWED_TYPE_WHEN_DELIVERY };
+         }
+         else if(PayDate < InvoiceDate)
+         {
+            return new Result { IsSuccess = false, Msg = Errors.Payments.START_MUST_BE_EARLIER_THAN_END };
          }
 
          return new Result { IsSuccess = true };
