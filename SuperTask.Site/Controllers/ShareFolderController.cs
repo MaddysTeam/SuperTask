@@ -22,7 +22,7 @@ namespace TheSite.Controllers
 
       public ActionResult Index(Guid? projectId)
       {
-         if(null== projectId || 
+         if(null!= projectId && 
             !ResourceHelper.HasPermission(GetUserInfo().UserId, projectId.Value, "P_10006", new APDBDef()))
          {
             throw new ApplicationException(Errors.Project.NOT_ALLOWED_VISIT_FOLDER);

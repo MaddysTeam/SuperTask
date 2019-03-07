@@ -148,13 +148,6 @@
 				}
 			});
 
-			$('.btn-save').on('click', function () {
-				var status = $('#ProjectStatus').val();
-				if (status == '@ProjectKeys.EditStatus') { // 如果是编辑状态，则保存后默认改为执行状态
-					$('#ProjectStatus').val('@ProjectKeys.ProcessStatus');
-				}
-			});
-
 			$('.btn-complete').on('click', function () {
 				if (confirm('@Confirm.Project.PROJECT_CONFIRM_COMPLETE')) {
 					$('#ProjectStatus').val('@ProjectKeys.CompleteStatus');
