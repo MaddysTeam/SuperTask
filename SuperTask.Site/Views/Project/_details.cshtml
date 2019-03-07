@@ -111,7 +111,7 @@
 						@Html.HiddenFor(x => x.StartDate)
 						@Html.HiddenFor(x => x.EndDate)
 						<div class="form-group">
-							@Html.LabelFor(p => p.EndDate, new { @class = "control-label col-md-3" })
+							@Html.LabelFor(p => p.StartDate, new { @class = "control-label col-md-3" })
 							<div class="col-md-9">
 								@Html.Label("预估开始", Model.StartDate.ToString("yyyy-MM-dd"), new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue, @readonly = "readonly" })
 							</div>
@@ -119,7 +119,7 @@
 						<div class="form-group">
 							@Html.LabelFor(p => p.EndDate, new { @class = "control-label col-md-3" })
 							<div class="col-md-9">
-								@Html.Label("预估结束", Model.StartDate.ToString("yyyy-MM-dd"), new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue, @readonly = "readonly" })
+								@Html.Label("预估结束", Model.EndDate.ToString("yyyy-MM-dd"), new { @class = "form-control plan", @hasValue = Model.StartDate != DateTime.MinValue, @readonly = "readonly" })
 							</div>
 						</div>
 					}

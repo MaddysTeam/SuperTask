@@ -7509,7 +7509,7 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_comment, null)) {
                         _comment = new StringAPColumnDef(this, "Comment", false, 1000);
-                        _comment.Display = "签字意见";
+                        _comment.Display = "填写说明";
                     }
                     return _comment;
                 }
@@ -35651,7 +35651,7 @@ namespace Business {
         /// <summary>
         /// Comment
         /// </summary>
-        [Display(Name="签字意见")]
+        [Display(Name="填写说明")]
         [StringLength(1000)]
         public virtual string Comment {
             get {
