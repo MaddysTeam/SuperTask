@@ -78,6 +78,7 @@ namespace TheSite.Controllers
               TaskKeys.NodeTaskType,
               project.ManagerId,
               project.ReviewerId,
+              payments.Sort,
               DateTime.MinValue
               ));
          }

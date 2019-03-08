@@ -68,11 +68,12 @@
 						$this.remove();
 						$payContainer.find('.btn-clear').hide();
 						$payContainer.find('.btn-pay').hide();
+						$payContainer.find('input').attr('disabled','disabled');
 					}
 					else {
 						$payContainer.find('.btn-clear').show();
-						$payContainer.find('#Ratio').html(data.payments.Ratio);
 					}
+					$payContainer.find('#Ratio').html(data.payments.Ratio);
 				});
 			});
 		}

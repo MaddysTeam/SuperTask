@@ -31,7 +31,7 @@ namespace TheSite.Controllers
          }
 
          query.primary(pst.PstId)
-          .order_by(pst.CreateDate.Desc)
+          .order_by(pst.SortId.Asc)
           .skip((current - 1) * rowCount)
           .take(rowCount);
 

@@ -97,33 +97,10 @@ namespace Business.Helper
                TaskKeys.NodeTaskType,
                project.ManagerId,
                project.ReviewerId,
+               mileStone.Sort,
                DateTime.MinValue
                ));
          }
-
-         //if (!taskIsExists)
-         //{
-         //   var tasks= db.WorkTaskDal.ConditionQuery(t.Projectid == project.ProjectId,null,null,null);
-         //   var root = tasks.Find(x => x.ParentId == Guid.Empty);
-         //   db.WorkTaskDal.Insert(new WorkTask
-         //   {
-         //      TaskId = Guid.NewGuid(),
-         //      Projectid=project.ProjectId,
-         //      CreateDate = DateTime.Now,
-         //      CreatorId = project.ManagerId,
-         //      StartDate = project.StartDate,
-         //      EndDate = project.EndDate,
-         //      ManagerId = project.ManagerId,
-         //      ReviewerID= project.ReviewerId,
-         //      TaskStatus = project.IsPlanStatus ? TaskKeys.PlanStatus : TaskKeys.ProcessStatus,
-         //      IsParent = false,
-         //      ParentId = root.TaskId,
-         //      TaskName = mileStone.StoneName,
-         //      TaskType = TaskKeys.ProjectTaskType,
-         //      TaskLevel = 2,
-         //      SortId = tasks.Count+1
-         //   });
-         //}
       }
 
       /// <summary>

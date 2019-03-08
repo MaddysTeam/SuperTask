@@ -304,6 +304,7 @@
 					<add name="TaskType"  columnName="Type" type="Guid"  isNullable="true"  display="任务类型" />
 					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true"  display="任务负责人ID" />
 					<add name="ReviewerID" columnName="ReviewerId" type="Guid"   isNullable="true" display="任务审核者ID" />
+					<add name="SortId" columnName="SortId" type="Double" isNullable="true" comment="排序Id" />
 
 					<add name="UpgradeEndDate"  columnName="UpgradeEndDate" type="DateTime" isNullable="true" display="变更结束时间" />
 				</columns>
