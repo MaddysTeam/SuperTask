@@ -12,7 +12,7 @@
 			</div>
 		</div>
 		<div class="widget-content">
-			<form action="@Url.Action("UploadFile", "Attachment")" class="dropzonePop filePop"></form>
+			<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
 			<form class="form-horizontal" action="@Url.Action("Edit", "ProjectStoneTask")" role="form" data-after-success="afterDialogSuccess()">
 				@Html.AntiForgeryToken()
 				<div class="row">
@@ -96,7 +96,7 @@
 		ajaxSubmitForm($('.modal-dialog form'));
 
 		//文件上传
-		$('.dropzonePop.filePop').dropzone({
+		$('.dropzone.file').dropzone({
 			addedContainer: '#flyArea',
 			dictResponseError: '上传出错',
 			uploadMultiple: false,
@@ -121,7 +121,7 @@
 		});
 
 		$('#btn-uploadPop').on('click', function () {
-			$('.dropzonePop').trigger('click');
+			$('.dropzone').trigger('click');
 		});
 
 	})

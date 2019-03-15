@@ -85,7 +85,7 @@
 							@Html.ValidationMessageFor(p => p.ProjectExecutor)
 						</div>
 					</div>
-					@if (Model.IsPlanStatus)
+					@if (Model.IsPlanStatus || Model.IsEditStatus)
 					{
 						<div class="form-group">
 							@Html.LabelFor(p => p.StartDate, new { @class = "control-label col-md-3" })

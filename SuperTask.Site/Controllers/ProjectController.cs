@@ -38,8 +38,8 @@ namespace TheSite.Controllers
                                     )
             .from(p,
                   u.JoinLeft(u.UserId == p.ManagerId)
-                  )
-            .where(p.ProjectStatus.NotIn(ProjectKeys.DeleteStatus, ProjectKeys.CompleteStatus));
+                  );
+            //.where(p.ProjectStatus.NotIn(ProjectKeys.DeleteStatus));
 
          if (searchTypeId == ProjectKeys.SearchMyProject)
             query.where_and(p.ManagerId == user.UserId);
