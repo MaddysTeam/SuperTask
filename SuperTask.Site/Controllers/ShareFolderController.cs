@@ -22,33 +22,29 @@ namespace TheSite.Controllers
 
       public ActionResult Index(Guid? projectId)
       {
-         if(null!= projectId && 
+         if (null != projectId &&
             !ResourceHelper.HasPermission(GetUserInfo().UserId, projectId.Value, "P_10006", new APDBDef()))
          {
             throw new ApplicationException(Errors.Project.NOT_ALLOWED_VISIT_FOLDER);
          }
 
-         return View();
+         if (projectId == null)
+         {
+            return View(Guid.Empty);
+         }
+
+         var project = ProjectrHelper.GetCurrentProject(projectId.Value);
+         return View(project.FolderId);
       }
 
       [HttpPost]
-      public ActionResult Search(Guid projectId, string phrase)
+      public ActionResult Search(Guid parentId, string phrase)
       {
          var folders = new List<FolderViewModel>();
-         var files = new List<FileViewModel>();
-         var project = db.ProjectDal.PrimaryGet(projectId);
-         if (project != null)
-         {
-            var parents = GetAllFolders().FindAll(f => f.id == project.FolderId || f.id == Guid.Parse("64206816-B1C7-403E-B4CF-D797E32FD322"));
-            var children = FindChildFolders(project.FolderId, GetAllFolders(), new List<FolderViewModel>());
-            folders.AddRange(parents.Concat(children));
-         }
-         else
-         {
-            folders = GetAllFolders();
-         }
-
-         files = GetFiles(phrase);
+         var files = GetFiles(phrase);
+         var parents = GetAllFolders().FindAll(f => f.id == parentId || f.id == Guid.Parse("64206816-B1C7-403E-B4CF-D797E32FD322"));
+         var children = FindChildFolders(parentId, GetAllFolders(), new List<FolderViewModel>());
+         folders.AddRange(parents.Concat(children));
 
          return Json(new
          {

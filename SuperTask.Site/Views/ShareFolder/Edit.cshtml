@@ -48,10 +48,12 @@
 
 	function afterDialogSuccess() {
 		$('#firstModal').modal('hide');
+
+		var para = { parentId: $('#ProjectFolderId').val(), phrase: '' };
 		loadData(function () {
-			showFolderFiles($('#ParentId').val())
+			showFolderFiles($('#ProjectId').val())
 			bindLeftNav();
-		});
+		}, para);
 	}
 
 </script>

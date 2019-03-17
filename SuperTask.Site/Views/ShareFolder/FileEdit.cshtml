@@ -98,11 +98,12 @@
 
 	function afterDialogSuccess() {
 		$('#firstModal').modal('hide');
+		var para = { parentId: $('#ProjectFolderId').val(), phrase: '' };
 		try {
 			loadData(function () {
 				showFolderFiles(currentFolderId)
 				bindLeftNav();
-			});
+			}, para);
 		} catch (e) {
 
 		}

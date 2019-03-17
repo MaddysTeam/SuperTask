@@ -1,7 +1,7 @@
-﻿
+﻿@model Guid
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	var projectId = string.IsNullOrEmpty(Request["projectId"])? Guid.Empty: Request["projectId"].ToGuid(Guid.Empty);
+	//var projectId = string.IsNullOrEmpty(Request["projectId"])? Guid.Empty: Request["projectId"].ToGuid(Guid.Empty);
 }
 @section Css{
 	<link href="~/assets/plugins/jstree-3.2.1/themes/default/style.min.css" rel="stylesheet" />
@@ -21,7 +21,7 @@
 		<div class="row">
 
 			<!-- explorer nav -->
-			<div class="col-md-3">
+			<div class="col-md-4">
 				<div class="widget">
 
 					<div class="widget-header"></div>
@@ -36,7 +36,7 @@
 			</div>
 			<!-- /explorer nav -->
 			<!-- explorer content -->
-			<div class="col-md-9">
+			<div class="col-md-8">
 				<div class="widget explorer">
 
 					<div class="widget-header">
@@ -86,7 +86,7 @@
 		</div>
 	</div>
 	<!-- /main -->
-
+	<input type="hidden" id="ProjectFolderId" value="@Model" />
 </div>
 
 @section Modals{
@@ -104,7 +104,7 @@
 
 			bindExplorButtons();
 
-			var para = { projectId: '@projectId', phrase: '' };
+			var para = { parentId: '@Model', phrase: '' };
 
 			loadData(function () {
 				bindLeftNav();
@@ -131,13 +131,13 @@
 			  { text: '下载', onclick: function (e) { download(e.data['filePath']); } },
 			  { text: '删除', onclick: function (e) { delFile(e.data['fileId']); } },
 			  { divider: true },
-			  { text: '设置权限',onclick: function (e) { alert('功能还在研发中'); } }
+			  { text: '设置权限', onclick: function (e) { alert('功能还在研发中'); } }
 			]
 		};
 		var emptyMessageStr = '<div class="text-center">该文件夹为空</div>';
 		var folderStr = function (folder) {
 			var folderClassName = folder.isMyFolder ? 'myFolder' : 'folder';
-			return '<div class="item col-lg-2 col-sm-2 col-xs-4">' +
+			return '<div class="item col-lg-2 col-sm-2 col-xs-4" title="' + folder.name + '">' +
 							 '<div class="btn06 ' + folderClassName + '" data-id="' + folder.id + '" data-path="' + folder.path + '" data-folder-id="' + folder.id + '">' +
 								'<img src="' + folder.coverPath + '" />' +
 								 '<div class="ovrly"></div>' +
