@@ -87,14 +87,14 @@ namespace TheSite.Controllers
             {
                EvalSubmitResult esri = submitItems.FirstOrDefault(x => x.UserId == item.TargetId && x.PeriodId == item.PeriodId && x.RoleId == item.TargetRoleId);
                if (esri != null)
-                  esri.Score = item.Score;
+                  esri.Score = item.Score.Round(2);
                else
                   esri = new EvalSubmitResult
                   {
                      SubmitResultId = Guid.NewGuid(),
                      PeriodId = item.PeriodId,
                      UserId = item.TargetId,
-                     Score = item.Score,
+                     Score = item.Score.Round(2),
                      UserName = item.TargetName,
                      PeriodName = item.PeriodName
                   };

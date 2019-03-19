@@ -625,7 +625,7 @@
 					<add name="CreaterId" columnName="CreaterId" type="Guid"  display="创建人"></add>
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
 					<add name="ModifierId" columnName="ModifierId" type="Guid"  display="修改人"></add>
-					<add name="UseCount" columnName="UseCount" type="Guid" display="使用次数"></add>
+					<!--<add name="UseCount" columnName="UseCount" type="Guid" display="使用次数"></add>-->
 					<add name="PerviouslyTableStatus" columnName="PerviouslyTableStatus" type="Guid" isNullable="true" display="考核表先前状态" comment="用于状态还原"></add>
 
 				</columns>
