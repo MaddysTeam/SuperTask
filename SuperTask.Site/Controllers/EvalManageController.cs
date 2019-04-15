@@ -51,7 +51,7 @@ namespace TheSite.Controllers
       {
          var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
          var accessor = GetUserInfo();
-         var results = APQuery.select(ett.TargetId.As("TargetId"), u.UserName, er.ResultId.Count().As("EvalCount"))
+         var results = APQuery.select(ett.TargetId.As("TargetId"), u.UserName, er.ResultId.Count().As("EvalCount"),er.Score)
                        .from(ett,
                              et.JoinInner(et.TableId==ett.TableId),
                              u.JoinInner(ett.TargetId == u.UserId),
@@ -62,7 +62,7 @@ namespace TheSite.Controllers
                                          )
                              )
                         .where(ett.AccessorId == accessor.UserId & et.TableType== evalType)
-                        .group_by(ett.TargetId, u.UserName)
+                        .group_by(ett.TargetId, u.UserName,er.Score)
                         .query(db, r =>
                         {
                            return new EvalMember
@@ -72,7 +72,8 @@ namespace TheSite.Controllers
                               AccessorId = accessor.UserId,
                               AccessorName = accessor.UserName,
                               EvalCount = (int)(r["EvalCount"]),
-                              PeriodNames = period.Name
+                              PeriodNames = period.Name,
+                              Score=er.Score.GetValue(r) 
                            };
                         }).ToList();
 

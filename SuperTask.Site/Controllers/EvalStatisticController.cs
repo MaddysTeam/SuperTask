@@ -57,7 +57,7 @@ namespace TheSite.Controllers
 		                     left join EvalPeriod ep
 		                     on er.PeriodId=ep.id
 							 left join EvalAccessorTarget eat
-							 on eat.TargetId=er.TargetId and eat.TableId = er.TableId and eat.PeriodId= er.PeriodId 
+							 on eat.TargetId=er.TargetId and eat.TableId = er.TableId and eat.PeriodId= er.PeriodId and eat.AccessorId=er.AccesserId
 							 left join EvalTargetTablePropertion ettp 
 							 on ettp.TargetId=er.TargetId and ettp.TableId=er.TableId and ettp.PeriodId= er.PeriodId
 							 where eat.TableId<> @EmptyTableId and er.PeriodId=@PeriodId and eat.Propertion>0
@@ -189,10 +189,10 @@ namespace TheSite.Controllers
       private static string _detailsSQL = @"if exists (select * from tempdb.dbo.sysobjects where id = object_id(N'tempdb..#temp2') and type='U')
                         drop table #temp2
 
-         
 					   select distinct
 	                 
 	                         i.Name as 'IndicationName',
+                            ei.FullScore as 'FullScore',
 							       eri.Score,
 						          er.AccesserId,
 	                         er.TargetId as 'TargetId',
@@ -214,15 +214,18 @@ namespace TheSite.Controllers
 	                         er.TableId=et.ID
 	                         join Indication i
 	                         on eri.IndicationId=i.id
+                            join EvalIndication ei
+                            on ei.IndicationId=i.id and ei.tableId=et.id
 							 join EvalAccessorTarget eat
-							  on eat.TargetId=er.TargetId and eat.TableId = er.TableId and eat.PeriodId= er.PeriodId 
+							  on eat.TargetId=er.TargetId and eat.TableId = er.TableId and eat.PeriodId= er.PeriodId and eat.AccessorId=er.AccesserId
 							 left join EvalTargetTablePropertion ettp 
 							 on ettp.TargetId=er.TargetId and ettp.TableId=er.TableId and ettp.PeriodId= er.PeriodId
 	                         where er.TargetId=@TargetId and er.PeriodId=@PeriodId and eat.Propertion >0 and ettp.Propertion>0
-							 group by i.Name,er.AccesserId,er.TargetId,er.PeriodId,et.Name,i.ID,et.ID,ep.Name,eri.Score,eat.Propertion,ettp.Propertion
+							 group by i.Name,er.AccesserId,er.TargetId,er.PeriodId,et.Name,i.ID,et.ID,ep.Name,eri.Score,eat.Propertion,ettp.Propertion,ei.FullScore
 							 
 
 							select 
+                     t.fullScore as 'FullScore',
 						   t.IndicationName,
 							sum(Score * (propertion/100) * (tablepropertion/100)) 'Score',
 							t.IndicationId,
@@ -231,7 +234,7 @@ namespace TheSite.Controllers
 							t.TableId,
 							t.PeriodName
 							from #temp2 t
-						    group by periodId,TargetId,IndicationName,IndicationId,TableId,PeriodName";
+						    group by periodId,TargetId,IndicationName,IndicationId,TableId,PeriodName,t.fullScore";
    }
 
 }

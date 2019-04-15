@@ -36,6 +36,8 @@ namespace TheSite.Models
 
       public Guid TargetRoleId { get; set; }
 
+      public double Score { get; set; }
+
 
       public override bool Equals(object obj)
       {
