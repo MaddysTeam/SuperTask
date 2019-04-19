@@ -160,6 +160,7 @@ namespace TheSite.Controllers
 
                db.UserInfoDal.UpdatePartial(model.UserId, new
                {
+                  model.UserName,
                   model.RealName,
                   model.UserId,
                   model.Email,
