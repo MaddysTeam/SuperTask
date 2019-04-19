@@ -8,6 +8,10 @@ namespace Business
    public partial class ProjectStoneTask
    {
 
+      public bool IsCompleteStatus => TaskStatus == TaskKeys.CompleteStatus;
+
+      public bool IsDelteStatus => TaskStatus == TaskKeys.DeleteStatus;
+
       public Attachment CurrentAttachment { get; set; }
 
       public Result Valiedate()

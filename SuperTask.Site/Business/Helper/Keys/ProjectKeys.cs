@@ -43,6 +43,12 @@ namespace Business.Helper
       public const int DefaultDateRange = 10;
 
 
+      public static Guid ExcuterTypeKey = Guid.Parse("1f5d405e-3e8d-470b-910f-7278846b3bbf");
+
+      public static Guid ExcuterJiaoRuan = Guid.Parse("0bc65d23-3dce-401e-a67c-8c9ef37c487c");
+
+      public static Guid ExcuterDianda = Guid.Parse("41566b17-6a84-4f39-b558-0d85fd501498");
+
       //列表查询类型
       public static Guid SearcType = Guid.Parse("efaae6de-c996-4987-8768-7a76f2355a97");
       public static Guid SearchMyProject = Guid.Parse("f23636ce-8963-46c4-a467-c395c4d818e4");

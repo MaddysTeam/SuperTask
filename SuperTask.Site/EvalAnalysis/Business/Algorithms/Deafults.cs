@@ -29,6 +29,10 @@ namespace TheSite.EvalAnalysis
       public static Guid TaskQuantityId = Guid.Parse("339f4f72-4f89-41ea-84ef-fbff16f4ddbe");
       public static Guid WorkJournalFillingRateId = Guid.Parse("41711be6-b08a-4bb8-b06f-78f989b474fb");
 
+      public static Guid ProjectComprehensiveId = Guid.Parse("c6e34405-85bc-471e-9008-8765fc33fac3");
+      public static Guid TaskAchievementId = Guid.Parse("61ccc497-4339-4178-bd46-d1ed8bd5400f");
+      public static Guid TaskInDeptId = Guid.Parse("2bc15f02-039f-49d0-b1de-0121513cbf36");
+
       /// <summary>
       /// 工作量算法
       /// </summary>
@@ -586,6 +590,117 @@ namespace TheSite.EvalAnalysis
          public string Name => "日志更新时效";
 
       }
+
+
+      /// <summary>
+      /// 综合指数
+      /// </summary>
+      internal class ProjectComprehensive: IIndicationAlgorithmn<AutoEvalParams, EvalResultItem>
+      {
+         public Func<AutoEvalParams, EvalResultItem> Algorithmn
+       => (paras) =>
+       {
+          var p = APDBDef.Project;
+
+          //审核通过正在执行中的项目
+          var projectsUnderImplement = paras.db.ProjectDal.ConditionQuery(p.ManagerId == paras.TargetId & p.ProjectStatus == ProjectKeys.ProcessStatus, null, null, null);
+          double score = projectsUnderImplement.Sum(x => x.Coefficient);
+
+          return new EvalResultItem
+          {
+             ResultItemId = Guid.NewGuid(),
+             PeriodId = paras.PeriodId,
+             Score = score,
+             TableId = paras.CurrentTableId,
+             IndicationId = paras.EvalIndication.IndicationId
+          };
+       };
+
+         public Guid Id => ProjectComprehensiveId;
+
+         public string Name => "综合指数";
+      }
+
+
+      /// <summary>
+      /// 任务绩效(正)
+      /// </summary>
+      internal class TaskAchievement: IIndicationAlgorithmn<AutoEvalParams, EvalResultItem>
+      {
+         public Func<AutoEvalParams, EvalResultItem> Algorithmn
+            => (paras) =>
+            {
+               var p = APDBDef.Project;
+               var t = APDBDef.WorkTask;
+               var period = EvalPeriod.PrimaryGet(paras.PeriodId);
+               var pst = APDBDef.ProjectStoneTask;
+
+               var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus == ProjectKeys.ProcessStatus);
+               var planTasks = paras.db.WorkTaskDal.ConditionQuery(
+                  t.Projectid.In(subquery)
+                  & t.TaskType == TaskKeys.PlanTaskTaskType
+                  & t.ManagerId == paras.TargetId
+                  , null, null, null);
+               var stoneTasks = paras.db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.ManagerId == t.ManagerId, null, null, null);
+
+               var completePlanTaskCount = planTasks.Count(x => x.IsCompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
+               var completeStoneTaskCount = stoneTasks.Count(x => x.IsCompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
+
+               double score = completePlanTaskCount * 2 + completeStoneTaskCount * 5;
+               score = score > paras.EvalIndication.FullScore ? paras.EvalIndication.FullScore : score;
+               score = score < 0 ? 0 : score;
+
+               return new EvalResultItem
+               {
+                  ResultItemId = Guid.NewGuid(),
+                  PeriodId = paras.PeriodId,
+                  Score = score,
+                  TableId = paras.CurrentTableId,
+                  IndicationId = paras.EvalIndication.IndicationId
+               };
+            };
+
+         public Guid Id => TaskAchievementId;
+
+         public string Name => "任务绩效(正)";
+      }
+
+
+      /// <summary>
+      /// 任务绩效(负)
+      /// </summary>
+      internal class TaskInDept: IIndicationAlgorithmn<AutoEvalParams, EvalResultItem>
+      {
+
+         public Func<AutoEvalParams, EvalResultItem> Algorithmn
+            => (paras) =>
+            {
+               var p = APDBDef.Project;
+               var t = APDBDef.WorkTask;
+               var period = EvalPeriod.PrimaryGet(paras.PeriodId);
+               var pst = APDBDef.ProjectStoneTask;
+
+               var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus == ProjectKeys.ProcessStatus);
+               var stoneTasks = paras.db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.ManagerId == t.ManagerId, null, null, null);
+               var noneCompleteStoneTaskCount = stoneTasks.Count(x => !x.IsCompleteStatus && !x.IsDelteStatus && x.EndDate >= period.BeginDate && x.EndDate <= period.EndDate);
+               double score = noneCompleteStoneTaskCount * 20 * -1;
+
+               return new EvalResultItem
+               {
+                  ResultItemId = Guid.NewGuid(),
+                  PeriodId = paras.PeriodId,
+                  Score = score,
+                  TableId = paras.CurrentTableId,
+                  IndicationId = paras.EvalIndication.IndicationId
+               };
+            };
+
+         public Guid Id => TaskInDeptId;
+
+         public string Name => "任务绩效(负)";
+
+      }
+
 
       class Util
       {

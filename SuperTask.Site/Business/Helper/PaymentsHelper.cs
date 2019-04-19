@@ -24,16 +24,16 @@ namespace Business.Helper
          var end = project.EndDate;
          var payments = new List<Payments> {
             //项目款项
-            new Payments(Guid.NewGuid(),PaymentsKeys.FirstPayment,projectId,0,0,start,end,PaymentsKeys.ProjectPaymentsType,Guid.Empty,1,false,Guid.Empty),
-            new Payments(Guid.NewGuid(),PaymentsKeys.MiddlePayment,projectId,0,0,start,end,PaymentsKeys.ProjectPaymentsType,Guid.Empty,2,false,Guid.Empty),
-            new Payments(Guid.NewGuid(),PaymentsKeys.TailPayment,projectId,0,0,start,end,PaymentsKeys.ProjectPaymentsType,Guid.Empty,3,false,Guid.Empty),
+            new Payments(Guid.NewGuid(),PaymentsKeys.FirstPayment,projectId,0,0,start,end,PaymentsKeys.ProjectPaymentsType,Guid.Empty,1,false,Guid.Empty,string.Empty),
+            new Payments(Guid.NewGuid(),PaymentsKeys.MiddlePayment,projectId,0,0,start,end,PaymentsKeys.ProjectPaymentsType,Guid.Empty,2,false,Guid.Empty,string.Empty),
+            new Payments(Guid.NewGuid(),PaymentsKeys.TailPayment,projectId,0,0,start,end,PaymentsKeys.ProjectPaymentsType,Guid.Empty,3,false,Guid.Empty,string.Empty),
 
             // 外包款项
            // new Payments(Guid.NewGuid(),string.Empty,projectId,0,0,start,end,PaymentsKeys.InternalVenderPaymentsType,Guid.Empty,1,false,Guid.Empty),
 
             // 验收款项
-            new Payments(Guid.NewGuid(),"是否有履约保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,PaymentsKeys.AppointGuaranteeResourceId,1,false,Guid.Empty),
-            new Payments(Guid.NewGuid(),"是否有质量保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,PaymentsKeys.QualityGuaranteeResourceId,2,false,Guid.Empty),
+            new Payments(Guid.NewGuid(),"是否有履约保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,PaymentsKeys.AppointGuaranteeResourceId,1,false,Guid.Empty,string.Empty),
+            new Payments(Guid.NewGuid(),"是否有质量保证金",projectId,0,0,start,end,PaymentsKeys.CheckBeforeDeliveryType,PaymentsKeys.QualityGuaranteeResourceId,2,false,Guid.Empty,string.Empty),
          };
 
          payments.ForEach(p =>

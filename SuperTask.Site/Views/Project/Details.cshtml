@@ -59,6 +59,7 @@
 					PayType: payType == null || payType == '' ? $payContainer.find('.resource_' + resourceId + ':checked').val() : payType,
 					IsConfirm: $this.data('confirm') == true,
 					ParentId: $payContainer.find('#ParentId').val(),
+					Content: $payContainer.find('#Content').val()
 				}
 
 				$.post('@Url.Action("Edit", "Payments")', { payments: payments }, function (data) {

@@ -60,6 +60,8 @@ namespace TheSite.Controllers
          var startDate = payments.InvoiceDate.IsEmpty() ? project.StartDate : payments.InvoiceDate;
          var endDate = payments.PayDate.IsEmpty() ? project.EndDate : payments.PayDate;
 
+         payments.PayName = payments.IsPayType ? $"款项管理({payments.PayName})" : $"外包管理({payments.PayName})";
+
          //新增项目节点任务      
          var stonetaskExists = db.ProjectStoneTaskDal.ConditionQueryCount(pst.PmsId == payments.PayId & pst.ProjectId == payments.ProjectId) > 0;
          if (!stonetaskExists)

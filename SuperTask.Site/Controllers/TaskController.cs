@@ -1008,7 +1008,7 @@ namespace TheSite.Controllers
       };
 
 
-      private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedProjects(GetUserInfo().UserId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus);
+      private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedProjects(GetUserInfo().UserId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus & p.ProjectStatus!=ProjectKeys.DeleteStatus);
 
 
       private void BindParentId(List<ArrangeTaskViewModel> tasks)

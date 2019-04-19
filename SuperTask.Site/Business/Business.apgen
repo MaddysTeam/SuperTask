@@ -181,12 +181,14 @@
 					<add name="RealCode" columnName="RealCode"  type="string" dataLength="100" isNullable="true" display="立项编号"></add>
 					<add name="ReviewerId" columnName="ReviewerId" type="Guid"  isNullable="true" display="审核人ID" />
 					<add name="ProjectExecutor" columnName="Executor"  type="string" dataLength="100"  isNullable="true" display="项目乙方"></add>
+					<add name="ProjectExecutorId" columnName="ExecutorId"  type="Guid" isNullable="true" display="项目乙方"></add>
 					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true" display="项目经理"/>
 					<add name="ProcessName" type="string"  dataLength="100"   isNullable="true" display="项目进展" />
 
 					<add name="FolderId" columnName="FolderId" type="Guid" isNullable="true" display="项目文件夹ID"   />
 					<add name="Money" columnName="money" type="double" isNullable="true"  display="预估总金额"/>
 					<add name="CMoney" columnName="cmoney" type="double" isNullable="true"  display="合同总金额"/>
+					<add name="Coefficient" columnName="Coefficient" type="double" isNullable="true" display="项目难度系数" />
 				</columns>
 			</table>
 
@@ -259,6 +261,8 @@
 					<add name="Sort"  type="double" isNullable="true"  comment="排序"/>
 					<add name="IsConfirm"  columnName="IsConfirm" type="bool" comment="是否最终确认" ></add>
 					<add name="ParentId" columnName="ParentId" type="Guid"  isNullable="true"  comment="父级ID"/>
+					<add name="Content" columnName="Description" type="string" dataLength="2000"  isNullable="true" display="内容"/>
+					
 				</columns>
 			</table>
 

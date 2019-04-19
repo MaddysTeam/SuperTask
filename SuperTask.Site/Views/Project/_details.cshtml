@@ -81,8 +81,7 @@
 					<div class="form-group">
 						@Html.LabelFor(p => p.ProjectExecutor, new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
-							@Html.TextBoxFor(p => p.ProjectExecutor, new { @class = "form-control plan" })
-							@Html.ValidationMessageFor(p => p.ProjectExecutor)
+							@Html.DropDownListFor(p=>p.ProjectExecutorId, DictionaryCache.Cached(ProjectKeys.ExcuterTypeKey).GetSelectList(Model.ProjectExecutorId),new {@class= "form-control" })
 						</div>
 					</div>
 					@if (Model.IsPlanStatus || Model.IsEditStatus)
@@ -169,6 +168,20 @@
 									new { @class = "form-control dropdown-reviewer" })
 						</div>
 					</div>
+
+					@if (Html.GetUserProfile().IsBoss)
+					{
+						<div class="form-group">
+							@Html.LabelFor(p => p.Coefficient, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextBoxFor(p => p.Coefficient, new { @class = "form-control" })
+							</div>
+						</div>
+					}
+					else
+					{
+                 @Html.HiddenFor(p => p.Coefficient);
+					}
 				</fieldset>
 			</div>
 		</div>

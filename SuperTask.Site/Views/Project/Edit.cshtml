@@ -35,7 +35,7 @@
 						<div class="form-group">
 							@Html.LabelFor(p => p.ProjectExecutor, new { @class = "control-label col-md-3" })
 							<div class="col-md-9">
-								@Html.TextBoxFor(p => p.ProjectExecutor, new { @class = "form-control" })
+								@Html.DropDownListFor(p => p.ProjectExecutorId, DictionaryCache.Cached(ProjectKeys.ExcuterTypeKey).GetSelectList(Model.ProjectExecutorId), new { @class = "form-control" })
 							</div>
 						</div>
 						<div class="form-group">

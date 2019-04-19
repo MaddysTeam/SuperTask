@@ -41,7 +41,7 @@ namespace TheSite.Controllers
                   );
             //.where(p.ProjectStatus.NotIn(ProjectKeys.DeleteStatus));
 
-         if (searchTypeId == ProjectKeys.SearchMyProject)
+         if (searchTypeId == ProjectKeys.SearchMyProject && !user.IsBoss)
             query.where_and(p.ManagerId == user.UserId);
 
          if (searchTypeId == ProjectKeys.SearchMyJoinedProject)
@@ -353,6 +353,7 @@ namespace TheSite.Controllers
          {
             return ReviewFail(review);
          }
+
          return Json(new
          {
             result = AjaxResults.Success,

@@ -186,6 +186,9 @@ namespace TheSite.EvalAnalysis
          _builder.BuildAutoEvalProcess(DefaultAlgorithms.PlanTaskComplentionId, new DefaultAlgorithms.PlanTaskCompletion());
          _builder.BuildAutoEvalProcess(DefaultAlgorithms.PlanTaskTimelinessId, new DefaultAlgorithms.PlanTaskTimeliness());
          _builder.BuildAutoEvalProcess(DefaultAlgorithms.WorkJournalFillingRateId, new DefaultAlgorithms.WorkJournalFillingRate());
+         _builder.BuildAutoEvalProcess(DefaultAlgorithms.ProjectComprehensiveId, new DefaultAlgorithms.ProjectComprehensive());
+         _builder.BuildAutoEvalProcess(DefaultAlgorithms.TaskAchievementId, new DefaultAlgorithms.TaskAchievement());
+         _builder.BuildAutoEvalProcess(DefaultAlgorithms.TaskInDeptId, new DefaultAlgorithms.TaskInDept());
       }
 
 
