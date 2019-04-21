@@ -85,16 +85,17 @@ namespace TheSite.Controllers
 
             foreach (var item in models)
             {
+               var score = item.Score >= 0 ? item.Score.Round(2) : 0;
                EvalSubmitResult esri = submitItems.FirstOrDefault(x => x.UserId == item.TargetId && x.PeriodId == item.PeriodId && x.RoleId == item.TargetRoleId);
                if (esri != null)
-                  esri.Score = item.Score.Round(2);
+                  esri.Score = score;
                else
                   esri = new EvalSubmitResult
                   {
                      SubmitResultId = Guid.NewGuid(),
                      PeriodId = item.PeriodId,
                      UserId = item.TargetId,
-                     Score = item.Score.Round(2),
+                     Score = score,
                      UserName = item.TargetName,
                      PeriodName = item.PeriodName
                   };
@@ -165,7 +166,7 @@ namespace TheSite.Controllers
                   ResultId = item.EvalResultId,
                   TableId = item.TableId,
                   EvalIndication = new EvalIndication { IndicationName = item.IndicationName, FullScore = item.FullScore},
-                  Score = item.Score,
+                  Score = item.Score.Round(2),
                   PeriodId = item.PeriodId,
                });
 

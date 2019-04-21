@@ -170,14 +170,14 @@
 			});
 
 			function checkScore(score) {
-				if (isNaN(score)) {
+				@*if (isNaN(score)) {
 					popupMessage({ msg: '@Errors.EvalTable.NOT_ALLOWED_SCORE_LESS_THAN_ZERO', result: 'error' });
 					return false;
 				}
 				else if (score <= 0) {
 					popupMessage({ msg: '@Errors.EvalTable.NOT_ALLOWED_SCORE_LESS_THAN_ZERO', result: 'error' });
 					return false;
-				}
+				}*@
 
 				return true;
 			}

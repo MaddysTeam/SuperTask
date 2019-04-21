@@ -605,6 +605,10 @@ namespace TheSite.EvalAnalysis
           //审核通过正在执行中的项目
           var projectsUnderImplement = paras.db.ProjectDal.ConditionQuery(p.ManagerId == paras.TargetId & p.ProjectStatus == ProjectKeys.ProcessStatus, null, null, null);
           double score = projectsUnderImplement.Sum(x => x.Coefficient);
+          score = score > paras.EvalIndication.FullScore ? paras.EvalIndication.FullScore : score;
+          score = score < 0 ? 0 : score;
+
+          //var score = 100;
 
           return new EvalResultItem
           {
@@ -684,6 +688,8 @@ namespace TheSite.EvalAnalysis
                var stoneTasks = paras.db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.ManagerId == t.ManagerId, null, null, null);
                var noneCompleteStoneTaskCount = stoneTasks.Count(x => !x.IsCompleteStatus && !x.IsDelteStatus && x.EndDate >= period.BeginDate && x.EndDate <= period.EndDate);
                double score = noneCompleteStoneTaskCount * 20 * -1;
+
+              // double score = -120;
 
                return new EvalResultItem
                {

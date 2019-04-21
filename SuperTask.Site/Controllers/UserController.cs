@@ -30,9 +30,9 @@ namespace TheSite.Controllers
       {
          ThrowNotAjax();
 
-         var query = APQuery.select(u.UserId, u.UserName, u.RealName,u.Department,u.Email)
+         var query = APQuery.select(u.UserId, u.UserName, u.RealName, u.Department, u.Email)
             .from(u)
-             .where(u.IsDelete==false)
+             .where(u.IsDelete == false)
             .primary(u.UserId)
             .skip((current - 1) * rowCount)
             .take(rowCount);
@@ -56,7 +56,7 @@ namespace TheSite.Controllers
             {
                case "userName": query.order_by(sort.OrderBy(u.UserName)); break;
                case "realName": query.order_by(sort.OrderBy(u.RealName)); break;
-               //case "userType": query.order_by(sort.OrderBy(u.UserType)); break;
+                  //case "userType": query.order_by(sort.OrderBy(u.UserType)); break;
             }
          }
 
@@ -96,7 +96,7 @@ namespace TheSite.Controllers
 
       public ActionResult Edit(Guid? id)
       {
-         var model = id == null  || id.Value.IsEmpty() ? new UserInfo() : db.UserInfoDal.PrimaryGet(id.Value);
+         var model = id == null || id.Value.IsEmpty() ? new UserInfo() : db.UserInfoDal.PrimaryGet(id.Value);
 
          return PartialView("Edit", model);
       }
@@ -106,11 +106,12 @@ namespace TheSite.Controllers
       {
          ThrowNotAjax();
 
+         var manager = new ST_AccountManager(db);
+         var result = false;
 
-         if (model.UserId == Guid.Empty)
+         var userInfo = db.UserInfoDal.PrimaryGet(model.UserId);
+         if (userInfo == null)
          {
-            var manager = new ST_AccountManager(db);
-            var result = false;
             var account = new Account
             {
                UserId = Guid.NewGuid(),
@@ -120,54 +121,52 @@ namespace TheSite.Controllers
                Status = (int)AccountStatus.Enable
             };
 
-            var userInfo = db.UserInfoDal.PrimaryGet(account.UserId);
-            if (userInfo == null)
+            db.BeginTrans();
+
+            try
             {
-               db.BeginTrans();
+               result = manager.Register(account);
 
-               try
+               if (userInfo == null && result)
                {
-                  result = manager.Register(account);
+                  userInfo = UserInfo.Initial(account.UserId, account.UserName);
+                  db.UserInfoDal.Insert(userInfo);
 
-                  if (userInfo == null && result)
-                  {
-                     userInfo = UserInfo.Initial(account.UserId, account.UserName);
-                     db.UserInfoDal.Insert(userInfo);
-
-                     db.Commit();
-                  }
-                  else
-                  {
-                     db.Rollback();
-
-                     return Json(new
-                     {
-                        result = AjaxResults.Error,
-                        msg = "用户名已存在!"
-                     });
-                  }
+                  db.Commit();
                }
-               catch
+               else
                {
-                  result = false;
-
                   db.Rollback();
+
+                  return Json(new
+                  {
+                     result = AjaxResults.Error,
+                     msg = "用户名已存在!"
+                  });
                }
             }
-            else {
+            catch
+            {
+               result = false;
 
-               var t = APDBDef.UserInfo;
-
-               db.UserInfoDal.UpdatePartial(model.UserId, new
-               {
-                  model.UserName,
-                  model.RealName,
-                  model.UserId,
-                  model.Email,
-                  model.Department,
-               });
+               db.Rollback();
             }
          }
+         else
+         {
+
+            var t = APDBDef.UserInfo;
+
+            db.UserInfoDal.UpdatePartial(model.UserId, new
+            {
+               model.UserName,
+               model.RealName,
+               model.UserId,
+               model.Email,
+               model.Department,
+            });
+         }
+
 
          return Json(new
          {
