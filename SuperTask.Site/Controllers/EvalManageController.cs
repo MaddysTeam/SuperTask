@@ -65,6 +65,7 @@ namespace TheSite.Controllers
                         .group_by(ett.TargetId, u.UserName,er.Score)
                         .query(db, r =>
                         {
+                           var score = er.Score.GetValue(r);
                            return new EvalMember
                            {
                               MemberId = ett.TargetId.GetValue(r, "TargetId"),
@@ -73,7 +74,7 @@ namespace TheSite.Controllers
                               AccessorName = accessor.UserName,
                               EvalCount = (int)(r["EvalCount"]),
                               PeriodNames = period.Name,
-                              Score=er.Score.GetValue(r) 
+                              Score= score < 0? 0: score.Round(2)
                            };
                         }).ToList();
 

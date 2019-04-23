@@ -61,6 +61,7 @@ namespace Business.Helper
          return all <= 0 ? 0 : ((double)(completed * 100 / all)).Round(2);
       }
 
+
    }
 
 

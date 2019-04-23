@@ -605,6 +605,13 @@ namespace TheSite.EvalAnalysis
           //审核通过正在执行中的项目
           var projectsUnderImplement = paras.db.ProjectDal.ConditionQuery(p.ManagerId == paras.TargetId & p.ProjectStatus == ProjectKeys.ProcessStatus, null, null, null);
           double score = projectsUnderImplement.Sum(x => x.Coefficient);
+<<<<<<< HEAD
+=======
+          score = score > paras.EvalIndication.FullScore ? paras.EvalIndication.FullScore : score;
+          score = score < 0 ? 0 : score;
+
+          //var score = 100;
+>>>>>>> 4d853105729064da6b37754461c6e42a70d0279e
 
           return new EvalResultItem
           {
@@ -643,18 +650,23 @@ namespace TheSite.EvalAnalysis
                   , null, null, null);
                var stoneTasks = paras.db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.ManagerId == t.ManagerId, null, null, null);
 
-               var completePlanTaskCount = planTasks.Count(x => x.TaskStatus == TaskKeys.CompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
-               var completeStoneTaskCount = stoneTasks.Count(x => x.TaskStatus == TaskKeys.CompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
+//<<<<<<< HEAD
+//               var completePlanTaskCount = planTasks.Count(x => x.TaskStatus == TaskKeys.CompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
+//               var completeStoneTaskCount = stoneTasks.Count(x => x.TaskStatus == TaskKeys.CompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
+//=======
+//               var completePlanTaskCount = planTasks.Count(x => x.IsCompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
+//               var completeStoneTaskCount = stoneTasks.Count(x => x.IsCompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
+//>>>>>>> 4d853105729064da6b37754461c6e42a70d0279e
 
-               double score = completePlanTaskCount * 2 + completeStoneTaskCount * 5;
-               score = score > paras.EvalIndication.FullScore ? paras.EvalIndication.FullScore : score;
-               score = score < 0 ? 0 : score;
+               //double score = completePlanTaskCount * 2 + completeStoneTaskCount * 5;
+               //score = score > paras.EvalIndication.FullScore ? paras.EvalIndication.FullScore : score;
+               //score = score < 0 ? 0 : score;
 
                return new EvalResultItem
                {
                   ResultItemId = Guid.NewGuid(),
                   PeriodId = paras.PeriodId,
-                  Score = score,
+                  Score = 0,
                   TableId = paras.CurrentTableId,
                   IndicationId = paras.EvalIndication.IndicationId
                };

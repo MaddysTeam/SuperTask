@@ -49,12 +49,16 @@ namespace Business
                //更改资源角色中的负责人和项目经理
                ResourceHelper.ReplaceLeader(project.ProjectId, project.ManagerId, project.PMId, db);
 
+               //更改节点任务中的负责人
+               ProjcetStoneTaskHelper.RefreshManager(project.ProjectId,project.ManagerId,db);
+
                if (EditStrategy.ContainsKey(project.ProjectStatus))
                   EditStrategy[project.ProjectStatus].Invoke(new EditContext { db = db, OperatorId = user.UserId, Project = project, Tasks = option.ProjectTasks });
 
                //最后更新项目数据
                db.ProjectDal.Update(project);
 
+               
                //如果修改过项目属性则创建记录
               // ProjectRecordHelper.CreateRecord(project, option.Orignal, user.UserId, db);
 
