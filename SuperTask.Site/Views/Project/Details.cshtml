@@ -228,7 +228,7 @@
 					bindAddVender(callback);
 
 					$('.btn-emoney').off('click').on('click', function () {
-						var money = $('#EsitimateMoney').val();
+						var money = $('#	EsitimateMoney').val();
 						$.post('@Url.Action("EditEestimateMoney", "Project")', { id: projectId, emoney: money }, function (data) {
 							callback();
 							popupMessage(data);
