@@ -211,15 +211,25 @@
 
 		$(function () {
 
-			$('#Projects,#Resources,#Start,#End,#TaskType').change(function () {
-				$('#bootgrid').bootgrid('reload');
+			var door;
+
+			$('#Projects,#Resources,#TaskType').searchableSelect({
+				afterSelectItem: function (v) {
+					if (door) {
+						$('#bootgrid').bootgrid('reload')
+					}
+				}
 			});
 
-
+			$('#Start,#End').change(function () {
+				$('#bootgrid').bootgrid('reload');
+			});
 
 			var grid = $('#bootgrid');
 			grid.bootgrid(getGridOptions())
 			.on('loaded.rs.jquery.bootgrid', function () {
+
+				door = true;
 
 				grid.find('.btn-edit,.btn-view').on('click', function (e) {
 					var rowId = $(this).parent().data('rowId');

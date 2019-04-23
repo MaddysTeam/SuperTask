@@ -44,6 +44,8 @@ namespace Business
          return user;
       }
 
+      public bool IsBoss => this.UserId == Guid.Parse("D1E6E02A-40FF-4F5A-80C3-24710996B9AE");
+
 
       public Result Validate()
       {

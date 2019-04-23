@@ -1,13 +1,13 @@
 ﻿@using Business.Config
 @{
 	var pageTitle = ViewBag.Title = "我的项目";
+	var isboos = Html.GetUserProfile().IsBoss;
 	var isLeader = Html.HasInRole(RoleKeys.ADMIN) || Html.HasInRole(RoleKeys.LEADER) || Html.HasInRole(RoleKeys.PROGRAME_MANAGER);
-	var idArray = new string[] { ProjectKeys.PlanStatus.ToString(), ProjectKeys.ProcessStatus.ToString(),ProjectKeys.ReviewStatus.ToString() , ProjectKeys.EditStatus.ToString()};
+	var idArray =
+		 isboos ?
+		 new string[] { ProjectKeys.ReviewStatus.ToString()}
+		:new string[] { ProjectKeys.PlanStatus.ToString(), ProjectKeys.ProcessStatus.ToString(),ProjectKeys.ReviewStatus.ToString() , ProjectKeys.EditStatus.ToString()};
 	var ids = string.Join(",",idArray);
-	//var owners = ViewBag.Owners as List<SelectListItem>;
-	//var executors = ViewBag.Executors as List<SelectListItem>;
-	//owners.Insert(0, new SelectListItem { Text = "全部", Value = ThisApp.SelectAll });
-	//executors.Insert(0, new SelectListItem { Text = "全部", Value = ThisApp.SelectAll });
 }
 @section Css{
 	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
@@ -32,33 +32,19 @@
 			</div>
 			<div class="widget-content">
 				<div class="row">
-					@*<div class="col-sm-4">
-							<div class="form-group">
-								<label class="col-md-4 control-label">项目甲方</label>
-								<div class="col-md-4">
-									@Html.DropDownList("dropdown_owner", owners, new { @class = "dropdown_owner" })
-								</div>
-							</div>
-						</div>
-
-						<div class="col-sm-4">
-							<div class="form-group">
-								<label class="col-md-4 control-label">项目乙方</label>
-								<div class="col-md-4">
-									@Html.DropDownList("dropdown_executor", executors, new { @class = "dropdown_executor" })
-								</div>
-							</div>
-						</div>*@
-					<div class="col-sm-4">
+					@if (!isboos)
+					{
+					<div class="col-sm-3">
 						<div class="form-group">
 							<label class="col-md-4 control-label">项目范围</label>
 							<div class="col-md-4">
 								@Html.DropDownList("SearchType", DictionaryCache.Cached(ProjectKeys.SearcType)
-							 .GetSelectListById(ProjectKeys.SearchMyProject), new { @class = "dropdown_search_type" })
+							.GetSelectListById(ProjectKeys.SearchMyProject), new { @class = "dropdown_search_type" })
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-4">
+					}
+					<div class="col-sm-3">
 						<div class="form-group">
 							<label class="col-md-4 control-label">项目状态</label>
 							<div class="col-md-4">
@@ -109,11 +95,10 @@
 @section Scripts {
 	<script>
 		function getGlobalRequest() {
+			var isBoss = '@isboos' == 'True';
 			return {
-				searchTypeId: $('#SearchType').val(),
+				searchTypeId: isBoss?'@Guid.Empty': $('#SearchType').val(),
 				statusIds: $('#StatusIdStr').val()
-				//owner: $('#Owner').val(),
-				//executor: $('#Executor').val(),
 			};
 		}
 
@@ -140,8 +125,6 @@
 
 			var door;
 
-
-
 			var userId = '@Html.GetUserProfile().UserId';
 			var grid = $('#bootgrid');
 			grid.bootgrid(getGridOptions())
@@ -150,7 +133,6 @@
 				var manUrl = '@Url.Action("Details", "Project")';
 				grid.find('.btn-details').on('click', function (e) {
 					var id = $(this).parent().data('rowId');
-					//var name = $(this).parent().data('name');
 					location.href = manUrl + '?id=' + id;
 				});
 
@@ -182,22 +164,6 @@
 				}
 			});
 
-			//$('.dropdown_executor').searchableSelect({
-			//	afterSelectItem: function (v) {
-			//		$('#Executor').val(v);
-			//		if (door)
-			//			$('#bootgrid').bootgrid('reload');
-			//	}
-			//});
-
-			//$('.dropdown_owner').searchableSelect({
-			//	afterSelectItem: function (v) {
-			//		$('#Owner').val(v)
-			//		if (door)
-			//			$('#bootgrid').bootgrid('reload');
-			//	}
-			//});
-
 			$('.btn-template').click(function () {
 				if (confirm("确定通过模板创建项目？")) {
 					$.post('@Url.Action("CreateByTemplate", "Project")', { projectType: '@ProjectKeys.DevelopmentProjectType' }, function (data) {
@@ -209,11 +175,6 @@
 					});
 				}
 			});
-
-
-			function reload() {
-
-			}
 
 		});
 	</script>

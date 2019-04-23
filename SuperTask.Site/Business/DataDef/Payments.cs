@@ -49,6 +49,8 @@ namespace Business
 
       public string Ratio { get; set; }
 
+      public bool IsPayType=> PayType == PaymentsKeys.ProjectPaymentsType || PayType == PaymentsKeys.ProjectPaymentsType;
+
       public bool IsProjectType => PayType == PaymentsKeys.ProjectPaymentsType;
       public bool IsInternalVenderType => PayType == PaymentsKeys.InternalVenderPaymentsType;
       public bool IsDeliveryType => PayType == PaymentsKeys.CheckBeforeDeliveryType ||
