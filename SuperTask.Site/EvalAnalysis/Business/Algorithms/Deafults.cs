@@ -669,7 +669,7 @@ namespace TheSite.EvalAnalysis
 				   {
 					   ResultItemId = Guid.NewGuid(),
 					   PeriodId = paras.PeriodId,
-					   Score = 0,
+					   Score = score,
 					   TableId = paras.CurrentTableId,
 					   IndicationId = paras.EvalIndication.IndicationId
 				   };
@@ -679,6 +679,7 @@ namespace TheSite.EvalAnalysis
 
 			public string Name => "任务绩效(正)";
 		}
+
 
 		/// <summary>
 		/// 任务绩效(负)

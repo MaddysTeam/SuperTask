@@ -163,6 +163,9 @@ namespace TheSite.EvalAnalysis
             db.EvalResultItemDal.Insert(item);
          }
 
+         if (evalResult.Score < 0)
+            evalResult.Score = 0;
+
          db.EvalResultDal.Insert(evalResult);
       }
 
