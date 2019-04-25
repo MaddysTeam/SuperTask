@@ -68,12 +68,6 @@
 		$(function () {
 
 			$('#bootgrid').bootgrid(getGridOptions()).on('loaded.rs.jquery.bootgrid', function () {
-				//$(this).find('.btn-edit').on('click', function (e) {
-				//	var id = $(this).parent().data('rowId');
-				//	$('#modelProxy')
-				//		.data('url', '/EvalGroup/TargetMemberEdit/?accessorTargetId=' + id)
-				//		.trigger('click');
-				//});
 
 				$(this).find('.btn-remove').on('click', function (e) {
 					var id = $(this).parent().data('rowId');

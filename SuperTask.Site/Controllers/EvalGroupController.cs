@@ -325,9 +325,9 @@ namespace TheSite.Controllers
                          , u.JoinInner(u.UserId == eat.TargetId))
                    .group_by(eat.TargetId, u.UserName);
 
-         query.primary(eat.AccessorTargetId)
-            .skip((current - 1) * rowCount)
-             .take(rowCount);
+         //query.primary(eat.AccessorTargetId)
+         //   .skip((current - 1) * rowCount)
+         //    .take(rowCount);
 
 
          //获得查询的总数量
@@ -548,7 +548,7 @@ namespace TheSite.Controllers
          var tu = APDBDef.UserInfo.As("targetUserInfo");
          var period = EvalPeriod.GetCurrentPeriod(db).FirstOrDefault();
 
-         var subquery = APQuery.select(eat.TableId).from(eat).where(eat.TargetId == targetId);
+         var subquery = APQuery.select(eat.TableId).from(eat).where(eat.TargetId == targetId & eat.PeriodId==period.PeriodId );
          var tables = db.EvalTableDal.ConditionQuery(et.TableStatus != EvalTableKeys.DisableStatus & et.TableId.NotIn(subquery), null, null, null); //左侧可用考核列表
          var tablePropertion = db.EvalTargetTablePropertionDal.ConditionQuery(ettp.TargetId == targetId & ettp.PeriodId == period.PeriodId, null, null, null);
          var accessorTargets = APQuery.select(eat.Asterisk, u.UserName.As("accessor"), tu.UserName.As("target"), et.TableId.As("tableId"), et.TableName.As("tableName")) // 评审人

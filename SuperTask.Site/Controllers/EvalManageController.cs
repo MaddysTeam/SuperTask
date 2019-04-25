@@ -301,7 +301,7 @@ namespace TheSite.Controllers
 
             db.Commit();
          }
-         catch
+         catch(Exception e)
          {
             db.Rollback();
          }
