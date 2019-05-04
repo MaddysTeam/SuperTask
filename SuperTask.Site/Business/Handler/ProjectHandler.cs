@@ -58,10 +58,6 @@ namespace Business
                //最后更新项目数据
                db.ProjectDal.Update(project);
 
-               
-               //如果修改过项目属性则创建记录
-              // ProjectRecordHelper.CreateRecord(project, option.Orignal, user.UserId, db);
-
             }
 
             db.Commit();

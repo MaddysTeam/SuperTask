@@ -43,6 +43,8 @@ namespace Business
             TaskHours = ta.WorkHours
          };
 
+         v.Review = review;
+
          var json = Newtonsoft.Json.JsonConvert.SerializeObject(review, new Newtonsoft.Json.JsonSerializerSettings() { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeNonAscii });
          var flowParams = new RunParams
          {
@@ -56,7 +58,7 @@ namespace Business
 
 
          v.RunParams = flowParams;
-         v.Result.IsSuccess = true;
+         //v.Result.IsSuccess = true;
       }
 
    }
@@ -144,6 +146,8 @@ namespace Business
       public Result Result { get; set; }
 
       public APDBDef db { get; set; }
+
+      public Review Review { get; set; }
    }
 
 
@@ -209,7 +213,7 @@ namespace Business
 
       public void Handle(ProjectStoneTask pst, ReviewRequestOption v)
       {
-         var isInReview = v.db.ReviewDal.ConditionQueryCount(rv.TaskId == pst.PstId & rv.ReviewType == v.ReviewType & rv.Result == ReviewKeys.ResultWait) > 0;
+         var isInReview = v.db.ReviewDal.ConditionQueryCount(rv.TaskId == pst.PstId & rv.Result == ReviewKeys.ResultWait) > 0;
          if (isInReview)
          {
             v.Result.Msg = Errors.Review.HAS_IN_REVIEW;
@@ -235,23 +239,10 @@ namespace Business
             Title = title,
             TaskName = pst.TaskName,
             ProjectName = project.ProjectName,
-            DateRange = string.Format("{0}  至  {1}", pst.StartDate, pst.EndDate)
+            //DateRange = string.Format("{0}  至  {1}", pst.StartDate, pst.EndDate)
          };
 
-         var json = Newtonsoft.Json.JsonConvert.SerializeObject(review, new Newtonsoft.Json.JsonSerializerSettings() { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeNonAscii });
-         var flowParams = new RunParams
-         {
-            UserId = user.UserId.ToString(),
-            DetaultMember = reviewerId.ToString(),
-            FlowId = v.FlowId.ToString(),
-            Display = "1",
-            ObjJson = json,
-            Title = title,
-         };
-
-
-         v.RunParams = flowParams;
-         v.Result.IsSuccess = true;
+         v.Review = review;
       }
    }
 

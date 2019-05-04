@@ -24,9 +24,6 @@ namespace Business
    {
 
       APDBDef _db;
-      //APDBDef.WorkJournalTableDef wj = APDBDef.WorkJournal;
-      //APDBDef.WorkTaskTableDef t = APDBDef.WorkTask;
-
 
       public GenerateProjectDataJob()
       {
@@ -34,41 +31,7 @@ namespace Business
       }
 
 
-      public void Execute()
-      {
-         //var exists = _db.WorkJournalDal.ConditionQueryCount(wj.CreateDate > DateTime.Now.TodayStart()) > 0;
-         //if (exists)
-         //   return;
-
-         //var processTasks = _db.WorkTaskDal.ConditionQuery(t.TaskStatus == TaskKeys.ProcessStatus, null, null, null);
-
-
-         //_db.BeginTrans();
-
-         //try
-         //{
-         //   processTasks.ForEach(tk => _db.WorkJournalDal.Insert(new WorkJournal
-         //   {
-         //      JournalId = Guid.NewGuid(),
-         //      Projectid = tk.Projectid,
-         //      TaskId = tk.TaskId,
-         //      UserId = tk.ManagerId,
-         //      CreateDate = DateTime.Now,
-         //      Status = JournalKeys.SaveStatus,
-         //      RecordDate = DateTime.Now,
-         //      WorkHours = 0,
-         //      Progress = tk.RateOfProgress,
-         //      RecordType = tk.IsParent ? JournalKeys.AutoRecordType : JournalKeys.ManuRecordType
-         //   }));
-
-
-         //   _db.Commit();
-         //}
-         //catch
-         //{
-         //   _db.Rollback();
-         //}
-      }
+      public void Execute(){}
 
 
       public void Stop(bool immediate)

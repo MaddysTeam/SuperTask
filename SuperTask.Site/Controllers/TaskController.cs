@@ -555,7 +555,7 @@ namespace TheSite.Controllers
             TaskLogHelper.CreateLogs(removedList, GetUserInfo().UserId, db);
 
             //通过根任务更新项目进度
-            db.ProjectDal.UpdatePartial(projectId, new { RateOfProgress = pjTasks[0].RateOfProgress, StartDate = pjTasks[0].StartDate, EndDate = pjTasks[0].EndDate });
+            //db.ProjectDal.UpdatePartial(projectId, new { RateOfProgress = pjTasks[0].RateOfProgress, StartDate = pjTasks[0].StartDate, EndDate = pjTasks[0].EndDate });
 
          }
          catch (Exception e)
@@ -790,136 +790,6 @@ namespace TheSite.Controllers
          task.SetStatus(TaskKeys.PlanStatus);
 
          return Edit(task);
-      }
-
-
-      //GET  /Task/ReviewRequest
-      //GET  /Task/AfterEditReview
-      //GET  /Task/AfterSubmitReview
-      //GET  /Task/AfterEditReviewSend
-      //GET  /Task/AfterReviewFail
-
-
-      public ActionResult ReviewRequest(Guid id, Guid reviewType)
-      {
-         if (id.IsEmpty())
-            throw new ArgumentException(Errors.Task.NOT_ALLOWED_ID_NULL);
-
-         var task = db.WorkTaskDal.PrimaryGet(id);
-         if (task == null)
-            throw new ArgumentException(Errors.Task.NOT_EXIST);
-
-         var project = db.ProjectDal.PrimaryGet(task.Projectid);
-
-         var requestOption = new ReviewRequestOption
-         {
-            Project = project,
-            User = GetUserInfo(),
-            ReviewType = reviewType,
-            db = db,
-            Result = Result.Initial()
-         };
-
-
-         HandleManager.TaskReviewRequestHandlers[reviewType].Handle(task, requestOption);
-
-         if (!requestOption.Result.IsSuccess)
-            throw new ApplicationException(requestOption.Result.Msg);
-
-
-         return RedirectToAction("FlowIndex", "WorkFlowRun", requestOption.RunParams);
-      }
-
-      public ActionResult AfterEditReview(Guid instanceId)
-      {
-         if (instanceId.IsEmpty())
-            throw new NullReferenceException("instance id 不能为空！");
-
-         var review = db.ReviewDal.PrimaryGet(instanceId);
-         var task = db.WorkTaskDal.PrimaryGet(review.TaskId);
-
-         //判断流程是否结束
-
-
-         //设置任务为临时编辑状态
-         task.SetStatus(TaskKeys.TaskTempEditStatus);
-         db.WorkTaskDal.Update(task);
-
-
-         //重定向到首页
-         // return RedirectToAction("Search", "WorkFlowTask");
-
-         return Content("<script>window.location.href='about:blank'; window.close();</script>");
-      }
-
-      public ActionResult AfterSubmitReview(Guid instanceId)
-      {
-         if (instanceId.IsEmpty())
-            throw new NullReferenceException("instance id 不能为空！");
-
-         //找其任务提交审核的第一条记录，将任务结束时间设置成第一次提交任务的时间
-         var review = ReviewHelper.GetEarlistReview(db, instanceId);
-         var task = db.WorkTaskDal.PrimaryGet(review.TaskId);
-         task.Complete(review.SendDate < task.StartDate ? task.EndDate : review.SendDate);
-
-         //执行完成后的事件
-         var editOption = new TaskEditOption { db = db, Result = Result.Initial() };
-         HandleManager.TaskEditHandlers[task.TaskType].Handle(task, editOption);
-
-
-         //重定向到首页
-         // return RedirectToAction("Search", "WorkFlowTask");
-         return Content("<script>window.location.href='about:blank'; window.close();</script>");
-      }
-
-      public ActionResult AfterEditReviewSend(Guid instanceId)
-      {
-         if (instanceId.IsEmpty())
-            throw new NullReferenceException("instance id 不能为空！");
-
-         var review = db.ReviewDal.PrimaryGet(instanceId);
-         var task = db.WorkTaskDal.PrimaryGet(review.TaskId);
-
-         task.SetStatus(TaskKeys.ReviewStatus);
-
-         db.WorkTaskDal.Update(task);
-
-
-         //重定向到首页
-         return RedirectToAction("Search", "WorkFlowTask");
-      }
-
-      public ActionResult AfterSubmitReviewSend(Guid instanceId)
-      {
-         if (instanceId.IsEmpty())
-            throw new NullReferenceException("instance id 不能为空！");
-
-         var review = db.ReviewDal.PrimaryGet(instanceId);
-         var task = db.WorkTaskDal.PrimaryGet(review.TaskId);
-
-         task.SetStatus(TaskKeys.ReviewStatus);
-
-         db.WorkTaskDal.Update(task);
-
-
-         //重定向到首页
-         return RedirectToAction("Search", "WorkFlowTask");
-      }
-
-      public ActionResult AfterReviewFail(Guid instanceId)
-      {
-         var review = db.ReviewDal.PrimaryGet(instanceId);
-         var task = db.WorkTaskDal.PrimaryGet(review.TaskId);
-
-         task.SetStatus(TaskKeys.ProcessStatus);
-
-         db.WorkTaskDal.Update(task);
-
-         //重定向到首页
-         //return RedirectToAction("Search", "WorkFlowTask");
-
-         //关闭页面
-         return Content("<script>window.location.href='about:blank'; window.close();</script>");
       }
 
 

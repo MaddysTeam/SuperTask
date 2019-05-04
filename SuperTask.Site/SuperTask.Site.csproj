@@ -333,6 +333,7 @@
     <Compile Include="Business\System.Web.MVC\Attribute\PermissionAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdviceController.cs" />
+    <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\ProjectStoneTaskController.cs" />
     <Compile Include="Controllers\AppsController.cs" />
@@ -1607,6 +1608,10 @@
     <Content Include="Views\Project\ReviewRequest.cshtml" />
     <Content Include="Views\Project\_submitReview.cshtml" />
     <Content Include="Views\EvalGroup\BindGroupMembers.cshtml" />
+    <Content Include="Views\Review\StoneTaskReviewRequest.cshtml" />
+    <Content Include="Views\Review\StoneTaskReviewAction.cshtml" />
+    <Content Include="Views\Review\WorkTaskReviewAction.cshtml" />
+    <Content Include="Views\Review\WorkTaskReviewRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

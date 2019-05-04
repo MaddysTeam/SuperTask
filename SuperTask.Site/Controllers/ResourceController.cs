@@ -148,8 +148,14 @@ namespace TheSite.Controllers
                db.ResourceDal.Update(resource);
             }
 
+
             if (resource.IsPM())
+            {
                ResourceHelper.ReplacePM(resource.Projectid, resource.UserId, db);
+
+               //更改节点任务中的负责人
+               ProjcetStoneTaskHelper.RefreshManager(resource.Projectid, resource.UserId, db);
+            }
 
             if (resource.IsHeader())
                ResourceHelper.ReplaceHeader(resource.Projectid, resource.UserId, db);
@@ -170,6 +176,8 @@ namespace TheSite.Controllers
                db.ProjectDal.UpdatePartial(resource.Projectid, new { ManagerId = Guid.Empty });
             else if (!resources.Exists(re => re.IsHeader()))
                db.ProjectDal.UpdatePartial(resource.Projectid, new { PMId = Guid.Empty });
+
+
 
 
             db.Commit();
@@ -217,7 +225,7 @@ namespace TheSite.Controllers
 
          var existApps = models.Select(vm => vm.AppId);
 
-         ViewBag.ExistAppids = existApps == null && existApps.Count() <= 0 ? string.Empty: string.Join(",", existApps.ToArray());
+         ViewBag.ExistAppids = existApps == null && existApps.Count() <= 0 ? string.Empty : string.Join(",", existApps.ToArray());
 
 
          return PartialView(models);

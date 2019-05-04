@@ -17,6 +17,7 @@ namespace Business
 
       public string Reciver { get; set; }
 
+      [Display(Name = "任务名称")]
       public string TaskName { get; set; }
 
       [Display(Name ="项目名称")]
@@ -24,17 +25,12 @@ namespace Business
 
       public string Type => ReviewKeys.GetTypeKeyByValue(ReviewType);
 
+      [Display(Name = "时间范围")]
       public string DateRange { get; set; }
 
       public double TaskEsHours { get; set; }
 
       public double TaskHours { get; set; }
-
-      //public string StatusName => ReviewKeys.GetStatusKeyByValue(Result);
-
-      //public bool IsProjectStartReview()=> ReviewType == ReviewKeys.ReviewTypeForPjStart;
-
-      //public bool IsInReview() => Result == null || Result.IsEmpty();
 
 
       public string GetStatus(int val)

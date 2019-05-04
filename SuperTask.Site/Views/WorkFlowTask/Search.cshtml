@@ -9,9 +9,9 @@
 <div class="content-wrapper">
 
 	@*<div class="main-header">
-		<h3><i class="fa fa-check-square-o"></i> @pageTitle</h3>
-		<em></em>
-	</div>*@
+			<h3><i class="fa fa-check-square-o"></i> @pageTitle</h3>
+			<em></em>
+		</div>*@
 	<div class="main-content">
 
 		<!-- widget -->
@@ -48,12 +48,12 @@
 							<tr>
 								<th data-column-id="projectName">项目名称</th>
 								<th data-column-id="taskName">任务名称</th>
-								@*<th data-column-id="title">标题</th>*@
+								<th data-column-id="taskTypeName">类型</th>
 								<th data-column-id="sender">申请者</th>
 								<th data-column-id="receiver">审核者</th>
 								<th data-column-id="comment">原因（或批注）</th>
 								<th data-column-id="sendDate" data-formatter="DateOnly">提交日期</th>
-								<th data-column-id="reviewDate" >审核日期</th>
+								<th data-column-id="reviewDate">审核日期</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" data-header-Css-Class="width130">操作</th>
 							</tr>
 						</thead>
@@ -67,6 +67,14 @@
 	</div>
 </div>
 <input type="hidden" id="taskId" value="@taskId" />
+
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
 @section Scripts {
 	<script>
 		function getGlobalRequest() {
@@ -86,18 +94,21 @@
 				formatters: {
 					'commands': function (column, row) {
 						var id = row.id;
-						if (row.result == '@ReviewKeys.ResultWait' && row.receiverId=='@Html.GetUserProfile().UserId')
+						var reviewTypeId = row.reviewTypeId;
+						var isStoneType = row.taskTypeId == '@TaskKeys.NodeTaskType';
+						var url = !isStoneType ? '@Url.Action("WorkTaskReviewAction", "Review")?id=' + row.taskId : '@Url.Action("StoneTaskReviewAction", "Review")?id=' + row.taskId;
+			
+
+						if (row.result == '@ReviewKeys.ResultWait' && row.receiverId == '@Html.GetUserProfile().UserId')
 							if (row.attachmentUrl) {
-								return "<div class='btn-group btn-group-xs pull-right' data-json='" + row.objJSON +
-										 "' data-query=" + row.query + " data-row-id=" + row.id + " data-row-active=" + row.actived + ">" +
-														 "<button class='btn btn-lg btn-success btn-detail'>查看</button>" +
+								return "<div class='btn-group btn-group-xs pull-right'>" +
+														 "<button class='btn btn-lg btn-success btn-detail' data-url='" + url + "'>审核</button>" +
 														 "<a class='btn btn-warning' href='" + row.attachmentUrl + "'>附件下载</a>" +
 														 "</div>";
 							}
 							else {
-								return "<div class='btn-group btn-group-xs pull-right' data-json='" + row.objJSON +
-									 "' data-query=" + row.query + " data-row-id=" + row.id + " data-row-active=" + row.actived + ">" +
-													 "<button class='btn btn-lg btn-success btn-detail'>查看</button>" +
+								return "<div class='btn-group btn-group-xs pull-right'>" +
+													 "<button class='btn btn-lg btn-success btn-detail' data-url='" + url + "'>审核</button>" +
 													 "</div>";
 							}
 					},
@@ -113,10 +124,10 @@
 				var manUrl = '@Url.Action("FlowIndex", "WorkFlowRun")';
 
 				grid.find('.btn-detail').on('click', function (e) {
-					var query = $(this).parent().data('query');
-					var json = $(this).parent().data('json');
-					var href = manUrl + '?' + query + '&ObjJson=' + JSON.stringify(json);
-					window.open(href);
+					var url = $(this).data('url');
+					$('#modelProxy')
+						.data('url', url)
+						.trigger('click');
 				});
 
 			});

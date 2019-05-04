@@ -327,8 +327,8 @@ namespace Business
 
 
             //更新项目进度和开始结束时间
-            if (tks.Count > 0)
-               db.ProjectDal.UpdatePartial(pj.ProjectId, new { RateOfProgress = tks[0].RateOfProgress, StartDate = tks[0].StartDate, EndDate = tks[0].EndDate });
+            //if (tks.Count > 0)
+            //   db.ProjectDal.UpdatePartial(pj.ProjectId, new { RateOfProgress = tks[0].RateOfProgress, StartDate = tks[0].StartDate, EndDate = tks[0].EndDate });
 
 
             //上传附件

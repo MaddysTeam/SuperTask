@@ -88,6 +88,9 @@ namespace TheSite.Controllers
                msg = Errors.StoneTask.EDIT_FAIL
             });
          }
+
+         task.TaskType = TaskKeys.NodeTaskType;
+
          if (task.PstId.IsEmpty())
          {
             db.ProjectStoneTaskDal.Insert(task);
@@ -142,14 +145,14 @@ namespace TheSite.Controllers
             re.IsSuccess = false;
             re.Msg = Errors.StoneTask.NOT_ALLOWED_EDIT_TASK_WHEN_PROJECT_COMPELETE;
          }
-         else if (task.StartDate > pj.EndDate ||
-               task.StartDate < pj.StartDate ||
-               task.EndDate > pj.EndDate ||
-               task.EndDate < pj.StartDate)
-         {
-            re.IsSuccess = false;
-            re.Msg = Errors.StoneTask.TASKS_OUT_OF_PROJECT_RANGE;
-         }
+         //else if (task.StartDate > pj.EndDate ||
+         //      task.StartDate < pj.StartDate ||
+         //      task.EndDate > pj.EndDate ||
+         //      task.EndDate < pj.StartDate)
+         //{
+         //   re.IsSuccess = false;
+         //   re.Msg = Errors.StoneTask.TASKS_OUT_OF_PROJECT_RANGE;
+         //}
          else
          {
             APQuery.update(pst)
@@ -202,95 +205,6 @@ namespace TheSite.Controllers
          });
       }
 
-
-      // GET: ProjectStoneTask/ReviewRequest
-      // GET: ProjectStoneTask/AfterProjectStartReviewSend
-      // GET: ProjectStoneTask/AfterProjectStartSubimitReview
-      // GET: ProjectStoneTask/AfterReviewFail
-
-      public ActionResult ReviewRequest(Guid id, Guid reviewType)
-      {
-         if (id.IsEmpty())
-            throw new ArgumentException(Errors.Task.NOT_ALLOWED_ID_NULL);
-
-         var pst = db.ProjectStoneTaskDal.PrimaryGet(id);
-         if (pst == null)
-            throw new ArgumentException(Errors.Task.NOT_EXIST);
-
-         var project = db.ProjectDal.PrimaryGet(pst.ProjectId);
-
-         var requestOption = new ReviewRequestOption
-         {
-            Project = project,
-            User = GetUserInfo(),
-            ReviewType = reviewType,
-            db = db,
-            Result = Result.Initial()
-         };
-
-
-         HandleManager.ProjectStoneTaskReviewHandlers[reviewType].Handle(pst, requestOption);
-
-         if (!requestOption.Result.IsSuccess)
-            throw new ApplicationException(requestOption.Result.Msg);
-
-
-         return RedirectToAction("FlowIndex", "WorkFlowRun", requestOption.RunParams);
-      }
-
-      public ActionResult AfterEditReview(Guid instanceId)
-      {
-         return AfterReviewSendOrSubmit(instanceId, TaskKeys.TaskTempEditStatus);
-      }
-
-      public ActionResult AfterSubmitReview(Guid instanceId)
-      {
-         if (instanceId.IsEmpty())
-            throw new NullReferenceException("instance id 不能为空！");
-
-         //找其任务提交审核的第一条记录，将任务结束时间设置成第一次提交任务的时间
-         var review = ReviewHelper.GetEarlistReview(db, instanceId);
-         var pst = db.ProjectStoneTaskDal.PrimaryGet(review.TaskId);
-
-         pst.Complete(review.SendDate < pst.StartDate ? pst.EndDate : review.SendDate);
-
-         db.ProjectStoneTaskDal.Update(pst);
-
-         db.ProjectDal.UpdatePartial(pst.ProjectId, new { RateOfProgress = ProjectrHelper.GetProcessByNodeTasks(pst.ProjectId, db) });
-
-         return RedirectToAction("Search", "WorkFlowTask");
-      }
-
-      public ActionResult AfterEditReviewSend(Guid instanceId)
-      {
-         return AfterReviewSendOrSubmit(instanceId, TaskKeys.ReviewStatus);
-      }
-
-      public ActionResult AfterSubmitReviewSend(Guid instanceId)
-      {
-         return AfterReviewSendOrSubmit(instanceId, TaskKeys.ReviewStatus);
-      }
-
-      public ActionResult AfterReviewFail(Guid instanceId)
-      {
-         return AfterReviewSendOrSubmit(instanceId, TaskKeys.ProcessStatus);
-
-      }
-
-      private ActionResult AfterReviewSendOrSubmit(Guid instanceId, Guid status)
-      {
-         if (instanceId.IsEmpty())
-            throw new NullReferenceException("instance id 不能为空！");
-
-         var review = db.ReviewDal.PrimaryGet(instanceId);
-         var pst = db.ProjectStoneTaskDal.PrimaryGet(review.TaskId);
-
-         pst.SetStatus(status);
-
-         db.ProjectStoneTaskDal.Update(pst);
-
-         return RedirectToAction("Search", "WorkFlowTask");
-      }
 
    }
 

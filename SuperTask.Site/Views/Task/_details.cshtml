@@ -220,7 +220,7 @@
 					<div class="col-md-8 text-right">
 						@if (!Model.IsParent && Model.IsProcessStatus)
 						{
-						<a class="btn btn-sm btn-warning btn-taskModify" href="@Url.Action("ReviewRequest", "Task", new { id = Model.TaskId, reviewType = ReviewKeys.ReviewTypeForTkChanged })"><i class="fa fa-refresh"></i>修改申请</a>
+						<a class="btn btn-sm btn-warning btn-taskModify" data-url="@Url.Action("WorkTaskReviewRequest", "Review", new { id = Model.TaskId, reviewType = ReviewKeys.ReviewTypeForTkChanged })"><i class="fa fa-refresh"></i>修改申请</a>
 						}
 						else
 						{
@@ -351,7 +351,7 @@
 					<div class="col-md-12 text-right">
 						@if (!Model.IsParent && !Model.IsReviewStatus)
 						{
-						<a class="btn btn-primary btn-taskSubmit" href="@Url.Action("ReviewRequest", "Task", new { id = Model.TaskId, reviewType = ReviewKeys.ReviewTypeForTkSubmit })"><i class="fa fa-star"></i>提交任务</a>
+						<a class="btn btn-primary btn-taskSubmit" data-url="@Url.Action("WorkTaskReviewRequest", "Review", new { id = Model.TaskId, reviewType = ReviewKeys.ReviewTypeForTkSubmit })"><i class="fa fa-star"></i>提交任务</a>
 						}
 						else
 						{
@@ -541,11 +541,16 @@
 		});
 
 		$('.btn-taskModify,.btn-taskSubmit').on('click', function () {
-			var isInReview = '@Model.IsReviewStatus' == "True";
+			@*var isInReview = '@Model.IsReviewStatus' == "True";
 			if (isInReview) {
 				popupMessage({ msg: '@Errors.Task.TASK_IN_REVIEW', result: 'error' });
 				return false;
-			}
+			}*@
+			var url = $(this).data('url');
+			$('#modelProxy')
+					.data('url', url)
+					.trigger('click');
+
 		});
 
 		$('.dropdown-project').searchableSelect({

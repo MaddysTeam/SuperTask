@@ -65,44 +65,44 @@ namespace Business.Helper
    }
 
 
-   public class ProjectRecordHelper
-   {
+   //public class ProjectRecordHelper
+   //{
 
-      static APDBDef.ProjectRecordTableDef prt = APDBDef.ProjectRecord;
+   //   static APDBDef.ProjectRecordTableDef prt = APDBDef.ProjectRecord;
 
-      public static void CreateRecord(Project proj, Guid operatorId, APDBDef db)
-      {
-         db.ProjectRecordDal.Insert(new ProjectRecord
-         {
-            RecordId = Guid.NewGuid(),
-            RecordDate = DateTime.Now,
-            StartDate = proj.StartDate,
-            EndDate = proj.EndDate,
-            Progress = proj.RateOfProgress,
-            ProjectStatus = proj.ProjectStatus,
-            ProjectType = proj.ProjectType,
-            ProjectId = proj.ProjectId,
-            RateOfProgress = proj.RateOfProgress,
-            PMId = proj.PMId,
-            ManagerId = proj.ManagerId,
-            ReviewerId = proj.ReviewerId,
-            OperatorId = operatorId,
-            ProjectExecutor = proj.ProjectExecutor,
-            ProjectOwner = proj.ProjectOwner,
-            RealCode = proj.RealCode,
-            Code = proj.Code,
-            ProjectName = proj.ProjectName,
-            ProcessName = proj.ProcessName
-         });
-      }
+   //   public static void CreateRecord(Project proj, Guid operatorId, APDBDef db)
+   //   {
+   //      db.ProjectRecordDal.Insert(new ProjectRecord
+   //      {
+   //         RecordId = Guid.NewGuid(),
+   //         RecordDate = DateTime.Now,
+   //         StartDate = proj.StartDate,
+   //         EndDate = proj.EndDate,
+   //         Progress = proj.RateOfProgress,
+   //         ProjectStatus = proj.ProjectStatus,
+   //         ProjectType = proj.ProjectType,
+   //         ProjectId = proj.ProjectId,
+   //         RateOfProgress = proj.RateOfProgress,
+   //         PMId = proj.PMId,
+   //         ManagerId = proj.ManagerId,
+   //         ReviewerId = proj.ReviewerId,
+   //         OperatorId = operatorId,
+   //         ProjectExecutor = proj.ProjectExecutor,
+   //         ProjectOwner = proj.ProjectOwner,
+   //         RealCode = proj.RealCode,
+   //         Code = proj.Code,
+   //         ProjectName = proj.ProjectName,
+   //         ProcessName = proj.ProcessName
+   //      });
+   //   }
 
-      public static void CreateRecord(Project proj, Project orignal, Guid operatorId, APDBDef db)
-      {
-         if (!proj.Equals(orignal))
-            CreateRecord(proj, operatorId, db);
-      }
+   //   public static void CreateRecord(Project proj, Project orignal, Guid operatorId, APDBDef db)
+   //   {
+   //      if (!proj.Equals(orignal))
+   //         CreateRecord(proj, operatorId, db);
+   //   }
 
-   }
+   //}
 
 
 }

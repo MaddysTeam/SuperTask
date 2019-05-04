@@ -532,11 +532,48 @@
 					<add name="ReviewDate" columnName="ReviewDate" type="DateTime"  isNullable="true" defaultValue="DateTime.Now"></add>
 					<add name="AttachmentUrl" columnName="AttachmentId" type="string" dataLength="1000" isNullable="true"></add>
 					<add name="Comment"  columnName="Comment" type="string" dataLength="1000" display="填写说明" ></add>
-					<add name="Title"  columnName="Title" type="string" dataLength="50" isNullable="true"></add>
+					<add name="Title"   columnName="Title" type="string" dataLength="50" isNullable="true" display="审核标题"></add>
 					<add name="ReviewComment"  columnName="ReviewComment" type="string" dataLength="1000" display="审核意见"  isNullable="true"></add>
 
 				</columns>
 			</table>
+
+
+			<table name="Review" tableName="Review">
+				<columns>
+
+					<add name="ReviewId" columnName="ID" type="Guid" primaryKey="true" ></add>
+					<add name="SenderID" columnName="SenderId" type="Guid" ></add>
+					<add name="ReceiverID" columnName="ReceiverId" type="Guid" ></add>
+					<add name="TaskId"  columnName="TaskId" type="Guid" ></add>
+					<add name="ProjectId"  columnName="ProjectId" type="Guid" ></add>
+					<add name="ReviewType" columnName="Type" type="Guid"></add>
+					<add name="Result" columnName="Result" type="Guid"></add>
+					<add name="SendDate" columnName="SendDate" type="DateTime" defaultValue="DateTime.Now"></add>
+					<add name="ReviewDate" columnName="ReviewDate" type="DateTime"  isNullable="true" defaultValue="DateTime.Now"></add>
+					<add name="AttachmentUrl" columnName="AttachmentId" type="string" dataLength="1000" isNullable="true"></add>
+					<add name="Comment"  columnName="Comment" type="string" dataLength="1000" display="填写说明" ></add>
+					<add name="Title"   columnName="Title" type="string" dataLength="50" isNullable="true" display="审核标题"></add>
+					<add name="ReviewComment"  columnName="ReviewComment" type="string" dataLength="1000" display="审核意见"  isNullable="true"></add>
+
+				</columns>
+			</table>
+
+			<table name="Workflow" tableName="Workflow" comment="流程">
+				<columns>
+					<add name="FlowId" columnName="ID" type="Guid"  primaryKey="true"></add>
+					<add name="ReviewId" columnName="ReviewId" type="Guid" primaryKey="true" ></add>
+					<add name="SenderId" columnName="SenderId" type="Guid" ></add>
+					<add name="ReceiverId" columnName="ReceiverId" type="Guid" ></add>
+					<add name="Comment"  columnName="Comment" type="string" dataLength="1000" display="填写说明" ></add>
+					<add name="SenderTime" columnName="SenderTime" type="DateTime" isNullable="true" ></add>
+					<add name="ReceiveTime" columnName="ReceiveTime" type="DateTime" isNullable="true" ></add>
+					<add name="CompletedTime" columnName="CompletedTime" type="DateTime" isNullable="true"></add>
+					<add name="Title" columnName="Title"  type="string" isNullable="true"  dataLength="200"></add>
+					<add name="Status" columnName="StatusId" type="Guid" isNullable="true" ></add>
+				</columns>
+			</table>
+		    
 
 			<table name="WorkflowTask" tableName="WorkFlowTask" comment="流程任务（专属于第三方工作流）">
 				<columns>

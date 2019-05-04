@@ -1,0 +1,108 @@
+﻿@model Review
+
+<div class="modal-dialog">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i> 提交审核</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("StoneTaskReviewAction", "Review")"  role="form" data-after-success="afterDialogSuccess()">
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(r => r.ReviewId)
+						@Html.HiddenFor(r => r.SenderID)
+						@Html.HiddenFor(r => r.ReceiverID)
+						@Html.HiddenFor(r => r.TaskId)
+						@Html.HiddenFor(r => r.ProjectId)
+						@Html.HiddenFor(r => r.Title)
+						@Html.HiddenFor(r => r.Result)
+						@Html.HiddenFor(r => r.ReviewType)
+						<div class="form-group">
+							@Html.LabelFor(r => r.Title, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.Label("Title", Model.Title, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(r => r.ProjectName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.Label("PName", Model.ProjectName, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.LabelFor(r => r.TaskName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.Label("TName", Model.TaskName, new { @class = "form-control" })
+							</div>
+						</div>
+
+
+						<div class="form-group">
+							@Html.LabelFor(r => r.DateRange, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.Label("DateRange", Model.DateRange, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.Label("Comment", "输入原因或批注(200字以内)", new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextAreaFor(r => r.Comment, 10, 4, new { @class = "form-control" })
+							</div>
+						</div>
+
+						@if (!string.IsNullOrEmpty(Model.AttachmentUrl))
+						{
+							<div class="form-group">
+								@Html.Label("Download", "附件下载", new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									<a class="btn btn-warning" href="@Model.AttachmentUrl">附件下载</a>
+								</div>
+							</div>
+						}
+
+						<div class="form-group">
+							<div class="col-sm-9 col-lg-offset-3">
+								<button id="ReviewSuccess" type="submit" class="btn btn-success btn-sm"><i class="fa fa-check-circle"></i> 审核通过</button>
+								<button id="ReviewFail" type="submit" class="btn btn-danger btn-sm" >退回</button>
+								<button  class="btn btn-default btn-sm" data-dismiss="modal">取消审核</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+<script src="~/assets/plugins/dropzone-4.3.0/js/dropzone.min.js"></script>
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('.modal-dialog form'));
+
+		$('#ReviewSuccess').on('click', function () {
+			$('#Result').val('@ReviewKeys.ResultSuccess');
+		});
+
+		$('#ReviewFail').on('click', function () {
+			$('#Result').val('@ReviewKeys.ResultFailed');
+		});
+
+	})
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+</script>

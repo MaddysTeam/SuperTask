@@ -166,13 +166,13 @@
 
 						var editUrl = isPlan ? '@Url.Action("PlanTaskEdit", "Task")' : '@Url.Action("Edit", "ProjectStoneTask")';  //post
 						var startUrl = isPlan ? '@Url.Action("PlanTaskStart", "Task")' : '@Url.Action("Start", "ProjectStoneTask")'; //post
-						var editReqeustUrl = isPlan ? '@Url.Action("ReviewRequest", "Task")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForTkChanged' : //get
-							                           '@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForStoneTaskChanged';  //get
-						var submitReqeustUrl = isPlan ? '@Url.Action("ReviewRequest", "Task")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForTkSubmit' :
-							                           '@Url.Action("ReviewRequest", "ProjectStoneTask")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForStoneTaskSubmit';  //get
+						var editReqeustUrl = isPlan ? '@Url.Action("WorkTaskReviewRequest", "Review")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForTkChanged' : //get
+							                           '@Url.Action("StoneTaskReviewRequest", "Review")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForStoneTaskChanged';  //get
+						var submitReqeustUrl = isPlan ? '@Url.Action("WorkTaskReviewRequest", "Review")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForTkSubmit' :
+							                           '@Url.Action("StoneTaskReviewRequest", "Review")?id=' + id + '&reviewType=@ReviewKeys.ReviewTypeForStoneTaskSubmit';  //get
 
-						var denyUrl = isPlan ? '@Url.Action("PlanTaskDeny", "Task")?id=' + id  : '@Url.Action("Deny", "ProjectStoneTask")?id=' + id ; // post 
-						var reviewUrl = '@Url.Action("Search", "WorkFlowTask")';
+						var denyUrl = isPlan ? '@Url.Action("PlanTaskDeny", "Task")?id=' + id  : '@Url.Action("Deny", "ProjectStoneTask")?id=' + id ; // post
+						var reviewUrl =isPlan ? '@Url.Action("WorkTaskReviewAction", "Review")?id=' + id : '@Url.Action("StoneTaskReviewAction", "Review")?id=' + id ;
 						//var edit = isPlan ? "编辑" : "上传文件";
 
 						if (isMe && row.statusId == '@TaskKeys.PlanStatus') {
@@ -255,27 +255,38 @@
 
 				grid.find('.btn-editReq').on('click', function (e) {
 					var url = $(this).data('url');
-					if (confirm('@Confirm.Task.TASK_SUBMIT_EDIT')) {
+					@*if (confirm('@Confirm.Task.TASK_SUBMIT_EDIT')) {
 						window.open(url);
 					}
 					else
-						return false;
+						return false;*@
+
+					$('#modelProxy')
+						.data('url', url)
+						.trigger('click');
 				});
 
 				grid.find('.btn-submitReq').on('click', function (e) {
 					var url = $(this).data('url');
-					if (confirm('@Confirm.Task.TASK_SUBMIT_REQUEST')) {
+					@*if (confirm('@Confirm.Task.TASK_SUBMIT_REQUEST')) {
 						window.open(url);
 					}
 					else
-						return false;
+						return false;*@
+					$('#modelProxy')
+					.data('url', url)
+					.trigger('click');
 				});
 
 				grid.find('.btn-review').on('click', function (e) {
 					var url = $(this).data('url');
 					//var url = reviewUrl + '?taskId=' + rowId;
 
-					window.open(url);
+					//window.open(url);
+
+					$('#modelProxy')
+						.data('url', url)
+						.trigger('click');
 				});
 
 				grid.find('.btn-deny').on('click', function (e) {
