@@ -165,7 +165,7 @@ namespace TheSite.Controllers
                comment = review.Comment,
                //objJSON = json,
             };
-         });
+         }).ToList();
 
          return Json(new
          {

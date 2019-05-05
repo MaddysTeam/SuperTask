@@ -96,7 +96,8 @@ namespace Business.Helper
                DateTime.Now,
                TaskKeys.NodeTaskType,
                project.ManagerId,
-               project.ReviewerId,
+               ResourceKeys.TempBossId, //所有的节点任务均由领导审核
+              // project.ReviewerId,//TODO:
                mileStone.Sort,
                DateTime.MinValue
                ));
