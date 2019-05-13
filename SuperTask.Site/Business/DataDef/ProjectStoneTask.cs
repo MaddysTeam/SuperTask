@@ -14,6 +14,8 @@ namespace Business
 
 		public bool IsProcessStatus => TaskStatus == TaskKeys.ProcessStatus;
 
+      public bool IsPlanStatus => TaskStatus == TaskKeys.PlanStatus;
+
 
 		public Attachment CurrentAttachment { get; set; }
 
