@@ -603,7 +603,7 @@ namespace TheSite.EvalAnalysis
 			  var p = APDBDef.Project;
 			  double maxScore = 0;
 			  var allProcessingProjects = paras.db.ProjectDal.ConditionQuery(p.ProjectStatus == ProjectKeys.ProcessStatus, null, null, null);
-			  var groupCounts = from proj in allProcessingProjects group proj by proj.ManagerId into grp select new { key = grp.Key, cnt = grp.Sum(x=>x.Coefficient) };
+			  var groupCounts = from proj in allProcessingProjects group proj by proj.ManagerId into grp select new { key = grp.Key, cnt = grp.Sum(x => x.Coefficient) };
 			  if (groupCounts.Count() > 0)
 			  {
 				  maxScore = groupCounts.Max(x => x.cnt);
@@ -649,7 +649,7 @@ namespace TheSite.EvalAnalysis
 				   var period = EvalPeriod.PrimaryGet(paras.PeriodId);
 				   var pst = APDBDef.ProjectStoneTask;
 
-				   var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus.In(new Guid[] { ProjectKeys.ProcessStatus,ProjectKeys.CompleteStatus }));
+				   var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus.In(new Guid[] { ProjectKeys.ProcessStatus, ProjectKeys.CompleteStatus }));
 				   var planTasks = paras.db.WorkTaskDal.ConditionQuery(
 				   t.Projectid.In(subquery)
 				   & t.TaskType == TaskKeys.PlanTaskTaskType
@@ -695,10 +695,12 @@ namespace TheSite.EvalAnalysis
 				   var period = EvalPeriod.PrimaryGet(paras.PeriodId);
 				   var pst = APDBDef.ProjectStoneTask;
 
-				   var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus == ProjectKeys.ProcessStatus);
+				   var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus.In(ProjectKeys.ProcessStatus, ProjectKeys.CompleteStatus));
 				   var stoneTasks = paras.db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.ManagerId == paras.TargetId, null, null, null);
-				   var noneCompleteStoneTaskCount = stoneTasks.Count(x => x.EndDate >= period.BeginDate && x.EndDate <= period.EndDate);
-				   double score = noneCompleteStoneTaskCount * 20 * -1;
+				   var nagetiveTaskCount = stoneTasks.Count(x => x.EndDate <= period.EndDate && x.IsProcessStatus); // 本周期结束之前应该完成但未完成的任务
+				   nagetiveTaskCount += stoneTasks.Count(x => x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate && x.RealEndDate > x.EndDate);// 在本周期内完成的，但是实际完成时间晚于计划结束时间
+
+				   double score = nagetiveTaskCount * 20 * -1;
 
 				   return new EvalResultItem
 				   {
