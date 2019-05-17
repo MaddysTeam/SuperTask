@@ -694,9 +694,9 @@ namespace TheSite.EvalAnalysis
                var period = EvalPeriod.PrimaryGet(paras.PeriodId);
                var pst = APDBDef.ProjectStoneTask;
 
-               var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus.In(ProjectKeys.ProcessStatus, ProjectKeys.CompleteStatus));
+               var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus.In(ProjectKeys.ProcessStatus));
                var stoneTasks = paras.db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.ManagerId == paras.TargetId, null, null, null);
-               var nagetiveTaskCount = stoneTasks.Count(x => x.EndDate <= period.EndDate && !x.IsCompleteStatus); // 本周期结束之前应该完成但未完成的任务
+               var nagetiveTaskCount = stoneTasks.Count(x => x.EndDate <= period.EndDate && x.IsProcessStatus); // 本周期结束之前应该完成但未完成的任务
                nagetiveTaskCount += stoneTasks.Count(x => x.EndDate <= period.EndDate && x.RealEndDate > period.EndDate); //本周其结束之前未完成的漏网之鱼
                nagetiveTaskCount += stoneTasks.Count(x => x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate && x.RealEndDate > x.EndDate);// 在本周期内完成的，但是实际完成时间晚于计划结束时间
 

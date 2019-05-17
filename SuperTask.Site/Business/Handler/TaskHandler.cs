@@ -322,8 +322,8 @@ namespace Business
             WorkJournalHelper.CreateOrUpdateJournalByTask(task, db);
 
             //创建任务记录日志（非系统日志）
-            TaskLogHelper.CreateLogs(tks, orignalTks, option.OperatorId, db);
-            TaskLogHelper.CreateLogs(ctx.DeletedTasks, option.OperatorId, db);
+            //TaskLogHelper.CreateLogs(tks, orignalTks, option.OperatorId, db);
+            //TaskLogHelper.CreateLogs(ctx.DeletedTasks, option.OperatorId, db);
 
 
             //更新项目进度和开始结束时间

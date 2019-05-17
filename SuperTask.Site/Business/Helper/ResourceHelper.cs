@@ -102,7 +102,7 @@ namespace Business.Helper
          foreach (var item in resources)
             db.ResourceDal.Insert(item);
 
-         db.ProjectDal.UpdatePartial(projectId, new { ManagerId = headerId });
+         db.ProjectDal.UpdatePartial(projectId, new { PMId = headerId });
 
       }
 
