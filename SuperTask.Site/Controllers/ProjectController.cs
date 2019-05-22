@@ -33,7 +33,7 @@ namespace TheSite.Controllers
 			var r = APDBDef.Resource;
 			var user = GetUserInfo();
 
-			var query = APQuery.select(p.ProjectId, p.RealCode, p.ProjectType, p.ProjectExecutor, p.ProjectName, p.RateOfProgress,
+			var query = APQuery.select(p.ProjectId, p.RealCode, p.ProjectType, p.ProjectExecutorId, p.ProjectName, p.RateOfProgress,
 									   p.ProjectOwner, p.ProjectStatus, p.OrgId, u.UserName.As("managerName")
 									   )
 			   .from(p,
@@ -88,7 +88,7 @@ namespace TheSite.Controllers
 				{
 					case "projectName": query.order_by(sort.OrderBy(p.ProjectName)); break;
 					case "projectOwner": query.order_by(sort.OrderBy(p.ProjectOwner)); break;
-					case "projectExecutor": query.order_by(sort.OrderBy(p.ProjectExecutor)); break;
+					//case "projectExecutor": query.order_by(sort.OrderBy(p.ProjectExecutor)); break;
 					case "pmName": query.order_by(sort.OrderBy(u.UserName)); break;
 					case "type": query.order_by(sort.OrderBy(p.ProjectType)); break;
 					case "code": query.order_by(sort.OrderBy(p.Code)); break;
@@ -115,8 +115,8 @@ namespace TheSite.Controllers
 					projectName = p.ProjectName.GetValue(rd),
 					progress = p.RateOfProgress.GetValue(rd) + "%",
 					projectOwner = p.ProjectOwner.GetValue(rd),
-					projectExecutor = p.ProjectExecutor.GetValue(rd),
-					pmName = u.UserName.GetValue(rd, "managerName"),
+					projectExecutor = ProjectKeys.GetExecutorById(p.ProjectExecutorId.GetValue(rd)),
+               pmName = u.UserName.GetValue(rd, "managerName"),
 					projectStatus = ProjectKeys.GetStatusKeyById(statusVal),
 					orgId = p.OrgId.GetValue(rd),
 					//orgName = o.Name.GetValue(rd, "orgName"),
@@ -363,11 +363,10 @@ namespace TheSite.Controllers
 		{
 			var pjms = APDBDef.ProjectMileStone;
 			var r = APDBDef.Review;
-			var t = APDBDef.WorkTask;
+			var t = APDBDef.ProjectStoneTask;
 
 			var projectId = review.ProjectId;
 			var project = db.ProjectDal.PrimaryGet(projectId);
-			var tasks = db.WorkTaskDal.ConditionQuery(t.Projectid == review.ProjectId, null, null, null);
 			var nodes = db.ProjectMileStoneDal.ConditionQuery(pjms.Projectid == projectId, null, null, null);
 			var stones = MileStone.GetAll();
 
@@ -385,29 +384,10 @@ namespace TheSite.Controllers
 					   .where(p.ProjectId == projectId)
 					   .execute(db);
 
-				// 依据节点创建项目任务
-				//foreach (var node in nodes)
-				//{
-				//   var root = tasks.Find(x => x.ParentId == Guid.Empty);
-				//   db.WorkTaskDal.Insert(new WorkTask
-				//   {
-				//      TaskId = Guid.NewGuid(),
-				//      Projectid = projectId,
-				//      CreateDate = DateTime.Now,
-				//      CreatorId = project.ManagerId,
-				//      StartDate = node.StartDate,
-				//      EndDate = node.EndDate,
-				//      ManagerId = project.ManagerId,
-				//      ReviewerID = project.ReviewerId,
-				//      TaskStatus = project.IsPlanStatus ? TaskKeys.PlanStatus : TaskKeys.ProcessStatus,
-				//      IsParent = false,
-				//      ParentId = root.TaskId,
-				//      TaskName = stones.Find(s=>s.StoneId==node.StoneId).StoneName,
-				//      TaskType = TaskKeys.ProjectTaskType,
-				//      TaskLevel = 2,
-				//      SortId = tasks.Count + 1
-				//   });
-				//}
+            APQuery.update(t)
+               .set(t.TaskStatus.SetValue(TaskKeys.ProcessStatus),t.RealStartDate.SetValue(DateTime.Now))
+               .where(t.ProjectId == project.ProjectId)
+               .execute(db);
 
 				db.Commit();
 			}

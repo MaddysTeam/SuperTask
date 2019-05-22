@@ -16,7 +16,6 @@ namespace Business
 
       public bool IsPlanStatus => TaskStatus == TaskKeys.PlanStatus;
 
-
 		public Attachment CurrentAttachment { get; set; }
 
 		public Result Valiedate()

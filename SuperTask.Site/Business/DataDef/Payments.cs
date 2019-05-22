@@ -13,7 +13,7 @@ namespace Business
          {
             return new Result { IsSuccess = false, Msg = Errors.Payments.EDIT_FAIL };
          }
-         else if (string.IsNullOrEmpty(PayName) &&(ParentId.IsEmpty())) // 只有父级元素款项名称必填
+         else if (string.IsNullOrEmpty(PayName) && (ParentId.IsEmpty())) // 只有父级元素款项名称必填
          {
             return new Result { IsSuccess = false, Msg = Errors.Payments.NOT_ALLOWED_NAME_NULL };
          }
@@ -21,7 +21,7 @@ namespace Business
          {
             return new Result { IsSuccess = false, Msg = Errors.Payments.NOT_ALLOWED_TYPE_NULL };
          }
-         else if(Money<=0 && PayType!=PaymentsKeys.NothingType
+         else if (Money <= 0 && PayType != PaymentsKeys.NothingType
             //&& !IsDeliveryType
             )
          {
@@ -39,7 +39,7 @@ namespace Business
          {
             return new Result { IsSuccess = false, Msg = Errors.Payments.NOT_ALLOWED_TYPE_WHEN_DELIVERY };
          }
-         else if(PayDate < InvoiceDate)
+         else if (PayDate < InvoiceDate)
          {
             return new Result { IsSuccess = false, Msg = Errors.Payments.START_MUST_BE_EARLIER_THAN_END };
          }
@@ -49,7 +49,11 @@ namespace Business
 
       public string Ratio { get; set; }
 
-      public bool IsPayType=> PayType == PaymentsKeys.ProjectPaymentsType || PayType == PaymentsKeys.ProjectPaymentsType;
+      public bool IsPayType => PayType == PaymentsKeys.ProjectPaymentsType || 
+                              PayType == PaymentsKeys.CheckBeforeDeliveryType || 
+                              PayType == PaymentsKeys.BondType || 
+                              PayType == PaymentsKeys.GuaranteeType || 
+                              PayType == PaymentsKeys.NothingType;
 
       public bool IsProjectType => PayType == PaymentsKeys.ProjectPaymentsType;
       public bool IsInternalVenderType => PayType == PaymentsKeys.InternalVenderPaymentsType;

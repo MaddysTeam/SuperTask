@@ -726,7 +726,7 @@ namespace TheSite.Controllers
          }
          else
          {
-            builder.Append($" order by s.[end] desc ");
+            builder.Append($" order by s.statusId asc, s.[end] desc");
          }
 
          var result = DapperHelper.QueryBySQL<PlanAndNodeTaskViewModel>(builder.ToString(), new

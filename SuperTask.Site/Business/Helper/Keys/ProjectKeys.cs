@@ -69,6 +69,14 @@ namespace Business.Helper
       /// <returns>数据字典</returns>
       public static string GetTypeKeyById(Guid typeId) => DictionaryHelper.GetDicByValue(ProjectTypeKeyGuid, typeId).Title;
 
+
+      /// <summary>
+      /// 项目乙方
+      /// </summary>
+      /// <param name="executorId"></param>
+      /// <returns></returns>
+      public static string GetExecutorById(Guid executorId) => DictionaryHelper.GetDicByValue(Guid.Parse("1F5D405E-3E8D-470B-910F-7278846B3BBF"), executorId).Title;
+
    }
 
 }

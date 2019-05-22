@@ -175,7 +175,7 @@
 						var reviewUrl =isPlan ? '@Url.Action("WorkTaskReviewAction", "Review")?id=' + id : '@Url.Action("StoneTaskReviewAction", "Review")?id=' + id ;
 						//var edit = isPlan ? "编辑" : "上传文件";
 
-						if (isMe && row.statusId == '@TaskKeys.PlanStatus') {
+						if (isMe && row.statusId == '@TaskKeys.PlanStatus' && isPlan) {
 							buttons += '<button class="btn btn-lg btn-danger btn-start" data-url="' + startUrl + '">启动</button>';
 							buttons += '<button class="btn btn-lg btn-success btn-edit" data-url="' + editUrl + '">编辑</button>';
 						}
@@ -183,9 +183,9 @@
 							buttons += '<button class="btn btn-lg btn-success btn-edit"  data-url="' + editUrl + '">编辑</button>';
 						}
 						else if (isMe && row.statusId == '@TaskKeys.ProcessStatus') {
-							buttons += '<button class="btn btn-lg btn-info btn-editReq"   data-url="' + editReqeustUrl + '">修改申请</button>';
+							buttons += '<button class="btn btn-lg btn-info btn-editReq"   data-url="' + editReqeustUrl + '">申请变更</button>';
 							if (!row.isParent)
-								buttons += '<button class="btn btn-lg btn-info btn-submitReq" data-url="' + submitReqeustUrl + '">提交申请</button>';
+								buttons += '<button class="btn btn-lg btn-info btn-submitReq" data-url="' + submitReqeustUrl + '">提交任务</button>';
 							else
 								buttons += '<button class="btn btn-lg" disable>父任务无需提交</button>';
 						}

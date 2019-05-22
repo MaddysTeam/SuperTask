@@ -203,6 +203,17 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult StoneTaskReviewRequest(Review review)
       {
+
+         var isInReview = db.ReviewDal.ConditionQueryCount(r.TaskId == review.TaskId & r.Result == ReviewKeys.ResultWait) > 0;
+         if (isInReview)
+         {
+            return Json(new
+            {
+               result = AjaxResults.Error,
+               msg = "不要重复提交"
+            });
+         }
+
          db.BeginTrans();
 
          try
