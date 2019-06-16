@@ -102,4 +102,15 @@ namespace TheSite.Models
       public string Score { get; set; }
    }
 
+
+   public class PMScoreViewModel
+   {
+      public string UserName { get; set; }
+      public double GoodStoneTaskCount { get; set; }
+      public double GoodPlanTaskCount { get; set; }
+      public double NegativeTaskCount1 { get; set; }
+      public double NegativeTaskCount2 { get; set; }
+   }
+
+
 }

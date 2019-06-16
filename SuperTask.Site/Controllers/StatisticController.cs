@@ -344,32 +344,44 @@ namespace TheSite.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult PMScoreAnalysis(Guid userId, int rowCount, AjaxOrder sort, string start, string end)
+		public ActionResult PMScoreAnalysis(Guid userId, int rowCount, AjaxOrder sort, DateTime start, DateTime end)
 		{
-			//var p = APDBDef.Project;
-			//var t = APDBDef.WorkTask;
-			//var period = EvalPeriod.PrimaryGet(paras.PeriodId);
-			//var pst = APDBDef.ProjectStoneTask;
+			var p = APDBDef.Project;
+			var t = APDBDef.WorkTask;
+			var pst = APDBDef.ProjectStoneTask;
+         var u = APDBDef.UserInfo;
 
-			//var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus.In(new Guid[] { ProjectKeys.ProcessStatus, ProjectKeys.CompleteStatus }));
-			//var planTasks = paras.db.WorkTaskDal.ConditionQuery(
-			//				 t.Projectid.In(subquery)
-			//				 & t.TaskType == TaskKeys.PlanTaskTaskType
-			//				 & t.ManagerId == paras.TargetId
-			//				 , null, null, null);
+			var subquery = APQuery.select(p.ProjectId).from(p).where(p.ProjectStatus.In(new Guid[] { ProjectKeys.ProcessStatus, ProjectKeys.CompleteStatus }));
+			var goodStoneTasks = db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.RealEndDate>=start & pst.RealEndDate<=end, null, null, null);
+         var goodPlanTasks = db.WorkTaskDal.ConditionQuery(t.TaskType == TaskKeys.PlanTaskTaskType & t.Projectid.In(subquery) & t.RealEndDate >= start & t.RealEndDate <= end, null, null, null);
+         var negativeStoneTasks1 = db.ProjectStoneTaskDal.ConditionQuery(pst.EndDate<=end & pst.TaskStatus==TaskKeys.ProcessStatus,null,null,null);
+         var negativeStoneTasks2 = db.ProjectStoneTaskDal.ConditionQuery(
+            pst.RealEndDate >= start 
+          & pst.RealEndDate<=end 
+          & pst.RealEndDate > pst.EndDate,
+            null, null, null);
 
-			//var stoneTasks = paras.db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.ManagerId == paras.TargetId, null, null, null);
-			//var completePlanTaskCount = planTasks.Count(x => x.IsCompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
-			//var completeStoneTaskCount = stoneTasks.Count(x => x.IsCompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
+         //nagetiveTaskCount += stoneTasks.Count(x => x.EndDate <= period.EndDate && x.RealEndDate > period.EndDate); //本周其结束之前未完成的漏网之鱼
 
+         //var subquery=APQuery()
+         var pms = db.UserInfoDal.ConditionQuery(null,null,null,null);
+         var result = new List<PMScoreViewModel>();
 
-			//var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus.In(ProjectKeys.ProcessStatus));
-			//var stoneTasks = paras.db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.ManagerId == paras.TargetId, null, null, null);
-			//var nagetiveTaskCount = stoneTasks.Count(x => x.EndDate <= period.EndDate && x.IsProcessStatus); // 本周期结束之前应该完成但未完成的任务
-			//nagetiveTaskCount += stoneTasks.Count(x => x.EndDate <= period.EndDate && x.RealEndDate > period.EndDate); //本周其结束之前未完成的漏网之鱼
-			//nagetiveTaskCount += stoneTasks.Count(x => x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate && x.RealEndDate > x.EndDate);// 在本周期内完成的，但是实际完成时间晚于计划结束时间
+         foreach(var pm in pms)
+         {
+            var viewModel = new PMScoreViewModel
+            {
+                UserName=pm.UserName,
+                GoodPlanTaskCount=0,
+                GoodStoneTaskCount=0,
+                NegativeTaskCount1=0,
+                NegativeTaskCount2=0
+            };
+         }
 
-			return View();
+         return Json(new {
+            rows = result
+         });
 		}
 
 

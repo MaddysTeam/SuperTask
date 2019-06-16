@@ -705,19 +705,19 @@ namespace TheSite.EvalAnalysis
 				   nagetiveTaskCount += stoneTasks.Count(x => x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate && x.RealEndDate > x.EndDate);// 在本周期内完成的，但是实际完成时间晚于计划结束时间
 
 				   double score = nagetiveTaskCount * 20 * -1;
-				   score = score < paras.EvalIndication.FullScore ? paras.EvalIndication.FullScore : score;
-				   var result = TaskAchievement.tempScore + score;
-				   score = result <= 0 ? TaskAchievement.tempScore * -1 : score;
-				   //if (score + TaskAchievement.tempScore >= 0)
-				   //{
-				   // score = score + TaskAchievement.tempScore;
-				   //}
-				   //else
-				   //{
-				   // score = -1 * TaskAchievement.tempScore;
-				   //}
+				   //score = score < paras.EvalIndication.FullScore ? paras.EvalIndication.FullScore : score;
+				   //var result = TaskAchievement.tempScore + score;
+				   //score = result <= 0 ? TaskAchievement.tempScore * -1 : score;
+               if (score + TaskAchievement.tempScore >= 0)
+               {
+                  score = score + TaskAchievement.tempScore;
+               }
+               else
+               {
+                  score = -1 * TaskAchievement.tempScore;
+               }
 
-				   return new EvalResultItem
+               return new EvalResultItem
 				   {
 					   ResultItemId = Guid.NewGuid(),
 					   PeriodId = paras.PeriodId,
