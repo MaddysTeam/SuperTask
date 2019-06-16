@@ -175,8 +175,9 @@
 						var reviewUrl =isPlan ? '@Url.Action("WorkTaskReviewAction", "Review")?id=' + id : '@Url.Action("StoneTaskReviewAction", "Review")?id=' + id ;
 						//var edit = isPlan ? "编辑" : "上传文件";
 
-						if (isMe && row.statusId == '@TaskKeys.PlanStatus' && isPlan) {
+						if (isMe && row.statusId == '@TaskKeys.PlanStatus') {
 							buttons += '<button class="btn btn-lg btn-danger btn-start" data-url="' + startUrl + '">启动</button>';
+							if (isPlan)
 							buttons += '<button class="btn btn-lg btn-success btn-edit" data-url="' + editUrl + '">编辑</button>';
 						}
 						else if (isMe && row.statusId == '@TaskKeys.TaskTempEditStatus') {

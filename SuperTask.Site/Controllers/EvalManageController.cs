@@ -61,7 +61,7 @@ namespace TheSite.Controllers
                                          & er.PeriodId == period.PeriodId
                                          )
                              )
-                        .where(ett.AccessorId == accessor.UserId & et.TableType== evalType)
+                        .where(ett.AccessorId == accessor.UserId & et.TableType== evalType & u.IsDelete==false)
                         .group_by(ett.TargetId, u.UserName,er.Score)
                         .query(db, r =>
                         {
@@ -97,41 +97,6 @@ namespace TheSite.Controllers
       }
 
 
-      //      //	GET: EvalManage/PeriodEvalMemberList
-      //      //	POST-Ajax: EvalManage/PeriodEvalMemberList
-
-      //      public ActionResult PeriodEvalMemberList()
-      //      {
-      //         ViewBag.AccessorRoles = RoleHelper.GetUserRoles(GetUserInfo().UserId, db);
-
-      //         ViewBag.AllPeriods = EvalPeriod.GetAll();
-
-      //         return View();
-      //      }
-
-      //      [HttpPost]
-      //      public ActionResult PeriodEvalMemberList(Guid periodId, Guid roleId, int current, int rowCount, AjaxOrder sort, string searchPhrase)
-      //      {
-      //         var memberViewModels = new AccessorTargetsHandler().GetTargetMembers(GetUserInfo().UserId, roleId, periodId, db);
-
-      //         var total = memberViewModels.Count();
-
-      //         if (total > 0)
-      //            memberViewModels = memberViewModels
-      //               .Skip(rowCount * current - rowCount)
-      //               .Take(rowCount)
-      //               .ToList();
-
-      //         return Json(new
-      //         {
-      //            rows = memberViewModels,
-      //            current,
-      //            rowCount,
-      //            total
-      //         });
-      //      }
-
-
       //	GET: EvalManage/AutoEvalMemberList
       //	POST-Ajax: EvalManage/AutoEvalMemberList
 
@@ -139,57 +104,6 @@ namespace TheSite.Controllers
       {
          return View();
       }
-
-      //[HttpPost]
-      //public ActionResult AutoEvalMemberList(int current, int rowCount, AjaxOrder sort, string searchPhrase)
-      //{
-      //   var memberViewModels = new GroupMemberHandler().GetTargetMembers(GetUserInfo().UserId, Guid.Empty, db);
-
-      //   var total = memberViewModels.Count();
-
-      //   if (total > 0)
-      //      memberViewModels = memberViewModels
-      //         .Skip(rowCount * current - rowCount)
-      //         .Take(rowCount)
-      //         .ToList();
-
-
-      //   return Json(new
-      //   {
-      //      rows = memberViewModels,
-      //      current,
-      //      rowCount,
-      //      total
-      //   });
-      //}
-
-
-      //      public ActionResult PeriodAutoEvalMemberList()
-      //      {
-      //         ViewBag.AllPeriods = EvalPeriod.GetAll();
-
-      //         return View();
-      //      }
-
-      //      [HttpPost]
-      //      public ActionResult PeriodAutoEvalMemberList(Guid periodId, int current, int rowCount, AjaxOrder sort, string searchPhrase)
-      //      {
-      //         var memberViewModels = new GroupMemberHandler().GetTargetMembers(GetUserInfo().UserId, Guid.Empty, periodId, db);
-
-      //         var total = memberViewModels.Count();
-
-      //         if (total > 0)
-      //            memberViewModels = memberViewModels.Skip(rowCount * current - rowCount).Take(rowCount).ToList();
-
-
-      //         return Json(new
-      //         {
-      //            rows = memberViewModels,
-      //            current,
-      //            rowCount,
-      //            total
-      //         });
-      //      }
 
 
       //	GET: EvalManage/SubjectEvalView
@@ -330,12 +244,6 @@ namespace TheSite.Controllers
             );
       }
 
-      //      public ActionResult SubjectEvalResult(SubjectEvalResultParams parms)
-      //      {
-      //         return View(
-      //            GetEvalViewModel(parms, EvalKeys.SubjectType)
-      //            );
-      //      }
 
       private void SubjectEvalAction(SubjectEvalParams paras, EvalResult result)
       {

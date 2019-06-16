@@ -232,6 +232,7 @@
 						$.post('@Url.Action("EditEestimateMoney", "Project")', { id: projectId, emoney: money }, function (data) {
 							callback();
 							popupMessage(data);
+							location.href = location.href;//TODO:
 						})
 					});
 

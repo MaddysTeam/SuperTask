@@ -1,4 +1,5 @@
-﻿using Business.Helper;
+﻿using Business;
+using Business.Helper;
 using Symber.Web.Data;
 using System;
 using System.Collections.Generic;
@@ -9,22 +10,22 @@ using TheSite.Models;
 namespace TheSite.Controllers
 {
 
-   public class StatisticController : BaseController
-   {
+	public class StatisticController : BaseController
+	{
 
-      // GET: Statistic/PersonalReport
-      // POST-Ajax: Statistic/PersonalReport
+		// GET: Statistic/PersonalReport
+		// POST-Ajax: Statistic/PersonalReport
 
-      //[Permission]
-      public ActionResult PersonalReport()
-      {
-         return View();
-      }
+		//[Permission]
+		public ActionResult PersonalReport()
+		{
+			return View();
+		}
 
-      [HttpPost]
-      public ActionResult PersonalReport(int current, int rowCount, AjaxOrder sort, string start, string end, string searchPhrase)
-      {
-         var sql = $@"if exists (select * from tempdb.dbo.sysobjects where id = object_id(N'tempdb..#temp') and type='U')
+		[HttpPost]
+		public ActionResult PersonalReport(int current, int rowCount, AjaxOrder sort, string start, string end, string searchPhrase)
+		{
+			var sql = $@"if exists (select * from tempdb.dbo.sysobjects where id = object_id(N'tempdb..#temp') and type='U')
                      drop table #temp
 
                   if exists (select * from tempdb.dbo.sysobjects where id = object_id(N'tempdb..#temp2') and type='U')
@@ -124,62 +125,62 @@ namespace TheSite.Controllers
                      and ac.status=0
                     group by u.UserName, p.ID,p.name,u.id";
 
-         var result = DapperHelper.QueryBySQL<PersonalReportModel>(sql, new { StartDate = start, EndDate = end });
-         if (!string.IsNullOrEmpty(searchPhrase) && result.Count > 0)
-         {
-            result = result.FindAll(r => r.UserName.IndexOf(searchPhrase) >= 0 || r.ProjectName.IndexOf(searchPhrase) >= 0);
-         }
+			var result = DapperHelper.QueryBySQL<PersonalReportModel>(sql, new { StartDate = start, EndDate = end });
+			if (!string.IsNullOrEmpty(searchPhrase) && result.Count > 0)
+			{
+				result = result.FindAll(r => r.UserName.IndexOf(searchPhrase) >= 0 || r.ProjectName.IndexOf(searchPhrase) >= 0);
+			}
 
-         if (sort != null && result.Count > 0)
-            switch (sort.ID)
-            {
-               case "ProjectName": result = result.OrderBy(r => r.ProjectName).ToList(); break;
-               case "UserName": result = result.OrderBy(r => r.UserName).ToList(); break;
-            }
-
-
-         var total = result.Count;
-
-         if (result != null && result.Count > 0)
-            result = result.Skip((current - 1) * rowCount).Take(rowCount).ToList();
-
-         //添加总计数据
-         result.Add(new PersonalReportModel
-         {
-            IsTotal = true,
-            ProjectName = "总计",
-            TotalTaskCount = result.Sum(t => t.TotalTaskCount),
-            CompleteTaskCount = result.Sum(t => t.CompleteTaskCount),
-            PlanCount = result.Sum(t => t.PlanCount),
-            ProcessCount = result.Sum(t => t.ProcessCount),
-            ReviewCount = result.Sum(t => t.ReviewCount),
-            DelCount = result.Sum(t => t.DelCount),
-            WorkHours = result.Sum(t => t.WorkHours)
-         });
-
-         return Json(new
-         {
-            rows = result,
-            current,
-            rowCount,
-            total
-         });
-
-      }
+			if (sort != null && result.Count > 0)
+				switch (sort.ID)
+				{
+					case "ProjectName": result = result.OrderBy(r => r.ProjectName).ToList(); break;
+					case "UserName": result = result.OrderBy(r => r.UserName).ToList(); break;
+				}
 
 
-      // GET: Statistic/PersonalScoreReport
-      // POST-Ajax: Statistic/PersonalScoreReport
+			var total = result.Count;
 
-      public ActionResult PersonalScoreReport()
-      {
-         return View();
-      }
+			if (result != null && result.Count > 0)
+				result = result.Skip((current - 1) * rowCount).Take(rowCount).ToList();
 
-      [HttpPost]
-      public ActionResult PersonalScoreReport(int current, int rowCount, AjaxOrder sort, string start, string end, string searchPhrase)
-      {
-         var sql = @"select u.id as UserId, u.UserName,t.ID,wj.TaskSubTypeValue as SubValue,d.Code from WorkJournal wj
+			//添加总计数据
+			result.Add(new PersonalReportModel
+			{
+				IsTotal = true,
+				ProjectName = "总计",
+				TotalTaskCount = result.Sum(t => t.TotalTaskCount),
+				CompleteTaskCount = result.Sum(t => t.CompleteTaskCount),
+				PlanCount = result.Sum(t => t.PlanCount),
+				ProcessCount = result.Sum(t => t.ProcessCount),
+				ReviewCount = result.Sum(t => t.ReviewCount),
+				DelCount = result.Sum(t => t.DelCount),
+				WorkHours = result.Sum(t => t.WorkHours)
+			});
+
+			return Json(new
+			{
+				rows = result,
+				current,
+				rowCount,
+				total
+			});
+
+		}
+
+
+		// GET: Statistic/PersonalScoreReport
+		// POST-Ajax: Statistic/PersonalScoreReport
+
+		public ActionResult PersonalScoreReport()
+		{
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult PersonalScoreReport(int current, int rowCount, AjaxOrder sort, string start, string end, string searchPhrase)
+		{
+			var sql = @"select u.id as UserId, u.UserName,t.ID,wj.TaskSubTypeValue as SubValue,d.Code from WorkJournal wj
                      inner join WorkTask t 
                      on t.id=wj.TaskId
                      inner join UserInfo u
@@ -190,47 +191,47 @@ namespace TheSite.Controllers
                      and wj.RecordDate>@StartDate and RecordDate<@EndDate
                      and t.IsParent=0 order by 1 ";
 
-         var scores = DapperHelper.QueryBySQL<PersonalScore>(sql, new { StartDate = start, EndDate = end });
-         var result = new List<PersonalScoreViewModel>();
-         var total = 0;
-         if (scores.Count > 0)
-         {
-            var scoreViewModels = scores.GroupBy(x => new { x.UserId, x.UserName })
-                                                    .Select(x => new PersonalScoreViewModel
-                                                    {
-                                                       UserId=x.Key.UserId.ToString(),
-                                                       Score = x.Sum(y => y.SubValue * y.Code).ToString("0.00"),
-                                                       UserName = x.Key.UserName
-                                                    });
-            total = scoreViewModels.Count();
-            if (total > 0)
-               result = scoreViewModels.Skip(rowCount*(current-1)).Take(rowCount).ToList();
-         }
+			var scores = DapperHelper.QueryBySQL<PersonalScore>(sql, new { StartDate = start, EndDate = end });
+			var result = new List<PersonalScoreViewModel>();
+			var total = 0;
+			if (scores.Count > 0)
+			{
+				var scoreViewModels = scores.GroupBy(x => new { x.UserId, x.UserName })
+														.Select(x => new PersonalScoreViewModel
+														{
+															UserId = x.Key.UserId.ToString(),
+															Score = x.Sum(y => y.SubValue * y.Code).ToString("0.00"),
+															UserName = x.Key.UserName
+														});
+				total = scoreViewModels.Count();
+				if (total > 0)
+					result = scoreViewModels.Skip(rowCount * (current - 1)).Take(rowCount).ToList();
+			}
 
-         return Json(new
-         {
-            rows = result,
-            current,
-            rowCount,
-            total
-         });
-      }
+			return Json(new
+			{
+				rows = result,
+				current,
+				rowCount,
+				total
+			});
+		}
 
 
-      // GET: Statistic/PersonalScoreDetails
-      // POST-Ajax: Statistic/PersonalScoreDetails
+		// GET: Statistic/PersonalScoreDetails
+		// POST-Ajax: Statistic/PersonalScoreDetails
 
-      public ActionResult PersonalScoreDetails(Guid userId)
-      {
-         return View(userId);
-      }
+		public ActionResult PersonalScoreDetails(Guid userId)
+		{
+			return View(userId);
+		}
 
-      [HttpPost]
-      public ActionResult PersonalScoreDetails(int current, int rowCount, AjaxOrder sort,Guid userId, string start, string end, string searchPhrase)
-      {
-         var total = 0;
-         var result = new List<PersonalScoreViewModel>();
-         var sql = @"select 
+		[HttpPost]
+		public ActionResult PersonalScoreDetails(int current, int rowCount, AjaxOrder sort, Guid userId, string start, string end, string searchPhrase)
+		{
+			var total = 0;
+			var result = new List<PersonalScoreViewModel>();
+			var sql = @"select 
                             u.UserName,
                             t.name as TaskName,
                             wj.TaskSubTypeValue as SubValue,
@@ -253,42 +254,42 @@ namespace TheSite.Controllers
                      and t.IsParent=0
                      and t.managerId=@ManagerId";
 
-         var scores = DapperHelper.QueryBySQL<PersonalScore>(sql, new { ManagerId=userId, StartDate = start, EndDate = end });
-         if (scores.Count > 0)
-         {
-            var scoreViewModels = scores.GroupBy(x => new { x.UserId, x.UserName, x.ProjectId,x.TaskId, x.TaskName, x.ProjectName, x.Code, x.SubType })
-                                                    .Select(x => new PersonalScoreViewModel
-                                                    {
-                                                       UserId= userId.ToString(),
-                                                       Score = x.Sum(y => y.SubValue * y.Code).ToString("0.00"),
-                                                       SubValue = x.Sum(y => y.SubValue).ToString(),
-                                                       SubType = x.Key.SubType,
-                                                       UnitScore =x.Key.Code.ToString(),
-                                                       UserName = x.Key.UserName,
-                                                       TaskName=x.Key.TaskName,
-                                                       ProjectId=x.Key.ProjectId.ToString(),
-                                                       ProjectName = x.Key.ProjectName,
-                                                       TaskId=x.Key.TaskId.ToString()
-                                                    });
-            total = scoreViewModels.Count();
-            if (total > 0)
-               result = scoreViewModels.Skip(rowCount * (current - 1)).Take(rowCount).ToList();
-         }
+			var scores = DapperHelper.QueryBySQL<PersonalScore>(sql, new { ManagerId = userId, StartDate = start, EndDate = end });
+			if (scores.Count > 0)
+			{
+				var scoreViewModels = scores.GroupBy(x => new { x.UserId, x.UserName, x.ProjectId, x.TaskId, x.TaskName, x.ProjectName, x.Code, x.SubType })
+														.Select(x => new PersonalScoreViewModel
+														{
+															UserId = userId.ToString(),
+															Score = x.Sum(y => y.SubValue * y.Code).ToString("0.00"),
+															SubValue = x.Sum(y => y.SubValue).ToString(),
+															SubType = x.Key.SubType,
+															UnitScore = x.Key.Code.ToString(),
+															UserName = x.Key.UserName,
+															TaskName = x.Key.TaskName,
+															ProjectId = x.Key.ProjectId.ToString(),
+															ProjectName = x.Key.ProjectName,
+															TaskId = x.Key.TaskId.ToString()
+														});
+				total = scoreViewModels.Count();
+				if (total > 0)
+					result = scoreViewModels.Skip(rowCount * (current - 1)).Take(rowCount).ToList();
+			}
 
-         return Json(new
-         {
-            rows = result,
-            current,
-            rowCount,
-            total
-         });
-      }
+			return Json(new
+			{
+				rows = result,
+				current,
+				rowCount,
+				total
+			});
+		}
 
 
-      public ActionResult PersonalScoreExport(string start, string end, string searchPhrase)
-      {
-         var result = new List<PersonalScoreViewModel>();
-         var sql = @"select 
+		public ActionResult PersonalScoreExport(string start, string end, string searchPhrase)
+		{
+			var result = new List<PersonalScoreViewModel>();
+			var sql = @"select 
                             u.UserName,
                             t.name as TaskName,
                             wj.TaskSubTypeValue as SubValue,
@@ -310,31 +311,75 @@ namespace TheSite.Controllers
                      and wj.RecordDate>@StartDate and RecordDate<@EndDate
                      and t.IsParent=0";
 
-         var scores = DapperHelper.QueryBySQL<PersonalScore>(sql, new {StartDate = start, EndDate = end });
-         if (scores.Count > 0)
-         {
-            var scoreViewModels = scores.GroupBy(x => new { x.UserId, x.UserName, x.ProjectId, x.TaskId, x.TaskName, x.ProjectName, x.Code, x.SubType })
-                                                    .Select(x => new PersonalScoreExportViewModel
-                                                    {
-                                                       Score = x.Sum(y => y.SubValue * y.Code).ToString("0.00"),
-                                                       SubValue = x.Sum(y => y.SubValue).ToString(),
-                                                       SubType = x.Key.SubType,
-                                                       UnitScore = x.Key.Code.ToString(),
-                                                       UserName = x.Key.UserName,
-                                                       TaskName = x.Key.TaskName,
-                                                       ProjectName = x.Key.ProjectName,
-                                                    }).ToList();
+			var scores = DapperHelper.QueryBySQL<PersonalScore>(sql, new { StartDate = start, EndDate = end });
+			if (scores.Count > 0)
+			{
+				var scoreViewModels = scores.GroupBy(x => new { x.UserId, x.UserName, x.ProjectId, x.TaskId, x.TaskName, x.ProjectName, x.Code, x.SubType })
+														.Select(x => new PersonalScoreExportViewModel
+														{
+															Score = x.Sum(y => y.SubValue * y.Code).ToString("0.00"),
+															SubValue = x.Sum(y => y.SubValue).ToString(),
+															SubType = x.Key.SubType,
+															UnitScore = x.Key.Code.ToString(),
+															UserName = x.Key.UserName,
+															TaskName = x.Key.TaskName,
+															ProjectName = x.Key.ProjectName,
+														}).ToList();
 
-            var book = ExportHelper.ExportToExcel(scoreViewModels,new string[] {"用户名","项目名称", "任务名称","任务子类型","任务子类型分值","工作数量","得分" });
-            var ms = new System.IO.MemoryStream();
-            book.Write(ms);
-            ms.Seek(0, System.IO.SeekOrigin.Begin);
+				var book = ExportHelper.ExportToExcel(scoreViewModels, new string[] { "用户名", "项目名称", "任务名称", "任务子类型", "任务子类型分值", "工作数量", "得分" });
+				var ms = new System.IO.MemoryStream();
+				book.Write(ms);
+				ms.Seek(0, System.IO.SeekOrigin.Begin);
 
-            return File(ms, "application/vnd.ms-excel", $"本周期得分统计{start}-{end}.xls");
-         }
+				return File(ms, "application/vnd.ms-excel", $"本周期得分统计{start}-{end}.xls");
+			}
 
-         return Content("没有数据导出");
-      }
-   }
+			return Content("没有数据导出");
+		}
+
+
+		public ActionResult PMScoreAnalysis()
+		{
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult PMScoreAnalysis(Guid userId, int rowCount, AjaxOrder sort, string start, string end)
+		{
+			//var p = APDBDef.Project;
+			//var t = APDBDef.WorkTask;
+			//var period = EvalPeriod.PrimaryGet(paras.PeriodId);
+			//var pst = APDBDef.ProjectStoneTask;
+
+			//var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus.In(new Guid[] { ProjectKeys.ProcessStatus, ProjectKeys.CompleteStatus }));
+			//var planTasks = paras.db.WorkTaskDal.ConditionQuery(
+			//				 t.Projectid.In(subquery)
+			//				 & t.TaskType == TaskKeys.PlanTaskTaskType
+			//				 & t.ManagerId == paras.TargetId
+			//				 , null, null, null);
+
+			//var stoneTasks = paras.db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.ManagerId == paras.TargetId, null, null, null);
+			//var completePlanTaskCount = planTasks.Count(x => x.IsCompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
+			//var completeStoneTaskCount = stoneTasks.Count(x => x.IsCompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
+
+
+			//var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus.In(ProjectKeys.ProcessStatus));
+			//var stoneTasks = paras.db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.ManagerId == paras.TargetId, null, null, null);
+			//var nagetiveTaskCount = stoneTasks.Count(x => x.EndDate <= period.EndDate && x.IsProcessStatus); // 本周期结束之前应该完成但未完成的任务
+			//nagetiveTaskCount += stoneTasks.Count(x => x.EndDate <= period.EndDate && x.RealEndDate > period.EndDate); //本周其结束之前未完成的漏网之鱼
+			//nagetiveTaskCount += stoneTasks.Count(x => x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate && x.RealEndDate > x.EndDate);// 在本周期内完成的，但是实际完成时间晚于计划结束时间
+
+			return View();
+		}
+
+
+		public ActionResult NegativeScoreReasonList(Guid userId)
+		{
+			var negativeTasks = new List<ProjectStoneTask>();
+
+			return View();
+		}
+
+	}
 
 }
