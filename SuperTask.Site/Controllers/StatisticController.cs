@@ -344,52 +344,88 @@ namespace TheSite.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult PMScoreAnalysis(Guid userId, int rowCount, AjaxOrder sort, DateTime start, DateTime end)
+		public ActionResult PMScoreAnalysis(int current, int rowCount, AjaxOrder sort, DateTime start, DateTime end)
 		{
 			var p = APDBDef.Project;
 			var t = APDBDef.WorkTask;
 			var pst = APDBDef.ProjectStoneTask;
-         var u = APDBDef.UserInfo;
+			var u = APDBDef.UserInfo;
+			var ur = APDBDef.UserRole;
 
-			var subquery = APQuery.select(p.ProjectId).from(p).where(p.ProjectStatus.In(new Guid[] { ProjectKeys.ProcessStatus, ProjectKeys.CompleteStatus }));
-			var goodStoneTasks = db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.RealEndDate>=start & pst.RealEndDate<=end, null, null, null);
-         var goodPlanTasks = db.WorkTaskDal.ConditionQuery(t.TaskType == TaskKeys.PlanTaskTaskType & t.Projectid.In(subquery) & t.RealEndDate >= start & t.RealEndDate <= end, null, null, null);
-         var negativeStoneTasks1 = db.ProjectStoneTaskDal.ConditionQuery(pst.EndDate<=end & pst.TaskStatus==TaskKeys.ProcessStatus,null,null,null);
-         var negativeStoneTasks2 = db.ProjectStoneTaskDal.ConditionQuery(
-            pst.RealEndDate >= start 
-          & pst.RealEndDate<=end 
-          & pst.RealEndDate > pst.EndDate,
-            null, null, null);
+			var subquery1 = APQuery.select(p.ProjectId).from(p).where(p.ProjectStatus.In(new Guid[] { ProjectKeys.ProcessStatus, ProjectKeys.CompleteStatus }));
+			var goodStoneTasks = db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery1) & pst.RealEndDate >= start & pst.RealEndDate <= end, null, null, null);
+			var goodPlanTasks = db.WorkTaskDal.ConditionQuery(t.TaskType == TaskKeys.PlanTaskTaskType & t.Projectid.In(subquery1) & t.RealEndDate >= start & t.RealEndDate <= end, null, null, null);
 
-         //nagetiveTaskCount += stoneTasks.Count(x => x.EndDate <= period.EndDate && x.RealEndDate > period.EndDate); //本周其结束之前未完成的漏网之鱼
+			var subquery2 = APQuery.select(p.ProjectId).from(p).where(p.ProjectStatus.In(new Guid[] { ProjectKeys.ProcessStatus }));
+			var negativeStoneTasks1 = db.ProjectStoneTaskDal.ConditionQuery(
+				pst.ProjectId.In(subquery2) &
+				pst.EndDate <= end &
+				pst.TaskStatus == TaskKeys.ProcessStatus, null, null, null);
+			var negativeStoneTasks2 = db.ProjectStoneTaskDal.ConditionQuery(
+			   pst.ProjectId.In(subquery2)
+			 & pst.RealEndDate >= start
+			 & pst.RealEndDate <= end
+			 & pst.RealEndDate > pst.EndDate,
+			   null, null, null);
 
-         //var subquery=APQuery()
-         var pms = db.UserInfoDal.ConditionQuery(null,null,null,null);
-         var result = new List<PMScoreViewModel>();
+			//nagetiveTaskCount += stoneTasks.Count(x => x.EndDate <= period.EndDate && x.RealEndDate > period.EndDate); //本周其结束之前未完成的漏网之鱼
 
-         foreach(var pm in pms)
-         {
-            var viewModel = new PMScoreViewModel
-            {
-                UserName=pm.UserName,
-                GoodPlanTaskCount=0,
-                GoodStoneTaskCount=0,
-                NegativeTaskCount1=0,
-                NegativeTaskCount2=0
-            };
-         }
+			var subquery3 = APQuery.select(ur.UserId)
+				.from(ur).where(ur.RoleId == RoleKeys.ProjectManagerId.ToGuid(Guid.Empty));
+			var pms = db.UserInfoDal.ConditionQuery(u.UserId.In(subquery3) & u.IsDelete == false, null, null, null);
+			var result = new List<PMScoreViewModel>();
 
-         return Json(new {
-            rows = result
-         });
+			foreach (var pm in pms)
+			{
+				var viewModel = new PMScoreViewModel
+				{
+					UserName = pm.UserName,
+					GoodPlanTaskCount = goodPlanTasks.Count(x => x.ManagerId == pm.UserId),
+					GoodStoneTaskCount = goodStoneTasks.Count(x => x.ManagerId == pm.UserId),
+					NegativeTaskCount1 = negativeStoneTasks1.Count(x => x.ManagerId == pm.UserId),
+					NegativeTaskCount2 = negativeStoneTasks2.Count(x => x.ManagerId == pm.UserId),
+				};
+
+				result.Add(viewModel);
+			}
+
+			return Json(new
+			{
+				rows = result,
+				current,
+				rowCount,
+				total = pms.Count
+			});
 		}
 
 
-		public ActionResult NegativeScoreReasonList(Guid userId)
+		public ActionResult PMScoreDetails(Guid userId, Guid negativeReason, DateTime start, DateTime end)
 		{
-			var negativeTasks = new List<ProjectStoneTask>();
+			var pst = APDBDef.ProjectStoneTask;
+			var p = APDBDef.Project;
+			var negativeTaskViewModels = new List<PMScoreDetailViewModel>();
+			var subquery2 = APQuery.select(p.ProjectId).from(p).where(p.ProjectStatus.In(new Guid[] { ProjectKeys.ProcessStatus }));
 
-			return View();
+			if (negativeReason == StatisticalKeys.NegativeTypeForNotComplete)
+			{
+				//negativeTasks = db.ProjectStoneTaskDal.ConditionQuery(
+				//						pst.ProjectId.In(subquery2) &
+				//						pst.ManagerId == userId &
+				//						pst.EndDate <= end &
+				//						pst.TaskStatus == TaskKeys.ProcessStatus, null, null, null);
+			}
+			else if (negativeReason == StatisticalKeys.NegativeTypeForNotCompleteInTime)
+			{
+				//negativeTasks = db.ProjectStoneTaskDal.ConditionQuery(
+				//					   pst.ProjectId.In(subquery2)
+				//					 & pst.ManagerId == userId
+				//					 & pst.RealEndDate >= start
+				//					 & pst.RealEndDate <= end
+				//					 & pst.RealEndDate > pst.EndDate,
+				//					   null, null, null);
+			}
+
+			return View("_PMScoreDetails", negativeTaskViewModels);
 		}
 
 	}

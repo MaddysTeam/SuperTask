@@ -11,8 +11,13 @@
 		cursor:pointer;
 	}
 
+	.navigator{
+		height:800px;
+		overflow-x:auto;
+		overflow-y:auto;
+	}
+
 	.explorer {
-		min-height: 600px;
 	}
 
 	.explore-header {
@@ -48,6 +53,12 @@
 			display: block;
 			height: 30px;
 			padding: 0px;
+		}
+		
+		.explore-body{
+				height: 840px;
+				overflow-y:auto;
+				overflow-x:hidden;
 		}
 
 	.item {

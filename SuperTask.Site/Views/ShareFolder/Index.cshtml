@@ -22,10 +22,13 @@
 
 			<!-- explorer nav -->
 			<div class="col-md-4">
-				<div class="widget">
+				<div class="widget" >
 
 					<div class="widget-header"></div>
-					<div class="widget-content">
+					<div class="widget-content navigator"  >
+						<div>
+							<input type="text"  id="search_file_node" class="form-control"/>
+						</div>
 						<div class="explorer-nav">
 
 						</div>
@@ -37,7 +40,7 @@
 			<!-- /explorer nav -->
 			<!-- explorer content -->
 			<div class="col-md-8">
-				<div class="widget explorer">
+				<div class="widget">
 
 					<div class="widget-header">
 						<div class="explore-header">
@@ -57,7 +60,7 @@
 									</a>
 								</li>
 								<li>
-									<input type="text" class="search form-control" placeholder="相关搜索" />
+									<input type="text" class="search form-control" placeholder="搜索文件" />
 								</li>
 								<li>
 									<a class="btn_search" href="#">
@@ -73,8 +76,8 @@
 							</ul>
 						</div>
 					</div>
-					<div class="widget-content row">
-						<div class="explore col-xs-12">
+					<div class="widget-content row  explore-body" >
+						<div class="col-xs-12 ">
 							<div class="center-block"><i class="fa fa-folder-open"></i></div>
 						</div>
 					</div>
@@ -118,7 +121,7 @@
 		var folderOptions = {
 			items: [
 			  { text: '打开', onclick: function (e) { openFolder(e.data['folderId']); } },
-			  { text: '删除', onclick: function (e) { delFolder(e.data['folderId']); } },
+			  { text: '删除', onclick: function (e) { delFolder(e.data['folderId'], currentFolderId); } },
 			  { text: '重命名', onclick: function (e) { editFolder(e.data['folderId']); } },
 			  { divider: true },
 			  { text: '设置权限', onclick: function (e) { alert('功能还在研发中'); } }
@@ -161,6 +164,13 @@
 						'</div>';
 		};
 
+		function searchNode(treeview) {
+			$('#search_file_node').on('keyup', function () {
+				treeview.jstree(true).search($('#search_file_node').val())
+			});
+		}
+
+
 		//folder operation
 		function openFolder(folderId) {
 			var folder = findFolderById(folderId);
@@ -168,14 +178,14 @@
 			showFolderFiles(folderId);
 		}
 
-		function delFolder(folderId) {
+		function delFolder(folderId,currentFolderId) {
 			if (confirm("@Success.Folder.CONFIRM_DELETE")) {
 				$.post('@Url.Action("Delete", "ShareFolder")', { id: folderId }, function () {
 					loadData(function () {
 						bindLeftNav();
 						showFolderFiles(currentFolderId);
-						//bindUpClick();
-					});
+						bindUpClick();
+					}, { parentId: currentFolderId, phrase: '' });
 				});
 			}
 		}
@@ -218,7 +228,7 @@
 				$.post('@Url.Action("DelFile", "ShareFolder")', { id: fileId, folderId: currentFolderId }, function (data) {
 					loadData(function () {
 						showFolderFiles(currentFolderId);
-					});
+					}, { parentId: currentFolderId, phrase:'' });
 				});
 			}
 		}
@@ -237,7 +247,7 @@
 					itemStr += fileStr(files[i]);
 				}
 			}
-			$('.explore').html('').append(itemStr == '' ? emptyMessageStr : itemStr);
+			$('.explore-body').html('').append(itemStr == '' ? emptyMessageStr : itemStr);
 			bindFolderClick();
 			bindPopup();
 			bindPreview();
@@ -271,8 +281,8 @@
 
 		//explorer operation
 		function bindPopup() {
-			$('.myFolder').contextify(folderOptions);
-			$('.myFile').contextify(fileOptions);
+			$('.myFolder,.folder').contextify(folderOptions);
+			$('.myFile,.file').contextify(fileOptions);
 		}
 
 		function bindUpClick() {
@@ -292,7 +302,7 @@
 				data.push({
 					"id": folder.id,
 					"parent": folder.parentId,
-					"text": folder.name,
+					"text": folder.name
 				});
 			});
 			var $treeviewApp = $('.explorer-nav');
@@ -302,7 +312,19 @@
 					'data': data,
 					'check_callback': true,
 				},
-				'plugins': ['types', 'search'],
+				'plugins': ['types', 'search', 'contextmenu'],
+				'contextmenu':{
+					'items': {
+						"remove": {
+							'label': '删除文件夹',
+							'action': function (data) {
+								var inst = jQuery.jstree.reference(data.reference);
+								var obj = inst.get_node(data.reference);
+								delFolder(obj.id, root.id);
+							}
+						}
+					}
+				},
 				'types': {
 					'root': {
 						'icon': 'fa fa-star yellow-font'
@@ -312,12 +334,13 @@
 					},
 				}
 			}).on('loaded.jstree', function (e, data) {
-				console.log(data);
-				console.log(e);
+				searchNode($('.explorer-nav'));
 			}).on('changed.jstree', function (e, data) {
+				alert();
 				openFolder(data.node["id"]);
 			}).on('ready.jstree', function () {
-				$treeviewApp.jstree('open_all');
+				//$treeviewApp.jstree('open_all');
+				$treeviewApp.jstree('open_node', '#' + root.id);
 			});
 
 		}
@@ -339,11 +362,11 @@
 					for (var i = 0; i < files.length; i++) {
 						itemStr += fileStr(files[i]);
 					}
-					$('.explore').html('').append(itemStr);
+					$('.explore-body').html('').append(itemStr);
 					bindPopup();
 					bindPreview();
 					setExplorePath("搜索结果");
-				}, { phrase: $('.search').val() });
+				}, { phrase: $('.search').val(), parentId:currentFolderId });
 			});
 			$('.btn_up').click(function () {
 				if (!currentFolderId) return;

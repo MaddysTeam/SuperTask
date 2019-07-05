@@ -1,0 +1,135 @@
+﻿
+
+<div class="content-wrapper">
+
+	<div class="main-content">
+		<!-- widget -->
+		<div class="widget">
+			<div class="widget-header">
+				<h3>统计报表</h3>
+				<div class="btn-group widget-header-toolbar">
+					<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+				</div>
+			</div>
+
+			<div class="widget-content">
+
+				<div class="row">
+					<div class="form-horizontal">
+
+						<div class="col-sm-4  startDate">
+							<div class="form-group">
+								<label class="col-md-6 control-label">时间范围</label>
+								<div class="col-md-6">
+
+									<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+										@Html.TextBox("start", DateTime.Now.AddMonths(-1).TodayStart().ToString("yyyy-MM-dd"), new { @class = "form-control plan start" })
+										<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-4  endDate">
+							<div class="form-group">
+								<div class="col-md-6">
+
+									<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+										@Html.TextBox("end", DateTime.Now.TodayEnd().ToString("yyyy-MM-dd"), new { @class = "form-control plan end" })
+										<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<!-- Grid -->
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								<th data-column-id="UserName">用户名</th>
+								<th data-column-id="GoodPlanTaskCount">计划任务完成数</th>
+								<th data-column-id="GoodStoneTaskCount">节点任务完成数</th>
+								<th data-column-id="NegativeTaskCount1">节点任务未完成数</th>
+								<th data-column-id="NegativeTaskCount2">节点任务延迟完成（晚于计划）</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+			<!-- /widget content -->
+		</div>
+		<!-- /widget -->
+
+	</div>
+</div>
+
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Scripts {
+	<script>
+		function getGlobalRequest() {
+			return {
+				start: $('#start').val(),
+				end: $('#end').val(),
+			};
+		}
+
+		var searchType = '@TaskKeys.SearchByPersonal';
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: window.location.href,
+
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+				formatters: {
+					'process': function (column, row) {
+						return row.ProcessCount == 0 || row.IsTotal ? row.ProcessCount : '<a target="_blank" href="/ProjectManage/ProcessInfo?type='+row.TaskType+'&projectId=' + row.ProjectId + '&userId=' + row.UserId + '&SearchType=' + searchType + '&status=@TaskKeys.ProcessStatus&startDate=' + $('#start').val() + '&endDate=' + $('#end').val() + '">' + row.ProcessCount + '</a>';
+					},
+					'complete': function (column, row) {
+						return row.CompleteTaskCount == 0 || row.IsTotal ? row.CompleteTaskCount : '<a target="_blank" href="/ProjectManage/ProcessInfo?type=' + row.TaskType + '&projectId=' + row.ProjectId + '&userId=' + row.UserId + '&SearchType=' + searchType + '&status=@TaskKeys.CompleteStatus&startDate=' + $('#start').val() + '&endDate=' + $('#end').val() + '">' + row.CompleteTaskCount + '</a>';
+					},
+					'review': function (column, row) {
+						return row.ReviewCount == 0 || row.IsTotal  ? row.ReviewCount : '<a target="_blank" href="/ProjectManage/ProcessInfo?type=' + row.TaskType + '&projectId=' + row.ProjectId + '&userId=' + row.UserId + '&SearchType=' + searchType + '&status=@TaskKeys.ReviewStatus&startDate=' + $('#start').val() + '&endDate=' + $('#end').val() + '">' + row.ReviewCount + '</a>';
+					},
+					'delete': function (column, row) {
+						return row.DelCount == 0 || row.IsTotal ? row.DelCount : '<a target="_blank" href="/ProjectManage/ProcessInfo?type=' + row.TaskType + '&projectId=' + row.ProjectId + '&userId=' + row.UserId + '&SearchType=' + searchType + '&status=@TaskKeys.DeleteStatus&startDate=' + $('#start').val() + '&endDate=' + $('#end').val() + '">' + row.DelCount + '</a>';
+					},
+					'double': function (column, row) {
+						return row[column.id].toFixed(1);
+					}
+					
+				},
+			});
+		}
+
+		$(function () {
+
+			$('#bootgrid').bootgrid(getGridOptions())
+			.on('loaded.rs.jquery.bootgrid', function () {
+
+			});
+
+			$('#start,#end').on('change', function () {
+				$('#bootgrid').bootgrid('reload');
+			});
+
+
+		});
+	</script>
+}

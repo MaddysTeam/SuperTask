@@ -49,6 +49,18 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Aspose.Cells, Version=8.7.1.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Business\Utilities\bins\Aspose.Cells.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Slides, Version=15.1.0.0, Culture=neutral, PublicKeyToken=00725b1ceb58d0a9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Business\Utilities\bins\Aspose.Slides.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Words, Version=18.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Business\Utilities\bins\Aspose.Words.dll</HintPath>
+    </Reference>
     <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.1.50.2\lib\net451\Dapper.dll</HintPath>
       <Private>True</Private>
@@ -60,6 +72,14 @@
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Business\Utilities\bins\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp.xmlworker, Version=5.5.13.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Business\Utilities\bins\itextsharp.xmlworker.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
@@ -90,6 +110,10 @@
     <Reference Include="NPOI.OpenXmlFormats, Version=2.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
       <HintPath>..\packages\NPOI.2.2.1\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="O2S.Components.PDFRender4NET, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Business\Utilities\bins\O2S.Components.PDFRender4NET.dll</HintPath>
     </Reference>
     <Reference Include="office, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -285,6 +309,7 @@
     <Compile Include="Business\Handler\PDFHandler.cs" />
     <Compile Include="Business\Handler\WorkJournalHandler.cs" />
     <Compile Include="Business\Helper\AppConfigHelper.cs" />
+    <Compile Include="Business\Helper\Keys\StatisticalKeys.cs" />
     <Compile Include="Business\Helper\Keys\PaymentsKeys.cs" />
     <Compile Include="Business\Helper\Keys\AlertKeys.cs" />
     <Compile Include="Business\Helper\Keys\AdviceKeys.cs" />
@@ -331,6 +356,15 @@
     <Compile Include="Business\System.Web.MVC\Attribute\AuthAttribute.cs" />
     <Compile Include="Business\System.Web.MVC\Attribute\ExceptionAttribute.cs" />
     <Compile Include="Business\System.Web.MVC\Attribute\PermissionAttribute.cs" />
+    <Compile Include="Business\Utilities\AppConfigHelper.cs" />
+    <Compile Include="Business\Utilities\AsposeCellPatch.cs" />
+    <Compile Include="Business\Utilities\Aspose\ExcelConverter.cs" />
+    <Compile Include="Business\Utilities\Aspose\PPTConverter.cs" />
+    <Compile Include="Business\Utilities\Aspose\WordConverter.cs" />
+    <Compile Include="Business\Utilities\FormatConverter.cs" />
+    <Compile Include="Business\Utilities\NpoiHelper.cs" />
+    <Compile Include="Business\Utilities\PDFHelper.cs" />
+    <Compile Include="Business\Utilities\wangsu\FileUploader.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdviceController.cs" />
     <Compile Include="Controllers\ReviewController.cs" />
@@ -1405,6 +1439,22 @@
     <Content Include="Business\Roadflow\dll\RoadFlow.Data.ORACLE.dll" />
     <Content Include="Business\Roadflow\dll\RoadFlow.Platform.dll" />
     <Content Include="Business\Roadflow\dll\RoadFlow.Utility.dll" />
+    <Content Include="Business\Utilities\Aspose\Aspose.Slides.dll" />
+    <Content Include="Business\Utilities\Aspose\Aspose.Words.dll" />
+    <Content Include="Business\Utilities\bins\Aspose.Cells.dll" />
+    <Content Include="Business\Utilities\bins\Aspose.Slides.dll" />
+    <Content Include="Business\Utilities\bins\Aspose.Words.dll" />
+    <Content Include="Business\Utilities\bins\itextsharp.dll" />
+    <Content Include="Business\Utilities\bins\itextsharp.xmlworker.dll" />
+    <Content Include="Business\Utilities\bins\NPOI.dll" />
+    <Content Include="Business\Utilities\bins\NPOI.OOXML.dll" />
+    <Content Include="Business\Utilities\bins\NPOI.OpenXml4Net.dll" />
+    <Content Include="Business\Utilities\bins\NPOI.OpenXmlFormats.dll" />
+    <Content Include="Business\Utilities\bins\O2S.Components.PDFRender4NET.dll" />
+    <Content Include="Business\Utilities\ITextSharp\itextsharp.dll" />
+    <Content Include="Business\Utilities\ITextSharp\itextsharp.xmlworker.dll" />
+    <Content Include="Business\Utilities\ITextSharp\O2S.Components.PDFRender4NET.dll" />
+    <Content Include="Business\Utilities\wangsu\WcsLib.dll" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="assets\fonts\fontawesome-webfont.eot" />
@@ -1612,6 +1662,8 @@
     <Content Include="Views\Review\StoneTaskReviewAction.cshtml" />
     <Content Include="Views\Review\WorkTaskReviewAction.cshtml" />
     <Content Include="Views\Review\WorkTaskReviewRequest.cshtml" />
+    <Content Include="Views\Statistic\PMScoreAnalysis.cshtml" />
+    <Content Include="Views\Statistic\_PMScoreDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
