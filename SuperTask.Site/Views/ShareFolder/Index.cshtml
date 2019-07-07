@@ -117,7 +117,7 @@
 		});
 
 		var currentFolderId;
-		var folders = [], files = [];
+		var folders = [], files = [], searchFolders = [], searchFiles = [],copyFiles=[];
 		var folderOptions = {
 			items: [
 			  { text: '打开', onclick: function (e) { openFolder(e.data['folderId']); } },
@@ -134,9 +134,11 @@
 			  { text: '下载', onclick: function (e) { download(e.data['filePath']); } },
 			  { text: '删除', onclick: function (e) { delFile(e.data['fileId']); } },
 			  { divider: true },
-			  { text: '设置权限', onclick: function (e) { alert('功能还在研发中'); } }
+			  { text: '发送到', onclick: function (e) { sendToFolder(e.data['fileId']); } },
+
 			]
 		};
+
 		var emptyMessageStr = '<div class="text-center">该文件夹为空</div>';
 		var folderStr = function (folder) {
 			var folderClassName = folder.isMyFolder ? 'myFolder' : 'folder';
@@ -151,7 +153,8 @@
 				 '</div>'
 		};
 		var fileStr = function (file) {
-			var fileClassName = file.isMyFile ? 'myFile' : 'file';
+			if (!file) return '';
+			var fileClassName = file && file.isMyFile ? 'myFile' : 'file';
 			return '<div class="item col-lg-2 col-sm-2 col-xs-4" title="' + file.name + '">' +
 									'<div class="btn06 ' + fileClassName + '" data-file-id="' + file.id + '" data-file-path="' + file.path + '" data-attachment-id="' + file.attachmentId + '">' +
 									  '<img src="' + file.coverPath + '" />' +
@@ -228,7 +231,7 @@
 				$.post('@Url.Action("DelFile", "ShareFolder")', { id: fileId, folderId: currentFolderId }, function (data) {
 					loadData(function () {
 						showFolderFiles(currentFolderId);
-					}, { parentId: currentFolderId, phrase:'' });
+					}, { parentId: '@ThisApp.DefaultId', phrase:'' });
 				});
 			}
 		}
@@ -277,6 +280,12 @@
 						.data('url', url)
 						.trigger('click');
 			});
+		}
+
+		function sendToFolder(itemId) {
+			$('#modelProxy')
+				.data('url', '@Url.Action("SendToFolder", "ShareFolder")?itemId=' + itemId + '&originFolderId='+ currentFolderId)
+				.trigger('click');
 		}
 
 		//explorer operation
@@ -336,7 +345,6 @@
 			}).on('loaded.jstree', function (e, data) {
 				searchNode($('.explorer-nav'));
 			}).on('changed.jstree', function (e, data) {
-				alert();
 				openFolder(data.node["id"]);
 			}).on('ready.jstree', function () {
 				//$treeviewApp.jstree('open_all');
@@ -357,10 +365,10 @@
 						.trigger('click');
 			});
 			$('.btn_search').click(function () {
-				loadData(function () {
+				searchData(function () {
 					var itemStr = '';
 					for (var i = 0; i < files.length; i++) {
-						itemStr += fileStr(files[i]);
+						itemStr += fileStr(searchFiles[i]);
 					}
 					$('.explore-body').html('').append(itemStr);
 					bindPopup();
@@ -394,5 +402,22 @@
 				}
 			});
 		}
+
+		function searchData(callback,para) {
+			$.post('@Url.Action("Search", "ShareFolder")', para, function (data) {
+				searchFolders = [];
+				searchFiles = [];
+				$(data.rows.folders).each(function () {
+					searchFolders.push(this);
+				});
+				$(data.rows.files).each(function () {
+					searchFiles.push(this);
+				});
+				if (callback) {
+					callback(data);
+				}
+			});
+		}
+
 	</script>
 }

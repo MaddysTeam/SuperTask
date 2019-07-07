@@ -173,6 +173,11 @@ namespace Business.Helper
 			public const string TASKS_OUT_OF_PROJECT_RANGE = "任务时间范围不能超过项目时间范围";
 		}
 
+      public class Files
+      {
+         public const string DUPLICATE_FILE_NAME = "已有重复的文件名称！";
+      }
+
 	}
 
 
@@ -239,7 +244,8 @@ namespace Business.Helper
 		{
 			public const string CONFIRM_DELETE = "确定要删除该文件？";
 			public const string DELETE_SUCCESS = "文件删除成功！";
-		}
+         public const string EDIT_SUCCESS = "操作成功！";
+      }
 
 
 		public class Folder

@@ -1,5 +1,4 @@
 ﻿using Business.Helper;
-using Business.Roadflow;
 using System;
 using System.Linq;
 using TheSite.Models;
@@ -44,21 +43,6 @@ namespace Business
          };
 
          v.Review = review;
-
-         var json = Newtonsoft.Json.JsonConvert.SerializeObject(review, new Newtonsoft.Json.JsonSerializerSettings() { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeNonAscii });
-         var flowParams = new RunParams
-         {
-            UserId = user.UserId.ToString(),
-            DetaultMember = ta.ReviewerID.ToString(),
-            FlowId = v.FlowId.ToString(),
-            Display = "1",
-            ObjJson = json,
-            Title = title,
-         };
-
-
-         v.RunParams = flowParams;
-         //v.Result.IsSuccess = true;
       }
 
    }
@@ -141,8 +125,6 @@ namespace Business
 
       public Guid ReviewType { get; set; }
 
-      public RunParams RunParams { get; set; }
-
       public Result Result { get; set; }
 
       public APDBDef db { get; set; }
@@ -183,18 +165,7 @@ namespace Business
             DateRange = string.Format("{0}  至  {1}", p.StartDate, p.EndDate),
          };
 
-         var json = Newtonsoft.Json.JsonConvert.SerializeObject(review, new Newtonsoft.Json.JsonSerializerSettings() { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeNonAscii });
-         var flowParams = new RunParams
-         {
-            UserId = user.UserId.ToString(),
-            DetaultMember = reviewerId.ToString(),
-            FlowId = v.FlowId.ToString(),
-            Display = "1",
-            ObjJson = json,
-            Title = title,
-         };
-
-         v.RunParams = flowParams;
+         v.Review = review;
          v.Result.IsSuccess = true;
       }
 

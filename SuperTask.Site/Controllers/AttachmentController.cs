@@ -1,10 +1,5 @@
-﻿using Business;
-using Business.Config;
-using Symber.Web.Data;
+﻿using Business.Config;
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
@@ -21,26 +16,21 @@ namespace TheSite.Controllers
       {
          ThrowNotAjax();
 
-
          try
          {
             string filename = DateTime.Now.ToString("yyyyMMddHHmmssffff") + file.FileName.Substring(file.FileName.IndexOf('.'));
-            string savepath = GetDirForSaveing();
-
-            string mappedDir = Server.MapPath("~" + savepath);
+            string mappedDir = Server.MapPath("~" + GetDirForSaveing());
             if (!Directory.Exists(mappedDir))
                Directory.CreateDirectory(mappedDir);
 
-
-            file.SaveAs(Path.Combine(mappedDir, filename));
-
-            string url = savepath + "/" + filename;
+            var fileUrl= Path.Combine(mappedDir, filename);
+            file.SaveAs(fileUrl);
 
             // 返回结果
             return Json(new
             {
                result = AjaxResults.Success,
-               url = url,
+               url = fileUrl,
                filename = file.FileName,
                size = file.ContentLength,
                ext = Path.GetExtension(file.FileName),

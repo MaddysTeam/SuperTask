@@ -1,0 +1,100 @@
+﻿@{ 
+	var folerFileId = Request["itemId"];
+	var originFolderId = Request["originFolderId"];
+}
+
+<div class="modal-dialog" style="width:800px;">
+	<div class="modal-content">
+		<div class="color-line"></div>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		</div>
+
+		<div class="modal-body">
+			<div class="form-horizontal">
+
+				<div class="form-group">
+					<label class="control-label col-sm-3">选择文件夹</label>
+					<div class="col-sm-9">
+						<div class="input-group">
+							@Html.Hidden("SuperiorId")
+							<input type="text" class="form-control" disabled id="SuperiorName" aria-label="...">
+							<div class="input-group-btn">
+								<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">文件夹 <span class="caret"></span></button>
+								<div class="dropdown-menu dropdown-menu-right" style="max-height:340px; width: 300px; overflow-y:auto">
+									<div id="jstreeModal"></div>
+								</div>
+							</div><!-- /btn-group -->
+						</div><!-- /input-group -->
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-dark btn-sm" data-dismiss="modal">取消</button>
+					<button type="submit" class="btn btn-primary btn-send" id="Send">发送</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<script>
+
+	$(function () {
+
+		var root = { id: '@ThisApp.DefaultId', parent: '#', text: '中小学事业部' };
+		var data = [root];
+		if (!folders) return;
+		$(folders).each(function () {
+			var folder = this;
+			data.push({
+				"id": folder.id,
+				"parent": folder.parentId,
+				"text": folder.name
+			});
+		});
+
+		$('#jstreeModal')
+		.on("click.jstree", function (e) {
+			e.stopImmediatePropagation();
+		})
+		.on("changed.jstree", function (e, data) {
+			$("#SuperiorName").val(data.instance.get_node(data.selected).text);
+			$("#SuperiorId").val(data.instance.get_node(data.selected).id);
+			$("#bootgrid").bootgrid("reload");
+			//data.instance.click();
+		})
+		.jstree({
+			"core": {
+				"animation": 0,
+				"multiple": false,
+				"check_callback": true,
+				"themes": {},
+				'data': data
+			},
+			"plugins": [
+				"wholerow"
+			]
+		});
+
+		$('#Send').on('click', function () {
+			$.post('@Url.Action("SendFileToFolder", "ShareFolder")', { folderFileId: '@folerFileId', originFolderId: '@originFolderId', targetFolderId: $("#SuperiorId").val() }, function () {
+				$('#firstModal').modal('hide');
+				loadData(null, { parentId: '@ThisApp.DefaultId', phrase: '' });
+			});
+		});
+
+	});
+
+	//function afterDialogSuccess() {
+	//	$('#firstModal').modal('hide');
+
+	//	var para = { parentId: $('#ProjectFolderId').val(), phrase: '' };
+	//	loadData(function () {
+	//		showFolderFiles($('#ProjectId').val())
+	//		bindLeftNav();
+	//	}, para);
+	//}
+
+</script>

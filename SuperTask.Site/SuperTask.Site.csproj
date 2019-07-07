@@ -300,6 +300,7 @@
     <Compile Include="Business\Extensions\HttpContextBaseExtensions.cs" />
     <Compile Include="Business\Extensions\PicklistAPRptColumnExtensions.cs" />
     <Compile Include="Business\Extensions\DictionaryExtension.cs" />
+    <Compile Include="Business\Extensions\StreamExtension.cs" />
     <Compile Include="Business\Extensions\StringExtensions.cs" />
     <Compile Include="Business\Handler\ProjectHandler.cs" />
     <Compile Include="Business\Handler\ResourceHandler.cs" />
@@ -347,9 +348,6 @@
     <Compile Include="Business\Jobs\WorkJournalGenerator.cs" />
     <Compile Include="Business\Json\json_treenode.cs" />
     <Compile Include="Business\Json\json_treenode_types.cs" />
-    <Compile Include="Business\Roadflow\Models\RunModels.cs" />
-    <Compile Include="Business\Roadflow\Services\IWorkflowService.cs" />
-    <Compile Include="Business\Roadflow\Services\RoadflowService.cs" />
     <Compile Include="Business\Json\Security\SecurityScenario.cs" />
     <Compile Include="Business\System.Web.MVC\AjaxOrder.cs" />
     <Compile Include="Business\System.Web.MVC\Attribute\SecurityAttribute.cs" />
@@ -392,7 +390,6 @@
     <Compile Include="Controllers\StudioController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
-    <Compile Include="Controllers\WorkFlowRunController.cs" />
     <Compile Include="Controllers\WorkFlowTaskController.cs" />
     <Compile Include="Controllers\WorkJournalController.cs" />
     <Compile Include="Controllers\TaskController.cs" />
@@ -1428,17 +1425,6 @@
     <Content Include="assets\themes\king\js\deliswitch.js" />
     <Content Include="assets\themes\king\js\king-common.js" />
     <Content Include="assets\themes\king\js\king-common.min.js" />
-    <Content Include="Business\Roadflow\dll\RoadFlow.Cache.Factory.dll" />
-    <Content Include="Business\Roadflow\dll\RoadFlow.Cache.InProc.dll" />
-    <Content Include="Business\Roadflow\dll\RoadFlow.Cache.Interface.dll" />
-    <Content Include="Business\Roadflow\dll\RoadFlow.Cache.IO.dll" />
-    <Content Include="Business\Roadflow\dll\RoadFlow.Data.Factory.dll" />
-    <Content Include="Business\Roadflow\dll\RoadFlow.Data.Interface.dll" />
-    <Content Include="Business\Roadflow\dll\RoadFlow.Data.Model.dll" />
-    <Content Include="Business\Roadflow\dll\RoadFlow.Data.MSSQL.dll" />
-    <Content Include="Business\Roadflow\dll\RoadFlow.Data.ORACLE.dll" />
-    <Content Include="Business\Roadflow\dll\RoadFlow.Platform.dll" />
-    <Content Include="Business\Roadflow\dll\RoadFlow.Utility.dll" />
     <Content Include="Business\Utilities\Aspose\Aspose.Slides.dll" />
     <Content Include="Business\Utilities\Aspose\Aspose.Words.dll" />
     <Content Include="Business\Utilities\bins\Aspose.Cells.dll" />
@@ -1664,6 +1650,7 @@
     <Content Include="Views\Review\WorkTaskReviewRequest.cshtml" />
     <Content Include="Views\Statistic\PMScoreAnalysis.cshtml" />
     <Content Include="Views\Statistic\_PMScoreDetails.cshtml" />
+    <Content Include="Views\ShareFolder\_folders.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1681,12 +1668,6 @@
     <Content Include="assets\plugins\kindeditor\asp.net\upload_json.ashx" />
     <Content Include="assets\plugins\kindeditor\ckeditor\plugins\insertVideo\ckplayer6.8\ckplayer\share\update.php" />
     <None Include="Project_Readme.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SuperTask.ThirdParty\LitJSON\LitJSON.csproj">
-      <Project>{28d9f7ba-2923-4364-9bea-9e1ccd70dd22}</Project>
-      <Name>LitJSON</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

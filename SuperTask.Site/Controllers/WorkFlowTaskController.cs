@@ -1,11 +1,8 @@
 ﻿using Business;
 using Business.Helper;
-using Business.Roadflow;
 using Symber.Web.Data;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace TheSite.Controllers
@@ -14,7 +11,6 @@ namespace TheSite.Controllers
    public class WorkFlowTaskController : BaseController
    {
 
-      //static APDBDef.WorkflowTaskTableDef wft = APDBDef.WorkflowTask;
       static APDBDef.WorkflowTableDef wf = APDBDef.Workflow;
       static APDBDef.ReviewTableDef r = APDBDef.Review;
 
@@ -38,8 +34,6 @@ namespace TheSite.Controllers
          var pst = APDBDef.ProjectStoneTask;
          var u = APDBDef.UserInfo;
          var u2 = APDBDef.UserInfo.As("Recevier");
-
-         //var subquery = APQuery.select(r.ReviewId).where(r.Result == ReviewKeys.ResultSuccess | r.Result == ReviewKeys.ResultFailed);
 
          var query = APQuery.select(wf.FlowId, u.UserName, u2.UserName.As("RecevierName"), pst.TaskName.As("StoneTaskName"), pst.TaskType.As("StoneTaskType")
                                     , p.ProjectName, t.TaskName.As("TaskName"), t.StartDate, t.EndDate, t.EstimateWorkHours, t.WorkHours,t.TaskType.As("TaskType"),
