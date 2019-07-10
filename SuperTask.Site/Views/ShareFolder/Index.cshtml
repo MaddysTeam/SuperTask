@@ -135,7 +135,6 @@
 			  { text: '删除', onclick: function (e) { delFile(e.data['fileId']); } },
 			  { divider: true },
 			  { text: '发送到', onclick: function (e) { sendToFolder(e.data['fileId']); } },
-
 			]
 		};
 
@@ -155,7 +154,7 @@
 		var fileStr = function (file) {
 			if (!file) return '';
 			var fileClassName = file && file.isMyFile ? 'myFile' : 'file';
-			return '<div class="item col-lg-2 col-sm-2 col-xs-4" title="' + file.name + '">' +
+			return '<div class="item col-lg-2 col-sm-2 col-xs-4" id="'+file.id+'" title="' + file.name + '">' +
 									'<div class="btn06 ' + fileClassName + '" data-file-id="' + file.id + '" data-file-path="' + file.path + '" data-attachment-id="' + file.attachmentId + '">' +
 									  '<img src="' + file.coverPath + '" />' +
 										'<div class="ovrly"></div>' +
@@ -188,7 +187,7 @@
 						bindLeftNav();
 						showFolderFiles(currentFolderId);
 						bindUpClick();
-					}, { parentId: currentFolderId, phrase: '' });
+					}, { parentId: '@ThisApp.DefaultId', phrase: '' });
 				});
 			}
 		}
@@ -229,9 +228,7 @@
 		function delFile(fileId) {
 			if (confirm("@Success.File.CONFIRM_DELETE")) {
 				$.post('@Url.Action("DelFile", "ShareFolder")', { id: fileId, folderId: currentFolderId }, function (data) {
-					loadData(function () {
-						showFolderFiles(currentFolderId);
-					}, { parentId: '@ThisApp.DefaultId', phrase:'' });
+					$('#' + fileId).remove();
 				});
 			}
 		}
@@ -324,12 +321,46 @@
 				'plugins': ['types', 'search', 'contextmenu'],
 				'contextmenu':{
 					'items': {
-						"remove": {
+						'addFile': {
+							'label': '新增文件',
+							'action': function (data) {
+								var inst = jQuery.jstree.reference(data.reference);
+								var obj = inst.get_node(data.reference);
+								$('#modelProxy')
+								.data('url', '@Url.Action("FileEdit", "ShareFolder")?folderId=' + currentFolderId)
+								.trigger('click');
+							}
+						},
+						'addFolder': {
+							'label': '新增文件夹',
+							'action': function (data) {
+								var inst = jQuery.jstree.reference(data.reference);
+								var obj = inst.get_node(data.reference);
+								$('#modelProxy')
+								.data('url', '@Url.Action("Edit", "ShareFolder")?parentId=' + currentFolderId)
+								.trigger('click');
+							}
+						},
+						'remove': {
 							'label': '删除文件夹',
 							'action': function (data) {
 								var inst = jQuery.jstree.reference(data.reference);
 								var obj = inst.get_node(data.reference);
 								delFolder(obj.id, root.id);
+							}
+						},
+						'rename': {
+							'label': '重命名',
+							'action': function (data) {
+								var inst = jQuery.jstree.reference(data.reference);
+								var obj = inst.get_node(data.reference);
+								editFolder(obj.id);
+							}
+						},
+						'sendTo': {
+							'label': '发送到',
+							'action': function (data) {
+								alert('正在开发中');
 							}
 						}
 					}

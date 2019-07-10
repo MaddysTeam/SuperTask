@@ -1,17 +1,12 @@
-﻿using Business.Helper;
-using Symber.Web.Data;
-using System;
-using System.Collections.Generic;
-using TheSite.Models;
+﻿using System.IO;
 using System.Web;
-using Util.ThirdParty.Aspose;
-using System.IO;
 
 namespace Business
 {
 
-   public class PDFHandler : IHandler<Attachment, PDFContext>
+	public class PDFHandler : IHandler<Attachment, PDFContext>
    {
+
       public virtual void Handle(Attachment orginal, PDFContext context)
       {
          var attachment = orginal;
@@ -40,7 +35,6 @@ namespace Business
             }
          }
       }
-
 
    }
 

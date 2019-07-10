@@ -1651,6 +1651,7 @@
     <Content Include="Views\Statistic\PMScoreAnalysis.cshtml" />
     <Content Include="Views\Statistic\_PMScoreDetails.cshtml" />
     <Content Include="Views\ShareFolder\_folders.cshtml" />
+    <Content Include="Views\Attachment\Preview.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

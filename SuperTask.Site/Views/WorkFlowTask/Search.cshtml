@@ -97,13 +97,15 @@
 						var reviewTypeId = row.reviewTypeId;
 						var isStoneType = row.taskTypeId == '@TaskKeys.NodeTaskType';
 						var url = !isStoneType ? '@Url.Action("WorkTaskReviewAction", "Review")?id=' + row.taskId : '@Url.Action("StoneTaskReviewAction", "Review")?id=' + row.taskId;
-			
+						
 
 						if (row.result == '@ReviewKeys.ResultWait' && row.receiverId == '@Html.GetUserProfile().UserId')
 							if (row.attachmentUrl) {
+								var previewUrl = '@Url.Action("Preview", "Attachment")?url=' + row.attachmentUrl;
 								return "<div class='btn-group btn-group-xs pull-right'>" +
 														 "<button class='btn btn-lg btn-success btn-detail' data-url='" + url + "'>审核</button>" +
 														 "<a class='btn btn-warning' href='" + row.attachmentUrl + "'>附件下载</a>" +
+														 "<a class='btn btn-info btn-preview' data-url='" + previewUrl + "'>附件预览</a>" +
 														 "</div>";
 							}
 							else {
@@ -130,6 +132,12 @@
 						.trigger('click');
 				});
 
+				grid.find('.btn-preview').on('click', function () {
+					var url = $(this).data('url');
+					$('#modelProxy')
+						.data('url', url)
+						.trigger('click');
+				});
 			});
 
 			$('#SearchType').on('change', function () {
