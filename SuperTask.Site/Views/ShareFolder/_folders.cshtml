@@ -80,8 +80,13 @@
 
 		$('#Send').on('click', function () {
 			$.post('@Url.Action("SendFileToFolder", "ShareFolder")', { folderFileId: '@folerFileId', originFolderId: '@originFolderId', targetFolderId: $("#SuperiorId").val() }, function () {
+
 				$('#firstModal').modal('hide');
-				loadData(null, { parentId: '@ThisApp.DefaultId', phrase: '' });
+				loadData(function () {
+					bindLeftNav();
+					showFolderFiles(currentFolderId);
+					bindUpClick();
+				}, { parentId: '@ThisApp.DefaultId', phrase: '' });
 			});
 		});
 

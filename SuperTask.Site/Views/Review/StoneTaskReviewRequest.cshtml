@@ -66,7 +66,7 @@
 
 						<div class="form-group">
 							<div class="col-sm-9 col-lg-offset-3">
-								<button type="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 提交申请</button>
+								<button id="reviewSubmit" type="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 提交申请</button>
 								<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
 							</div>
 						</div>
@@ -106,9 +106,16 @@
 					}, function () {
 
 					});
+					$('#reviewSubmit').removeAttr('disabled');
 				});
+
+				this.on('addedfile', function (file) {
+					$('#reviewSubmit').attr('disabled','disabled');
+				});
+
 				this.on('error', function (file, message) {
 					popupMessage({ result: 'error', msg: message });
+					$('#reviewSubmit').removeAttr('disabled');
 				});
 			}
 		});

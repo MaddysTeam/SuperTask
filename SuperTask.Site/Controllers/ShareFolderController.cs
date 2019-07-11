@@ -10,269 +10,288 @@ using TheSite.Models;
 namespace TheSite.Controllers
 {
 
-   public class ShareFolderController : BaseController
-   {
+	public class ShareFolderController : BaseController
+	{
 
-      APDBDef.FolderTableDef f = APDBDef.Folder;
-      APDBDef.FolderFileTableDef ff = APDBDef.FolderFile;
-      APDBDef.AttachmentTableDef at = APDBDef.Attachment;
-
-
-      // GET: ShareFolder/Index
-
-      public ActionResult Index(Guid? projectId)
-      {
-         if (null != projectId &&
-            !ResourceHelper.HasPermission(GetUserInfo().UserId, projectId.Value, "P_10006", new APDBDef()))
-         {
-            throw new ApplicationException(Errors.Project.NOT_ALLOWED_VISIT_FOLDER);
-         }
-
-         if (projectId == null)
-         {
-            return View(Guid.Empty);
-         }
-
-         var project = ProjectrHelper.GetCurrentProject(projectId.Value);
-         return View(project.FolderId);
-      }
-
-      [HttpPost]
-      public ActionResult Search(Guid parentId, string phrase)
-      {
-         double fileCount = 0;
-         var folders = new List<FolderViewModel>();
-         var files = GetFiles(phrase);
-         var parents = GetAllFolders().FindAll(f => f.id == parentId);
-         var children = FindChildFolders(parentId, GetAllFolders(), new List<FolderViewModel>(), files, ref fileCount);
-         folders.AddRange(parents.Concat(children));
-
-         return Json(new
-         {
-            rows = new { folders = folders, files = files },
-         });
-      }
-
-      // GET: ShareFolder/Edit
-      // Post-ajax: ShareFolder/Edit 
-
-      public ActionResult Edit(Guid? parentId, Guid? id)
-      {
-         Folder folder = null;
-         if (id != null)
-         {
-            folder = Folder.PrimaryGet(id.Value);
-         }
-         else
-         {
-            folder = new Folder { ParentId = parentId == null ? Guid.Empty : parentId.Value };
-         }
-
-         return PartialView(folder);
-      }
-
-      [HttpPost]
-      public ActionResult Edit(Folder folder)
-      {
-         var parentFolder = Folder.PrimaryGet(folder.ParentId);
-         if (folder.FolderId.IsEmpty())
-         {
-            folder.FolderId = Guid.NewGuid();
-            folder.FolderPath = parentFolder == null ? $"{folder.FolderName}" : $"{parentFolder.FolderPath} > {folder.FolderName}";
-            folder.OperatorId = GetUserInfo().UserId;
-
-            db.FolderDal.Insert(folder);
-         }
-         else
-         {
-            folder.OperatorId = GetUserInfo().UserId;
-            db.FolderDal.Update(folder);
-         }
-
-         return Json(new
-         {
-            result = AjaxResults.Success,
-            msg = Success.Folder.EDIT_SUCCESS
-         });
-      }
+		APDBDef.FolderTableDef f = APDBDef.Folder;
+		APDBDef.FolderFileTableDef ff = APDBDef.FolderFile;
+		APDBDef.AttachmentTableDef at = APDBDef.Attachment;
 
 
-      // GET: ShareFolder/FileEdit
-      // Post-ajax: ShareFolder/FileEdit 
+		// GET: ShareFolder/Index
 
-      public ActionResult FileEdit(Guid? id, Guid? folderId)
-      {
-         FileViewModel model = new FileViewModel();
-         if (id != null)
-            model = GetFiles().FirstOrDefault(x => x.id == id);
+		public ActionResult Index(Guid? projectId)
+		{
+			if (null != projectId &&
+			   !ResourceHelper.HasPermission(GetUserInfo().UserId, projectId.Value, "P_10006", new APDBDef()))
+			{
+				throw new ApplicationException(Errors.Project.NOT_ALLOWED_VISIT_FOLDER);
+			}
 
-         model.folderId = folderId ?? Guid.Empty;
+			if (projectId == null)
+			{
+				return View(Guid.Empty);
+			}
 
-         return PartialView(model);
-      }
+			var project = ProjectrHelper.GetCurrentProject(projectId.Value);
+			return View(project.FolderId);
+		}
 
-      [HttpPost]
-      public ActionResult FileEdit(FileViewModel file)
-      {
-         if (file.id.IsEmpty())
-         {
-            if (GetFiles(file.name, file.folderId).Count > 0)
-            {
-               return Json(new
-               {
-                  result = AjaxResults.Error,
-                  msg = Errors.Files.DUPLICATE_FILE_NAME
-               });
-            }
+		[HttpPost]
+		public ActionResult Search(Guid parentId, string phrase)
+		{
+			double fileCount = 0;
+			var allFolders = GetAllFolders();
 
-            var attachmentId = Guid.NewGuid();
-            var foldFile = new FolderFile { FolderFileId = Guid.NewGuid(), FolderId = file.folderId, AttachmentId = attachmentId };
-            var attachment = new Attachment
-            {
-               AttachmentId = attachmentId,
-               Url = file.path,
-               RealName = file.name,
-               FileExtName = file.fileExtName,
-               PublishUserId = GetUserInfo().UserId,
-               UploadDate = DateTime.Now,
-            };
+			var folders = new List<FolderViewModel>();
+			var files = GetFiles(phrase);
+			var parents = allFolders.FindAll(f => f.id == parentId);
+			var children = FindChildFolders(parentId, GetAllFolders(), new List<FolderViewModel>(), files, ref fileCount);
+			if (children != null && children.Count > 0)
+			{
+				folders.AddRange(parents.Concat(children));
+			}
+			else //如果没有子文件夹则向上搜索
+			{
+				var currentFolder = allFolders.Find(x => x.id == parentId);
+				while (true)
+				{
+					folders.Add(currentFolder);
 
-            db.AttachmentDal.Insert(attachment);
-            db.FolderFileDal.Insert(foldFile);
-         }
-         else
-         {
-            db.AttachmentDal.UpdatePartial(file.attachmentId, new { RealName = file.name });
-         }
+					if (currentFolder.parentId.IsEmpty())
+						break;
 
-         return Json(new
-         {
-            result = AjaxResults.Success,
-            msg = Success.Folder.EDIT_SUCCESS
-         });
-      }
+					currentFolder = allFolders.Find(x => x.id == currentFolder.parentId);
+				}
+			}
 
+			return Json(new
+			{
+				rows = new { folders = folders, files = files },
+			});
+		}
 
-      // Post-ajax: ShareFolder/Del 
+		// GET: ShareFolder/Edit
+		// Post-ajax: ShareFolder/Edit 
 
-      [HttpPost]
-      public ActionResult Delete(Guid id)
-      {
-         double count = 0;
-         var delfolders = FindChildFolders(id,
-            GetAllFolders(),
-            new List<FolderViewModel>(),
-            null
-            , ref count);
+		public ActionResult Edit(Guid? parentId, Guid? id)
+		{
+			Folder folder = null;
+			if (id != null)
+			{
+				folder = Folder.PrimaryGet(id.Value);
+			}
+			else
+			{
+				folder = new Folder { ParentId = parentId == null ? Guid.Empty : parentId.Value };
+			}
 
-         delfolders.Add(new FolderViewModel { id = id });
+			return PartialView(folder);
+		}
 
+		[HttpPost]
+		public ActionResult Edit(Folder folder)
+		{
+			var parentFolder = Folder.PrimaryGet(folder.ParentId);
+			if (folder.FolderId.IsEmpty())
+			{
+				folder.FolderId = Guid.NewGuid();
+				folder.FolderPath = parentFolder == null ? $"{folder.FolderName}" : $"{parentFolder.FolderPath} > {folder.FolderName}";
+				folder.OperatorId = GetUserInfo().UserId;
 
-         db.BeginTrans();
+				db.FolderDal.Insert(folder);
+			}
+			else
+			{
+				folder.OperatorId = GetUserInfo().UserId;
+				db.FolderDal.Update(folder);
+			}
 
-         try
-         {
-            foreach (var item in delfolders)
-            {
-               db.FolderFileDal.ConditionDelete(ff.FolderId == item.id);
-               db.FolderDal.PrimaryDelete(item.id);
-            }
-
-            db.Commit();
-         }
-         catch
-         {
-            db.Rollback();
-         }
-
-         return Json(new
-         {
-            result = AjaxResults.Success,
-            msg = Success.Folder.EDIT_SUCCESS
-         });
-      }
-
-      // Post-ajax: ShareFolder/DelFile 
-
-      [HttpPost]
-      public ActionResult DelFile(Guid id)
-      {
-         var file = db.FolderFileDal.PrimaryGet(id);
-
-         db.BeginTrans();
-
-         try
-         {
-            db.AttachmentDal.ConditionDelete(at.AttachmentId == file.AttachmentId);
-            db.FolderFileDal.ConditionDelete(ff.FolderFileId == id);
-
-            db.Commit();
-         }
-         catch
-         {
-            db.Rollback();
-         }
-
-         return Json(new
-         {
-            result = AjaxResults.Success,
-            msg = Success.File.DELETE_SUCCESS
-         });
-      }
+			return Json(new
+			{
+				result = AjaxResults.Success,
+				msg = Success.Folder.EDIT_SUCCESS
+			});
+		}
 
 
-      [HttpPost]
-      public ActionResult PasteFile(Guid id)
-      {
-         return null;
-      }
+		// GET: ShareFolder/FileEdit
+		// Post-ajax: ShareFolder/FileEdit 
+
+		public ActionResult FileEdit(Guid? id, Guid? folderId)
+		{
+			FileViewModel model = new FileViewModel();
+			if (id != null)
+				model = GetFiles().FirstOrDefault(x => x.id == id);
+
+			model.folderId = folderId ?? Guid.Empty;
+
+			return PartialView(model);
+		}
+
+		[HttpPost]
+		public ActionResult FileEdit(FileViewModel file)
+		{
+			if (file.id.IsEmpty())
+			{
+				if (GetFiles(file.name, file.folderId).Count > 0)
+				{
+					return Json(new
+					{
+						result = AjaxResults.Error,
+						msg = Errors.Files.DUPLICATE_FILE_NAME
+					});
+				}
+
+				var attachmentId = Guid.NewGuid();
+				var foldFile = new FolderFile { FolderFileId = Guid.NewGuid(), FolderId = file.folderId, AttachmentId = attachmentId };
+				var attachment = new Attachment
+				{
+					AttachmentId = attachmentId,
+					Url = file.path,
+					RealName = file.name,
+					FileExtName = file.fileExtName,
+					PublishUserId = GetUserInfo().UserId,
+					UploadDate = DateTime.Now,
+				};
+
+				db.AttachmentDal.Insert(attachment);
+				db.FolderFileDal.Insert(foldFile);
+			}
+			else
+			{
+				db.AttachmentDal.UpdatePartial(file.attachmentId, new { RealName = file.name });
+			}
+
+			return Json(new
+			{
+				result = AjaxResults.Success,
+				msg = Success.Folder.EDIT_SUCCESS
+			});
+		}
 
 
-      // Get: ShareFolder/SendToFolder 
+		// Post-ajax: ShareFolder/Del 
 
-      public ActionResult SendToFolder(Guid itemId, Guid originFolderId)
-      {
-         return PartialView("_folders");
-      }
+		[HttpPost]
+		public ActionResult Delete(Guid id)
+		{
+			double count = 0;
+			var delfolders = FindChildFolders(id,
+			   GetAllFolders(),
+			   new List<FolderViewModel>(),
+			   null
+			   , ref count);
 
-      public ActionResult SendFileToFolder(Guid folderFileId,Guid originFolderId, Guid targetFolderId)
-      {
-         var folderFile = db.FolderFileDal.PrimaryGet(folderFileId);
-         var attachment = db.AttachmentDal.PrimaryGet(folderFile.AttachmentId);
-         if (attachment != null && GetFiles(attachment.RealName, targetFolderId).Count > 0)
-         {
-            return Json(new
-            {
-               result = AjaxResults.Error,
-               msg = Errors.Files.DUPLICATE_FILE_NAME
-            });
-         }
+			delfolders.Add(new FolderViewModel { id = id });
 
-         db.BeginTrans();
 
-         try
-         {
-            db.FolderFileDal.ConditionDelete(ff.AttachmentId == attachment.AttachmentId & ff.FolderId == originFolderId);
-            db.FolderFileDal.Insert(new FolderFile { FolderFileId = Guid.NewGuid(), AttachmentId = attachment.AttachmentId, FolderId = targetFolderId });
+			db.BeginTrans();
 
-            db.Commit();
-         }
-         catch(Exception e)
-         {
-            db.Rollback();
+			try
+			{
+				foreach (var item in delfolders)
+				{
+					db.FolderFileDal.ConditionDelete(ff.FolderId == item.id);
+					db.FolderDal.PrimaryDelete(item.id);
+				}
 
-            return Json(new
-            {
-               result = AjaxResults.Error,
-               msg = "",
-            });
-         }
+				db.Commit();
+			}
+			catch
+			{
+				db.Rollback();
+			}
 
-         return Json(new {
-            result = AjaxResults.Success,
-            msg = Success.File.EDIT_SUCCESS
-         });
-      }
+			return Json(new
+			{
+				result = AjaxResults.Success,
+				msg = Success.Folder.EDIT_SUCCESS
+			});
+		}
+
+		// Post-ajax: ShareFolder/DelFile 
+
+		[HttpPost]
+		public ActionResult DelFile(Guid id)
+		{
+			var file = db.FolderFileDal.PrimaryGet(id);
+
+			db.BeginTrans();
+
+			try
+			{
+				db.AttachmentDal.ConditionDelete(at.AttachmentId == file.AttachmentId);
+				db.FolderFileDal.ConditionDelete(ff.FolderFileId == id);
+
+				db.Commit();
+			}
+			catch
+			{
+				db.Rollback();
+			}
+
+			return Json(new
+			{
+				result = AjaxResults.Success,
+				msg = Success.File.DELETE_SUCCESS
+			});
+		}
+
+
+		[HttpPost]
+		public ActionResult PasteFile(Guid id)
+		{
+			return null;
+		}
+
+
+		// Get: ShareFolder/SendToFolder 
+
+		public ActionResult SendToFolder(Guid itemId, Guid originFolderId)
+		{
+			return PartialView("_folders");
+		}
+
+		public ActionResult SendFileToFolder(Guid folderFileId, Guid originFolderId, Guid targetFolderId)
+		{
+			var folderFile = db.FolderFileDal.PrimaryGet(folderFileId);
+			var attachment = db.AttachmentDal.PrimaryGet(folderFile.AttachmentId);
+			if (attachment != null && GetFiles(attachment.RealName, targetFolderId).Count > 0)
+			{
+				return Json(new
+				{
+					result = AjaxResults.Error,
+					msg = Errors.Files.DUPLICATE_FILE_NAME
+				});
+			}
+
+			db.BeginTrans();
+
+			try
+			{
+				db.FolderFileDal.ConditionDelete(ff.AttachmentId == attachment.AttachmentId & ff.FolderId == originFolderId);
+				db.FolderFileDal.Insert(new FolderFile { FolderFileId = Guid.NewGuid(), AttachmentId = attachment.AttachmentId, FolderId = targetFolderId });
+
+				db.Commit();
+			}
+			catch (Exception e)
+			{
+				db.Rollback();
+
+				return Json(new
+				{
+					result = AjaxResults.Error,
+					msg = "",
+				});
+			}
+
+			return Json(new
+			{
+				result = AjaxResults.Success,
+				msg = Success.File.EDIT_SUCCESS
+			});
+		}
 
 
 		// GET: ShareFolder/FileReview
@@ -340,24 +359,24 @@ namespace TheSite.Controllers
 								}).ToList();
 		}
 
-		private bool HasChildItem(Guid parentFolderId, List<FileViewModel> files,List<FolderViewModel> folders)
+		private bool HasChildItem(Guid parentFolderId, List<FileViewModel> files, List<FolderViewModel> folders)
 		{
-         var fileCount = files == null ? 0 : files.Count(x => x.folderId == parentFolderId);
-         var folderCount = folders == null ? 0 : folders.Count(x => x.parentId == parentFolderId);
+			var fileCount = files == null ? 0 : files.Count(x => x.folderId == parentFolderId);
+			var folderCount = folders == null ? 0 : folders.Count(x => x.parentId == parentFolderId);
 
-         return fileCount + folderCount > 0;
+			return fileCount + folderCount > 0;
 		}
 
-		private List<FileViewModel> GetFiles(string phrase = null, Guid? folderId=null)
+		private List<FileViewModel> GetFiles(string phrase = null, Guid? folderId = null)
 		{
 			var query = APQuery.select(ff.FolderId, ff.FolderFileId.As("folderFileId"), at.Asterisk)
 						   .from(ff, at.JoinLeft(at.AttachmentId == ff.AttachmentId)
 						   ).order_by(at.RealName.Asc);
 
-         if (folderId != null)
-         {
-            query = query.where(ff.FolderId == folderId);
-         }
+			if (folderId != null)
+			{
+				query = query.where(ff.FolderId == folderId);
+			}
 
 			if (!string.IsNullOrEmpty(phrase))
 			{
@@ -368,7 +387,7 @@ namespace TheSite.Controllers
 			var result = query.query(db, r =>
 							 {
 								 var ext = at.FileExtName.GetValue(r);
-								 var cover = AttahmentKeys.FileIcos.ContainsKey(ext) ?
+								 var cover = !string.IsNullOrEmpty(ext) && AttahmentKeys.FileIcos.ContainsKey(ext) ?
 										  AttahmentKeys.FileIcos[ext] : AttahmentKeys.DefaultFileIcoPath;
 								 return new FileViewModel
 								 {

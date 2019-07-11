@@ -33,7 +33,6 @@ namespace TheSite.Controllers
             Result = Result.Initial()
          };
 
-
          HandleManager.TaskReviewRequestHandlers[reviewType].Handle(task, requestOption);
 
          if (!requestOption.Result.IsSuccess)
