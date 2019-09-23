@@ -36,7 +36,6 @@ namespace TheSite.Controllers
       {
          ThrowNotAjax();
 
-
          var p = APDBDef.Project;
 
          var user = GetUserInfo();

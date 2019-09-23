@@ -344,13 +344,18 @@ namespace TheSite.Controllers
          //找其任务提交审核的第一条记录，将任务结束时间设置成第一次提交任务的时间
 
          var pst = db.ProjectStoneTaskDal.PrimaryGet(review.TaskId);
+         
 
          pst.Complete(review.SendDate < pst.StartDate ? pst.EndDate : review.SendDate);
 
          db.ProjectStoneTaskDal.Update(pst);
 
-         db.ProjectDal.UpdatePartial(pst.ProjectId, new { RateOfProgress = ProjectrHelper.GetProcessByNodeTasks(pst.ProjectId, db) });
+         var projectProcess = ProjectrHelper.GetProcessByNodeTasks(pst.ProjectId, db);
 
+         db.ProjectDal.UpdatePartial(pst.ProjectId, new {
+             RateOfProgress = projectProcess,
+             ProjectStatus= projectProcess>=100? ProjectKeys.CompleteStatus:ProjectKeys.ProcessStatus
+         });
          // return RedirectToAction("Search", "WorkFlowTask");
       }
 

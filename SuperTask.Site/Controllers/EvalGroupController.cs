@@ -322,6 +322,7 @@ namespace TheSite.Controllers
 			var query = APQuery.select(eat.TargetId, u.UserName.As("UserName"))
 					  .from(eat
 							, u.JoinInner(u.UserId == eat.TargetId))
+                      .where(u.IsDelete==false)
 					  .group_by(eat.TargetId, u.UserName);
 
 			//query.primary(eat.AccessorTargetId)

@@ -181,15 +181,17 @@ namespace TheSite.Controllers
 		public ActionResult PersonalScoreReport(int current, int rowCount, AjaxOrder sort, string start, string end, string searchPhrase)
 		{
 			var sql = @"select u.id as UserId, u.UserName,t.ID,wj.TaskSubTypeValue as SubValue,d.Code from WorkJournal wj
-                     inner join WorkTask t 
+                     left join WorkTask t 
                      on t.id=wj.TaskId
-                     inner join UserInfo u
+                     left join UserInfo u
                      on u.id=t.ManagerId
                      left join Dictionary d 
                      on d.ID=t.SubTypeId
-                     where TaskSubTypeValue > 0
-                     and wj.RecordDate>@StartDate and RecordDate<@EndDate
-                     and t.IsParent=0 order by 1 ";
+                     -- TaskSubTypeValue > 0
+                     where  wj.RecordDate>@StartDate and RecordDate<@EndDate
+                     and t.IsParent=0
+                     and u.isDelete<>1
+                     order by 1 ";
 
 			var scores = DapperHelper.QueryBySQL<PersonalScore>(sql, new { StartDate = start, EndDate = end });
 			var result = new List<PersonalScoreViewModel>();
@@ -207,6 +209,7 @@ namespace TheSite.Controllers
 				if (total > 0)
 					result = scoreViewModels.Skip(rowCount * (current - 1)).Take(rowCount).ToList();
 			}
+
 
 			return Json(new
 			{
@@ -360,7 +363,7 @@ namespace TheSite.Controllers
 			var negativeStoneTasks1 = db.ProjectStoneTaskDal.ConditionQuery(
 				pst.ProjectId.In(subquery2) &
 				pst.EndDate <= end &
-				pst.TaskStatus == TaskKeys.ProcessStatus, null, null, null);
+				pst.TaskStatus != TaskKeys.CompleteStatus, null, null, null);
 			var negativeStoneTasks2 = db.ProjectStoneTaskDal.ConditionQuery(
 			   pst.ProjectId.In(subquery2)
 			 & pst.RealEndDate >= start

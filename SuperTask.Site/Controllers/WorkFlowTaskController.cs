@@ -152,12 +152,11 @@ namespace TheSite.Controllers
                receiver = u2.UserName.GetValue(rd, "RecevierName"),
                receiverId = review.ReceiverID,
                reviewTypeId = review.ReviewType,
-               //query = queryStr,
                attachmentUrl = review.AttachmentUrl,
                result = review.Result,
-               reviewDate = review.ReviewDate == DateTime.MinValue ? "-" : review.ReviewDate.ToString("yyyy-MM-dd"),
-               comment = review.Comment,
-               //objJSON = json,
+               reviewDate = review.ReviewDate == DateTime.MinValue || searchType == ReviewKeys.ResultWait.ToString() ?
+                            "-" : review.ReviewDate.ToString("yyyy-MM-dd"),
+                comment = review.Comment,
             };
          }).ToList();
 

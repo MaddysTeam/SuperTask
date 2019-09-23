@@ -646,6 +646,8 @@ namespace TheSite.EvalAnalysis
 			public Func<AutoEvalParams, EvalResultItem> Algorithmn
 			   => (paras) =>
 			   {
+                   var tempMaxScore = 100;
+                   var tempPropertion = paras.EvalIndication.FullScore/100;
 				   var p = APDBDef.Project;
 				   var t = APDBDef.WorkTask;
 				   var period = EvalPeriod.PrimaryGet(paras.PeriodId);
@@ -663,16 +665,18 @@ namespace TheSite.EvalAnalysis
 				   var completeStoneTaskCount = stoneTasks.Count(x => x.IsCompleteStatus && x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate);
 
 				   double score = completePlanTaskCount * 5 + completeStoneTaskCount * 20;
-				   score = score > paras.EvalIndication.FullScore ? paras.EvalIndication.FullScore : score;
+				   score = score > tempMaxScore ? tempMaxScore : score;
+
+
 				   score = score < 0 ? 0 : score;
 
-				   tempScore = score;
+				   tempScore = score * tempPropertion;
 
 				   return new EvalResultItem
 				   {
 					   ResultItemId = Guid.NewGuid(),
 					   PeriodId = paras.PeriodId,
-					   Score = score,
+					   Score = tempScore,
 					   TableId = paras.CurrentTableId,
 					   IndicationId = paras.EvalIndication.IndicationId
 				   };
@@ -693,28 +697,33 @@ namespace TheSite.EvalAnalysis
 			public Func<AutoEvalParams, EvalResultItem> Algorithmn
 			   => (paras) =>
 			   {
-				   var p = APDBDef.Project;
+                   var tempMaxScore = 100;
+                   var tempPropertion = paras.EvalIndication.FullScore / 100;
+                   var p = APDBDef.Project;
 				   var t = APDBDef.WorkTask;
 				   var period = EvalPeriod.PrimaryGet(paras.PeriodId);
 				   var pst = APDBDef.ProjectStoneTask;
 
 				   var subquery = APQuery.select(p.ProjectId).from(p).where(p.ManagerId == paras.TargetId & p.ProjectStatus.In(ProjectKeys.ProcessStatus));
 				   var stoneTasks = paras.db.ProjectStoneTaskDal.ConditionQuery(pst.ProjectId.In(subquery) & pst.ManagerId == paras.TargetId, null, null, null);
-				   var nagetiveTaskCount = stoneTasks.Count(x => x.EndDate <= period.EndDate && x.IsProcessStatus); // 本周期结束之前应该完成但未完成的任务
-				   nagetiveTaskCount += stoneTasks.Count(x => x.EndDate <= period.EndDate && x.RealEndDate > period.EndDate); //本周其结束之前未完成的漏网之鱼
-				   nagetiveTaskCount += stoneTasks.Count(x => x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate && x.RealEndDate > x.EndDate);// 在本周期内完成的，但是实际完成时间晚于计划结束时间
+				   var nagetiveTaskCount1 = stoneTasks.Count(x => x.EndDate <= period.EndDate && !x.IsCompleteStatus); // 本周期结束之前应该完成但未完成的任务
+				   //nagetiveTaskCount += stoneTasks.Count(x => x.EndDate <= period.EndDate && x.RealEndDate > period.EndDate); //本周其结束之前未完成的漏网之鱼
+				   var  nagetiveTaskCount2 = stoneTasks.Count(x => x.RealEndDate >= period.BeginDate && x.RealEndDate <= period.EndDate && x.RealEndDate > x.EndDate);// 在本周期内完成的，但是实际完成时间晚于计划结束时间
 
-				   double score = nagetiveTaskCount * 20 * -1;
-				   if (score + TaskAchievement.tempScore >= 0)
-				   {
-					   score = score + TaskAchievement.tempScore;
-				   }
-				   else
-				   {
-					   score = -1 * TaskAchievement.tempScore;
-				   }
+				   double score = nagetiveTaskCount1 * 20 * -1 + nagetiveTaskCount2 * 10 * -1;
+                   if (score <= tempMaxScore * -1)
+                   {
+                       score = tempMaxScore * -1;
+                   }
 
-				   return new EvalResultItem
+                   score = score * Math.Abs(tempPropertion);
+
+                   if (score + TaskAchievement.tempScore <= 0)
+                   {
+                       score = -1 * TaskAchievement.tempScore;
+                   }
+
+                   return new EvalResultItem
 				   {
 					   ResultItemId = Guid.NewGuid(),
 					   PeriodId = paras.PeriodId,
