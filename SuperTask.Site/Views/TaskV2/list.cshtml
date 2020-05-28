@@ -1,0 +1,145 @@
+﻿@{
+	var pageTitle = ViewBag.Title = "我的任务";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var requestTaskType = Request["TaskType"] ?? string.Empty;
+	var requestTaskStatus = Request["TaskStatus"] ?? string.Empty;
+	var requestTaskRange = Request["TaskRange"] ?? string.Empty;
+	var defaultItem = new SelectListItem { Text = "全部", Value = TaskKeys.SelectAll.ToString() };
+	var statusList = DictionaryCache.Cached(TaskKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), defaultItem).ToList();
+	var typeList = DictionaryCache.Cached(TaskKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), defaultItem).ToList();
+	var rangeList = DictionaryCache.Cached(TaskKeys.RangeTypeGuid).GetSelectListById(requestTaskRange.ToGuid(Guid.Empty), defaultItem).ToList();
+	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId", null, defaultItem);
+}
+@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+}
+
+<div class="content-wrapper">
+
+	<!-- main -->
+	<div class="content">
+		<div>
+			<button class="btn btn-danger" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "TaskV2")" data-target="#firstModal"><i class="fa fa-plus-square"></i>新建</button>
+			@*<button class="btn btn-info btn-startAll" data-toggle="ajax-modal" data-url="" data-target="#firstModal"><i class="fa fa-hourglass-start"></i>启动</button>*@
+		</div>
+		<div class="row" style="margin-bottom:20px; margin-top:10px;">
+
+			<!-- 项目筛选下拉框 -->
+			<div class="col-md-2">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						@Html.DropDownList("dpProjects", projectsSelectList, new { @class = "form-control dropdown-myProjects" })
+					</div>
+				</div>
+			</div>
+			<!-- /任务搜索框 -->
+
+			<div class="col-md-9 row" style="border:1px solid gray; margin-left:2%; padding:5px;">
+
+				<div class="col-md-1">
+					<div class="form-horizontal">
+						<div class="FormGroup">
+							<a class="btn btn-info">所有</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="form-horizontal">
+						<div class="FormGroup">
+							@Html.DropDownList("dpStatus", statusList, new { @class = "form-control dropdown-taskStatus", @style = "width:70%" })
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-2">
+					<div class="form-horizontal">
+						<div class="FormGroup">
+							@Html.DropDownList("dpTypes", typeList, new { @class = "form-control dropdown-taskTypes", @style = "width:70%" })
+						</div>
+					</div>
+				</div>
+
+				<div class="col-sm-2">
+					<div class="form-horizontal">
+						<div class="FormGroup" > 
+							@Html.DropDownList("dpTypes", typeList, new { @class = "form-control dropdown-taskTypes", @style = "width:70%" })
+						</div>
+					</div>
+				</div>
+
+				<div class="col-sm-3">
+					<div class="form-horizontal">
+						<div class="FormGroup" style="float:left"> 
+							<input type="text" placeholder="输入任务名称" class="form-control txt-taskName " id="TaskName" />
+						</div>
+						<div>
+							<a class="btn btn-info">搜索</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-sm-2 text-center line-height: 70px;">
+					<div class="form-horizontal">
+						<div class="FormGroup" style="line-height: 35px;">
+							<a>指派给我</a>
+							<a>由我参与</a>
+						</div>
+					</div>
+				</div>
+				<!-- /搜索按钮 -->
+			</div>
+
+
+		</div>
+
+		<div class="row">
+			<div class="col-md-2">
+
+			</div>
+			<div class="row col-md-9" style="margin-left:1%;">
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								<th data-column-id="">ID</th>
+								<th data-column-id="">优先级</th>
+								<th data-column-id="">任务名称</th>
+								<th data-column-id="">状态</th>
+								<th data-column-id="">类型</th>
+								<th data-column-id="">指派给</th>
+								<th data-column-id="">已消耗</th>
+								<th data-column-id="">预计消耗</th>
+								<th data-column-id="">预计完成</th>
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	<!-- /main -->
+	<input type="hidden" id="Range" />
+	<input type="hidden" id="Status" />
+	<input type="hidden" id="ProjectIds" />
+	<input type="hidden" id="Types" />
+	<input type="hidden" id="SearchType" value="@(TaskKeys.SearchByDetaultType)" />
+	<input type="hidden" id="UserId" value="@Html.GetUserProfile().UserId" />
+</div>
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal fade" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+@section Scripts{
+	<script>
+
+	</script>
+}

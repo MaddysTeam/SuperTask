@@ -1,0 +1,387 @@
+﻿@model WorkTask
+@{
+//var resources = ViewBag.Resource as List<Account>;
+//var attachments = ViewBag.Attachments as List<Attachment>;
+//var resourceSelectList = SelectListHelper.GetSelectItems(resources, "UserName", "UserId", null, new SelectListItem { Text = Model.Manager, Value = Model.ManagerId.ToString() });
+//var standardItemSelectList = SelectListHelper.GetSelectItems(ViewBag.StandardItems as List<TaskStandardItem>, "ItemName", "ItemId");
+
+//	TaskHelper.GetSubTaskTypesFromCache(Model.TaskType).Select(x => new SelectListItem { Text = x.Title, Value = x.ID.ToString() });
+}
+
+<div class="widget details">
+
+	<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
+	<form class="form-horizontal" action="@Url.Action("Edit","Task")" role="form" data-after-success="afterDialogSuccess()" style="width:80%;border:1px solid red;margin:auto">
+
+		<div class="widget-content">
+
+			<div class="row editTaskInfo">
+				<fieldset class="col-sm-12">
+
+					<div class="form-group projectsDropdown">
+						@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-1" })
+						<div class="col-md-2">
+							@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+						</div>
+
+						@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+						</div>
+					</div>
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-1" })
+						<div class="col-md-6">
+							@Html.TextBoxFor(t => t.TaskName, new { @class = "form-control" })
+							@Html.ValidationMessageFor(t => t.TaskName)
+						</div>
+					</div>
+
+					<div class="form-group projectsDropdown">
+						@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-1" })
+						<div class="col-md-1">
+							@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+						</div>
+
+						@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-1" })
+						<div class="col-md-1">
+							@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+						</div>
+
+						@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-1" })
+						<div class="col-md-1">
+							@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+
+						</div>
+						<div class="col-md-1">
+							@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+
+						</div>
+					</div>
+
+					<div class="form-group projectsDropdown">
+						@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-1" })
+						<div class="col-md-1">
+							@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+						</div>
+
+						@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-1" })
+						<div class="col-md-1">
+							@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-1" })
+						<div class="col-md-6">
+							@Html.TextAreaFor(t => t.TaskName, new { @class = "form-control" })
+							@Html.ValidationMessageFor(t => t.TaskName)
+						</div>
+					</div>
+
+					<div class="form-group">
+						@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileName" })
+						@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePath" })
+						<label class="col-md-1 control-label">上传文件</label>
+						<div class="col-md-3">
+							<input style="visibility:hidden;position:absolute;" />
+							<div class="input-group">
+								<label id="uploadName" class="form-control oversize uploadName"></label>
+								<span class="input-group-btn">
+									<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="from-group">
+						<button class="btn btn-info col-md-3">保存</button>
+						<a class="btn btn-info col-md-3" href="@Url.Action("Index", "Task")">取消</a>
+					</div>
+					@*<div class="form-group">
+							@Html.LabelFor(t => t.TaskType, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(t => t.TaskType,
+								DictionaryCache.Cached(TaskKeys.TypeGuid)
+								.GetSelectListById(Model.TaskType),
+								new { @class = "form-control dropdown-taskType" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(t => t.SubType, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(t => t.SubTypeId,
+								new List<SelectListItem>(),
+								new { @class = "form-control dropdown-subType" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(t => t.ManagerId,
+								resourceSelectList,
+								new { @class = "form-control dropdown-manager" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(t => t.Reviewer, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.DropDownListFor(t => t.ReviewerID,
+								resourceSelectList,
+								new { @class = "form-control dropdown-reviewer" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(t => t.Description, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.TextAreaFor(t => t.Description, new { @class = "form-control", @rows = "5" })
+							</div>
+						</div>
+						<div class="row fileUpload">
+							<fieldset class="col-sm-6">
+
+								<div class="form-group">
+									@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileName" })
+									@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePath" })
+									<label class="col-md-3 control-label">上传文件</label>
+									<div class="col-md-9">
+										<input style="visibility:hidden;position:absolute;" />
+										<div class="input-group">
+											<label id="uploadName" class="form-control oversize uploadName"></label>
+											<span class="input-group-btn">
+												<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
+											</span>
+										</div>
+									</div>
+								</div>
+
+							</fieldset>
+						</div>*@
+
+				</fieldset>
+
+			</div>
+
+
+
+		</div>
+
+	</form>
+
+</div>
+
+@*<div class="widget attachments">
+
+		<div class="widget-header">
+			<h3><i class="fa fa-paperclip"></i>任务附件   (*包含当前任务日志中的附件)</h3>
+		</div>
+
+		<div class="widget-content">
+
+			@if (attachments == null || attachments.Count <= 0)
+			{
+				<div class="alert alert-success taskEstimate">
+					<div class="row">
+
+						<div class="col-md-4">暂无附件</div>
+					</div>
+				</div>
+			}
+			else
+			{
+				foreach (var att in attachments)
+				{
+					<a href="@att.Url"><h4>@att.RealName</h4></a>
+					<p></p>
+				}
+			}
+
+
+		</div>
+
+	</div>*@
+<script>
+
+	@*function whenPlan() {
+		$('.taskEstimateInfo,.taskProcess').hide();
+		$('.taskEstimateEdit,.btn-taskStart,.fileUpload').show();
+		var startDate = $('.startDate'),
+			endDate = $('.endDate'),
+			hasStartDate = startDate.attr('hasValue') == 'True',
+			hasEndDate = startDate.attr('hasValue') == 'True';
+		if (!hasStartDate)
+			startDate.val(new Date().Format('yyyy-MM-dd'));
+		if (!hasEndDate)
+			endDate.val(new Date().Format('yyyy-MM-dd'));
+	}
+
+	function whenProcess() {
+		$('.taskEstimateEdit,.btn-taskStart').hide();
+		$('.taskEstimateInfo,.btn-taskSubmit,.taskProcess').show();
+	}
+
+	function whenComplete() {
+		$('.taskEstimateEdit,.btn-taskModify,.btn-taskSubmit,.btn-taskStart,.btn-taskSave,.fileUpload').hide();
+		$('.taskEstimateInfo').show();
+	}
+
+	function whenTempEdit() {
+		$('.taskEstimateEdit').show();
+		$('.taskEstimateInfo,.btn-taskModify,.btn-taskStart,.btn-taskSubmit').hide();
+	}
+
+	function bindTaskSubTypeDropDown(taskTypeId) {
+		var $dp = $('.dropdown-subType');
+		var currentSubType = '@Model.SubTypeId';
+		var door = true && currentSubType != '@Guid.Empty'; //如果第一次加载，读取Model.SubTypeId,否则视为重新选
+		bindDropDownByAjax($dp, '@Url.Action("GetSubTaskTypes", "Task")', { taskTypeId: taskTypeId }, function (v, o) {
+			v = door ? currentSubType : v;
+			door = false;
+			$dp.val(v);
+			// 绑定子类型下拉框和相应逻辑
+			var subTypes = o.data;
+			$(subTypes).each(function () {
+				if (v == this.Value) {
+					$('.lb-subTypeTitle').text(this.Text);
+					$('.lb-unitName').text(this.UnitName);
+					currentSubType = v;
+					return false;
+				}
+			});
+		});
+	}
+
+	function notAllowedEditIfNotSelf() {
+		if ($('#ManagerId').val() != '@Html.GetUserProfile().UserId') {
+			$('.widget-content,.widget-header').find('button').attr('disabled', 'disabled');
+		}
+	}
+
+	function afterDialogSuccess() {
+		var taskId = $('#TaskId').val();
+		var url = '@Url.Action("Details", "Task")' + '?taskId=' + taskId;
+		loadDetail(url);
+	}
+
+	function isTempTask(typeId) {
+		return typeId == '@TaskKeys.TempTaskType';
+	}
+
+	function hasSubTaskType(typeId) {
+		return typeId != '@TaskKeys.ProjectTaskType' &&
+			    typeId != '@TaskKeys.TempTaskType' &&
+		       typeId != '@TaskKeys.PlanTaskTaskType';
+	}
+
+	function bindTasksDropDown(projectId) {
+		var $dp = $('.dropdown-myTasks');
+		bindDropDownByAjax($dp, '@Url.Action("GetMyTasks", "Task")', { projectId: projectId }, function (o) {
+			$('.myProjectId').val(projectId);
+			$('.myParentId').val(o);
+		});
+	}*@
+
+
+	$(function () {
+
+		@*var isPlanStatus = '@Model.IsPlanStatus' == 'True';
+		var isProcessStatus = '@Model.IsProcessStatus' == 'True';
+		var isCompleteStatus = '@Model.IsCompleteStatus' == 'True';
+		var isTempEditStatus = '@Model.IsTempEditStatus' == 'True';
+		var isDelStatus = '@Model.IsDelteStatus' == 'True';
+		var isReviewStatus = '@Model.IsReviewStatus' == 'True';*@
+
+		//任务负责人非本人无法进行编辑
+		//notAllowedEditIfNotSelf();
+
+		ajaxSubmitForm($('form'));
+
+		//$('.dropdown-taskType').searchableSelect({
+		//	afterSelectItem: function (v) {
+		//		var typeId = v;
+		//		if (isTempTask(typeId)) {
+		//			$('.projectsDropdown,.myTasksDropdown').hide();
+		//		}
+		//		else {
+		//			$('.projectsDropdown,.myTasksDropdown').show();
+		//		}
+		//		if (!hasSubTaskType(typeId) || isPlanStatus) {
+		//			$('.subTaskValueArea').hide();
+		//		}
+		//		else
+		//			$('.subTaskValueArea').show();
+
+		//		bindTaskSubTypeDropDown(v)
+		//	}
+		//});
+
+		$('.dropdown-manager,.dropdown-reviewer,.dropdown-taskFileType').searchableSelect();
+
+
+		@*$('.btn-taskStart').on('click', function () {
+			if (confirm('@Confirm.Task.TASK_CONFIRM_START')) {
+				$('#TaskStatus').val('@TaskKeys.ProcessStatus');
+			}
+			else
+				return false;
+		});*@
+
+		@*$('.btn-taskSave').on('click', function () {
+			$('#TaskStatus').val('@Model.TaskStatus');
+		});*@
+
+		//$('.btn-taskModify,.btn-taskSubmit').on('click', function () {
+		//	var url = $(this).data('url');
+		//	$('#modelProxy')
+		//			.data('url', url)
+		//			.trigger('click');
+
+		//});
+
+		$('.dropdown-project').searchableSelect({
+			afterSelectItem: function (v) {
+				bindTasksDropDown(v);
+			}
+		});
+
+
+		//文件上传
+		$('.dropzone.file').dropzone({
+			addedContainer: '#flyArea',
+			dictResponseError: '上传出错',
+			uploadMultiple: false,
+			maxFilesize: 200,
+			init: function () {
+				this.on('success', function (file, data) {
+					$('.fileName').val(data.filename);
+					$('.filePath').val(data.url);
+					setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
+				});
+				this.on('error', function (file, message) {
+					popupMessage({ result: 'error', msg: message });
+				});
+			}
+		});
+
+		$('#btn-upload').on('click', function () {
+			$('.dropzone').trigger('click');
+		});
+
+	});
+</script>

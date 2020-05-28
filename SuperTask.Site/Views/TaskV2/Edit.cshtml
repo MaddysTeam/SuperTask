@@ -1,0 +1,139 @@
+﻿@model WorkTask
+@{
+	Layout = null;
+
+	//var resourceSelectList = (ViewBag.Resource as List<Account>).Select(x => new SelectListItem { Text = x.UserName, Value = x.UserId.ToString(), Selected = x.UserId == Html.GetUserProfile().UserId });
+	//var complexitySelectList = SelectListHelper.GetSelectItems(ViewBag.StandardItems as List<TaskStandardItem>, "ItemName", "ItemId");
+	//var taskType = Model == null ? TaskKeys.ProjectTaskType : Model.TaskType;
+}
+
+<style>
+	.dropzonePop {
+		display: none;
+	}
+</style>
+
+<div class="modal-dialog" style="width:95%;">
+
+	<!-- widget -->
+	<div class="widget details" style="height:600px;">
+
+		<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
+		<form class="form-horizontal" action="@Url.Action("Edit","Task")" role="form" data-after-success="afterDialogSuccess()" style="border:1px solid red;margin:auto">
+
+			<div class="widget-content">
+
+				<div class="row editTaskInfo">
+					<fieldset class="col-sm-12">
+
+						<div class="form-group projectsDropdown">
+							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+							</div>
+
+							@Html.LabelFor(t => t.ParentTaskName, new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-2" })
+							<div class="col-md-6">
+								@Html.TextBoxFor(t => t.TaskName, new { @class = "form-control" })
+								@Html.ValidationMessageFor(t => t.TaskName)
+							</div>
+						</div>
+
+						<div class="form-group projectsDropdown">
+							@Html.LabelFor(t => t.TaskType, new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+							</div>
+
+							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-1 text-align:left" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+							</div>
+
+							@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-1  text-align:left" })
+							<div class="col-md-1">
+								@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+							</div>
+						
+							<div class="col-md-1">
+								@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+
+							</div>
+						</div>
+
+						<div class="form-group projectsDropdown">
+							@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2 text-align:left" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+							</div>
+
+							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-1 text-align:left" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })
+							</div>
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(t => t.Description, new { @class = "control-label col-md-2" })
+							<div class="col-md-6">
+								@Html.TextAreaFor(t => t.TaskName, 12, 2, new { @class = "form-control" })
+								@Html.ValidationMessageFor(t => t.TaskName)
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileName" })
+							@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePath" })
+							<label class="col-md-2 control-label">上传文件</label>
+							<div class="col-md-3">
+								<input style="visibility:hidden;position:absolute;" />
+								<div class="input-group">
+									<label id="uploadName" class="form-control oversize uploadName hidden"></label>
+									<span class="input-group-btn">
+										<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
+									</span>
+								</div>
+							</div>
+						</div>
+
+						<div class="input-group center-block">
+							<button class="btn btn-info col-md-3 col-md-offset-3">保存</button>
+							<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
+						</div>
+
+					</fieldset>
+
+				</div>
+
+			</div>
+
+		</form>
+
+	</div>
+
+
+
+
+</div>
