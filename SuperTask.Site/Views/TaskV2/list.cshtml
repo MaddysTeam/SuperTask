@@ -9,7 +9,7 @@
 	var statusList = DictionaryCache.Cached(TaskKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), defaultItem).ToList();
 	var typeList = DictionaryCache.Cached(TaskKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), defaultItem).ToList();
 	var rangeList = DictionaryCache.Cached(TaskKeys.RangeTypeGuid).GetSelectListById(requestTaskRange.ToGuid(Guid.Empty), defaultItem).ToList();
-	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId", null, defaultItem);
+	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId");
 }
 @section Css{
 	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
@@ -140,7 +140,7 @@
 	<script>
 		function getGlobalRequest() {
 			return {
-				projectId: '@Guid.Parse("A03F47B3-4ED2-46E7-A8AB-113B8DF583C1")'
+				projectId: $('#dpProjects').val()
 			};
 		}
 
@@ -159,7 +159,7 @@
 					'commands': function (column, row) {
 						var id = row.TaskId;
 						var isParent = row.IsParent;
-						var subTaskButtonStr = isParent ? '<a target="_blank" href="@Url.Action("Edit", "TaskV2")?projectId=' + id + '" class="btn btn-lg btn-info btn-tasks">子任务</a> ' : '<button class="btn" disable="disable">子任务</button>'
+						var subTaskButtonStr = isParent ? '<button class="btn btn-lg btn-info btn-tasks">子任务</button> ' : '<button class="btn" disable="disable">子任务</button>'
 						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.taskName + '" data-row-id="' + id + '" data-row-active="' + row.actived + '">' +
 							'<a target="_blank" href="@Url.Action("Start", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-details">开始</a> ' +
 							'<a target="_blank" href="@Url.Action("Complete", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-tasks">完成</a> ' +
@@ -175,9 +175,20 @@
 
 		$(function () {
 
+			var grid = $('#bootgrid');
+			grid.bootgrid(getGridOptions())
+				.on('loaded.rs.jquery.bootgrid', function () {
 
-			$('#bootgrid').bootgrid(getGridOptions())
-			.on('loaded.rs.jquery.bootgrid', function () {
+				grid.find('.btn-tasks').on('click', function (e) {
+					var id = $(this).parent().data('rowId');
+					var projectId = $('#dpProjects').val();
+					var url = '@Url.Action("AddSubTask", "TaskV2")?projectId=' + projectId + '&parentId=' + id;
+					var $proxy = $('#modelProxy');
+					$proxy
+						.data('url', url)
+						.trigger('click');
+				});
+
 
 			});
 

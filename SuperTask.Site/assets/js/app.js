@@ -185,14 +185,14 @@ function ajaxBindFileUpload() {
 	});
 }
 
-function ajaxSubmitForm(selector,isReplaceCommas) {
+function ajaxSubmitForm(selector, isReplaceCommas) {
 	$.validator.unobtrusive.parse(selector);
 
 	selector.submit(function (e) {
 		e.preventDefault();
 		var $this = $(this);
 		var para = $this.serialize();
-		if(isReplaceCommas==true){
+		if (isReplaceCommas == true) {
 			para = para.replace('%2c', ',');
 		}
 		$this.valid() && $.post($this.attr('action'), para, function (data, status) {
@@ -245,14 +245,17 @@ function getValuesByCheckboxList(checkbox, callback) {
 }
 
 
-function bindDropDownByAjax(dp, url, para, cb) {
+function bindDropDownByAjax(dp, url, para, cb, dv) {
 	var $dp = $(dp);
 
 	$.post(url, para, function (o) {
 		$dp.empty();
 
 		$(o.data).each(function (i) {
-			$dp.append('<option value="' + this.Value + '">' + this.Text + '</option>');
+			if (this.Value === dv) 
+				$dp.append('<option selected="selected" value="' + this.Value + '">' + this.Text + '</option>');
+			else
+				$dp.append('<option value="' + this.Value + '">' + this.Text + '</option>');
 		});
 
 		$dp.parent().find('.searchable-select').remove();

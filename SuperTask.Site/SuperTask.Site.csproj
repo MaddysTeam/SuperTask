@@ -1653,9 +1653,8 @@
     <Content Include="Views\Statistic\_PMScoreDetails.cshtml" />
     <Content Include="Views\ShareFolder\_folders.cshtml" />
     <Content Include="Views\Attachment\Preview.cshtml" />
-    <Content Include="Views\TaskV2\Edit.cshtml" />
     <Content Include="Views\TaskV2\EditDetail.cshtml" />
-    <Content Include="Views\TaskV2\list.cshtml" />
+    <Content Include="Views\TaskV2\List.cshtml" />
     <Content Include="Views\Shared\_subNav.cshtml" />
     <Content Include="Views\TaskV2\Add.cshtml" />
     <Content Include="Views\TaskV2\Detail.cshtml" />

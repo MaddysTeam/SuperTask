@@ -21,7 +21,7 @@
 
 				<div class="row editTaskInfo">
 					<fieldset class="col-sm-12">
-
+					@Html.HiddenFor(x=>x.ParentId)
 						<div class="form-group projectsDropdown">
 							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
@@ -31,11 +31,11 @@
 							</div>
 
 							<div class="col-md-1 text-right">
-								@Html.CheckBox("hasParnetTask", new { @class = "" })
+								@Html.CheckBox("hasParnetTask", !Model.ParentId.IsEmpty(), new { @class = "" })
 								@Html.LabelFor(t => t.ParentTaskName, new { @class = "control-label" })
 							</div>
 							<div class="col-md-2 parentTasks">
-								<select id="myTasks" class="form-control dropdown-parnetTasks"></select>
+								<select id="parentTasks" name="parentTasks" class="form-control dropdown-parnetTasks hidden"></select>
 							</div>
 						</div>
 
@@ -58,9 +58,7 @@
 
 							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-1 text-align:left" })
 							<div class="col-md-2">
-								@*@Html.DropDownListFor(t => t.Projectid,
-									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
-									new { @class = "form-control dropdown-project2" })*@
+
 							</div>
 
 							@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-1  text-align:left" })
@@ -154,13 +152,30 @@
 <script>
 	$(function () {
 
-		isShow = false;
 		ajaxSubmitForm($('.modal-dialog form'), true);
 
+		showParentTasks();
+
+		if ($('#hasParnetTask').is(':checked')) {
+			$('.parentTasks').show();
+			$('.subTaskExecutor').hide();
+		}
+		else {
+			$('.parentTasks').hide();
+			$('.subTaskExecutor').show();
+		}
+
+		isShow = false;
 		$('#hasParnetTask').click(function () {
 			if ($(this).is(':checked') && !isShow) {
-				showParentTasks();
 				isShow = true;
+				$('.parentTasks').show();
+				$('.subTaskExecutor').hide();
+			}
+			else {
+				isShow = false;
+				$('.parentTasks').hide();
+				$('.subTaskExecutor').show();
 			}
 		});
 
@@ -182,13 +197,14 @@
 
 
 	function bindTasksDropDown(projectId) {
+		console.log($("#ParentId").val());
 		var $dp = $('.dropdown-parnetTasks');
 		bindDropDownByAjax($dp, '@Url.Action("GetLeafTasks", "TaskV2")', { projectId: projectId }, function (o) {
-			$('.parentId').val(o);
-		});
+			$('#ParentId').val(o);
+		}, $("#ParentId").val());
 	}
 
-	function showParentTasks() {
+	function showParentTasks(door) {
 		$('.dropdown-project').searchableSelect({
 			afterSelectItem: function (v) {
 				bindTasksDropDown(v);
