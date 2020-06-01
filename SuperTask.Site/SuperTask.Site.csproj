@@ -365,6 +365,7 @@
     <Compile Include="Business\Utilities\wangsu\FileUploader.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdviceController.cs" />
+    <Compile Include="Controllers\TaskV2Controller.cs" />
     <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\ProjectStoneTaskController.cs" />
@@ -390,7 +391,6 @@
     <Compile Include="Controllers\StudioController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
-    <Compile Include="Controllers\TaskV2Controller.cs" />
     <Compile Include="Controllers\WorkFlowTaskController.cs" />
     <Compile Include="Controllers\WorkJournalController.cs" />
     <Compile Include="Controllers\TaskController.cs" />
@@ -1653,9 +1653,13 @@
     <Content Include="Views\Statistic\_PMScoreDetails.cshtml" />
     <Content Include="Views\ShareFolder\_folders.cshtml" />
     <Content Include="Views\Attachment\Preview.cshtml" />
-    <Content Include="Views\TaskV2\list.cshtml" />
     <Content Include="Views\TaskV2\Edit.cshtml" />
     <Content Include="Views\TaskV2\EditDetail.cshtml" />
+    <Content Include="Views\TaskV2\list.cshtml" />
+    <Content Include="Views\Shared\_subNav.cshtml" />
+    <Content Include="Views\TaskV2\Add.cshtml" />
+    <Content Include="Views\TaskV2\Detail.cshtml" />
+    <Content Include="Views\TaskV2\_subTaskExecutor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -5,6 +5,8 @@
 	//var resourceSelectList = (ViewBag.Resource as List<Account>).Select(x => new SelectListItem { Text = x.UserName, Value = x.UserId.ToString(), Selected = x.UserId == Html.GetUserProfile().UserId });
 	//var complexitySelectList = SelectListHelper.GetSelectItems(ViewBag.StandardItems as List<TaskStandardItem>, "ItemName", "ItemId");
 	//var taskType = Model == null ? TaskKeys.ProjectTaskType : Model.TaskType;
+
+	var taskType = Model == null ? TaskKeys.ProjectTaskType : Model.TaskType;
 }
 
 <style>
@@ -53,9 +55,10 @@
 						<div class="form-group projectsDropdown">
 							@Html.LabelFor(t => t.TaskType, new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.Projectid,
-									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
-									new { @class = "form-control dropdown-project2" })
+								@Html.DropDownListFor(t => t.TaskType,
+									DictionaryCache.Cached(TaskKeys.TypeGuid)
+														.GetSelectListById(taskType),
+									new { @class = "form-control dropdown-taskType2" })
 							</div>
 
 							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-1 text-align:left" })

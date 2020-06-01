@@ -1,0 +1,207 @@
+﻿@model WorkTask
+@{
+	Layout = null;
+}
+
+<style>
+	.dropzonePop {
+		display: none;
+	}
+</style>
+
+<div class="modal-dialog" style="width:95%;">
+
+	<!-- widget -->
+	<div class="widget details">
+
+		<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
+		<form class="form-horizontal" action="@Url.Action("Add","TaskV2")" role="form" data-after-success="afterDialogSuccess()" style="border:1px solid red;margin:auto">
+
+			<div class="widget-content">
+
+				<div class="row editTaskInfo">
+					<fieldset class="col-sm-12">
+
+						<div class="form-group projectsDropdown">
+							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project" })
+							</div>
+
+							<div class="col-md-1 text-right">
+								@Html.CheckBox("hasParnetTask", new { @class = "" })
+								@Html.LabelFor(t => t.ParentTaskName, new { @class = "control-label" })
+							</div>
+							<div class="col-md-2 parentTasks">
+								<select id="myTasks" class="form-control dropdown-parnetTasks"></select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-2" })
+							<div class="col-md-6">
+								@Html.TextBoxFor(t => t.TaskName, new { @class = "form-control" })
+								@Html.ValidationMessageFor(t => t.TaskName)
+							</div>
+						</div>
+
+						<div class="form-group projectsDropdown">
+							@Html.LabelFor(t => t.TaskType, new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.TaskType,
+									DictionaryCache.Cached(TaskKeys.TypeGuid)
+														.GetSelectListById(Guid.Empty),
+									new { @class = "form-control dropdown-taskType2" })
+							</div>
+
+							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-1 text-align:left" })
+							<div class="col-md-2">
+								@*@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })*@
+							</div>
+
+							@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-1  text-align:left" })
+							<div class="col-md-2">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(t => t.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control startDate" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+
+							<div class="col-md-2">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(t => t.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2 text-align:left" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.ManagerId,
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
+									new { @class = "form-control dropdown-project2" })
+							</div>
+
+							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-1 text-align:left" })
+							<div class="col-md-2">
+								@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group subTaskExecutor">
+							@Html.Label("执行人", new { @class = "control-label col-md-2 text-align:left" })
+							<div class="col-md-2">
+								@Html.DropDownList("executorId",
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == Html.GetUserProfile().UserId.ToString()),
+									new { @class = "form-control" })
+							</div>
+
+							@Html.Label("预计消耗", new { @class = "control-label col-md-1 text-align:left" })
+							<div class="col-md-2">
+								@Html.TextBox("estimateWorkHours", "0", new { @class = "form-control" })
+							</div>
+							<div>
+								<a href="#" class="btn btn-info" onclick="addSubTaskExecutor()"><i class="fa fa-plus"> </i></a>
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.LabelFor(t => t.Description, new { @class = "control-label col-md-2" })
+							<div class="col-md-6">
+								@Html.TextAreaFor(t => t.Description, 12, 2, new { @class = "form-control" })
+								@Html.ValidationMessageFor(t => t.Description)
+							</div>
+						</div>
+
+						@*<div class="form-group">
+								@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileName" })
+								@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePath" })
+								<label class="col-md-2 control-label">上传文件</label>
+								<div class="col-md-3">
+									<input style="visibility:hidden;position:absolute;" />
+									<div class="input-group">
+										<label id="uploadName" class="form-control oversize uploadName hidden"></label>
+										<span class="input-group-btn">
+											<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
+										</span>
+									</div>
+								</div>
+							</div>*@
+
+						<div class="input-group center-block">
+							<button class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
+							<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
+						</div>
+
+					</fieldset>
+
+				</div>
+
+			</div>
+
+		</form>
+
+	</div>
+
+
+</div>
+
+<script>
+	$(function () {
+
+		isShow = false;
+		ajaxSubmitForm($('.modal-dialog form'), true);
+
+		$('#hasParnetTask').click(function () {
+			if ($(this).is(':checked') && !isShow) {
+				showParentTasks();
+				isShow = true;
+			}
+		});
+
+	});
+
+
+	function addSubTaskExecutor() {
+		$.post('@Url.Action("AddExecutor", "TaskV2")', function (html) {
+			$('.subTaskExecutor:last').after(html);
+		})
+	}
+
+
+	function removeSubTaskExecutor() {
+		$.post('@Url.Action("AddExecutor", "TaskV2")', function (html) {
+			$('.subTaskExecutor:last').after(html);
+		})
+	}
+
+
+	function bindTasksDropDown(projectId) {
+		var $dp = $('.dropdown-parnetTasks');
+		bindDropDownByAjax($dp, '@Url.Action("GetLeafTasks", "TaskV2")', { projectId: projectId }, function (o) {
+			$('.parentId').val(o);
+		});
+	}
+
+	function showParentTasks() {
+		$('.dropdown-project').searchableSelect({
+			afterSelectItem: function (v) {
+				bindTasksDropDown(v);
+			}
+		});
+	}
+
+	function removeSubTaskExecutor(obj) {
+		$(obj).parent().parent().remove();
+	}
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+	}
+
+</script>

@@ -1,10 +1,12 @@
 ﻿@model WorkTask
 @{
-	Layout = null;
+//Layout = null;
 
-	//var resourceSelectList = (ViewBag.Resource as List<Account>).Select(x => new SelectListItem { Text = x.UserName, Value = x.UserId.ToString(), Selected = x.UserId == Html.GetUserProfile().UserId });
-	//var complexitySelectList = SelectListHelper.GetSelectItems(ViewBag.StandardItems as List<TaskStandardItem>, "ItemName", "ItemId");
-	//var taskType = Model == null ? TaskKeys.ProjectTaskType : Model.TaskType;
+//var resourceSelectList = (ViewBag.Resource as List<Account>).Select(x => new SelectListItem { Text = x.UserName, Value = x.UserId.ToString(), Selected = x.UserId == Html.GetUserProfile().UserId });
+//var complexitySelectList = SelectListHelper.GetSelectItems(ViewBag.StandardItems as List<TaskStandardItem>, "ItemName", "ItemId");
+//var taskType = Model == null ? TaskKeys.ProjectTaskType : Model.TaskType;
+
+
 }
 
 <style>
@@ -13,93 +15,111 @@
 	}
 </style>
 
-<div class="modal-dialog" style="width:90%;">
+
+<div class="row" style="margin-top:20px;margin-bottom:20px;">
+	<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List","TaskV2")">返回</a>
+	<div class="col-md-6">
+		<h4>任务ID - 优先级 - 项目名称 - 任务名称</h4>
+	</div>
+</div>
+<div class="row">
 
 	<!-- widget -->
-	<div class="widget details" style="height:600px;">
+	<div class="widget details col-md-7 col-md-offset-1">
 
 		<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
-		<form class="form-horizontal" action="@Url.Action("Edit","Task")" role="form" data-after-success="afterDialogSuccess()" style="border:1px solid red;margin:auto">
+
+		<form id="taskForm" class="form-horizontal" action="@Url.Action("EditDetail","TaskV2")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 			<div class="widget-content">
 
 				<div class="row editTaskInfo">
 					<fieldset class="col-sm-12">
-
-						<div class="form-group projectsDropdown">
-							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
-							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.Projectid,
-									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
-									new { @class = "form-control dropdown-project2" })
-							</div>
-
-							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
-							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.Projectid,
-									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
-									new { @class = "form-control dropdown-project2" })
-							</div>
-						</div>
+						@Html.HiddenFor(t => t.Projectid)
+						@Html.HiddenFor(t => t.SortId)
+						@Html.HiddenFor(t => t.TaskId)
+						@Html.HiddenFor(t => t.ParentId)
+						@Html.HiddenFor(t => t.IsParent)
 
 						<div class="form-group">
 							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-2" })
-							<div class="col-md-6">
+							<div class="col-md-9">
 								@Html.TextBoxFor(t => t.TaskName, new { @class = "form-control" })
 								@Html.ValidationMessageFor(t => t.TaskName)
 							</div>
 						</div>
 
-						<div class="form-group projectsDropdown">
+						<div class="form-group">
 							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.Projectid,
-									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
-									new { @class = "form-control dropdown-project2" })
+								<span class="form-control details-text" style="background-color:#eee;">@Model.ProjectName</span>
 							</div>
 
-							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-1 text-align:left" })
+							@Html.LabelFor(t => t.TaskStatus, new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.Projectid,
-									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
-									new { @class = "form-control dropdown-project2" })
-							</div>
-
-							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-1  text-align:left" })
-							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.Projectid,
-									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
-									new { @class = "form-control dropdown-project2" })
-
-							</div>
-							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.Projectid,
-									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
-									new { @class = "form-control dropdown-project2" })
-
+								@Html.DropDownListFor(t => t.TaskStatus,
+									DictionaryCache.Cached(TaskKeys.StatusGuid)
+														.GetSelectListById(Guid.Empty),
+									new { @class = "form-control dropdown-taskStatus" })
 							</div>
 						</div>
 
-						<div class="form-group projectsDropdown">
-							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2 text-align:left" })
-							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.Projectid,
-									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
-									new { @class = "form-control dropdown-project2" })
-							</div>
-
-							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-1 text-align:left" })
-							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.Projectid,
-									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
-									new { @class = "form-control dropdown-project2" })
-							</div>
-						</div>
 						<div class="form-group">
-							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-2" })
-							<div class="col-md-6">
-								@Html.TextAreaFor(t => t.TaskName, 12, 2, new { @class = "form-control" })
-								@Html.ValidationMessageFor(t => t.TaskName)
+							@Html.LabelFor(t => t.TaskType, new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.TaskType,
+									DictionaryCache.Cached(TaskKeys.TypeGuid)
+														.GetSelectListById(Guid.Empty),
+									new { @class = "form-control dropdown-taskType" })
+							</div>
+							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-2	" })
+							<div class="col-md-2">
+								@*@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
+									new { @class = "form-control dropdown-project2" })*@
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2 text-align:left" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.ManagerId,
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
+									new { @class = "form-control dropdown-project2" })
+							</div>
+
+							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-2 text-align:left" })
+							<div class="col-md-2">
+								@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
+							</div>
+						</div>
+
+						@foreach (var item in ViewBag.SubTask as List<WorkTask>)
+						{
+							<div class="form-group subTaskExecutor">
+								@Html.Label("执行人", new { @class = "control-label col-md-2 text-align:left" })
+								<div class="col-md-2">
+									@Html.DropDownList("subTaskExecutorId",
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == item.ManagerId.ToString()),
+									new { @class = "form-control" })
+								</div>
+
+								@Html.Label("预计消耗", new { @class = "control-label col-md-2 text-align:left" })
+								<div class="col-md-2">
+									@Html.TextBox("subTaskWorkHours", item.EstimateWorkHours, new { @class = "form-control" })
+								</div>
+								@*<div>
+										<a href="#" class="btn btn-info" onclick="addSubTaskExecutor()"><i class="fa fa-plus"> </i></a>
+									</div>*@
+								@Html.Hidden("subTaskId",item.TaskId)
+							</div>
+						}
+
+						<div class="form-group">
+							@Html.LabelFor(t => t.Description, new { @class = "control-label col-md-2" })
+							<div class="col-md-9">
+								@Html.TextAreaFor(t => t.Description, 12, 2, new { @class = "form-control" })
+								@Html.ValidationMessageFor(t => t.Description)
 							</div>
 						</div>
 
@@ -118,9 +138,36 @@
 							</div>
 						</div>
 
+						<div class="form-group">
+							@Html.Label("预估开始结束时间", new { @class = "control-label col-md-2" })
+							<div class="col-md-3">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(t => t.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control startDate" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+
+							<div class="col-md-3">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(t => t.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.Label("实际开始结束时间", new { @class = "control-label col-md-2" })
+							<div class="col-md-3">
+								<span class="form-control details-text" style="background-color:#eee;">@Model.RealStartDate</span>
+							</div>
+							<div class="col-md-3">
+								<span class="form-control details-text" style="background-color:#eee;">@Model.RealEndDate</span>
+							</div>
+						</div>
+
 						<div class="input-group center-block">
-							<button class="btn btn-info col-md-3 col-md-offset-3">保存</button>
-							<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
+							<button class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
+							<a class="btn btn-info col-md-3" href="@Url.Action("List","TaskV2")">取消</a>
 						</div>
 
 					</fieldset>
@@ -133,7 +180,82 @@
 
 	</div>
 
+	<div class="widget col-md-3" style="margin-left:20px;">
+		<div style="margin-top:10px;margin-bottom:10px;">编辑子任务</div>
+		<table id="childTaskgrid" class="table table-striped table-hover table-dark-header">
+			<thead>
+				<tr>
+					<th data-column-id="">ID</th>
+					<th data-column-id="TaskName">任务名称</th>
+					<th data-column-id="">指派给</th>
+					<th data-column-id="">状态</th>
+				</tr>
+			</thead>
+		</table>
 
+	</div>
 
 
 </div>
+@section Scripts{
+	<script>
+
+		$(function () {
+
+			ajaxSubmitForm($('#taskForm'), true);
+
+			$('#childTaskgrid').bootgrid(getGridOptions())
+				.on('loaded.rs.jquery.bootgrid', function () {
+					$('.search,.actions').hide();
+				});
+
+		});
+
+
+		function addSubTaskExecutor() {
+			$.post('@Url.Action("AddExecutor", "TaskV2")', function (html) {
+				$('.subTaskExecutor:last').after(html);
+			})
+		}
+
+
+		function removeSubTaskExecutor() {
+			$.post('@Url.Action("AddExecutor", "TaskV2")', function (html) {
+				$('.subTaskExecutor:last').after(html);
+			})
+		}
+
+		function getGlobalRequest() {
+			return {
+				parentId: '@Model.TaskId'
+			};
+		}
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: '@Url.Action("GetChildTasks", "TaskV2")',
+
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+				formatters: {
+					@*'commands': function (column, row) {
+					var id = row.TaskId;
+					var isParent = row.IsParent;
+					var subTaskButtonStr = isParent ? '<a target="_blank" href="@Url.Action("Edit", "TaskV2")?projectId=' + id + '" class="btn btn-lg btn-info btn-tasks">子任务</a> ' : '<button class="btn" disable="disable">子任务</button>'
+					return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.taskName + '" data-row-id="' + id + '" data-row-active="' + row.actived + '">' +
+						'<a target="_blank" href="@Url.Action("Start", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-details">开始</a> ' +
+						'<a target="_blank" href="@Url.Action("Complete", "TaskV2")?taskId=' + id + '" class="btn btn-lg btn-info btn-tasks">完成</a> ' +
+						'<a target="_blank" href="@Url.Action("Close", "TaskV2")?taskId=' + id + '" class="btn btn-lg btn-info btn-tasks">关闭</a> ' +
+						'<a target="_blank" href="@Url.Action("EditDetail", "TaskV2")?taskId=' + id + '" class="btn btn-lg btn-info btn-tasks">编辑</a> ' +
+						'<a target="_blank" href="@Url.Action("Close", "TaskV2")?taskId=' + id + '" class="btn btn-lg btn-info btn-tasks">工时</a> ' +
+						subTaskButtonStr +
+						'</div>';
+				},*@
+				},
+			});
+		}
+
+
+	</script>
+}

@@ -1,0 +1,18 @@
+﻿@model SubTaskExecutorViewModel
+
+<div class="form-group subTaskExecutor">
+	@Html.Label("执行人", new { @class = "control-label col-md-2 text-align:left" })
+	<div class="col-md-2">
+		@Html.DropDownListFor(x=>x.ExecutorId,
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
+									new { @class = "form-control" })
+	</div>
+
+	@Html.Label("预计消耗", new { @class = "control-label col-md-1 text-align:left" })
+	<div class="col-md-2">
+		@Html.TextBoxFor(x=>x.EstimateWorkHours, "", new { @class = "form-control" })
+	</div>
+	<div>
+		<a href="#" class="btn btn-info" onclick="removeSubTaskExecutor(this)"><i class="fa fa-minus"> </i></a>
+	</div>
+</div>

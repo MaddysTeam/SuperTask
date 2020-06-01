@@ -1,0 +1,28 @@
+﻿@{
+}
+<style>
+	.subnav {
+		background-color: rgba(204, 204, 204, 1);
+		color: #fff;
+		height: 50px;
+		line-height: 50px;
+	}
+
+		.subnav a, .subnav i {
+			font-size: 15px;
+		}
+
+			.subnav a:hover {
+				text-decoration: none;
+			}
+</style>
+<div class="row subnav">
+	<a href="@Url.Action("List","TaskV2")" class="main-nav-toggle col-md-1 col-lg-offset-2"><i class="fa fa-tasks"></i> 任务</a>
+	<a href="@Url.Action("List","TaskV2")" class="main-nav-toggle col-md-1"><i class="fa fa-sticky-note"></i> 需求</a>
+	<a href="@Url.Action("List","TaskV2")" class="main-nav-toggle col-md-1"><i class="fa fa-question"></i> BUG</a>
+
+	@if (Request.Url.AbsoluteUri.IndexOf("/TaskV2") >= 0)
+	{
+		<button class="btn btn-danger  col-lg-offset-6" data-toggle="ajax-modal" data-url="@Url.Action("Add", "TaskV2")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建任务</button>
+	}
+</div>
