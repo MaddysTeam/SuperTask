@@ -175,9 +175,20 @@
 
 		$(function () {
 
+
+			$('#dpProjects').searchableSelect({
+				afterSelectItem: function (v) {
+					//bindTasksDropDown(v);
+					
+					//$('#bootgrid').bootgrid('reload');
+					}
+			});
+				
 			var grid = $('#bootgrid');
 			grid.bootgrid(getGridOptions())
 				.on('loaded.rs.jquery.bootgrid', function () {
+
+					
 
 				grid.find('.btn-tasks').on('click', function (e) {
 					var id = $(this).parent().data('rowId');

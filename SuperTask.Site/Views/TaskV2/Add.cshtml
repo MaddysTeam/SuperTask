@@ -152,7 +152,7 @@
 <script>
 	$(function () {
 
-		ajaxSubmitForm($('.modal-dialog form'), true);
+		ajaxSubmitForm($('.modal-dialog form'),true);
 
 		showParentTasks();
 
@@ -176,6 +176,7 @@
 				isShow = false;
 				$('.parentTasks').hide();
 				$('.subTaskExecutor').show();
+				$('#ParentId').val('')
 			}
 		});
 
@@ -200,7 +201,10 @@
 		console.log($("#ParentId").val());
 		var $dp = $('.dropdown-parnetTasks');
 		bindDropDownByAjax($dp, '@Url.Action("GetLeafTasks", "TaskV2")', { projectId: projectId }, function (o) {
-			$('#ParentId').val(o);
+			if ($('#hasParnetTask').is(':checked'))
+			{
+				$('#ParentId').val(o);
+			}
 		}, $("#ParentId").val());
 	}
 

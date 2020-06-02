@@ -169,8 +169,8 @@ namespace TheSite.Controllers
 					if (task.TaskId.IsEmpty())
 						task.TaskId = Guid.NewGuid();
 
-					bool hasParnet = !string.IsNullOrEmpty(collection["parentTasks"]);
-					if (!hasParnet)
+					var isParent = task.ParentId.IsEmpty();
+					if (isParent)
 					{
 						var subTaskEsTimes = collection["estimateWorkHours"];
 						var subTaskExecutors = collection["executorId"];
@@ -189,7 +189,8 @@ namespace TheSite.Controllers
 								ManagerId = item.ToGuid(Guid.Empty),
 								Description = task.Description,
 								EstimateWorkHours = double.Parse(subTaskEsTimes.Split(',')[index]),
-								TaskLevel = task.TaskLevel + 1
+								TaskLevel = task.TaskLevel + 1,
+								TaskStatus=TaskKeys.PlanStatus
 							};
 
 							db.WorkTaskDal.Insert(subTask);
@@ -197,12 +198,9 @@ namespace TheSite.Controllers
 							index++;
 						}
 					}
-					else
-					{
-						task.ParentId = collection["parentTasks"].ToGuid(Guid.Empty);
-					}
 
-					task.IsParent = hasParnet;
+					task.IsParent = isParent;
+					task.TaskStatus = TaskKeys.PlanStatus;
 					db.WorkTaskDal.Insert(task);
 
 
