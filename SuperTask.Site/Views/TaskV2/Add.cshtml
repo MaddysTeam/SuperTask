@@ -56,19 +56,20 @@
 									new { @class = "form-control dropdown-taskType2" })
 							</div>
 
-							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-1 text-align:left" })
+							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-2 text-align:left" })
 							<div class="col-md-2">
 
-							</div>
-
-							@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-1  text-align:left" })
+							</div>				
+						</div>
+						<div class="form-group">
+							@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
 								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
 									@Html.TextBoxFor(t => t.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control startDate" })
 									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 								</div>
 							</div>
-
+							@Html.LabelFor(t => t.EndDate, new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
 								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
 									@Html.TextBoxFor(t => t.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
@@ -85,7 +86,7 @@
 									new { @class = "form-control dropdown-project2" })
 							</div>
 
-							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-1 text-align:left" })
+							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-2 text-align:left" })
 							<div class="col-md-2">
 								@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
 							</div>
@@ -99,7 +100,7 @@
 									new { @class = "form-control" })
 							</div>
 
-							@Html.Label("预计消耗", new { @class = "control-label col-md-1 text-align:left" })
+							@Html.Label("预计消耗", new { @class = "control-label col-md-2 text-align:left" })
 							<div class="col-md-2">
 								@Html.TextBox("estimateWorkHours", "0", new { @class = "form-control" })
 							</div>
@@ -115,6 +116,8 @@
 								@Html.ValidationMessageFor(t => t.Description)
 							</div>
 						</div>
+
+
 
 						@*<div class="form-group">
 								@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileName" })

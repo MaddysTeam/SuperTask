@@ -161,11 +161,11 @@
 						var isParent = row.IsParent;
 						var subTaskButtonStr = isParent ? '<button class="btn btn-lg btn-info btn-tasks">子任务</button> ' : '<button class="btn" disable="disable">子任务</button>'
 						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.taskName + '" data-row-id="' + id + '" data-row-active="' + row.actived + '">' +
-							'<a target="_blank" href="@Url.Action("Start", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-details">开始</a> ' +
-							'<a target="_blank" href="@Url.Action("Complete", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-tasks">完成</a> ' +
-							'<a target="_blank" href="@Url.Action("Close", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-tasks">关闭</a> ' +
-							'<a target="_blank" href="@Url.Action("EditDetail", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-tasks">编辑</a> ' +
-							'<a target="_blank" href="@Url.Action("Close", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-tasks">工时</a> ' +
+							'<a target="_blank" href="@Url.Action("Start", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-start">开始</a> ' +
+							'<a target="_blank" href="@Url.Action("Complete", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-complete">完成</a> ' +
+							'<a target="_blank" href="@Url.Action("Close", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-close">关闭</a> ' +
+							'<a target="_blank" href="@Url.Action("EditDetail", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-edit">编辑</a> ' +
+							'<a target="_blank" href="@Url.Action("Close", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-journal">工时</a> ' +
 							subTaskButtonStr +
                      '</div>';
 					},
@@ -175,20 +175,25 @@
 
 		$(function () {
 
+			door = false;
 
 			$('#dpProjects').searchableSelect({
 				afterSelectItem: function (v) {
 					//bindTasksDropDown(v);
-					
-					//$('#bootgrid').bootgrid('reload');
+					if (door) {
+						$('#bootgrid').bootgrid('reload');
 					}
+					else {
+						door = !door;
+					}
+				}
 			});
 				
 			var grid = $('#bootgrid');
 			grid.bootgrid(getGridOptions())
 				.on('loaded.rs.jquery.bootgrid', function () {
 
-					
+						
 
 				grid.find('.btn-tasks').on('click', function (e) {
 					var id = $(this).parent().data('rowId');

@@ -1,12 +1,6 @@
 ﻿@model WorkTask
 @{
-//Layout = null;
-
-//var resourceSelectList = (ViewBag.Resource as List<Account>).Select(x => new SelectListItem { Text = x.UserName, Value = x.UserId.ToString(), Selected = x.UserId == Html.GetUserProfile().UserId });
-//var complexitySelectList = SelectListHelper.GetSelectItems(ViewBag.StandardItems as List<TaskStandardItem>, "ItemName", "ItemId");
-//var taskType = Model == null ? TaskKeys.ProjectTaskType : Model.TaskType;
-
-
+	var subTasks = ViewBag.SubTask as List<WorkTask>;
 }
 
 <style>
@@ -53,7 +47,7 @@
 							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
 							<div class="col-md-9">
 								<span class="form-control details-text" style="background-color:#eee;">@Model.ProjectName</span>
-							</div>					
+							</div>
 						</div>
 
 						<div class="form-group">
@@ -95,25 +89,32 @@
 								@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
 							</div>
 						</div>
-
+						@if (Model.IsParent)
+						{
+						<div class="form-group subTaskExecutor">
+							<div class="col-md-2 col-md-offset-2">
+								<a href="#" class="btn btn-info" onclick="addSubTaskExecutor()">新增执行人<i class="fa fa-plus"> </i></a>
+							</div>
+						</div>
+						}
 						@foreach (var item in ViewBag.SubTask as List<WorkTask>)
 						{
 							<div class="form-group subTaskExecutor">
 								@Html.Label("执行人", new { @class = "control-label col-md-2 text-align:left" })
 								<div class="col-md-2">
-									@Html.DropDownList("subTaskExecutorId",
+									@Html.DropDownList("ExecutorId",
 									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == item.ManagerId.ToString()),
 									new { @class = "form-control" })
 								</div>
 
 								@Html.Label("预计消耗", new { @class = "control-label col-md-2 text-align:left" })
 								<div class="col-md-2">
-									@Html.TextBox("subTaskWorkHours", item.EstimateWorkHours, new { @class = "form-control" })
+									@Html.TextBox("EstimateWorkHours", item.EstimateWorkHours, new { @class = "form-control" })
 								</div>
-								@*<div>
-										<a href="#" class="btn btn-info" onclick="addSubTaskExecutor()"><i class="fa fa-plus"> </i></a>
-									</div>*@
-								@Html.Hidden("subTaskId",item.TaskId)
+								<div>
+									<a href="#" class="btn btn-info" onclick="removeSubTaskExecutor(this)"><i class="fa fa-minus"> </i></a>
+								</div>
+								@Html.Hidden("SubTaskId", item.TaskId)
 							</div>
 						}
 
@@ -199,6 +200,13 @@
 
 
 </div>
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal fade" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
 @section Scripts{
 	<script>
 
@@ -214,6 +222,7 @@
 		});
 
 
+
 		function addSubTaskExecutor() {
 			$.post('@Url.Action("AddExecutor", "TaskV2")', function (html) {
 				$('.subTaskExecutor:last').after(html);
@@ -221,10 +230,8 @@
 		}
 
 
-		function removeSubTaskExecutor() {
-			$.post('@Url.Action("AddExecutor", "TaskV2")', function (html) {
-				$('.subTaskExecutor:last').after(html);
-			})
+		function removeSubTaskExecutor(obj) {
+			$(obj).parent().parent().remove();
 		}
 
 		function getGlobalRequest() {
