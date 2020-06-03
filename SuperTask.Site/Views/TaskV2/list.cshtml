@@ -5,10 +5,9 @@
 	var requestTaskType = Request["TaskType"] ?? string.Empty;
 	var requestTaskStatus = Request["TaskStatus"] ?? string.Empty;
 	var requestTaskRange = Request["TaskRange"] ?? string.Empty;
-	var defaultItem = new SelectListItem { Text = "全部", Value = TaskKeys.SelectAll.ToString() };
-	var statusList = DictionaryCache.Cached(TaskKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), defaultItem).ToList();
-	var typeList = DictionaryCache.Cached(TaskKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), defaultItem).ToList();
-	var rangeList = DictionaryCache.Cached(TaskKeys.RangeTypeGuid).GetSelectListById(requestTaskRange.ToGuid(Guid.Empty), defaultItem).ToList();
+	var statusList = DictionaryCache.Cached(TaskKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "任务状态", Value = TaskKeys.SelectAll.ToString() }).ToList();
+	var typeList = DictionaryCache.Cached(TaskKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "任务类型", Value = TaskKeys.SelectAll.ToString() }).ToList();
+	var levelList=DictionaryCache.Cached(TaskKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "优先级", Value = TaskKeys.SelectAll.ToString() }).ToList();
 	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId");
 }
 @section Css{
@@ -32,11 +31,18 @@
 			<!-- /任务搜索框 -->
 
 			<div class="col-md-9 row" style="border:1px solid gray; margin-left:2%; padding:5px;">
-
+	
 				<div class="col-md-1">
 					<div class="form-horizontal">
 						<div class="FormGroup">
 							<a class="btn btn-info">所有</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-2">
+					<div class="form-horizontal">
+						<div class="FormGroup">
+							@Html.DropDownList("dpLevels", levelList, new { @class = "form-control dropdown-taskLevels", @style = "width:70%" })
 						</div>
 					</div>
 				</div>
@@ -55,13 +61,6 @@
 					</div>
 				</div>
 
-				<div class="col-sm-2">
-					<div class="form-horizontal">
-						<div class="FormGroup">
-							@Html.DropDownList("dpTypes", typeList, new { @class = "form-control dropdown-taskTypes", @style = "width:70%" })
-						</div>
-					</div>
-				</div>
 
 				<div class="col-sm-3">
 					<div class="form-horizontal">

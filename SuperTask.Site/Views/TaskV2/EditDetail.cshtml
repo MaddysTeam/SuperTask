@@ -70,9 +70,10 @@
 							</div>
 							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-2	" })
 							<div class="col-md-2">
-								@*@Html.DropDownListFor(t => t.Projectid,
-									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
-									new { @class = "form-control dropdown-project2" })*@
+								@Html.DropDownListFor(t => t.V2Level,
+									DictionaryCache.Cached(TaskKeys.LevelGuid)
+														.GetSelectListById(Guid.Empty),
+									new { @class = "form-control dropdown-taskLevel" })
 							</div>
 						</div>
 

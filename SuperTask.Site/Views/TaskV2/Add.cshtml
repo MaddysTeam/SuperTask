@@ -53,12 +53,15 @@
 								@Html.DropDownListFor(t => t.TaskType,
 									DictionaryCache.Cached(TaskKeys.TypeGuid)
 														.GetSelectListById(Guid.Empty),
-									new { @class = "form-control dropdown-taskType2" })
+									new { @class = "form-control dropdown-taskType" })
 							</div>
 
 							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-2 text-align:left" })
 							<div class="col-md-2">
-
+								@Html.DropDownListFor(t => t.V2Level ,
+									DictionaryCache.Cached(TaskKeys.LevelGuid)
+														.GetSelectListById(Guid.Empty),
+									new { @class = "form-control dropdown-taskLevel" })
 							</div>				
 						</div>
 						<div class="form-group">
