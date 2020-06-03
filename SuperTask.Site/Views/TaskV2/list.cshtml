@@ -7,7 +7,7 @@
 	var requestTaskRange = Request["TaskRange"] ?? string.Empty;
 	var statusList = DictionaryCache.Cached(TaskKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "任务状态", Value = TaskKeys.SelectAll.ToString() }).ToList();
 	var typeList = DictionaryCache.Cached(TaskKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "任务类型", Value = TaskKeys.SelectAll.ToString() }).ToList();
-	var levelList=DictionaryCache.Cached(TaskKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "优先级", Value = TaskKeys.SelectAll.ToString() }).ToList();
+	var levelList = DictionaryCache.Cached(TaskKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "优先级", Value = TaskKeys.SelectAll.ToString() }).ToList();
 	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId");
 }
 @section Css{
@@ -31,11 +31,11 @@
 			<!-- /任务搜索框 -->
 
 			<div class="col-md-9 row" style="border:1px solid gray; margin-left:2%; padding:5px;">
-	
+
 				<div class="col-md-1">
 					<div class="form-horizontal">
 						<div class="FormGroup">
-							<a class="btn btn-info">所有</a>
+							<a id="showAll" class="btn btn-info">所有</a>
 						</div>
 					</div>
 				</div>
@@ -96,15 +96,15 @@
 					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
 						<thead>
 							<tr>
-								<th data-column-id="">ID</th>
-								<th data-column-id="">优先级</th>
+								<th data-column-id="SortId">ID</th>
+								<th data-column-id="V2LevelTitle">优先级</th>
 								<th data-column-id="TaskName" data-formatter="TaskName">任务名称</th>
-								<th data-column-id="">状态</th>
-								<th data-column-id="">类型</th>
+								<th data-column-id="Status">状态</th>
+								<th data-column-id="Type">类型</th>
 								<th data-column-id="Manager">指派给</th>
 								<th data-column-id="">已消耗</th>
-								<th data-column-id="">预计消耗</th>
-								<th data-column-id="">预计完成</th>
+								<th data-column-id="StartDate" data-formatter="DateOnly">预计消耗</th>
+								<th data-column-id="EndDate" data-formatter="DateOnly">预计完成</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
 							</tr>
 						</thead>
@@ -116,12 +116,7 @@
 
 	</div>
 	<!-- /main -->
-	@*<input type="hidden" id="Range" />
-		<input type="hidden" id="Status" />
-		<input type="hidden" id="ProjectIds" />
-		<input type="hidden" id="Types" />
-		<input type="hidden" id="SearchType" value="@(TaskKeys.SearchByDetaultType)" />
-		<input type="hidden" id="UserId" value="@Html.GetUserProfile().UserId" />*@
+
 </div>
 
 
@@ -139,7 +134,8 @@
 	<script>
 		function getGlobalRequest() {
 			return {
-				projectId: $('#dpProjects').val()
+				projectId: $('#dpProjects').val(),
+				levelId: $('#dpLevels').val()
 			};
 		}
 
@@ -153,7 +149,7 @@
 				formatters: {
 					'TaskName': function (column, row) {
 						var url = '@Url.Action("Detail", "TaskV2")?id=' + row.TaskId;
-						return '<a href="' + url + '">'+row.TaskName+'</a>'
+						return '<a href="' + url + '">' + row.TaskName + '</a>'
 					},
 					'commands': function (column, row) {
 						var id = row.TaskId;
@@ -174,38 +170,40 @@
 
 		$(function () {
 
-			door = false;
+			isLoaded = false;
 
-			$('#dpProjects').searchableSelect({
+
+			$('#showAll').click(function () {
+				$('#dpLevels').val('@TaskKeys.SelectAll');
+				$('#bootgrid').bootgrid('reload');
+			});
+
+			$('#dpProjects,#dpLevels').searchableSelect({
 				afterSelectItem: function (v) {
-					//bindTasksDropDown(v);
-					if (door) {
+					if (isLoaded) {
 						$('#bootgrid').bootgrid('reload');
-					}
-					else {
-						door = !door;
 					}
 				}
 			});
-				
+
 			var grid = $('#bootgrid');
 			grid.bootgrid(getGridOptions())
 				.on('loaded.rs.jquery.bootgrid', function () {
 
-						
+					isLoaded = true;
 
-				grid.find('.btn-tasks').on('click', function (e) {
-					var id = $(this).parent().data('rowId');
-					var projectId = $('#dpProjects').val();
-					var url = '@Url.Action("AddSubTask", "TaskV2")?projectId=' + projectId + '&parentId=' + id;
-					var $proxy = $('#modelProxy');
-					$proxy
-						.data('url', url)
-						.trigger('click');
+					grid.find('.btn-tasks').on('click', function (e) {
+						var id = $(this).parent().data('rowId');
+						var projectId = $('#dpProjects').val();
+						var url = '@Url.Action("AddSubTask", "TaskV2")?projectId=' + projectId + '&parentId=' + id;
+						var $proxy = $('#modelProxy');
+						$proxy
+							.data('url', url)
+							.trigger('click');
+					});
+
+
 				});
-
-
-			});
 
 		});
 

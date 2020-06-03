@@ -56,7 +56,7 @@ namespace Business
                if (getAll)
                   items = db.DictionaryDal.ConditionQuery(null, null, null, null);
                else
-                  items = db.DictionaryDal.ConditionQuery(d.ParentID == parentId, null, null, null);
+                  items = db.DictionaryDal.ConditionQuery(d.ParentID == parentId, d.Sort.Asc, null, null);
 
                var cacheUnit = new CacheUnit(parentId, items);
                unitDict[parentId] = cacheUnit;

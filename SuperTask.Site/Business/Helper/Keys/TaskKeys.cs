@@ -56,8 +56,10 @@ namespace Business.Helper
 
 		public static string GetFileTypeKeyByValue(Guid val) => DictionaryHelper.GetDicById(FileTypeGuid, val).Title;
 
+      public static string GetV2LevelByValue(Guid val) => DictionaryHelper.GetDicById(LevelGuid, val).Title;
 
-		public static Guid DeleteStatus => Guid.Parse("CC3CDC7F-A46D-3C58-9CAF-D3A2B7C9AB8D");
+
+      public static Guid DeleteStatus => Guid.Parse("CC3CDC7F-A46D-3C58-9CAF-D3A2B7C9AB8D");
 
 		public static Guid PlanStatus => Guid.Parse("CC3CDC7F-A46D-3C58-9CAF-D3A2B7C9AB5D");
 

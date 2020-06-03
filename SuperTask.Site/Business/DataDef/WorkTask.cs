@@ -34,9 +34,14 @@ namespace Business
 		[Display(Name = "子类型")]
 		public string SubType { get; set; }
 
-		public string Type => TaskKeys.GetTypeKeyByValue(TaskType);
+ 
+      public string V2LevelTitle => TaskKeys.GetV2LevelByValue(V2Level);
 
-		public bool IsPlanStatus => TaskStatus == TaskKeys.PlanStatus;
+      public string Type => TaskKeys.GetTypeKeyByValue(TaskType);
+
+      // public string Status => TaskKeys.GetStatusKeyByValue(TaskStatus);
+
+      public bool IsPlanStatus => TaskStatus == TaskKeys.PlanStatus;
 
 		public bool IsProcessStatus => TaskStatus == TaskKeys.ProcessStatus;
 
