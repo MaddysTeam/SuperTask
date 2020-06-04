@@ -34,6 +34,7 @@
 						@Html.HiddenFor(t => t.TaskId)
 						@Html.HiddenFor(t => t.ParentId)
 						@Html.HiddenFor(t => t.IsParent)
+						@Html.HiddenFor(t => t.WorkHours)
 
 						<div class="form-group">
 							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-2" })
@@ -89,6 +90,13 @@
 							<div class="col-md-2">
 								@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
 							</div>
+							@Html.Label("实际消耗", new { @class = "control-label col-md-2 text-align:left" })
+							<div class="col-md-1">
+								@Html.Label("WorkHours", Model.WorkHours.ToString(), new { @class = "form-control " })
+							</div>
+							<div>
+								<a href="#" class="btn btn-info" onclick=""><i class="fa fa-clock-o"> </i></a>
+							</div>
 						</div>
 						@if (Model.IsParent)
 						{
@@ -111,6 +119,11 @@
 								@Html.Label("预计消耗", new { @class = "control-label col-md-2 text-align:left" })
 								<div class="col-md-2">
 									@Html.TextBox("EstimateWorkHours", item.EstimateWorkHours, new { @class = "form-control" })
+								</div>
+
+								@Html.Label("实际消耗", new { @class = "control-label col-md-2 text-align:left" })
+								<div class="col-md-1">
+									@Html.Label("WorkHours", item.WorkHours.ToString(), new { @class = "form-control " })
 								</div>
 								<div>
 									<a href="#" class="btn btn-info" onclick="removeSubTaskExecutor(this)"><i class="fa fa-minus"> </i></a>
@@ -162,10 +175,10 @@
 						<div class="form-group">
 							@Html.Label("实际开始结束时间", new { @class = "control-label col-md-2" })
 							<div class="col-md-3">
-								<span class="form-control details-text" style="background-color:#eee;">@Model.RealStartDate</span>
+								<span class="form-control details-text" style="background-color:#eee;">@Model.RealStartDate.ToString("yyyy-MM-dd")</span>
 							</div>
 							<div class="col-md-3">
-								<span class="form-control details-text" style="background-color:#eee;">@Model.RealEndDate</span>
+								<span class="form-control details-text" style="background-color:#eee;">@Model.RealEndDate.ToString("yyyy-MM-dd")</span>
 							</div>
 						</div>
 
@@ -189,11 +202,10 @@
 		<table id="childTaskgrid" class="table table-striped table-hover table-dark-header">
 			<thead>
 				<tr>
-					<th data-column-id="">ID</th>
+					<th data-column-id="SortId">ID</th>
 					<th data-column-id="TaskName">任务名称</th>
-					<th data-column-id="">指派给</th>
-					<th data-column-id="">状态</th>
-				</tr>
+					<th data-column-id="ManagerId">指派给</th>
+					<th data-column-id="Status">状态</th>
 			</thead>
 		</table>
 
