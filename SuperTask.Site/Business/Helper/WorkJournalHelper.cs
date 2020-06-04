@@ -27,20 +27,20 @@ namespace Business.Helper
 
          if (jounal == null)
             CreateByTask(tk, db);
-         else
-            db.WorkJournalDal.UpdatePartial(jounal.JournalId,
-               new
-               {
-                  UserId = tk.ManagerId,
-                  Projectid = tk.Projectid,
-                  TaskId = tk.TaskId,
-                  Status = JournalKeys.SaveStatus,
-                  RecordType = GetRecordType(tk),
-                  TaskStatus = tk.TaskStatus,
-                  TaskType = tk.TaskType,
-                  TaskSubType=tk.SubType,
-                  Progress=tk.RateOfProgress,
-               });
+         //else
+         //   db.WorkJournalDal.UpdatePartial(jounal.JournalId,
+         //      new
+         //      {
+         //         UserId = tk.ManagerId,
+         //         Projectid = tk.Projectid,
+         //         TaskId = tk.TaskId,
+         //         Status = JournalKeys.SaveStatus,
+         //         RecordType = GetRecordType(tk),
+         //         TaskStatus = tk.TaskStatus,
+         //         TaskType = tk.TaskType,
+         //         TaskSubType=tk.SubType,
+         //         Progress=tk.RateOfProgress,
+         //      });
       }
 
 
