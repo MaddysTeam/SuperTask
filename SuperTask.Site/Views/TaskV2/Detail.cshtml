@@ -1,12 +1,8 @@
 ﻿@model WorkTask
 @{
-	//Layout = null;
-
-	//var resourceSelectList = (ViewBag.Resource as List<Account>).Select(x => new SelectListItem { Text = x.UserName, Value = x.UserId.ToString(), Selected = x.UserId == Html.GetUserProfile().UserId });
-	//var complexitySelectList = SelectListHelper.GetSelectItems(ViewBag.StandardItems as List<TaskStandardItem>, "ItemName", "ItemId");
-	//var taskType = Model == null ? TaskKeys.ProjectTaskType : Model.TaskType;
-
 	var users = ViewBag.Users as List<UserInfo>;
+	var manager =users.Find(x => x.UserId == Model.ManagerId);
+	var attahcments = ViewBag.Attahcments as List<Attachment>;
 }
 
 <style>
@@ -22,7 +18,7 @@
 <div class="row" style="margin-top:20px;margin-bottom:20px;">
 	<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List","TaskV2")">返回</a>
 	<div class="col-md-4">
-		<h5>任务ID - 优先级 - 项目名称 - 任务名称</h5>
+		<h5>@Model.SortId - @Model.V2LevelTitle - @Model.ProjectName - @Model.TaskName</h5>
 	</div>
 
 	<div class="buttons col-md-4">
@@ -73,9 +69,15 @@
 
 						@Html.Label("关闭日期", new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
-							@Html.Label(Model.RealEndDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
+							@if (Model.RealEndDate <= DateTime.MinValue)
+							{
+								@Html.Label(" ", new { @class = "form-control" })
+							}
+							else
+							{
+								@Html.Label(Model.RealEndDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
+							}
 						</div>
-
 					</div>
 
 					<div class="form-group">
@@ -99,12 +101,26 @@
 					<div class="form-group">
 						@Html.LabelFor(t => t.RealStartDate, new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
-							@Html.Label(Model.RealStartDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
+							@if (Model.RealStartDate <= DateTime.MinValue)
+							{
+								@Html.Label(" ", new { @class = "form-control" })
+							}
+							else
+							{
+								@Html.Label(Model.RealStartDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
+							}
 						</div>
 
 						@Html.LabelFor(t => t.RealEndDate, new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
-							@Html.Label(Model.RealEndDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
+							@if (Model.RealEndDate <= DateTime.MinValue)
+							{
+								@Html.Label(" ", new { @class = "form-control" })
+							}
+							else
+							{
+								@Html.Label(Model.RealEndDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
+							}
 						</div>
 
 						@Html.LabelFor(t => t.WorkHours, new { @class = "control-label col-md-2 text-align:left" })
@@ -117,7 +133,12 @@
 					<div class="form-group">
 						@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2 text-align:left" })
 						<div class="col-md-2">
-							@Html.Label(Model.Manager, new { @class = "form-control" })
+							@Html.Label(manager?.UserName, new { @class = "form-control" })
+						</div>
+
+						@Html.Label("预估消耗", new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							@Html.Label(Model.EstimateWorkHours.ToString(), new { @class = "form-control" })
 						</div>
 					</div>
 
@@ -132,14 +153,18 @@
 
 							@Html.Label("预估消耗", new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
-								@Html.Label(Model.EstimateWorkHours.ToString(), new { @class = "form-control" })
+								@Html.Label(item.EstimateWorkHours.ToString(), new { @class = "form-control" })
+							</div>
+
+							@Html.Label("实际消耗", new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
+								@Html.Label(item.WorkHours.ToString(), new { @class = "form-control" })
 							</div>
 
 						</div>
 					}
 
 					<hr />
-
 
 					<div class="col-md-12">
 						@Html.LabelFor(t => t.Description, new { @class = "control-label"  })
@@ -151,6 +176,10 @@
 						@Html.Label("附件", new { @class = "control-label" })
 						<p></p>
 						<div class="alert alert-info alert-dismissable">
+							@foreach (var item in attahcments)
+							{
+								<div><a href="@item.Url">@item.RealName</a></div>
+							}
 						</div>
 					</div>
 
@@ -163,20 +192,7 @@
 
 	</div>
 
-	<div class="widget col-md-3" style="margin-left:20px;">
-		<div style="margin-top:10px;margin-bottom:10px;">子任务</div>
-		<table id="childTaskgrid" class="table table-striped table-hover table-dark-header">
-			<thead>
-				<tr>
-					<th data-column-id="SortId">ID</th>
-					<th data-column-id="TaskName">任务名称</th>
-					<th data-column-id="ManagerId">指派给</th>
-					<th data-column-id="Status">状态</th>
-				</tr>
-			</thead>
-		</table>
-
-	</div>
+	@Html.Partial("_subTaskList")
 
 
 	<div class="widget col-md-7 col-md-offset-1">

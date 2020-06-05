@@ -292,7 +292,6 @@
     <Compile Include="Business\DataDef\WorkJournal.cs" />
     <Compile Include="Business\DataDef\WorkTask.cs" />
     <Compile Include="Business\DataDef\WorkTaskIssue.cs" />
-    <Compile Include="Business\Extensions\AttachmentsExtensions.cs" />
     <Compile Include="Business\Extensions\DateTimeExtensions.cs" />
     <Compile Include="Business\Extensions\GuidExtension.cs" />
     <Compile Include="Business\Extensions\ListExtensions.cs" />
@@ -309,6 +308,7 @@
     <Compile Include="Business\Handler\TaskHandler.cs" />
     <Compile Include="Business\Handler\PDFHandler.cs" />
     <Compile Include="Business\Handler\WorkJournalHandler.cs" />
+    <Compile Include="Business\Helper\AttachmentHelper.cs" />
     <Compile Include="Business\Helper\AppConfigHelper.cs" />
     <Compile Include="Business\Helper\Keys\StatisticalKeys.cs" />
     <Compile Include="Business\Helper\Keys\PaymentsKeys.cs" />
@@ -1660,6 +1660,7 @@
     <Content Include="Views\TaskV2\Detail.cshtml" />
     <Content Include="Views\TaskV2\_subTaskExecutor.cshtml" />
     <Content Include="Views\TaskV2\JournalEdit.cshtml" />
+    <Content Include="Views\TaskV2\_subTaskList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

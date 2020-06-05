@@ -1,0 +1,3 @@
+E:\DBbase\mysql2\bin\ndbd.exe --ndb-connectstring=10.4.4.22
+E:\DBbase\mysql2\bin\ndbd.exe --ndbcluster --ndb-connectstring=10.4.4.22 --console
+E:\DBbase\mysql2\bin\ndb_mgm

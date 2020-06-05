@@ -1,0 +1,19 @@
+6 auth server loadbalancer by nginx or proxy (for authentication part) 0%
+8 building unit test 20%
+
+9 ci cd 50%
+12 appollo configuration 70%
+13 prometheus 60%
+14 zipkin or jager 70%
+15 subscription function in message center 80%
+
+7 menu tree issue 90%
+2 login   100%
+4 logout  80%
+3 signup  80%
+5 change password 80%
+
+
+1 identity server: redis grant store 20% (delay)
+10 system role system issue (delay)
+11 microservice configuration tool (delay)

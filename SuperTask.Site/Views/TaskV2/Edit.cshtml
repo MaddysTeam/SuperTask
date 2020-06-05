@@ -1,6 +1,7 @@
 ﻿@model WorkTask
 @{
 	var subTasks = ViewBag.SubTask as List<WorkTask>;
+	var attahcments = ViewBag.Attahcments as List<Attachment>;
 }
 
 <style>
@@ -13,7 +14,7 @@
 <div class="row" style="margin-top:20px;margin-bottom:20px;">
 	<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List","TaskV2")">返回</a>
 	<div class="col-md-6">
-		<h4>任务ID - 优先级 - 项目名称 - 任务名称</h4>
+		<h4>@Model.SortId - @Model.V2LevelTitle - @Model.ProjectName - @Model.TaskName</h4>
 	</div>
 </div>
 <div class="row">
@@ -95,16 +96,16 @@
 								@Html.Label("WorkHours", Model.WorkHours.ToString(), new { @class = "form-control " })
 							</div>
 							<div>
-								<a href="#" class="btn btn-info" onclick=""><i class="fa fa-clock-o"> </i></a>
+								<a id="btnEditJournal" data-toggle="ajax-modal" data-url="@Url.Action("JournalEdit", "TaskV2", new { id = Model.TaskId })" data-target="#firstModal" class="btn btn-info"><i class="fa fa-clock-o"> </i></a>
 							</div>
 						</div>
 						@if (Model.IsParent)
 						{
-						<div class="form-group subTaskExecutor">
-							<div class="col-md-2 col-md-offset-2">
-								<a href="#" class="btn btn-info" onclick="addSubTaskExecutor()">新增执行人<i class="fa fa-plus"> </i></a>
+							<div class="form-group subTaskExecutor">
+								<div class="col-md-2 col-md-offset-2">
+									<a href="#" class="btn btn-info" onclick="addSubTaskExecutor()">新增执行人<i class="fa fa-plus"> </i></a>
+								</div>
 							</div>
-						</div>
 						}
 						@foreach (var item in ViewBag.SubTask as List<WorkTask>)
 						{
@@ -147,11 +148,21 @@
 							<div class="col-md-3">
 								<input style="visibility:hidden;position:absolute;" />
 								<div class="input-group">
-									<label id="uploadName" class="form-control oversize uploadName hidden"></label>
+									<label id="uploadName" class="form-control oversize uploadName"></label>
 									<span class="input-group-btn">
 										<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
 									</span>
 								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.Label("已上传", new { @class = "control-label col-md-2" })
+							<div class="col-md-9">
+								@foreach (var item in attahcments)
+								{
+									<div><a href="@item.Url">@item.RealName</a></div>
+								}
 							</div>
 						</div>
 
@@ -175,10 +186,10 @@
 						<div class="form-group">
 							@Html.Label("实际开始结束时间", new { @class = "control-label col-md-2" })
 							<div class="col-md-3">
-								<span class="form-control details-text" style="background-color:#eee;">@Model.RealStartDate.ToString("yyyy-MM-dd")</span>
+								<span class="form-control details-text" style="background-color:#eee;">@(Model.RealEndDate <= DateTime.MinValue ? " " : Model.RealStartDate.ToString("yyyy-MM-dd")) </span>
 							</div>
 							<div class="col-md-3">
-								<span class="form-control details-text" style="background-color:#eee;">@Model.RealEndDate.ToString("yyyy-MM-dd")</span>
+								<span class="form-control details-text" style="background-color:#eee;">@(Model.RealEndDate <= DateTime.MinValue ? " " : Model.RealEndDate.ToString("yyyy-MM-dd"))</span>
 							</div>
 						</div>
 
@@ -197,19 +208,7 @@
 
 	</div>
 
-	<div class="widget col-md-3" style="margin-left:20px;">
-		<div style="margin-top:10px;margin-bottom:10px;">编辑子任务</div>
-		<table id="childTaskgrid" class="table table-striped table-hover table-dark-header">
-			<thead>
-				<tr>
-					<th data-column-id="SortId">ID</th>
-					<th data-column-id="TaskName">任务名称</th>
-					<th data-column-id="ManagerId">指派给</th>
-					<th data-column-id="Status">状态</th>
-			</thead>
-		</table>
-
-	</div>
+	@Html.Partial("_subTaskList")
 
 
 </div>
@@ -227,10 +226,37 @@
 
 			ajaxSubmitForm($('#taskForm'), true);
 
+			//fix bug
+			$('#btnEditJournal').click();
+
 			$('#childTaskgrid').bootgrid(getGridOptions())
 				.on('loaded.rs.jquery.bootgrid', function () {
 					$('.search,.actions').hide();
 				});
+
+
+			//文件上传
+			$('.dropzone.file').dropzone({
+				addedContainer: '#flyArea',
+				dictResponseError: '上传出错',
+				uploadMultiple: false,
+				maxFilesize: 200,
+				init: function () {
+					this.on('success', function (file, data) {
+						$('.fileName').val(data.filename);
+						$('.filePath').val(data.url);
+						setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
+					});
+					this.on('error', function (file, message) {
+						popupMessage({ result: 'error', msg: message });
+					});
+				}
+			});
+
+			$('#btn-upload').click(function () {
+
+				$('.dropzone.file').trigger('click');
+			});
 
 		});
 
@@ -253,6 +279,10 @@
 			};
 		}
 
+		function afterDialogSuccess() {
+			$('#childTaskgrid').bootgrid('reload');
+		}
+
 		function getGridOptions() {
 			return $.extend(true, {}, gridOptions, {
 
@@ -261,22 +291,17 @@
 				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
 
 				formatters: {
-					@*'commands': function (column, row) {
-					var id = row.TaskId;
-					var isParent = row.IsParent;
-					var subTaskButtonStr = isParent ? '<a target="_blank" href="@Url.Action("Edit", "TaskV2")?projectId=' + id + '" class="btn btn-lg btn-info btn-tasks">子任务</a> ' : '<button class="btn" disable="disable">子任务</button>'
-					return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.taskName + '" data-row-id="' + id + '" data-row-active="' + row.actived + '">' +
-						'<a target="_blank" href="@Url.Action("Start", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-details">开始</a> ' +
-						'<a target="_blank" href="@Url.Action("Complete", "TaskV2")?taskId=' + id + '" class="btn btn-lg btn-info btn-tasks">完成</a> ' +
-						'<a target="_blank" href="@Url.Action("Close", "TaskV2")?taskId=' + id + '" class="btn btn-lg btn-info btn-tasks">关闭</a> ' +
-						'<a target="_blank" href="@Url.Action("EditDetail", "TaskV2")?taskId=' + id + '" class="btn btn-lg btn-info btn-tasks">编辑</a> ' +
-						'<a target="_blank" href="@Url.Action("Close", "TaskV2")?taskId=' + id + '" class="btn btn-lg btn-info btn-tasks">工时</a> ' +
-						subTaskButtonStr +
-						'</div>';
-				},*@
-				},
+
+					'commands': function (column, row) {
+						var id = row.TaskId;
+						var isParent = row.IsParent;
+						
+						return '<div>' + row.Manager + '&nbsp;<i class="fa fa-pencil"> </i><div>';
+					}
+				}
 			});
 		}
+
 
 
 	</script>

@@ -23,6 +23,7 @@ namespace Business.Helper
          var projects = APQuery.select(p.ProjectId, p.ProjectName)
                 .from(p,
                       re.JoinInner(re.Projectid == p.ProjectId & re.UserId == userId))
+					  .order_by(p.CreateDate.Desc)
                 .query(db, r => new Project
                 {
                    ProjectId = p.ProjectId.GetValue(r),
