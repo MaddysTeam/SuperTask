@@ -2,6 +2,7 @@
 @{
 	var subTasks = ViewBag.SubTask as List<WorkTask>;
 	var attahcments = ViewBag.Attahcments as List<Attachment>;
+	var isCompeleteOrClose = Model.IsCompleteStatus || Model.IsCloseStatus;
 }
 
 <style>
@@ -95,9 +96,12 @@
 							<div class="col-md-1">
 								@Html.Label("WorkHours", Model.WorkHours.ToString(), new { @class = "form-control " })
 							</div>
+							@if (!isCompeleteOrClose)
+							{
 							<div>
 								<a id="btnEditJournal" data-toggle="ajax-modal" data-url="@Url.Action("JournalEdit", "TaskV2", new { id = Model.TaskId })" data-target="#firstModal" class="btn btn-info"><i class="fa fa-clock-o"> </i></a>
 							</div>
+							}
 						</div>
 						@if (Model.IsParent)
 						{
@@ -227,11 +231,19 @@
 			ajaxSubmitForm($('#taskForm'), true);
 
 			//fix bug
-			$('#btnEditJournal').click();
+		//	$('#btnEditJournal').click();
 
-			$('#childTaskgrid').bootgrid(getGridOptions())
+			var $grid = $('#childTaskgrid');
+			$grid.bootgrid(getGridOptions())
 				.on('loaded.rs.jquery.bootgrid', function () {
 					$('.search,.actions').hide();
+
+					$grid.find('.editManager').click(function () {
+						$this = $(this);
+						$this.parent().hide();
+						var managerId = $this.parent().data("rowId");
+						$this.parent().after($('#ExecutorId').clone().val(managerId)); // show select and set current manager
+					});
 				});
 
 
@@ -254,7 +266,6 @@
 			});
 
 			$('#btn-upload').click(function () {
-
 				$('.dropzone.file').trigger('click');
 			});
 
@@ -280,7 +291,6 @@
 		}
 
 		function afterDialogSuccess() {
-			alert();
 			$('#childTaskgrid').bootgrid('reload');
 		}
 
@@ -294,10 +304,10 @@
 				formatters: {
 
 					'commands': function (column, row) {
-						var id = row.TaskId;
+						var managerId = row.ManagerId;
 						var isParent = row.IsParent;
 						
-						return '<div>' + row.Manager + '&nbsp;<i class="fa fa-pencil"> </i><div>';
+						return '<div data-row-id="' + managerId + '">' + row.Manager + '&nbsp;&nbsp;&nbsp;<a href="#" class="editManager"><i class="fa fa-pencil"> </i></a><div>';
 					}
 				}
 			});

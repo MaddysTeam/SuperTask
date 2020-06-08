@@ -213,14 +213,14 @@ namespace TheSite.Controllers
                         }).FirstOrDefault();
 
 
-         var yesterdayJournal = db.WorkJournalDal.ConditionQuery(
-            wj.UserId == currentUser.UserId &
-            wj.TaskId == workJournal.TaskId
-            & wj.RecordDate > workJournal.RecordDate.AddDays(-1).TodayStart()
-            & wj.RecordDate < workJournal.RecordDate.AddDays(-1).TodayEnd()
-            , null, null, null).FirstOrDefault();
+         //var yesterdayJournal = db.WorkJournalDal.ConditionQuery(
+         //   wj.UserId == currentUser.UserId &
+         //   wj.TaskId == workJournal.TaskId
+         //   & wj.RecordDate > workJournal.RecordDate.AddDays(-1).TodayStart()
+         //   & wj.RecordDate < workJournal.RecordDate.AddDays(-1).TodayEnd()
+         //   , null, null, null).FirstOrDefault();
 
-         ViewBag.YesterdayProgress = yesterdayJournal == null ? 0 : yesterdayJournal.Progress;
+         //ViewBag.YesterdayProgress = yesterdayJournal == null ? 0 : yesterdayJournal.Progress;
 
          return PartialView(workJournal);
       }

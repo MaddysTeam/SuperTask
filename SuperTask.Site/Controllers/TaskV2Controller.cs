@@ -54,15 +54,29 @@ namespace TheSite.Controllers
                SortId = t.SortId.GetValue(r),
                TaskType = t.TaskType.GetValue(r),
                TaskStatus = t.TaskStatus.GetValue(r),
-               WorkHours=t.WorkHours.GetValue(r),
+               WorkHours = t.WorkHours.GetValue(r),
                EstimateWorkHours = t.EstimateWorkHours.GetValue(r)
             }).ToList();
 
 
          var results = new List<WorkTask>();
          var parents = tasks.FindAll(x => x.IsParent);
+
+
          if (parents.Count > 0)
          {
+
+            //排序条件表达式
+
+            if (sort != null)
+            {
+               switch (sort.ID)
+               {
+                  case "SortId": parents= sort.According==APSqlOrderAccording.Asc? parents.OrderBy(x=>x.SortId).ToList(): 
+                                                                                        parents.OrderByDescending(x => x.SortId).ToList(); break;
+               }
+            }
+
             foreach (var item in parents)
             {
                results.Add(item);
@@ -104,25 +118,6 @@ namespace TheSite.Controllers
             rowCount,
             total
          });
-
-
-         //排序条件表达式
-
-         //if (sort != null)
-         //{
-         //   switch (sort.ID)
-         //   {
-         //      case "projectName": query.order_by(sort.OrderBy(p.ProjectName)); break;
-         //      case "projectOwner": query.order_by(sort.OrderBy(p.ProjectOwner)); break;
-         //      //case "projectExecutor": query.order_by(sort.OrderBy(p.ProjectExecutor)); break;
-         //      case "pmName": query.order_by(sort.OrderBy(u.UserName)); break;
-         //      case "type": query.order_by(sort.OrderBy(p.ProjectType)); break;
-         //      case "code": query.order_by(sort.OrderBy(p.Code)); break;
-         //      case "progress": query.order_by(sort.OrderBy(p.RateOfProgress)); break;
-         //   }
-         //}
-
-
 
       }
 
@@ -248,7 +243,7 @@ namespace TheSite.Controllers
          task.ProjectName = MyJoinedProjects().Find(x => x.ProjectId == task.Projectid)?.ProjectName;
 
          ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
-         ViewBag.SubTask = TaskHelper.GetAllChildren(id,db,t.CreateDate.Desc);
+         ViewBag.SubTask = TaskHelper.GetAllChildren(id, db, t.CreateDate.Desc);
          ViewBag.Attahcments = AttachmentHelper.GetAttachments(task.Projectid, task.TaskId, db);
 
          return View(task);
@@ -331,6 +326,10 @@ namespace TheSite.Controllers
             {
                task.Close(DateTime.Now);
             }
+            else if ((orignalTask.IsCloseStatus || orignalTask.IsCompleteStatus) && task.IsProcessStatus)
+            {
+               WorkJournalHelper.CreateOrUpdateJournalByTask(task, db);
+            }
 
             db.WorkTaskDal.Update(task);
 
@@ -356,6 +355,7 @@ namespace TheSite.Controllers
       }
 
       //GET TaskV2/Detail
+      //POST-Ajax TaskV2/Detail
 
       public ActionResult Detail(Guid id)
       {
@@ -377,6 +377,9 @@ namespace TheSite.Controllers
       }
 
 
+      //POST-Ajax TaskV2/Start
+      //POST-Ajax TaskV2/MultipleStart
+
       [HttpPost]
       public ActionResult Start(Guid id)
       {
@@ -394,6 +397,45 @@ namespace TheSite.Controllers
       }
 
       [HttpPost]
+      public ActionResult MultipleStart(Guid[] ids)
+      {
+         var tasks = db.WorkTaskDal.ConditionQuery(t.TaskId.In(ids), null, null, null);
+
+         db.BeginTrans();
+
+         try
+         {
+            APQuery.update(t)
+           .set(t.TaskStatus.SetValue(TaskKeys.ProcessStatus))
+           .set(t.RealStartDate.SetValue(DateTime.Now))
+           .where(t.TaskId.In(ids))
+           .execute(db);
+
+            tasks.ForEach(x => x.Start());
+            WorkJournalHelper.CreateOrUpdateJournalByTasks(tasks, db);
+
+            db.Commit();
+         }
+         catch
+         {
+            db.Rollback();
+         }
+
+
+
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.Task.EDIT_SUCCESS
+         });
+      }
+
+
+      //POST-Ajax TaskV2/Complete
+      //POST-Ajax TaskV2/MultipleComplete
+
+      [HttpPost]
       public ActionResult Complete(Guid id)
       {
          APQuery.update(t)
@@ -409,7 +451,25 @@ namespace TheSite.Controllers
          });
       }
 
+      [HttpPost]
+      public ActionResult MultipleComplete(Guid[] ids)
+      {
+         APQuery.update(t)
+          .set(t.TaskStatus.SetValue(TaskKeys.CompleteStatus))
+          .set(t.RealEndDate.SetValue(DateTime.Now))
+          .where(t.TaskId.In(ids))
+          .execute(db);
 
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.Task.EDIT_SUCCESS
+         });
+      }
+
+
+      //POST-Ajax TaskV2/Close
+      //POST-Ajax TaskV2/MultipleClose
       [HttpPost]
       public ActionResult Close(Guid id)
       {
@@ -426,6 +486,25 @@ namespace TheSite.Controllers
          });
       }
 
+      [HttpPost]
+      public ActionResult MultipleClose(Guid[] ids)
+      {
+         APQuery.update(t)
+          .set(t.TaskStatus.SetValue(TaskKeys.CloseStatus))
+          .set(t.RealEndDate.SetValue(DateTime.Now))
+          .where(t.TaskId.In(ids))
+          .execute(db);
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.Task.EDIT_SUCCESS
+         });
+      }
+
+
+
+      //POST-Ajax TaskV2/JournalEdit
 
       public ActionResult JournalEdit(Guid id)
       {
@@ -436,11 +515,11 @@ namespace TheSite.Controllers
             .ConditionQuery(j.TaskId == id & j.RecordDate.Between(DateTime.Now.TodayStart(), DateTime.Now.TodayEnd()), null, null, null)
             .FirstOrDefault();
 
-         return RedirectToAction("Edit", "WorkJournal", new { id = journal.JournalId });
+         return RedirectToAction("Edit", "WorkJournal", new { id = journal == null ? Guid.NewGuid() : journal.JournalId });
       }
 
 
-      //POST  TaskV2/GetLeafTasks
+      //POST-Ajax  TaskV2/GetLeafTasks
 
       [HttpPost]
       public ActionResult GetLeafTasks(Guid projectId)
@@ -461,7 +540,7 @@ namespace TheSite.Controllers
       }
 
 
-      //POST  TaskV2/GetChildTasks
+      //POST-Ajax  TaskV2/GetChildTasks
 
       [HttpPost]
       public ActionResult GetChildTasks(Guid parentId, int current, int rowCount, AjaxOrder sort, string searchPhrase)

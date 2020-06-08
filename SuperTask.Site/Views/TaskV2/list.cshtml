@@ -94,9 +94,16 @@
 
 		<div class="row">
 			<div class="col-md-2">
-
+				
 			</div>
 			<div class="row col-md-9" style="margin-left:1%;">
+				<div class="btn-group" style="position:relative">
+					<div style="position:absolute;top:20px; width:200px; z-index:99">
+						<a class="btn btn-success" id="start" data-url="@Url.Action("MultipleStart","TaskV2")">开始</a>
+						<a class="btn btn-success" id="start" data-url="@Url.Action("MultipleComplete","TaskV2")">完成</a>
+						<a class="btn btn-success" id="close" data-url="@Url.Action("MultipleClose","TaskV2")">关闭</a>
+					</div>
+				</div>
 				<div class="table-responsive">
 					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
 						<thead>
@@ -173,7 +180,7 @@
 					'checkbox': function (column, row) {
 						var currentUserId = '@Html.GetUserProfile().UserId';
 						if (currentUserId == row.ManagerId)
-							return '<input type="checkbox" />'
+							return '<input type="checkbox" class="checkbox" data-row-id="'+row.TaskId+'" />'
 					},
 					'TaskName': function (column, row) {
 						var url = '@Url.Action("Detail", "TaskV2")?id=' + row.TaskId;
@@ -293,6 +300,26 @@
 								siblings.show();
 							}
 							siblings = siblings.next();
+						}
+					});
+
+					// multiple start,complete and close tasks 
+					$('#start,#complete,#close').off('click').on('click', function () {
+						result = [];
+						grid.find('.checkbox').each(function (i) {
+							$this = $(this);
+							if ($this.is(':checked')) {
+								result.push($this.data('rowId'));
+							}
+						});
+
+						if (result.length > 0) {
+							$.post($(this).data('url'), { ids: result }, function () {
+								grid.bootgrid('reload')
+							});
+						}
+						else {
+							alert('请先勾选任务！')
 						}
 					});
 
