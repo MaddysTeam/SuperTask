@@ -71,7 +71,7 @@ namespace Business.Helper
 
 		public static Guid ReviewStatus => Guid.Parse("CC3CDC7F-A46D-3C58-9CAF-D3A2B7C9AC1D");
 
-		public static Guid CloseStatus => Guid.Parse("CC3CDC7F-A46D-3C58-9CAF-D3A2B7C9AB0D");
+		public static Guid CloseStatus => Guid.Parse("CC3CDC7F-A46D-3C58-9CAF-D3A2B7C9AB9D");
 
 
 		public static Guid ProjectTaskType => Guid.Parse("DD3ABC1D-A33C-3C68-8ACF-C2E5D6C9DC8B");

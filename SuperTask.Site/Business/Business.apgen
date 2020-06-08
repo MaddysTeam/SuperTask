@@ -184,7 +184,6 @@
 					<add name="ProjectExecutorId" columnName="ExecutorId"  type="Guid" isNullable="true" display="项目乙方"></add>
 					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true" display="项目经理"/>
 					<add name="ProcessName" type="string"  dataLength="100"   isNullable="true" display="项目进展" />
-
 					<add name="FolderId" columnName="FolderId" type="Guid" isNullable="true" display="项目文件夹ID"   />
 					<add name="Money" columnName="money" type="double" isNullable="true"  display="预估总金额"/>
 					<add name="CMoney" columnName="cmoney" type="double" isNullable="true"  display="合同总金额"/>
@@ -342,6 +341,7 @@
 					<add name="RealStartDate"  columnName="RealStartDate" type="DateTime"  isNullable="true" display="实际开始时间" />
 					<add name="RealEndDate"  columnName="RealEndDate" type="DateTime"  isNullable="true" display="实际结束时间" />
 					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
+					<add name="CloseDate"  columnName="CloseDate" type="DateTime"  isNullable="true" display="任务关闭时间" />
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
 					<add name="SortId" columnName="SortId" type="int" isNullable="true" comment="排序Id" />
 					<add name="IsParent"  columnName="IsParent" type="bool" comment="是否是父任务" ></add>

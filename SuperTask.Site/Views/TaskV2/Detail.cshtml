@@ -69,13 +69,13 @@
 
 						@Html.Label("关闭日期", new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
-							@if (Model.RealEndDate <= DateTime.MinValue)
+							@if (Model.CloseDate <= DateTime.MinValue)
 							{
 								@Html.Label(" ", new { @class = "form-control" })
 							}
 							else
 							{
-								@Html.Label(Model.RealEndDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
+								@Html.Label(Model.CloseDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
 							}
 						</div>
 					</div>

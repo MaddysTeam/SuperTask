@@ -47,11 +47,13 @@ namespace Business
 
 		public bool IsCompleteStatus => TaskStatus == TaskKeys.CompleteStatus;
 
+      public bool IsCloseStatus => TaskStatus == TaskKeys.CloseStatus;
+
 		public bool IsDelteStatus => TaskStatus == TaskKeys.DeleteStatus;
 
-		public bool IsTempEditStatus => TaskStatus == TaskKeys.TaskTempEditStatus;
+		//public bool IsTempEditStatus => TaskStatus == TaskKeys.TaskTempEditStatus;
 
-		public bool IsReviewStatus => TaskStatus == TaskKeys.ReviewStatus;
+		//public bool IsReviewStatus => TaskStatus == TaskKeys.ReviewStatus;
 
 		public bool IsProjectTaskType => TaskType != TaskKeys.TempTaskType;
 
@@ -162,6 +164,12 @@ namespace Business
 			SetStatus(TaskKeys.CompleteStatus);
 			RateOfProgress = 100;
 		}
+
+      public  virtual void Close(DateTime closeDate)
+      {
+         CloseDate = closeDate;
+         SetStatus(TaskKeys.CloseStatus);
+      }
 
 		public void SetParentProgress()
 		{

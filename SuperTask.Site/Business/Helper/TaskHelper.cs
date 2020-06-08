@@ -39,10 +39,10 @@ namespace Business.Helper
 		/// </summary>
 		/// <param name="parentId">父id</param>
 		/// <returns></returns>
-		public static List<WorkTask> GetAllChildren(Guid parentId, APDBDef db = null)
+		public static List<WorkTask> GetAllChildren(Guid parentId, APDBDef db = null, Symber.Web.Data.APSqlOrderPhrase order=null)
 		{
 			db = db ?? new APDBDef();
-			return db.WorkTaskDal.ConditionQuery(t.ParentId == parentId, null, null, null);
+			return db.WorkTaskDal.ConditionQuery(t.ParentId == parentId, order, null, null);
 		}
 
 
