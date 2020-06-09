@@ -97,6 +97,10 @@ namespace TheSite.Controllers
          {
             results = results.FindAll(t => t.TaskStatus == statusId);
          }
+         else
+         {
+            results = results.FindAll(t => t.TaskStatus != TaskKeys.DeleteStatus);
+         }
          if (!string.IsNullOrEmpty(taskName))
          {
             results = results.FindAll(t => t.TaskName.IndexOf(taskName) >= 0);
@@ -255,7 +259,7 @@ namespace TheSite.Controllers
          task.ProjectName = MyJoinedProjects().Find(x => x.ProjectId == task.Projectid)?.ProjectName;
 
          ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
-         ViewBag.SubTask = TaskHelper.GetAllChildren(id, db, t.CreateDate.Desc);
+         ViewBag.SubTask = TaskHelper.GetAllChildren(id, db, t.CreateDate.Desc).FindAll(x => !x.IsDelteStatus);
          ViewBag.Attahcments = AttachmentHelper.GetAttachments(task.Projectid, task.TaskId, db);
 
          return View(task);
@@ -269,7 +273,7 @@ namespace TheSite.Controllers
 
          try
          {
-            var subTasks = TaskHelper.GetAllChildren(task.TaskId);
+            var subTasks = TaskHelper.GetAllChildren(task.TaskId).FindAll(t => !t.IsDelteStatus);
             var subTaskEsTimes = collection["EstimateWorkHours"] ?? string.Empty;
             var subTaskExecutors = collection["ExecutorId"] ?? string.Empty;
             var subTaskIds = collection["SubTaskId"] ?? string.Empty;
@@ -382,7 +386,7 @@ namespace TheSite.Controllers
          task.Manager = string.Empty;
 
          ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
-         ViewBag.SubTasks = TaskHelper.GetAllChildren(id, db, t.CreateDate.Desc);
+         ViewBag.SubTasks = TaskHelper.GetAllChildren(id, db, t.CreateDate.Desc).FindAll(x => !x.IsDelteStatus);
          ViewBag.Attahcments = AttachmentHelper.GetAttachments(task.Projectid, task.TaskId, db);
 
          return View(task);
@@ -392,7 +396,16 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult Delete(Guid id)
       {
-         return Json(new { });
+         APQuery.update(t)
+            .set(t.TaskStatus.SetValue(TaskKeys.DeleteStatus))
+            .where(t.TaskId == id)
+            .execute(db);
+
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg = Success.Task.EDIT_SUCCESS
+         });
       }
 
 
@@ -567,7 +580,7 @@ namespace TheSite.Controllers
          var results = APQuery.select(t.TaskId, t.SortId, t.ManagerId, t.TaskStatus, t.TaskName, u.UserName)
                          .from(t, u.JoinInner(u.UserId == t.ManagerId))
                          .order_by(t.CreateDate.Desc)
-                         .where(t.ParentId == parentId)
+                         .where(t.ParentId == parentId & t.TaskStatus != TaskKeys.DeleteStatus)
                          .query(db, r => new WorkTask
                          {
                             TaskId = t.TaskId.GetValue(r),

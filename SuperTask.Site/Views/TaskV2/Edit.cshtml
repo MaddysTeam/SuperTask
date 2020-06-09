@@ -98,9 +98,9 @@
 							</div>
 							@if (!isCompeleteOrClose)
 							{
-							<div>
+							@*<div>
 								<a id="btnEditJournal" data-toggle="ajax-modal" data-url="@Url.Action("JournalEdit", "TaskV2", new { id = Model.TaskId })" data-target="#firstModal" class="btn btn-info"><i class="fa fa-clock-o"> </i></a>
-							</div>
+							</div>*@
 							}
 						</div>
 						@if (Model.IsParent)
@@ -113,7 +113,7 @@
 						}
 						@foreach (var item in ViewBag.SubTask as List<WorkTask>)
 						{
-							<div class="form-group subTaskExecutor">
+							<div class="form-group subTaskExecutor" data-task-id="@item.TaskId">
 								@Html.Label("执行人", new { @class = "control-label col-md-2 text-align:left" })
 								<div class="col-md-2">
 									@Html.DropDownList("ExecutorId",
@@ -281,7 +281,15 @@
 
 
 		function removeSubTaskExecutor(obj) {
-			$(obj).parent().parent().remove();
+			var taskId = $(obj).parents('.subTaskExecutor').data('taskId');
+			if (taskId) {
+				$.post('@Url.Action("Delete", "TaskV2")', { id: taskId }, function () {
+					$(obj).parent().parent().remove();
+				})
+			}
+			else {
+				$(obj).parent().parent().remove();
+			}
 		}
 
 		function getGlobalRequest() {
@@ -306,7 +314,7 @@
 					'commands': function (column, row) {
 						var managerId = row.ManagerId;
 						var isParent = row.IsParent;
-						
+
 						return '<div data-row-id="' + managerId + '">' + row.Manager + '&nbsp;&nbsp;&nbsp;<a href="#" class="editManager hidden"><i class="fa fa-pencil"> </i></a><div>';
 					}
 				}
