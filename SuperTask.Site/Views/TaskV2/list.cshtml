@@ -115,7 +115,7 @@
 								<th data-column-id="Status">状态</th>
 								<th data-column-id="Type">类型</th>
 								<th data-column-id="Manager">指派给</th>
-								<th data-column-id="WorkHours">已消耗</th>
+								<th data-column-id="WorkHours">已消耗(累计)</th>
 								<th data-column-id="EstimateWorkHours">预计消耗</th>
 								<th data-column-id="EndDate" data-formatter="DateOnly">预计完成</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
@@ -301,6 +301,11 @@
 							}
 							siblings = siblings.next();
 						}
+					});
+						
+					//bind checkbox column
+					$('th:first').html('<input type="checkbox" class="checkAll" />').find('.checkAll').click(function () {
+						grid.find('.checkbox').click();
 					});
 
 					// multiple start,complete and close tasks 

@@ -72,8 +72,9 @@ namespace TheSite.Controllers
             {
                switch (sort.ID)
                {
-                  case "SortId": parents= sort.According==APSqlOrderAccording.Asc? parents.OrderBy(x=>x.SortId).ToList(): 
-                                                                                        parents.OrderByDescending(x => x.SortId).ToList(); break;
+                  case "SortId":
+                     parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.SortId).ToList() :
+                                                                            parents.OrderByDescending(x => x.SortId).ToList(); break;
                }
             }
 
@@ -104,6 +105,11 @@ namespace TheSite.Controllers
          {
             results = results.FindAll(t => t.ManagerId == user.UserId);
          }
+         //else
+         //{
+         //   var parent = parents.FindAll(x => x.ManagerId == user.UserId);
+         //   var child=
+         //}
 
          var total = results.Count;
          if (total > 0)
@@ -189,6 +195,9 @@ namespace TheSite.Controllers
                      //create subtask journal
                      WorkJournalHelper.CreateByTask(subTask, db);
 
+                     //add user to project resurce if not exits
+                     ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.ManagerId, ResourceKeys.OtherType, db);
+
                      index++;
                   }
                }
@@ -199,6 +208,9 @@ namespace TheSite.Controllers
 
                //create default journal
                WorkJournalHelper.CreateByTask(task, db);
+
+               //add user to project resurce if not exits
+               ResourceHelper.AddUserToResourceIfNotExist(task.Projectid, task.TaskId, task.ManagerId, ResourceKeys.OtherType, db);
 
 
                db.Commit();
@@ -252,6 +264,9 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult Edit(WorkTask task, FormCollection collection)
       {
+         db.BeginTrans();
+
+
          try
          {
             var subTasks = TaskHelper.GetAllChildren(task.TaskId);
@@ -268,9 +283,6 @@ namespace TheSite.Controllers
 
                if (subTasks.Count > 0)
                   db.WorkTaskDal.ConditionDelete(t.TaskId.In(subTasks.Select(x => x.TaskId).ToArray()));
-
-
-               db.BeginTrans();
 
                // re-add all subtasks whitch properties value should be changed
 
@@ -308,6 +320,9 @@ namespace TheSite.Controllers
 
                   db.WorkTaskDal.Insert(subTask);
 
+                  //add user to project resurce if not exits
+                  ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.ManagerId, ResourceKeys.OtherType, db);
+
                   index++;
                }
 
@@ -333,6 +348,10 @@ namespace TheSite.Controllers
 
             db.WorkTaskDal.Update(task);
 
+            //add user to project resurce if not exits
+            ResourceHelper.AddUserToResourceIfNotExist(task.Projectid, task.TaskId, task.ManagerId, ResourceKeys.OtherType, db);
+
+            //upload attachments
             AttachmentHelper.UploadTaskAttachment(task, db);
 
 
@@ -363,7 +382,7 @@ namespace TheSite.Controllers
          task.Manager = string.Empty;
 
          ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
-         ViewBag.SubTasks = TaskHelper.GetAllChildren(id);
+         ViewBag.SubTasks = TaskHelper.GetAllChildren(id, db, t.CreateDate.Desc);
          ViewBag.Attahcments = AttachmentHelper.GetAttachments(task.Projectid, task.TaskId, db);
 
          return View(task);
@@ -560,11 +579,12 @@ namespace TheSite.Controllers
                          })
                          .ToList();
 
+
          return Json(new
          {
-            rows = results,
+            rows = results.Skip(rowCount * (current - 1)).Take(rowCount),
             current,
-            rowCount,
+            rowCount = rowCount,
             total = results.Count
          });
       }

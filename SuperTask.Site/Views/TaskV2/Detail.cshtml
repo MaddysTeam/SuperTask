@@ -25,9 +25,8 @@
 
 		@if (Html.GetUserProfile().UserId == Model.ManagerId)
 		{
-		<button class="btn btn-info  col-lg-offset-1" data-toggle="ajax-modal" data-url="@Url.Action("AddSubTask", "TaskV2", new { parentId = Model.TaskId, projectId = Model.Projectid })" data-target="#firstModal"><i class="fa fa-plus-square"></i>分解任务</button>
-		<a class="btn btn-warning" href="@Url.Action("Edit", "TaskV2", new { id = Model.TaskId })">修改</a>
-		<a class="btn btn-primary">删除</a>
+		<button class="btn btn-info  col-lg-offset-1 @(!Model.IsParent? "hidden":"")" data-toggle="ajax-modal" data-url="@Url.Action("AddSubTask", "TaskV2", new { parentId = Model.TaskId, projectId = Model.Projectid })" data-target="#firstModal"><i class="fa fa-plus-square"></i>分解任务</button>
+		<a class="btn btn-warning " href="@Url.Action("Edit", "TaskV2", new { id = Model.TaskId })">修改</a>
 		}
 	</div>
 </div>

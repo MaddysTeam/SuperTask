@@ -231,7 +231,7 @@
 			ajaxSubmitForm($('#taskForm'), true);
 
 			//fix bug
-		//	$('#btnEditJournal').click();
+			$('#btnEditJournal').click();
 
 			var $grid = $('#childTaskgrid');
 			$grid.bootgrid(getGridOptions())
@@ -307,7 +307,7 @@
 						var managerId = row.ManagerId;
 						var isParent = row.IsParent;
 						
-						return '<div data-row-id="' + managerId + '">' + row.Manager + '&nbsp;&nbsp;&nbsp;<a href="#" class="editManager"><i class="fa fa-pencil"> </i></a><div>';
+						return '<div data-row-id="' + managerId + '">' + row.Manager + '&nbsp;&nbsp;&nbsp;<a href="#" class="editManager hidden"><i class="fa fa-pencil"> </i></a><div>';
 					}
 				}
 			});
