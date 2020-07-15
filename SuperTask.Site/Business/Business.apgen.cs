@@ -64,6 +64,10 @@ namespace Business {
         
         private static IssueItemTableDef _issueItem;
         
+        private static BugTableDef _bug;
+        
+        private static TaskBugsTableDef _taskBugs;
+        
         private static WorkJournalTableDef _workJournal;
         
         private static AttachmentTableDef _attachment;
@@ -73,8 +77,6 @@ namespace Business {
         private static ReviewTableDef _review;
         
         private static WorkflowTableDef _workflow;
-        
-        private static WorkflowTaskTableDef _workflowTask;
         
         private static IndicationTableDef _indication;
         
@@ -154,6 +156,10 @@ namespace Business {
         
         private APDalDef.IssueItemDal _issueItemDal;
         
+        private APDalDef.BugDal _bugDal;
+        
+        private APDalDef.TaskBugsDal _taskBugsDal;
+        
         private APDalDef.WorkJournalDal _workJournalDal;
         
         private APDalDef.AttachmentDal _attachmentDal;
@@ -163,8 +169,6 @@ namespace Business {
         private APDalDef.ReviewDal _reviewDal;
         
         private APDalDef.WorkflowDal _workflowDal;
-        
-        private APDalDef.WorkflowTaskDal _workflowTaskDal;
         
         private APDalDef.IndicationDal _indicationDal;
         
@@ -461,6 +465,30 @@ namespace Business {
         }
         
         /// <summary>
+        ///  TableDef
+        /// </summary>
+        public static BugTableDef Bug {
+            get {
+                if ((_bug == null)) {
+                    _bug = new BugTableDef("Bug");
+                }
+                return _bug;
+            }
+        }
+        
+        /// <summary>
+        ///  TableDef
+        /// </summary>
+        public static TaskBugsTableDef TaskBugs {
+            get {
+                if ((_taskBugs == null)) {
+                    _taskBugs = new TaskBugsTableDef("TaskBugs");
+                }
+                return _taskBugs;
+            }
+        }
+        
+        /// <summary>
         /// 工作日志 TableDef
         /// </summary>
         public static WorkJournalTableDef WorkJournal {
@@ -517,18 +545,6 @@ namespace Business {
                     _workflow = new WorkflowTableDef("Workflow");
                 }
                 return _workflow;
-            }
-        }
-        
-        /// <summary>
-        /// 流程任务（专属于第三方工作流） TableDef
-        /// </summary>
-        public static WorkflowTaskTableDef WorkflowTask {
-            get {
-                if ((_workflowTask == null)) {
-                    _workflowTask = new WorkflowTaskTableDef("WorkFlowTask");
-                }
-                return _workflowTask;
             }
         }
         
@@ -989,6 +1005,30 @@ namespace Business {
         }
         
         /// <summary>
+        ///  Dal
+        /// </summary>
+        public virtual APDalDef.BugDal BugDal {
+            get {
+                if ((_bugDal == null)) {
+                    _bugDal = new APDalDef.BugDal(this);
+                }
+                return _bugDal;
+            }
+        }
+        
+        /// <summary>
+        ///  Dal
+        /// </summary>
+        public virtual APDalDef.TaskBugsDal TaskBugsDal {
+            get {
+                if ((_taskBugsDal == null)) {
+                    _taskBugsDal = new APDalDef.TaskBugsDal(this);
+                }
+                return _taskBugsDal;
+            }
+        }
+        
+        /// <summary>
         /// 工作日志 Dal
         /// </summary>
         public virtual APDalDef.WorkJournalDal WorkJournalDal {
@@ -1045,18 +1085,6 @@ namespace Business {
                     _workflowDal = new APDalDef.WorkflowDal(this);
                 }
                 return _workflowDal;
-            }
-        }
-        
-        /// <summary>
-        /// 流程任务（专属于第三方工作流） Dal
-        /// </summary>
-        public virtual APDalDef.WorkflowTaskDal WorkflowTaskDal {
-            get {
-                if ((_workflowTaskDal == null)) {
-                    _workflowTaskDal = new APDalDef.WorkflowTaskDal(this);
-                }
-                return _workflowTaskDal;
             }
         }
         
@@ -1300,12 +1328,13 @@ namespace Business {
                 db.TaskCompelxtiyRoleDal.InitData(db);
                 db.TaskStandardItemDal.InitData(db);
                 db.IssueItemDal.InitData(db);
+                db.BugDal.InitData(db);
+                db.TaskBugsDal.InitData(db);
                 db.WorkJournalDal.InitData(db);
                 db.AttachmentDal.InitData(db);
                 db.DictionaryDal.InitData(db);
                 db.ReviewDal.InitData(db);
                 db.WorkflowDal.InitData(db);
-                db.WorkflowTaskDal.InitData(db);
                 db.IndicationDal.InitData(db);
                 db.EvalIndicationDal.InitData(db);
                 db.EvalIndicationItemDal.InitData(db);
@@ -6629,6 +6658,398 @@ namespace Business {
         }
         
         [Serializable()]
+        public partial class BugTableDef : APTableDef {
+            
+            private GuidAPColumnDef _bugId;
+            
+            private Int32APColumnDef _sortId;
+            
+            private Int32APColumnDef _bugLevel;
+            
+            private GuidAPColumnDef _bugType;
+            
+            private GuidAPColumnDef _bugStatus;
+            
+            private GuidAPColumnDef _managerId;
+            
+            private StringAPColumnDef _content;
+            
+            private GuidAPColumnDef _creatorId;
+            
+            private GuidAPColumnDef _systemId;
+            
+            private GuidAPColumnDef _browser;
+            
+            private DateTimeAPColumnDef _createDate;
+            
+            private DateTimeAPColumnDef _fixDate;
+            
+            public BugTableDef(string tableName) : 
+                    base(tableName) {
+            }
+            
+            protected BugTableDef(string tableName, string alias) : 
+                    base(tableName, alias) {
+            }
+            
+            /// <summary>
+            /// BugId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef BugId {
+                get {
+                    if (Object.ReferenceEquals(_bugId, null)) {
+                        _bugId = new GuidAPColumnDef(this, "ID", false);
+                        _bugId.Display = "bugID";
+                    }
+                    return _bugId;
+                }
+            }
+            
+            /// <summary>
+            /// SortId ColumnDef
+            /// </summary>
+            public virtual Int32APColumnDef SortId {
+                get {
+                    if (Object.ReferenceEquals(_sortId, null)) {
+                        _sortId = new Int32APColumnDef(this, "SortId", true);
+                        _sortId.Display = "SortId";
+                    }
+                    return _sortId;
+                }
+            }
+            
+            /// <summary>
+            /// BugLevel ColumnDef
+            /// </summary>
+            public virtual Int32APColumnDef BugLevel {
+                get {
+                    if (Object.ReferenceEquals(_bugLevel, null)) {
+                        _bugLevel = new Int32APColumnDef(this, "Level", true);
+                        _bugLevel.Display = "bug级别";
+                    }
+                    return _bugLevel;
+                }
+            }
+            
+            /// <summary>
+            /// BugType ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef BugType {
+                get {
+                    if (Object.ReferenceEquals(_bugType, null)) {
+                        _bugType = new GuidAPColumnDef(this, "Type", true);
+                        _bugType.Display = "bug类型";
+                    }
+                    return _bugType;
+                }
+            }
+            
+            /// <summary>
+            /// BugStatus ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef BugStatus {
+                get {
+                    if (Object.ReferenceEquals(_bugStatus, null)) {
+                        _bugStatus = new GuidAPColumnDef(this, "Status", true);
+                        _bugStatus.Display = "bug状态";
+                    }
+                    return _bugStatus;
+                }
+            }
+            
+            /// <summary>
+            /// ManagerId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef ManagerId {
+                get {
+                    if (Object.ReferenceEquals(_managerId, null)) {
+                        _managerId = new GuidAPColumnDef(this, "ManagerId", true);
+                        _managerId.Display = "bug负责人ID";
+                    }
+                    return _managerId;
+                }
+            }
+            
+            /// <summary>
+            /// Content ColumnDef
+            /// </summary>
+            public virtual StringAPColumnDef Content {
+                get {
+                    if (Object.ReferenceEquals(_content, null)) {
+                        _content = new StringAPColumnDef(this, "Content", true, 40000);
+                        _content.Display = "bug内容";
+                    }
+                    return _content;
+                }
+            }
+            
+            /// <summary>
+            /// CreatorId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef CreatorId {
+                get {
+                    if (Object.ReferenceEquals(_creatorId, null)) {
+                        _creatorId = new GuidAPColumnDef(this, "CreatorId", true);
+                        _creatorId.Display = "任务创建者ID";
+                    }
+                    return _creatorId;
+                }
+            }
+            
+            /// <summary>
+            /// SystemId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef SystemId {
+                get {
+                    if (Object.ReferenceEquals(_systemId, null)) {
+                        _systemId = new GuidAPColumnDef(this, "SystemId", true);
+                        _systemId.Display = "系统ID";
+                    }
+                    return _systemId;
+                }
+            }
+            
+            /// <summary>
+            /// Browser ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef Browser {
+                get {
+                    if (Object.ReferenceEquals(_browser, null)) {
+                        _browser = new GuidAPColumnDef(this, "BrowserId", true);
+                        _browser.Display = "浏览器ID";
+                    }
+                    return _browser;
+                }
+            }
+            
+            /// <summary>
+            /// CreateDate ColumnDef
+            /// </summary>
+            public virtual DateTimeAPColumnDef CreateDate {
+                get {
+                    if (Object.ReferenceEquals(_createDate, null)) {
+                        _createDate = new DateTimeAPColumnDef(this, "CreateDate", false);
+                        _createDate.Display = "创建时间";
+                    }
+                    return _createDate;
+                }
+            }
+            
+            /// <summary>
+            /// FixDate ColumnDef
+            /// </summary>
+            public virtual DateTimeAPColumnDef FixDate {
+                get {
+                    if (Object.ReferenceEquals(_fixDate, null)) {
+                        _fixDate = new DateTimeAPColumnDef(this, "CreateDate", false);
+                        _fixDate.Display = "解决时间";
+                    }
+                    return _fixDate;
+                }
+            }
+            
+            /// <summary>
+            /// Default Index
+            /// </summary>
+            public virtual APSqlOrderPhrase DefaultOrder {
+                get {
+                    return null;
+                }
+            }
+            
+            /// <summary>
+            /// Create a alias table
+            /// </summary>
+            public virtual BugTableDef As(string name) {
+                return new BugTableDef("Bug", name);
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual void Fullup(IDataReader reader, Bug data, bool throwIfValidColumnName) {
+                data.BugId = BugId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.SortId = SortId.GetValue<int>(reader, throwIfValidColumnName);
+                data.BugLevel = BugLevel.GetValue<int>(reader, throwIfValidColumnName, 1);
+                data.BugType = BugType.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.BugStatus = BugStatus.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.ManagerId = ManagerId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.Content = Content.GetValue<string>(reader, throwIfValidColumnName);
+                data.CreatorId = CreatorId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.SystemId = SystemId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.Browser = Browser.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.CreateDate = CreateDate.GetValue<System.DateTime>(reader, throwIfValidColumnName, DateTime.Now);
+                data.FixDate = FixDate.GetValue<System.DateTime>(reader, throwIfValidColumnName, DateTime.Now);
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual Bug Map(IDataReader reader) {
+                Bug data = new Bug();
+                Fullup(reader, data, true);
+                return data;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual Bug TolerantMap(IDataReader reader) {
+                Bug data = new Bug();
+                Fullup(reader, data, false);
+                return data;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual List<Bug> MapList(IDataReader reader) {
+                List<Bug> list = new List<Bug>();
+                try {
+                    for (; reader.Read(); ) {
+                        list.Add(Map(reader));
+                    }
+                }
+                finally {
+                    reader.Close();
+                }
+                return list;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual List<Bug> TolerantMapList(IDataReader reader) {
+                List<Bug> list = new List<Bug>();
+                try {
+                    for (; reader.Read(); ) {
+                        list.Add(TolerantMap(reader));
+                    }
+                }
+                finally {
+                    reader.Close();
+                }
+                return list;
+            }
+        }
+        
+        [Serializable()]
+        public partial class TaskBugsTableDef : APTableDef {
+            
+            private GuidAPColumnDef _taskId;
+            
+            private GuidAPColumnDef _bugId;
+            
+            public TaskBugsTableDef(string tableName) : 
+                    base(tableName) {
+            }
+            
+            protected TaskBugsTableDef(string tableName, string alias) : 
+                    base(tableName, alias) {
+            }
+            
+            /// <summary>
+            /// TaskId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef TaskId {
+                get {
+                    if (Object.ReferenceEquals(_taskId, null)) {
+                        _taskId = new GuidAPColumnDef(this, "TaskId", true);
+                        _taskId.Display = "TaskId";
+                    }
+                    return _taskId;
+                }
+            }
+            
+            /// <summary>
+            /// BugId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef BugId {
+                get {
+                    if (Object.ReferenceEquals(_bugId, null)) {
+                        _bugId = new GuidAPColumnDef(this, "BugId", true);
+                        _bugId.Display = "BugId";
+                    }
+                    return _bugId;
+                }
+            }
+            
+            /// <summary>
+            /// Default Index
+            /// </summary>
+            public virtual APSqlOrderPhrase DefaultOrder {
+                get {
+                    return null;
+                }
+            }
+            
+            /// <summary>
+            /// Create a alias table
+            /// </summary>
+            public virtual TaskBugsTableDef As(string name) {
+                return new TaskBugsTableDef("TaskBugs", name);
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual void Fullup(IDataReader reader, TaskBugs data, bool throwIfValidColumnName) {
+                data.TaskId = TaskId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.BugId = BugId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual TaskBugs Map(IDataReader reader) {
+                TaskBugs data = new TaskBugs();
+                Fullup(reader, data, true);
+                return data;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual TaskBugs TolerantMap(IDataReader reader) {
+                TaskBugs data = new TaskBugs();
+                Fullup(reader, data, false);
+                return data;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual List<TaskBugs> MapList(IDataReader reader) {
+                List<TaskBugs> list = new List<TaskBugs>();
+                try {
+                    for (; reader.Read(); ) {
+                        list.Add(Map(reader));
+                    }
+                }
+                finally {
+                    reader.Close();
+                }
+                return list;
+            }
+            
+            /// <summary>
+            /// Fill the data.
+            /// </summary>
+            public virtual List<TaskBugs> TolerantMapList(IDataReader reader) {
+                List<TaskBugs> list = new List<TaskBugs>();
+                try {
+                    for (; reader.Read(); ) {
+                        list.Add(TolerantMap(reader));
+                    }
+                }
+                finally {
+                    reader.Close();
+                }
+                return list;
+            }
+        }
+        
+        [Serializable()]
         public partial class WorkJournalTableDef : APTableDef {
             
             private GuidAPColumnDef _journalId;
@@ -7984,490 +8405,6 @@ namespace Business {
             /// </summary>
             public virtual List<Workflow> TolerantMapList(IDataReader reader) {
                 List<Workflow> list = new List<Workflow>();
-                try {
-                    for (; reader.Read(); ) {
-                        list.Add(TolerantMap(reader));
-                    }
-                }
-                finally {
-                    reader.Close();
-                }
-                return list;
-            }
-        }
-        
-        [Serializable()]
-        public partial class WorkflowTaskTableDef : APTableDef {
-            
-            private GuidAPColumnDef _taskId;
-            
-            private GuidAPColumnDef _prevID;
-            
-            private GuidAPColumnDef _prevStepID;
-            
-            private GuidAPColumnDef _flowId;
-            
-            private GuidAPColumnDef _stepID;
-            
-            private StringAPColumnDef _stepName;
-            
-            private StringAPColumnDef _senderName;
-            
-            private StringAPColumnDef _receiveName;
-            
-            private StringAPColumnDef _instanceID;
-            
-            private GuidAPColumnDef _groupID;
-            
-            private Int32APColumnDef _type;
-            
-            private StringAPColumnDef _title;
-            
-            private GuidAPColumnDef _senderID;
-            
-            private GuidAPColumnDef _receiveID;
-            
-            private DateTimeAPColumnDef _senderTime;
-            
-            private DateTimeAPColumnDef _receiveTime;
-            
-            private DateTimeAPColumnDef _openTime;
-            
-            private DateTimeAPColumnDef _completedTime;
-            
-            private DateTimeAPColumnDef _completedTime1;
-            
-            private StringAPColumnDef _comment;
-            
-            private Int32APColumnDef _isSign;
-            
-            private Int32APColumnDef _status;
-            
-            private StringAPColumnDef _note;
-            
-            private Int32APColumnDef _sort;
-            
-            private GuidAPColumnDef _subFlowGroupID;
-            
-            public WorkflowTaskTableDef(string tableName) : 
-                    base(tableName) {
-            }
-            
-            protected WorkflowTaskTableDef(string tableName, string alias) : 
-                    base(tableName, alias) {
-            }
-            
-            /// <summary>
-            /// TaskId ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef TaskId {
-                get {
-                    if (Object.ReferenceEquals(_taskId, null)) {
-                        _taskId = new GuidAPColumnDef(this, "ID", false);
-                        _taskId.Display = "ID";
-                    }
-                    return _taskId;
-                }
-            }
-            
-            /// <summary>
-            /// PrevID ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef PrevID {
-                get {
-                    if (Object.ReferenceEquals(_prevID, null)) {
-                        _prevID = new GuidAPColumnDef(this, "PrevID", true);
-                        _prevID.Display = "PrevID";
-                    }
-                    return _prevID;
-                }
-            }
-            
-            /// <summary>
-            /// PrevStepID ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef PrevStepID {
-                get {
-                    if (Object.ReferenceEquals(_prevStepID, null)) {
-                        _prevStepID = new GuidAPColumnDef(this, "PrevStepID", true);
-                        _prevStepID.Display = "PrevStepID";
-                    }
-                    return _prevStepID;
-                }
-            }
-            
-            /// <summary>
-            /// FlowId ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef FlowId {
-                get {
-                    if (Object.ReferenceEquals(_flowId, null)) {
-                        _flowId = new GuidAPColumnDef(this, "FlowID", true);
-                        _flowId.Display = "FlowID";
-                    }
-                    return _flowId;
-                }
-            }
-            
-            /// <summary>
-            /// StepID ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef StepID {
-                get {
-                    if (Object.ReferenceEquals(_stepID, null)) {
-                        _stepID = new GuidAPColumnDef(this, "StepID", true);
-                        _stepID.Display = "StepID";
-                    }
-                    return _stepID;
-                }
-            }
-            
-            /// <summary>
-            /// StepName ColumnDef
-            /// </summary>
-            public virtual StringAPColumnDef StepName {
-                get {
-                    if (Object.ReferenceEquals(_stepName, null)) {
-                        _stepName = new StringAPColumnDef(this, "StepName", true, 500);
-                        _stepName.Display = "StepName";
-                    }
-                    return _stepName;
-                }
-            }
-            
-            /// <summary>
-            /// SenderName ColumnDef
-            /// </summary>
-            public virtual StringAPColumnDef SenderName {
-                get {
-                    if (Object.ReferenceEquals(_senderName, null)) {
-                        _senderName = new StringAPColumnDef(this, "SenderName", true, 50);
-                        _senderName.Display = "SenderName";
-                    }
-                    return _senderName;
-                }
-            }
-            
-            /// <summary>
-            /// ReceiveName ColumnDef
-            /// </summary>
-            public virtual StringAPColumnDef ReceiveName {
-                get {
-                    if (Object.ReferenceEquals(_receiveName, null)) {
-                        _receiveName = new StringAPColumnDef(this, "ReceiveName", true, 50);
-                        _receiveName.Display = "ReceiveName";
-                    }
-                    return _receiveName;
-                }
-            }
-            
-            /// <summary>
-            /// InstanceID ColumnDef
-            /// </summary>
-            public virtual StringAPColumnDef InstanceID {
-                get {
-                    if (Object.ReferenceEquals(_instanceID, null)) {
-                        _instanceID = new StringAPColumnDef(this, "InstanceID", true, 50);
-                        _instanceID.Display = "InstanceID";
-                    }
-                    return _instanceID;
-                }
-            }
-            
-            /// <summary>
-            /// GroupID ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef GroupID {
-                get {
-                    if (Object.ReferenceEquals(_groupID, null)) {
-                        _groupID = new GuidAPColumnDef(this, "GroupID", true);
-                        _groupID.Display = "GroupID";
-                    }
-                    return _groupID;
-                }
-            }
-            
-            /// <summary>
-            /// Type ColumnDef
-            /// </summary>
-            public virtual Int32APColumnDef Type {
-                get {
-                    if (Object.ReferenceEquals(_type, null)) {
-                        _type = new Int32APColumnDef(this, "Type", true);
-                        _type.Display = "Type";
-                    }
-                    return _type;
-                }
-            }
-            
-            /// <summary>
-            /// Title ColumnDef
-            /// </summary>
-            public virtual StringAPColumnDef Title {
-                get {
-                    if (Object.ReferenceEquals(_title, null)) {
-                        _title = new StringAPColumnDef(this, "Title", true, 200);
-                        _title.Display = "Title";
-                    }
-                    return _title;
-                }
-            }
-            
-            /// <summary>
-            /// SenderID ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef SenderID {
-                get {
-                    if (Object.ReferenceEquals(_senderID, null)) {
-                        _senderID = new GuidAPColumnDef(this, "SenderID", true);
-                        _senderID.Display = "SenderID";
-                    }
-                    return _senderID;
-                }
-            }
-            
-            /// <summary>
-            /// ReceiveID ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef ReceiveID {
-                get {
-                    if (Object.ReferenceEquals(_receiveID, null)) {
-                        _receiveID = new GuidAPColumnDef(this, "ReceiveID", true);
-                        _receiveID.Display = "ReceiveID";
-                    }
-                    return _receiveID;
-                }
-            }
-            
-            /// <summary>
-            /// SenderTime ColumnDef
-            /// </summary>
-            public virtual DateTimeAPColumnDef SenderTime {
-                get {
-                    if (Object.ReferenceEquals(_senderTime, null)) {
-                        _senderTime = new DateTimeAPColumnDef(this, "SenderTime", true);
-                        _senderTime.Display = "SenderTime";
-                    }
-                    return _senderTime;
-                }
-            }
-            
-            /// <summary>
-            /// ReceiveTime ColumnDef
-            /// </summary>
-            public virtual DateTimeAPColumnDef ReceiveTime {
-                get {
-                    if (Object.ReferenceEquals(_receiveTime, null)) {
-                        _receiveTime = new DateTimeAPColumnDef(this, "ReceiveTime", true);
-                        _receiveTime.Display = "ReceiveTime";
-                    }
-                    return _receiveTime;
-                }
-            }
-            
-            /// <summary>
-            /// OpenTime ColumnDef
-            /// </summary>
-            public virtual DateTimeAPColumnDef OpenTime {
-                get {
-                    if (Object.ReferenceEquals(_openTime, null)) {
-                        _openTime = new DateTimeAPColumnDef(this, "OpenTime", true);
-                        _openTime.Display = "OpenTime";
-                    }
-                    return _openTime;
-                }
-            }
-            
-            /// <summary>
-            /// CompletedTime ColumnDef
-            /// </summary>
-            public virtual DateTimeAPColumnDef CompletedTime {
-                get {
-                    if (Object.ReferenceEquals(_completedTime, null)) {
-                        _completedTime = new DateTimeAPColumnDef(this, "CompletedTime", true);
-                        _completedTime.Display = "CompletedTime";
-                    }
-                    return _completedTime;
-                }
-            }
-            
-            /// <summary>
-            /// CompletedTime1 ColumnDef
-            /// </summary>
-            public virtual DateTimeAPColumnDef CompletedTime1 {
-                get {
-                    if (Object.ReferenceEquals(_completedTime1, null)) {
-                        _completedTime1 = new DateTimeAPColumnDef(this, "CompletedTime1", true);
-                        _completedTime1.Display = "CompletedTime1";
-                    }
-                    return _completedTime1;
-                }
-            }
-            
-            /// <summary>
-            /// Comment ColumnDef
-            /// </summary>
-            public virtual StringAPColumnDef Comment {
-                get {
-                    if (Object.ReferenceEquals(_comment, null)) {
-                        _comment = new StringAPColumnDef(this, "Comment", true, 1000);
-                        _comment.Display = "Comment";
-                    }
-                    return _comment;
-                }
-            }
-            
-            /// <summary>
-            /// IsSign ColumnDef
-            /// </summary>
-            public virtual Int32APColumnDef IsSign {
-                get {
-                    if (Object.ReferenceEquals(_isSign, null)) {
-                        _isSign = new Int32APColumnDef(this, "IsSign", true);
-                        _isSign.Display = "IsSign";
-                    }
-                    return _isSign;
-                }
-            }
-            
-            /// <summary>
-            /// Status ColumnDef
-            /// </summary>
-            public virtual Int32APColumnDef Status {
-                get {
-                    if (Object.ReferenceEquals(_status, null)) {
-                        _status = new Int32APColumnDef(this, "Status", true);
-                        _status.Display = "Status";
-                    }
-                    return _status;
-                }
-            }
-            
-            /// <summary>
-            /// Note ColumnDef
-            /// </summary>
-            public virtual StringAPColumnDef Note {
-                get {
-                    if (Object.ReferenceEquals(_note, null)) {
-                        _note = new StringAPColumnDef(this, "Note", true, 1000);
-                        _note.Display = "Note";
-                    }
-                    return _note;
-                }
-            }
-            
-            /// <summary>
-            /// Sort ColumnDef
-            /// </summary>
-            public virtual Int32APColumnDef Sort {
-                get {
-                    if (Object.ReferenceEquals(_sort, null)) {
-                        _sort = new Int32APColumnDef(this, "Sort", true);
-                        _sort.Display = "Sort";
-                    }
-                    return _sort;
-                }
-            }
-            
-            /// <summary>
-            /// SubFlowGroupID ColumnDef
-            /// </summary>
-            public virtual GuidAPColumnDef SubFlowGroupID {
-                get {
-                    if (Object.ReferenceEquals(_subFlowGroupID, null)) {
-                        _subFlowGroupID = new GuidAPColumnDef(this, "SubFlowGroupID", true);
-                        _subFlowGroupID.Display = "SubFlowGroupID";
-                    }
-                    return _subFlowGroupID;
-                }
-            }
-            
-            /// <summary>
-            /// Default Index
-            /// </summary>
-            public virtual APSqlOrderPhrase DefaultOrder {
-                get {
-                    return null;
-                }
-            }
-            
-            /// <summary>
-            /// Create a alias table
-            /// </summary>
-            public virtual WorkflowTaskTableDef As(string name) {
-                return new WorkflowTaskTableDef("WorkFlowTask", name);
-            }
-            
-            /// <summary>
-            /// Fill the data.
-            /// </summary>
-            public virtual void Fullup(IDataReader reader, WorkflowTask data, bool throwIfValidColumnName) {
-                data.TaskId = TaskId.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.PrevID = PrevID.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.PrevStepID = PrevStepID.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.FlowId = FlowId.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.StepID = StepID.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.StepName = StepName.GetValue<string>(reader, throwIfValidColumnName);
-                data.SenderName = SenderName.GetValue<string>(reader, throwIfValidColumnName);
-                data.ReceiveName = ReceiveName.GetValue<string>(reader, throwIfValidColumnName);
-                data.InstanceID = InstanceID.GetValue<string>(reader, throwIfValidColumnName);
-                data.GroupID = GroupID.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.Type = Type.GetValue<int>(reader, throwIfValidColumnName);
-                data.Title = Title.GetValue<string>(reader, throwIfValidColumnName);
-                data.SenderID = SenderID.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.ReceiveID = ReceiveID.GetValue<System.Guid>(reader, throwIfValidColumnName);
-                data.SenderTime = SenderTime.GetValue<System.DateTime>(reader, throwIfValidColumnName);
-                data.ReceiveTime = ReceiveTime.GetValue<System.DateTime>(reader, throwIfValidColumnName);
-                data.OpenTime = OpenTime.GetValue<System.DateTime>(reader, throwIfValidColumnName);
-                data.CompletedTime = CompletedTime.GetValue<System.DateTime>(reader, throwIfValidColumnName);
-                data.CompletedTime1 = CompletedTime1.GetValue<System.DateTime>(reader, throwIfValidColumnName);
-                data.Comment = Comment.GetValue<string>(reader, throwIfValidColumnName);
-                data.IsSign = IsSign.GetValue<int>(reader, throwIfValidColumnName);
-                data.Status = Status.GetValue<int>(reader, throwIfValidColumnName);
-                data.Note = Note.GetValue<string>(reader, throwIfValidColumnName);
-                data.Sort = Sort.GetValue<int>(reader, throwIfValidColumnName);
-                data.SubFlowGroupID = SubFlowGroupID.GetValue<System.Guid>(reader, throwIfValidColumnName);
-            }
-            
-            /// <summary>
-            /// Fill the data.
-            /// </summary>
-            public virtual WorkflowTask Map(IDataReader reader) {
-                WorkflowTask data = new WorkflowTask();
-                Fullup(reader, data, true);
-                return data;
-            }
-            
-            /// <summary>
-            /// Fill the data.
-            /// </summary>
-            public virtual WorkflowTask TolerantMap(IDataReader reader) {
-                WorkflowTask data = new WorkflowTask();
-                Fullup(reader, data, false);
-                return data;
-            }
-            
-            /// <summary>
-            /// Fill the data.
-            /// </summary>
-            public virtual List<WorkflowTask> MapList(IDataReader reader) {
-                List<WorkflowTask> list = new List<WorkflowTask>();
-                try {
-                    for (; reader.Read(); ) {
-                        list.Add(Map(reader));
-                    }
-                }
-                finally {
-                    reader.Close();
-                }
-                return list;
-            }
-            
-            /// <summary>
-            /// Fill the data.
-            /// </summary>
-            public virtual List<WorkflowTask> TolerantMapList(IDataReader reader) {
-                List<WorkflowTask> list = new List<WorkflowTask>();
                 try {
                     for (; reader.Read(); ) {
                         list.Add(TolerantMap(reader));
@@ -14600,6 +14537,272 @@ namespace Business {
         }
         
         /// <summary>
+        ///  DalBase
+        /// </summary>
+        public partial class BugDalBase : APDal {
+            
+            public BugDalBase() {
+            }
+            
+            public BugDalBase(APDatabase db) : 
+                    base(db) {
+            }
+            
+            /// <summary>
+            /// Insert Data.
+            /// </summary>
+            public virtual void Insert(Bug data) {
+                var query = APQuery.insert(APDBDef.Bug).values(APDBDef.Bug.BugId.SetValue(data.BugId), APDBDef.Bug.SortId.SetValue(data.SortId), APDBDef.Bug.BugLevel.SetValue(data.BugLevel), APDBDef.Bug.BugType.SetValue(data.BugType), APDBDef.Bug.BugStatus.SetValue(data.BugStatus), APDBDef.Bug.ManagerId.SetValue(data.ManagerId), APDBDef.Bug.Content.SetValue(data.Content), APDBDef.Bug.CreatorId.SetValue(data.CreatorId), APDBDef.Bug.SystemId.SetValue(data.SystemId), APDBDef.Bug.Browser.SetValue(data.Browser), APDBDef.Bug.CreateDate.SetValue(data.CreateDate), APDBDef.Bug.FixDate.SetValue(data.FixDate));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public virtual void Update(Bug data) {
+                var query = APQuery.update(APDBDef.Bug).values(APDBDef.Bug.SortId.SetValue(data.SortId), APDBDef.Bug.BugLevel.SetValue(data.BugLevel), APDBDef.Bug.BugType.SetValue(data.BugType), APDBDef.Bug.BugStatus.SetValue(data.BugStatus), APDBDef.Bug.ManagerId.SetValue(data.ManagerId), APDBDef.Bug.Content.SetValue(data.Content), APDBDef.Bug.CreatorId.SetValue(data.CreatorId), APDBDef.Bug.SystemId.SetValue(data.SystemId), APDBDef.Bug.Browser.SetValue(data.Browser), APDBDef.Bug.CreateDate.SetValue(data.CreateDate), APDBDef.Bug.FixDate.SetValue(data.FixDate)).where((APDBDef.Bug.BugId == data.BugId));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public virtual void UpdatePartial(System.Guid bugId, Object metadata) {
+                var query = APQuery.update(APDBDef.Bug).values(APSqlSetPhraseSelector.Select(APDBDef.Bug, metadata)).where((APDBDef.Bug.BugId == bugId));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Delete data by primary key.
+            /// </summary>
+            public virtual void PrimaryDelete(System.Guid bugId) {
+                var query = APQuery.delete(APDBDef.Bug).where((APDBDef.Bug.BugId == bugId));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Delete data by condition.
+            /// </summary>
+            public virtual void ConditionDelete(APSqlWherePhrase condition) {
+                var query = APQuery.delete(APDBDef.Bug).where(condition);
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Query count by condition.
+            /// </summary>
+            public virtual int ConditionQueryCount(APSqlWherePhrase condition) {
+                var query = APQuery.select(APDBDef.Bug.Asterisk.Count()).from(APDBDef.Bug).where(condition);
+                return ExecuteCount(query);
+            }
+            
+            /// <summary>
+            /// Get data by PK.
+            /// </summary>
+            public virtual Bug PrimaryGet(System.Guid bugId) {
+                var query = APQuery.select(APDBDef.Bug.Asterisk).from(APDBDef.Bug).where((APDBDef.Bug.BugId == bugId));
+                IDataReader reader = ExecuteReader(query);
+                try {
+                    if (reader.Read()) {
+                        return APDBDef.Bug.Map(reader);
+                    }
+                    return null;
+                }
+                finally {
+                    reader.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public virtual List<Bug> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+                var query = APQuery.select(APDBDef.Bug.Asterisk).from(APDBDef.Bug);
+                if ((condition != null)) {
+                    query.where(condition);
+                }
+                if ((orderBy != null)) {
+                    query.order_by(orderBy);
+                }
+                if ((take != null)) {
+                    query.take(take);
+                }
+                if ((skip != null)) {
+                    query.skip(skip);
+                }
+                query.primary(APDBDef.Bug.BugId);
+                IDataReader reader = ExecuteReader(query);
+                return APDBDef.Bug.MapList(reader);
+            }
+            
+            /// <summary>
+            /// Get the initial data of the table.
+            /// </summary>
+            public virtual List<Bug> GetInitData() {
+                return new List<Bug>();
+            }
+            
+            /// <summary>
+            /// Initialize data.
+            /// </summary>
+            public virtual void InitData(APDBDef db) {
+                List<Bug> list = GetInitData();
+                for (int i = 0; (i < list.Count); i = (i + 1)) {
+                    Bug data = list[i];
+                    if ((PrimaryGet(data.BugId) == null)) {
+                        Insert(data);
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        ///  Dal
+        /// </summary>
+        public partial class BugDal : BugDalBase {
+            
+            public BugDal() {
+            }
+            
+            public BugDal(APDatabase db) : 
+                    base(db) {
+            }
+        }
+        
+        /// <summary>
+        ///  DalBase
+        /// </summary>
+        public partial class TaskBugsDalBase : APDal {
+            
+            public TaskBugsDalBase() {
+            }
+            
+            public TaskBugsDalBase(APDatabase db) : 
+                    base(db) {
+            }
+            
+            /// <summary>
+            /// Insert Data.
+            /// </summary>
+            public virtual void Insert(TaskBugs data) {
+                var query = APQuery.insert(APDBDef.TaskBugs).values(APDBDef.TaskBugs.TaskId.SetValue(data.TaskId), APDBDef.TaskBugs.BugId.SetValue(data.BugId));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public virtual void Update(TaskBugs data) {
+                var query = APQuery.update(APDBDef.TaskBugs).values(APDBDef.TaskBugs.BugId.SetValue(data.BugId)).where((APDBDef.TaskBugs.TaskId == data.TaskId));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public virtual void UpdatePartial(System.Guid taskId, Object metadata) {
+                var query = APQuery.update(APDBDef.TaskBugs).values(APSqlSetPhraseSelector.Select(APDBDef.TaskBugs, metadata)).where((APDBDef.TaskBugs.TaskId == taskId));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Delete data by primary key.
+            /// </summary>
+            public virtual void PrimaryDelete(System.Guid taskId) {
+                var query = APQuery.delete(APDBDef.TaskBugs).where((APDBDef.TaskBugs.TaskId == taskId));
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Delete data by condition.
+            /// </summary>
+            public virtual void ConditionDelete(APSqlWherePhrase condition) {
+                var query = APQuery.delete(APDBDef.TaskBugs).where(condition);
+                ExecuteNonQuery(query);
+            }
+            
+            /// <summary>
+            /// Query count by condition.
+            /// </summary>
+            public virtual int ConditionQueryCount(APSqlWherePhrase condition) {
+                var query = APQuery.select(APDBDef.TaskBugs.Asterisk.Count()).from(APDBDef.TaskBugs).where(condition);
+                return ExecuteCount(query);
+            }
+            
+            /// <summary>
+            /// Get data by PK.
+            /// </summary>
+            public virtual TaskBugs PrimaryGet(System.Guid taskId) {
+                var query = APQuery.select(APDBDef.TaskBugs.Asterisk).from(APDBDef.TaskBugs).where((APDBDef.TaskBugs.TaskId == taskId));
+                IDataReader reader = ExecuteReader(query);
+                try {
+                    if (reader.Read()) {
+                        return APDBDef.TaskBugs.Map(reader);
+                    }
+                    return null;
+                }
+                finally {
+                    reader.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public virtual List<TaskBugs> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+                var query = APQuery.select(APDBDef.TaskBugs.Asterisk).from(APDBDef.TaskBugs);
+                if ((condition != null)) {
+                    query.where(condition);
+                }
+                if ((orderBy != null)) {
+                    query.order_by(orderBy);
+                }
+                if ((take != null)) {
+                    query.take(take);
+                }
+                if ((skip != null)) {
+                    query.skip(skip);
+                }
+                query.primary(APDBDef.TaskBugs.TaskId);
+                IDataReader reader = ExecuteReader(query);
+                return APDBDef.TaskBugs.MapList(reader);
+            }
+            
+            /// <summary>
+            /// Get the initial data of the table.
+            /// </summary>
+            public virtual List<TaskBugs> GetInitData() {
+                return new List<TaskBugs>();
+            }
+            
+            /// <summary>
+            /// Initialize data.
+            /// </summary>
+            public virtual void InitData(APDBDef db) {
+                List<TaskBugs> list = GetInitData();
+                for (int i = 0; (i < list.Count); i = (i + 1)) {
+                    TaskBugs data = list[i];
+                    if ((PrimaryGet(data.TaskId) == null)) {
+                        Insert(data);
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        ///  Dal
+        /// </summary>
+        public partial class TaskBugsDal : TaskBugsDalBase {
+            
+            public TaskBugsDal() {
+            }
+            
+            public TaskBugsDal(APDatabase db) : 
+                    base(db) {
+            }
+        }
+        
+        /// <summary>
         /// 工作日志 DalBase
         /// </summary>
         public partial class WorkJournalDalBase : APDal {
@@ -15260,139 +15463,6 @@ namespace Business {
             }
             
             public WorkflowDal(APDatabase db) : 
-                    base(db) {
-            }
-        }
-        
-        /// <summary>
-        /// 流程任务（专属于第三方工作流） DalBase
-        /// </summary>
-        public partial class WorkflowTaskDalBase : APDal {
-            
-            public WorkflowTaskDalBase() {
-            }
-            
-            public WorkflowTaskDalBase(APDatabase db) : 
-                    base(db) {
-            }
-            
-            /// <summary>
-            /// Insert Data.
-            /// </summary>
-            public virtual void Insert(WorkflowTask data) {
-                var query = APQuery.insert(APDBDef.WorkflowTask).values(APDBDef.WorkflowTask.TaskId.SetValue(data.TaskId), APDBDef.WorkflowTask.PrevID.SetValue(data.PrevID), APDBDef.WorkflowTask.PrevStepID.SetValue(data.PrevStepID), APDBDef.WorkflowTask.FlowId.SetValue(data.FlowId), APDBDef.WorkflowTask.StepID.SetValue(data.StepID), APDBDef.WorkflowTask.StepName.SetValue(data.StepName), APDBDef.WorkflowTask.SenderName.SetValue(data.SenderName), APDBDef.WorkflowTask.ReceiveName.SetValue(data.ReceiveName), APDBDef.WorkflowTask.InstanceID.SetValue(data.InstanceID), APDBDef.WorkflowTask.GroupID.SetValue(data.GroupID), APDBDef.WorkflowTask.Type.SetValue(data.Type), APDBDef.WorkflowTask.Title.SetValue(data.Title), APDBDef.WorkflowTask.SenderID.SetValue(data.SenderID), APDBDef.WorkflowTask.ReceiveID.SetValue(data.ReceiveID), APDBDef.WorkflowTask.SenderTime.SetValue(data.SenderTime), APDBDef.WorkflowTask.ReceiveTime.SetValue(data.ReceiveTime), APDBDef.WorkflowTask.OpenTime.SetValue(data.OpenTime), APDBDef.WorkflowTask.CompletedTime.SetValue(data.CompletedTime), APDBDef.WorkflowTask.CompletedTime1.SetValue(data.CompletedTime1), APDBDef.WorkflowTask.Comment.SetValue(data.Comment), APDBDef.WorkflowTask.IsSign.SetValue(data.IsSign), APDBDef.WorkflowTask.Status.SetValue(data.Status), APDBDef.WorkflowTask.Note.SetValue(data.Note), APDBDef.WorkflowTask.Sort.SetValue(data.Sort), APDBDef.WorkflowTask.SubFlowGroupID.SetValue(data.SubFlowGroupID));
-                ExecuteNonQuery(query);
-            }
-            
-            /// <summary>
-            /// Update Data.
-            /// </summary>
-            public virtual void Update(WorkflowTask data) {
-                var query = APQuery.update(APDBDef.WorkflowTask).values(APDBDef.WorkflowTask.PrevID.SetValue(data.PrevID), APDBDef.WorkflowTask.PrevStepID.SetValue(data.PrevStepID), APDBDef.WorkflowTask.FlowId.SetValue(data.FlowId), APDBDef.WorkflowTask.StepID.SetValue(data.StepID), APDBDef.WorkflowTask.StepName.SetValue(data.StepName), APDBDef.WorkflowTask.SenderName.SetValue(data.SenderName), APDBDef.WorkflowTask.ReceiveName.SetValue(data.ReceiveName), APDBDef.WorkflowTask.InstanceID.SetValue(data.InstanceID), APDBDef.WorkflowTask.GroupID.SetValue(data.GroupID), APDBDef.WorkflowTask.Type.SetValue(data.Type), APDBDef.WorkflowTask.Title.SetValue(data.Title), APDBDef.WorkflowTask.SenderID.SetValue(data.SenderID), APDBDef.WorkflowTask.ReceiveID.SetValue(data.ReceiveID), APDBDef.WorkflowTask.SenderTime.SetValue(data.SenderTime), APDBDef.WorkflowTask.ReceiveTime.SetValue(data.ReceiveTime), APDBDef.WorkflowTask.OpenTime.SetValue(data.OpenTime), APDBDef.WorkflowTask.CompletedTime.SetValue(data.CompletedTime), APDBDef.WorkflowTask.CompletedTime1.SetValue(data.CompletedTime1), APDBDef.WorkflowTask.Comment.SetValue(data.Comment), APDBDef.WorkflowTask.IsSign.SetValue(data.IsSign), APDBDef.WorkflowTask.Status.SetValue(data.Status), APDBDef.WorkflowTask.Note.SetValue(data.Note), APDBDef.WorkflowTask.Sort.SetValue(data.Sort), APDBDef.WorkflowTask.SubFlowGroupID.SetValue(data.SubFlowGroupID)).where((APDBDef.WorkflowTask.TaskId == data.TaskId));
-                ExecuteNonQuery(query);
-            }
-            
-            /// <summary>
-            /// Update Data.
-            /// </summary>
-            public virtual void UpdatePartial(System.Guid taskId, Object metadata) {
-                var query = APQuery.update(APDBDef.WorkflowTask).values(APSqlSetPhraseSelector.Select(APDBDef.WorkflowTask, metadata)).where((APDBDef.WorkflowTask.TaskId == taskId));
-                ExecuteNonQuery(query);
-            }
-            
-            /// <summary>
-            /// Delete data by primary key.
-            /// </summary>
-            public virtual void PrimaryDelete(System.Guid taskId) {
-                var query = APQuery.delete(APDBDef.WorkflowTask).where((APDBDef.WorkflowTask.TaskId == taskId));
-                ExecuteNonQuery(query);
-            }
-            
-            /// <summary>
-            /// Delete data by condition.
-            /// </summary>
-            public virtual void ConditionDelete(APSqlWherePhrase condition) {
-                var query = APQuery.delete(APDBDef.WorkflowTask).where(condition);
-                ExecuteNonQuery(query);
-            }
-            
-            /// <summary>
-            /// Query count by condition.
-            /// </summary>
-            public virtual int ConditionQueryCount(APSqlWherePhrase condition) {
-                var query = APQuery.select(APDBDef.WorkflowTask.Asterisk.Count()).from(APDBDef.WorkflowTask).where(condition);
-                return ExecuteCount(query);
-            }
-            
-            /// <summary>
-            /// Get data by PK.
-            /// </summary>
-            public virtual WorkflowTask PrimaryGet(System.Guid taskId) {
-                var query = APQuery.select(APDBDef.WorkflowTask.Asterisk).from(APDBDef.WorkflowTask).where((APDBDef.WorkflowTask.TaskId == taskId));
-                IDataReader reader = ExecuteReader(query);
-                try {
-                    if (reader.Read()) {
-                        return APDBDef.WorkflowTask.Map(reader);
-                    }
-                    return null;
-                }
-                finally {
-                    reader.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Query by condition.
-            /// </summary>
-            public virtual List<WorkflowTask> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
-                var query = APQuery.select(APDBDef.WorkflowTask.Asterisk).from(APDBDef.WorkflowTask);
-                if ((condition != null)) {
-                    query.where(condition);
-                }
-                if ((orderBy != null)) {
-                    query.order_by(orderBy);
-                }
-                if ((take != null)) {
-                    query.take(take);
-                }
-                if ((skip != null)) {
-                    query.skip(skip);
-                }
-                query.primary(APDBDef.WorkflowTask.TaskId);
-                IDataReader reader = ExecuteReader(query);
-                return APDBDef.WorkflowTask.MapList(reader);
-            }
-            
-            /// <summary>
-            /// Get the initial data of the table.
-            /// </summary>
-            public virtual List<WorkflowTask> GetInitData() {
-                return new List<WorkflowTask>();
-            }
-            
-            /// <summary>
-            /// Initialize data.
-            /// </summary>
-            public virtual void InitData(APDBDef db) {
-                List<WorkflowTask> list = GetInitData();
-                for (int i = 0; (i < list.Count); i = (i + 1)) {
-                    WorkflowTask data = list[i];
-                    if ((PrimaryGet(data.TaskId) == null)) {
-                        Insert(data);
-                    }
-                }
-            }
-        }
-        
-        /// <summary>
-        /// 流程任务（专属于第三方工作流） Dal
-        /// </summary>
-        public partial class WorkflowTaskDal : WorkflowTaskDalBase {
-            
-            public WorkflowTaskDal() {
-            }
-            
-            public WorkflowTaskDal(APDatabase db) : 
                     base(db) {
             }
         }
@@ -20794,6 +20864,304 @@ namespace Business {
         }
         
         /// <summary>
+        ///  BplBase
+        /// </summary>
+        public partial class BugBplBase {
+            
+            /// <summary>
+            /// Insert Data.
+            /// </summary>
+            public static void Insert(Bug data) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.BugDal.Insert(data);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public static void Update(Bug data) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.BugDal.Update(data);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public static void UpdatePartial(System.Guid bugId, Object metadata) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.BugDal.UpdatePartial(bugId, metadata);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Delete data by primary key.
+            /// </summary>
+            public static void PrimaryDelete(System.Guid bugId) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.BugDal.PrimaryDelete(bugId);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Delete data by condition.
+            /// </summary>
+            public static void ConditionDelete(APSqlWherePhrase condition) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.BugDal.ConditionDelete(condition);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query count by condition.
+            /// </summary>
+            public static int ConditionQueryCount(APSqlWherePhrase condition) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.BugDal.ConditionQueryCount(condition);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Get data by PK.
+            /// </summary>
+            public static Bug PrimaryGet(System.Guid bugId) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.BugDal.PrimaryGet(bugId);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<Bug> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.BugDal.ConditionQuery(condition, orderBy, take, skip);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<Bug> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.BugDal.ConditionQuery(condition, orderBy, take, null);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<Bug> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.BugDal.ConditionQuery(condition, orderBy, null, null);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Get all data.
+            /// </summary>
+            public static List<Bug> GetAll() {
+                return ConditionQuery(null, null);
+            }
+        }
+        
+        /// <summary>
+        ///  Dal
+        /// </summary>
+        public partial class BugBpl : BugBplBase {
+        }
+        
+        /// <summary>
+        ///  BplBase
+        /// </summary>
+        public partial class TaskBugsBplBase {
+            
+            /// <summary>
+            /// Insert Data.
+            /// </summary>
+            public static void Insert(TaskBugs data) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.TaskBugsDal.Insert(data);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public static void Update(TaskBugs data) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.TaskBugsDal.Update(data);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Update Data.
+            /// </summary>
+            public static void UpdatePartial(System.Guid taskId, Object metadata) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.TaskBugsDal.UpdatePartial(taskId, metadata);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Delete data by primary key.
+            /// </summary>
+            public static void PrimaryDelete(System.Guid taskId) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.TaskBugsDal.PrimaryDelete(taskId);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Delete data by condition.
+            /// </summary>
+            public static void ConditionDelete(APSqlWherePhrase condition) {
+                APDBDef db = new APDBDef();
+                try {
+                    db.TaskBugsDal.ConditionDelete(condition);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query count by condition.
+            /// </summary>
+            public static int ConditionQueryCount(APSqlWherePhrase condition) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.TaskBugsDal.ConditionQueryCount(condition);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Get data by PK.
+            /// </summary>
+            public static TaskBugs PrimaryGet(System.Guid taskId) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.TaskBugsDal.PrimaryGet(taskId);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<TaskBugs> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.TaskBugsDal.ConditionQuery(condition, orderBy, take, skip);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<TaskBugs> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.TaskBugsDal.ConditionQuery(condition, orderBy, take, null);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Query by condition.
+            /// </summary>
+            public static List<TaskBugs> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+                APDBDef db = new APDBDef();
+                try {
+                    return db.TaskBugsDal.ConditionQuery(condition, orderBy, null, null);
+                }
+                finally {
+                    db.Close();
+                }
+            }
+            
+            /// <summary>
+            /// Get all data.
+            /// </summary>
+            public static List<TaskBugs> GetAll() {
+                return ConditionQuery(null, null);
+            }
+        }
+        
+        /// <summary>
+        ///  Dal
+        /// </summary>
+        public partial class TaskBugsBpl : TaskBugsBplBase {
+        }
+        
+        /// <summary>
         /// 工作日志 BplBase
         /// </summary>
         public partial class WorkJournalBplBase {
@@ -21536,155 +21904,6 @@ namespace Business {
         /// 流程 Dal
         /// </summary>
         public partial class WorkflowBpl : WorkflowBplBase {
-        }
-        
-        /// <summary>
-        /// 流程任务（专属于第三方工作流） BplBase
-        /// </summary>
-        public partial class WorkflowTaskBplBase {
-            
-            /// <summary>
-            /// Insert Data.
-            /// </summary>
-            public static void Insert(WorkflowTask data) {
-                APDBDef db = new APDBDef();
-                try {
-                    db.WorkflowTaskDal.Insert(data);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Update Data.
-            /// </summary>
-            public static void Update(WorkflowTask data) {
-                APDBDef db = new APDBDef();
-                try {
-                    db.WorkflowTaskDal.Update(data);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Update Data.
-            /// </summary>
-            public static void UpdatePartial(System.Guid taskId, Object metadata) {
-                APDBDef db = new APDBDef();
-                try {
-                    db.WorkflowTaskDal.UpdatePartial(taskId, metadata);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Delete data by primary key.
-            /// </summary>
-            public static void PrimaryDelete(System.Guid taskId) {
-                APDBDef db = new APDBDef();
-                try {
-                    db.WorkflowTaskDal.PrimaryDelete(taskId);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Delete data by condition.
-            /// </summary>
-            public static void ConditionDelete(APSqlWherePhrase condition) {
-                APDBDef db = new APDBDef();
-                try {
-                    db.WorkflowTaskDal.ConditionDelete(condition);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Query count by condition.
-            /// </summary>
-            public static int ConditionQueryCount(APSqlWherePhrase condition) {
-                APDBDef db = new APDBDef();
-                try {
-                    return db.WorkflowTaskDal.ConditionQueryCount(condition);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Get data by PK.
-            /// </summary>
-            public static WorkflowTask PrimaryGet(System.Guid taskId) {
-                APDBDef db = new APDBDef();
-                try {
-                    return db.WorkflowTaskDal.PrimaryGet(taskId);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Query by condition.
-            /// </summary>
-            public static List<WorkflowTask> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take, System.Nullable<int> skip) {
-                APDBDef db = new APDBDef();
-                try {
-                    return db.WorkflowTaskDal.ConditionQuery(condition, orderBy, take, skip);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Query by condition.
-            /// </summary>
-            public static List<WorkflowTask> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, System.Nullable<int> take) {
-                APDBDef db = new APDBDef();
-                try {
-                    return db.WorkflowTaskDal.ConditionQuery(condition, orderBy, take, null);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Query by condition.
-            /// </summary>
-            public static List<WorkflowTask> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
-                APDBDef db = new APDBDef();
-                try {
-                    return db.WorkflowTaskDal.ConditionQuery(condition, orderBy, null, null);
-                }
-                finally {
-                    db.Close();
-                }
-            }
-            
-            /// <summary>
-            /// Get all data.
-            /// </summary>
-            public static List<WorkflowTask> GetAll() {
-                return ConditionQuery(null, null);
-            }
-        }
-        
-        /// <summary>
-        /// 流程任务（专属于第三方工作流） Dal
-        /// </summary>
-        public partial class WorkflowTaskBpl : WorkflowTaskBplBase {
         }
         
         /// <summary>
@@ -34550,6 +34769,746 @@ namespace Business {
     }
     
     /// <summary>
+    ///  Base
+    /// </summary>
+    [Serializable()]
+    public abstract partial class BugBase {
+        
+        /// <summary>
+        /// BugId
+        /// </summary>
+        private System.Guid _bugId;
+        
+        /// <summary>
+        /// 排序Id
+        /// </summary>
+        private int _sortId;
+        
+        /// <summary>
+        /// BugLevel
+        /// </summary>
+        private int _bugLevel = 1;
+        
+        /// <summary>
+        /// BugType
+        /// </summary>
+        private System.Guid _bugType;
+        
+        /// <summary>
+        /// BugStatus
+        /// </summary>
+        private System.Guid _bugStatus;
+        
+        /// <summary>
+        /// ManagerId
+        /// </summary>
+        private System.Guid _managerId;
+        
+        /// <summary>
+        /// Content
+        /// </summary>
+        private string _content;
+        
+        /// <summary>
+        /// CreatorId
+        /// </summary>
+        private System.Guid _creatorId;
+        
+        /// <summary>
+        /// SystemId
+        /// </summary>
+        private System.Guid _systemId;
+        
+        /// <summary>
+        /// Browser
+        /// </summary>
+        private System.Guid _browser;
+        
+        /// <summary>
+        /// CreateDate
+        /// </summary>
+        private System.DateTime _createDate = DateTime.Now;
+        
+        /// <summary>
+        /// FixDate
+        /// </summary>
+        private System.DateTime _fixDate = DateTime.Now;
+        
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public BugBase() {
+        }
+        
+        /// <summary>
+        /// Constructor with all field values.
+        /// </summary>
+        public BugBase(System.Guid bugId, int sortId, int bugLevel, System.Guid bugType, System.Guid bugStatus, System.Guid managerId, string content, System.Guid creatorId, System.Guid systemId, System.Guid browser, System.DateTime createDate, System.DateTime fixDate) {
+            _bugId = bugId;
+            _sortId = sortId;
+            _bugLevel = bugLevel;
+            _bugType = bugType;
+            _bugStatus = bugStatus;
+            _managerId = managerId;
+            _content = content;
+            _creatorId = creatorId;
+            _systemId = systemId;
+            _browser = browser;
+            _createDate = createDate;
+            _fixDate = fixDate;
+        }
+        
+        /// <summary>
+        /// BugId
+        /// </summary>
+        [Display(Name="bugID")]
+        public virtual System.Guid BugId {
+            get {
+                return _bugId;
+            }
+            set {
+                _bugId = value;
+            }
+        }
+        
+        /// <summary>
+        /// BugId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef BugIdDef {
+            get {
+                return APDBDef.Bug.BugId;
+            }
+        }
+        
+        /// <summary>
+        /// 排序Id
+        /// </summary>
+        public virtual int SortId {
+            get {
+                return _sortId;
+            }
+            set {
+                _sortId = value;
+            }
+        }
+        
+        /// <summary>
+        /// 排序Id APColumnDef
+        /// </summary>
+        public static Int32APColumnDef SortIdDef {
+            get {
+                return APDBDef.Bug.SortId;
+            }
+        }
+        
+        /// <summary>
+        /// BugLevel
+        /// </summary>
+        [Display(Name="bug级别")]
+        public virtual int BugLevel {
+            get {
+                return _bugLevel;
+            }
+            set {
+                _bugLevel = value;
+            }
+        }
+        
+        /// <summary>
+        /// BugLevel APColumnDef
+        /// </summary>
+        public static Int32APColumnDef BugLevelDef {
+            get {
+                return APDBDef.Bug.BugLevel;
+            }
+        }
+        
+        /// <summary>
+        /// BugType
+        /// </summary>
+        [Display(Name="bug类型")]
+        public virtual System.Guid BugType {
+            get {
+                return _bugType;
+            }
+            set {
+                _bugType = value;
+            }
+        }
+        
+        /// <summary>
+        /// BugType APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef BugTypeDef {
+            get {
+                return APDBDef.Bug.BugType;
+            }
+        }
+        
+        /// <summary>
+        /// BugStatus
+        /// </summary>
+        [Display(Name="bug状态")]
+        public virtual System.Guid BugStatus {
+            get {
+                return _bugStatus;
+            }
+            set {
+                _bugStatus = value;
+            }
+        }
+        
+        /// <summary>
+        /// BugStatus APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef BugStatusDef {
+            get {
+                return APDBDef.Bug.BugStatus;
+            }
+        }
+        
+        /// <summary>
+        /// ManagerId
+        /// </summary>
+        [Display(Name="bug负责人ID")]
+        public virtual System.Guid ManagerId {
+            get {
+                return _managerId;
+            }
+            set {
+                _managerId = value;
+            }
+        }
+        
+        /// <summary>
+        /// ManagerId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef ManagerIdDef {
+            get {
+                return APDBDef.Bug.ManagerId;
+            }
+        }
+        
+        /// <summary>
+        /// Content
+        /// </summary>
+        [Display(Name="bug内容")]
+        [StringLength(40000)]
+        public virtual string Content {
+            get {
+                return _content;
+            }
+            set {
+                _content = value;
+            }
+        }
+        
+        /// <summary>
+        /// Content APColumnDef
+        /// </summary>
+        public static StringAPColumnDef ContentDef {
+            get {
+                return APDBDef.Bug.Content;
+            }
+        }
+        
+        /// <summary>
+        /// CreatorId
+        /// </summary>
+        [Display(Name="任务创建者ID")]
+        public virtual System.Guid CreatorId {
+            get {
+                return _creatorId;
+            }
+            set {
+                _creatorId = value;
+            }
+        }
+        
+        /// <summary>
+        /// CreatorId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef CreatorIdDef {
+            get {
+                return APDBDef.Bug.CreatorId;
+            }
+        }
+        
+        /// <summary>
+        /// SystemId
+        /// </summary>
+        [Display(Name="系统ID")]
+        public virtual System.Guid SystemId {
+            get {
+                return _systemId;
+            }
+            set {
+                _systemId = value;
+            }
+        }
+        
+        /// <summary>
+        /// SystemId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef SystemIdDef {
+            get {
+                return APDBDef.Bug.SystemId;
+            }
+        }
+        
+        /// <summary>
+        /// Browser
+        /// </summary>
+        [Display(Name="浏览器ID")]
+        public virtual System.Guid Browser {
+            get {
+                return _browser;
+            }
+            set {
+                _browser = value;
+            }
+        }
+        
+        /// <summary>
+        /// Browser APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef BrowserDef {
+            get {
+                return APDBDef.Bug.Browser;
+            }
+        }
+        
+        /// <summary>
+        /// CreateDate
+        /// </summary>
+        [Display(Name="创建时间")]
+        public virtual System.DateTime CreateDate {
+            get {
+                return _createDate;
+            }
+            set {
+                _createDate = value;
+            }
+        }
+        
+        /// <summary>
+        /// CreateDate APColumnDef
+        /// </summary>
+        public static DateTimeAPColumnDef CreateDateDef {
+            get {
+                return APDBDef.Bug.CreateDate;
+            }
+        }
+        
+        /// <summary>
+        /// FixDate
+        /// </summary>
+        [Display(Name="解决时间")]
+        public virtual System.DateTime FixDate {
+            get {
+                return _fixDate;
+            }
+            set {
+                _fixDate = value;
+            }
+        }
+        
+        /// <summary>
+        /// FixDate APColumnDef
+        /// </summary>
+        public static DateTimeAPColumnDef FixDateDef {
+            get {
+                return APDBDef.Bug.FixDate;
+            }
+        }
+        
+        /// <summary>
+        /// BugTableDef APTableDef
+        /// </summary>
+        public static APDBDef.BugTableDef TableDef {
+            get {
+                return APDBDef.Bug;
+            }
+        }
+        
+        /// <summary>
+        /// BugTableDef APSqlAsteriskExpr
+        /// </summary>
+        public static APSqlAsteriskExpr Asterisk {
+            get {
+                return APDBDef.Bug.Asterisk;
+            }
+        }
+        
+        /// <summary>
+        /// Assignment.
+        /// </summary>
+        public virtual void Assignment(Bug data) {
+            BugId = data.BugId;
+            SortId = data.SortId;
+            BugLevel = data.BugLevel;
+            BugType = data.BugType;
+            BugStatus = data.BugStatus;
+            ManagerId = data.ManagerId;
+            Content = data.Content;
+            CreatorId = data.CreatorId;
+            SystemId = data.SystemId;
+            Browser = data.Browser;
+            CreateDate = data.CreateDate;
+            FixDate = data.FixDate;
+        }
+        
+        /// <summary>
+        /// Compare equals.
+        /// </summary>
+        public virtual bool CompareEquals(Bug data) {
+            if ((BugId != data.BugId)) {
+                return false;
+            }
+            if ((SortId != data.SortId)) {
+                return false;
+            }
+            if ((BugLevel != data.BugLevel)) {
+                return false;
+            }
+            if ((BugType != data.BugType)) {
+                return false;
+            }
+            if ((BugStatus != data.BugStatus)) {
+                return false;
+            }
+            if ((ManagerId != data.ManagerId)) {
+                return false;
+            }
+            if ((Content != data.Content)) {
+                return false;
+            }
+            if ((CreatorId != data.CreatorId)) {
+                return false;
+            }
+            if ((SystemId != data.SystemId)) {
+                return false;
+            }
+            if ((Browser != data.Browser)) {
+                return false;
+            }
+            if ((CreateDate != data.CreateDate)) {
+                return false;
+            }
+            if ((FixDate != data.FixDate)) {
+                return false;
+            }
+            return true;
+        }
+        
+        /// <summary>
+        /// Insert Data.
+        /// </summary>
+        public virtual void Insert() {
+            APBplDef.BugBpl.Insert(((Bug)(this)));
+        }
+        
+        /// <summary>
+        /// Update Data.
+        /// </summary>
+        public virtual void Update() {
+            APBplDef.BugBpl.Update(((Bug)(this)));
+        }
+        
+        /// <summary>
+        /// Update Data.
+        /// </summary>
+        public static void UpdatePartial(System.Guid bugId, Object metadata) {
+            APBplDef.BugBpl.UpdatePartial(bugId, metadata);
+        }
+        
+        /// <summary>
+        /// Delete data by primary key.
+        /// </summary>
+        public static void PrimaryDelete(System.Guid bugId) {
+            APBplDef.BugBpl.PrimaryDelete(bugId);
+        }
+        
+        /// <summary>
+        /// Delete data by condition.
+        /// </summary>
+        public static void ConditionDelete(APSqlWherePhrase condition) {
+            APBplDef.BugBpl.ConditionDelete(condition);
+        }
+        
+        /// <summary>
+        /// Query count by condition.
+        /// </summary>
+        public static int ConditionQueryCount(APSqlWherePhrase condition) {
+            return APBplDef.BugBpl.ConditionQueryCount(condition);
+        }
+        
+        /// <summary>
+        /// Get data by PK.
+        /// </summary>
+        public static Bug PrimaryGet(System.Guid bugId) {
+            return APBplDef.BugBpl.PrimaryGet(bugId);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<Bug> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take, int skip) {
+            return APBplDef.BugBpl.ConditionQuery(condition, orderBy, take, skip);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<Bug> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take) {
+            return APBplDef.BugBpl.ConditionQuery(condition, orderBy, take);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<Bug> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+            return APBplDef.BugBpl.ConditionQuery(condition, orderBy);
+        }
+        
+        /// <summary>
+        /// Get all data.
+        /// </summary>
+        public static List<Bug> GetAll() {
+            return APBplDef.BugBpl.GetAll();
+        }
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    [Serializable()]
+    public partial class Bug : BugBase {
+        
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public Bug() {
+        }
+        
+        /// <summary>
+        /// Constructor with all field values.
+        /// </summary>
+        public Bug(System.Guid bugId, int sortId, int bugLevel, System.Guid bugType, System.Guid bugStatus, System.Guid managerId, string content, System.Guid creatorId, System.Guid systemId, System.Guid browser, System.DateTime createDate, System.DateTime fixDate) : 
+                base(bugId, sortId, bugLevel, bugType, bugStatus, managerId, content, creatorId, systemId, browser, createDate, fixDate) {
+        }
+    }
+    
+    /// <summary>
+    ///  Base
+    /// </summary>
+    [Serializable()]
+    public abstract partial class TaskBugsBase {
+        
+        /// <summary>
+        /// TaskId
+        /// </summary>
+        private System.Guid _taskId;
+        
+        /// <summary>
+        /// BugId
+        /// </summary>
+        private System.Guid _bugId;
+        
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public TaskBugsBase() {
+        }
+        
+        /// <summary>
+        /// Constructor with all field values.
+        /// </summary>
+        public TaskBugsBase(System.Guid taskId, System.Guid bugId) {
+            _taskId = taskId;
+            _bugId = bugId;
+        }
+        
+        /// <summary>
+        /// TaskId
+        /// </summary>
+        public virtual System.Guid TaskId {
+            get {
+                return _taskId;
+            }
+            set {
+                _taskId = value;
+            }
+        }
+        
+        /// <summary>
+        /// TaskId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef TaskIdDef {
+            get {
+                return APDBDef.TaskBugs.TaskId;
+            }
+        }
+        
+        /// <summary>
+        /// BugId
+        /// </summary>
+        public virtual System.Guid BugId {
+            get {
+                return _bugId;
+            }
+            set {
+                _bugId = value;
+            }
+        }
+        
+        /// <summary>
+        /// BugId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef BugIdDef {
+            get {
+                return APDBDef.TaskBugs.BugId;
+            }
+        }
+        
+        /// <summary>
+        /// TaskBugsTableDef APTableDef
+        /// </summary>
+        public static APDBDef.TaskBugsTableDef TableDef {
+            get {
+                return APDBDef.TaskBugs;
+            }
+        }
+        
+        /// <summary>
+        /// TaskBugsTableDef APSqlAsteriskExpr
+        /// </summary>
+        public static APSqlAsteriskExpr Asterisk {
+            get {
+                return APDBDef.TaskBugs.Asterisk;
+            }
+        }
+        
+        /// <summary>
+        /// Assignment.
+        /// </summary>
+        public virtual void Assignment(TaskBugs data) {
+            TaskId = data.TaskId;
+            BugId = data.BugId;
+        }
+        
+        /// <summary>
+        /// Compare equals.
+        /// </summary>
+        public virtual bool CompareEquals(TaskBugs data) {
+            if ((TaskId != data.TaskId)) {
+                return false;
+            }
+            if ((BugId != data.BugId)) {
+                return false;
+            }
+            return true;
+        }
+        
+        /// <summary>
+        /// Insert Data.
+        /// </summary>
+        public virtual void Insert() {
+            APBplDef.TaskBugsBpl.Insert(((TaskBugs)(this)));
+        }
+        
+        /// <summary>
+        /// Update Data.
+        /// </summary>
+        public virtual void Update() {
+            APBplDef.TaskBugsBpl.Update(((TaskBugs)(this)));
+        }
+        
+        /// <summary>
+        /// Update Data.
+        /// </summary>
+        public static void UpdatePartial(System.Guid taskId, Object metadata) {
+            APBplDef.TaskBugsBpl.UpdatePartial(taskId, metadata);
+        }
+        
+        /// <summary>
+        /// Delete data by primary key.
+        /// </summary>
+        public static void PrimaryDelete(System.Guid taskId) {
+            APBplDef.TaskBugsBpl.PrimaryDelete(taskId);
+        }
+        
+        /// <summary>
+        /// Delete data by condition.
+        /// </summary>
+        public static void ConditionDelete(APSqlWherePhrase condition) {
+            APBplDef.TaskBugsBpl.ConditionDelete(condition);
+        }
+        
+        /// <summary>
+        /// Query count by condition.
+        /// </summary>
+        public static int ConditionQueryCount(APSqlWherePhrase condition) {
+            return APBplDef.TaskBugsBpl.ConditionQueryCount(condition);
+        }
+        
+        /// <summary>
+        /// Get data by PK.
+        /// </summary>
+        public static TaskBugs PrimaryGet(System.Guid taskId) {
+            return APBplDef.TaskBugsBpl.PrimaryGet(taskId);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<TaskBugs> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take, int skip) {
+            return APBplDef.TaskBugsBpl.ConditionQuery(condition, orderBy, take, skip);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<TaskBugs> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take) {
+            return APBplDef.TaskBugsBpl.ConditionQuery(condition, orderBy, take);
+        }
+        
+        /// <summary>
+        /// Query by condition.
+        /// </summary>
+        public static List<TaskBugs> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
+            return APBplDef.TaskBugsBpl.ConditionQuery(condition, orderBy);
+        }
+        
+        /// <summary>
+        /// Get all data.
+        /// </summary>
+        public static List<TaskBugs> GetAll() {
+            return APBplDef.TaskBugsBpl.GetAll();
+        }
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    [Serializable()]
+    public partial class TaskBugs : TaskBugsBase {
+        
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public TaskBugs() {
+        }
+        
+        /// <summary>
+        /// Constructor with all field values.
+        /// </summary>
+        public TaskBugs(System.Guid taskId, System.Guid bugId) : 
+                base(taskId, bugId) {
+        }
+    }
+    
+    /// <summary>
     /// 工作日志 Base
     /// </summary>
     [Serializable()]
@@ -37189,985 +38148,6 @@ namespace Business {
         /// </summary>
         public Workflow(System.Guid flowId, System.Guid reviewId, System.Guid senderId, System.Guid receiverId, string comment, System.DateTime senderTime, System.DateTime receiveTime, System.DateTime completedTime, string title, System.Guid status) : 
                 base(flowId, reviewId, senderId, receiverId, comment, senderTime, receiveTime, completedTime, title, status) {
-        }
-    }
-    
-    /// <summary>
-    /// 流程任务（专属于第三方工作流） Base
-    /// </summary>
-    [Serializable()]
-    public abstract partial class WorkflowTaskBase {
-        
-        /// <summary>
-        /// TaskId
-        /// </summary>
-        private System.Guid _taskId;
-        
-        /// <summary>
-        /// PrevID
-        /// </summary>
-        private System.Guid _prevID;
-        
-        /// <summary>
-        /// PrevStepID
-        /// </summary>
-        private System.Guid _prevStepID;
-        
-        /// <summary>
-        /// FlowId
-        /// </summary>
-        private System.Guid _flowId;
-        
-        /// <summary>
-        /// StepID
-        /// </summary>
-        private System.Guid _stepID;
-        
-        /// <summary>
-        /// StepName
-        /// </summary>
-        private string _stepName;
-        
-        /// <summary>
-        /// SenderName
-        /// </summary>
-        private string _senderName;
-        
-        /// <summary>
-        /// ReceiveName
-        /// </summary>
-        private string _receiveName;
-        
-        /// <summary>
-        /// InstanceID
-        /// </summary>
-        private string _instanceID;
-        
-        /// <summary>
-        /// GroupID
-        /// </summary>
-        private System.Guid _groupID;
-        
-        /// <summary>
-        /// Type
-        /// </summary>
-        private int _type;
-        
-        /// <summary>
-        /// Title
-        /// </summary>
-        private string _title;
-        
-        /// <summary>
-        /// SenderID
-        /// </summary>
-        private System.Guid _senderID;
-        
-        /// <summary>
-        /// ReceiveID
-        /// </summary>
-        private System.Guid _receiveID;
-        
-        /// <summary>
-        /// SenderTime
-        /// </summary>
-        private System.DateTime _senderTime;
-        
-        /// <summary>
-        /// ReceiveTime
-        /// </summary>
-        private System.DateTime _receiveTime;
-        
-        /// <summary>
-        /// OpenTime
-        /// </summary>
-        private System.DateTime _openTime;
-        
-        /// <summary>
-        /// CompletedTime
-        /// </summary>
-        private System.DateTime _completedTime;
-        
-        /// <summary>
-        /// CompletedTime1
-        /// </summary>
-        private System.DateTime _completedTime1;
-        
-        /// <summary>
-        /// Comment
-        /// </summary>
-        private string _comment;
-        
-        /// <summary>
-        /// IsSign
-        /// </summary>
-        private int _isSign;
-        
-        /// <summary>
-        /// Status
-        /// </summary>
-        private int _status;
-        
-        /// <summary>
-        /// Note
-        /// </summary>
-        private string _note;
-        
-        /// <summary>
-        /// Sort
-        /// </summary>
-        private int _sort;
-        
-        /// <summary>
-        /// SubFlowGroupID
-        /// </summary>
-        private System.Guid _subFlowGroupID;
-        
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        public WorkflowTaskBase() {
-        }
-        
-        /// <summary>
-        /// Constructor with all field values.
-        /// </summary>
-        public WorkflowTaskBase(
-                    System.Guid taskId, 
-                    System.Guid prevID, 
-                    System.Guid prevStepID, 
-                    System.Guid flowId, 
-                    System.Guid stepID, 
-                    string stepName, 
-                    string senderName, 
-                    string receiveName, 
-                    string instanceID, 
-                    System.Guid groupID, 
-                    int type, 
-                    string title, 
-                    System.Guid senderID, 
-                    System.Guid receiveID, 
-                    System.DateTime senderTime, 
-                    System.DateTime receiveTime, 
-                    System.DateTime openTime, 
-                    System.DateTime completedTime, 
-                    System.DateTime completedTime1, 
-                    string comment, 
-                    int isSign, 
-                    int status, 
-                    string note, 
-                    int sort, 
-                    System.Guid subFlowGroupID) {
-            _taskId = taskId;
-            _prevID = prevID;
-            _prevStepID = prevStepID;
-            _flowId = flowId;
-            _stepID = stepID;
-            _stepName = stepName;
-            _senderName = senderName;
-            _receiveName = receiveName;
-            _instanceID = instanceID;
-            _groupID = groupID;
-            _type = type;
-            _title = title;
-            _senderID = senderID;
-            _receiveID = receiveID;
-            _senderTime = senderTime;
-            _receiveTime = receiveTime;
-            _openTime = openTime;
-            _completedTime = completedTime;
-            _completedTime1 = completedTime1;
-            _comment = comment;
-            _isSign = isSign;
-            _status = status;
-            _note = note;
-            _sort = sort;
-            _subFlowGroupID = subFlowGroupID;
-        }
-        
-        /// <summary>
-        /// TaskId
-        /// </summary>
-        public virtual System.Guid TaskId {
-            get {
-                return _taskId;
-            }
-            set {
-                _taskId = value;
-            }
-        }
-        
-        /// <summary>
-        /// TaskId APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef TaskIdDef {
-            get {
-                return APDBDef.WorkflowTask.TaskId;
-            }
-        }
-        
-        /// <summary>
-        /// PrevID
-        /// </summary>
-        public virtual System.Guid PrevID {
-            get {
-                return _prevID;
-            }
-            set {
-                _prevID = value;
-            }
-        }
-        
-        /// <summary>
-        /// PrevID APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef PrevIDDef {
-            get {
-                return APDBDef.WorkflowTask.PrevID;
-            }
-        }
-        
-        /// <summary>
-        /// PrevStepID
-        /// </summary>
-        public virtual System.Guid PrevStepID {
-            get {
-                return _prevStepID;
-            }
-            set {
-                _prevStepID = value;
-            }
-        }
-        
-        /// <summary>
-        /// PrevStepID APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef PrevStepIDDef {
-            get {
-                return APDBDef.WorkflowTask.PrevStepID;
-            }
-        }
-        
-        /// <summary>
-        /// FlowId
-        /// </summary>
-        public virtual System.Guid FlowId {
-            get {
-                return _flowId;
-            }
-            set {
-                _flowId = value;
-            }
-        }
-        
-        /// <summary>
-        /// FlowId APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef FlowIdDef {
-            get {
-                return APDBDef.WorkflowTask.FlowId;
-            }
-        }
-        
-        /// <summary>
-        /// StepID
-        /// </summary>
-        public virtual System.Guid StepID {
-            get {
-                return _stepID;
-            }
-            set {
-                _stepID = value;
-            }
-        }
-        
-        /// <summary>
-        /// StepID APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef StepIDDef {
-            get {
-                return APDBDef.WorkflowTask.StepID;
-            }
-        }
-        
-        /// <summary>
-        /// StepName
-        /// </summary>
-        [StringLength(500)]
-        public virtual string StepName {
-            get {
-                return _stepName;
-            }
-            set {
-                _stepName = value;
-            }
-        }
-        
-        /// <summary>
-        /// StepName APColumnDef
-        /// </summary>
-        public static StringAPColumnDef StepNameDef {
-            get {
-                return APDBDef.WorkflowTask.StepName;
-            }
-        }
-        
-        /// <summary>
-        /// SenderName
-        /// </summary>
-        [StringLength(50)]
-        public virtual string SenderName {
-            get {
-                return _senderName;
-            }
-            set {
-                _senderName = value;
-            }
-        }
-        
-        /// <summary>
-        /// SenderName APColumnDef
-        /// </summary>
-        public static StringAPColumnDef SenderNameDef {
-            get {
-                return APDBDef.WorkflowTask.SenderName;
-            }
-        }
-        
-        /// <summary>
-        /// ReceiveName
-        /// </summary>
-        [StringLength(50)]
-        public virtual string ReceiveName {
-            get {
-                return _receiveName;
-            }
-            set {
-                _receiveName = value;
-            }
-        }
-        
-        /// <summary>
-        /// ReceiveName APColumnDef
-        /// </summary>
-        public static StringAPColumnDef ReceiveNameDef {
-            get {
-                return APDBDef.WorkflowTask.ReceiveName;
-            }
-        }
-        
-        /// <summary>
-        /// InstanceID
-        /// </summary>
-        [StringLength(50)]
-        public virtual string InstanceID {
-            get {
-                return _instanceID;
-            }
-            set {
-                _instanceID = value;
-            }
-        }
-        
-        /// <summary>
-        /// InstanceID APColumnDef
-        /// </summary>
-        public static StringAPColumnDef InstanceIDDef {
-            get {
-                return APDBDef.WorkflowTask.InstanceID;
-            }
-        }
-        
-        /// <summary>
-        /// GroupID
-        /// </summary>
-        public virtual System.Guid GroupID {
-            get {
-                return _groupID;
-            }
-            set {
-                _groupID = value;
-            }
-        }
-        
-        /// <summary>
-        /// GroupID APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef GroupIDDef {
-            get {
-                return APDBDef.WorkflowTask.GroupID;
-            }
-        }
-        
-        /// <summary>
-        /// Type
-        /// </summary>
-        public virtual int Type {
-            get {
-                return _type;
-            }
-            set {
-                _type = value;
-            }
-        }
-        
-        /// <summary>
-        /// Type APColumnDef
-        /// </summary>
-        public static Int32APColumnDef TypeDef {
-            get {
-                return APDBDef.WorkflowTask.Type;
-            }
-        }
-        
-        /// <summary>
-        /// Title
-        /// </summary>
-        [StringLength(200)]
-        public virtual string Title {
-            get {
-                return _title;
-            }
-            set {
-                _title = value;
-            }
-        }
-        
-        /// <summary>
-        /// Title APColumnDef
-        /// </summary>
-        public static StringAPColumnDef TitleDef {
-            get {
-                return APDBDef.WorkflowTask.Title;
-            }
-        }
-        
-        /// <summary>
-        /// SenderID
-        /// </summary>
-        public virtual System.Guid SenderID {
-            get {
-                return _senderID;
-            }
-            set {
-                _senderID = value;
-            }
-        }
-        
-        /// <summary>
-        /// SenderID APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef SenderIDDef {
-            get {
-                return APDBDef.WorkflowTask.SenderID;
-            }
-        }
-        
-        /// <summary>
-        /// ReceiveID
-        /// </summary>
-        public virtual System.Guid ReceiveID {
-            get {
-                return _receiveID;
-            }
-            set {
-                _receiveID = value;
-            }
-        }
-        
-        /// <summary>
-        /// ReceiveID APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef ReceiveIDDef {
-            get {
-                return APDBDef.WorkflowTask.ReceiveID;
-            }
-        }
-        
-        /// <summary>
-        /// SenderTime
-        /// </summary>
-        public virtual System.DateTime SenderTime {
-            get {
-                return _senderTime;
-            }
-            set {
-                _senderTime = value;
-            }
-        }
-        
-        /// <summary>
-        /// SenderTime APColumnDef
-        /// </summary>
-        public static DateTimeAPColumnDef SenderTimeDef {
-            get {
-                return APDBDef.WorkflowTask.SenderTime;
-            }
-        }
-        
-        /// <summary>
-        /// ReceiveTime
-        /// </summary>
-        public virtual System.DateTime ReceiveTime {
-            get {
-                return _receiveTime;
-            }
-            set {
-                _receiveTime = value;
-            }
-        }
-        
-        /// <summary>
-        /// ReceiveTime APColumnDef
-        /// </summary>
-        public static DateTimeAPColumnDef ReceiveTimeDef {
-            get {
-                return APDBDef.WorkflowTask.ReceiveTime;
-            }
-        }
-        
-        /// <summary>
-        /// OpenTime
-        /// </summary>
-        public virtual System.DateTime OpenTime {
-            get {
-                return _openTime;
-            }
-            set {
-                _openTime = value;
-            }
-        }
-        
-        /// <summary>
-        /// OpenTime APColumnDef
-        /// </summary>
-        public static DateTimeAPColumnDef OpenTimeDef {
-            get {
-                return APDBDef.WorkflowTask.OpenTime;
-            }
-        }
-        
-        /// <summary>
-        /// CompletedTime
-        /// </summary>
-        public virtual System.DateTime CompletedTime {
-            get {
-                return _completedTime;
-            }
-            set {
-                _completedTime = value;
-            }
-        }
-        
-        /// <summary>
-        /// CompletedTime APColumnDef
-        /// </summary>
-        public static DateTimeAPColumnDef CompletedTimeDef {
-            get {
-                return APDBDef.WorkflowTask.CompletedTime;
-            }
-        }
-        
-        /// <summary>
-        /// CompletedTime1
-        /// </summary>
-        public virtual System.DateTime CompletedTime1 {
-            get {
-                return _completedTime1;
-            }
-            set {
-                _completedTime1 = value;
-            }
-        }
-        
-        /// <summary>
-        /// CompletedTime1 APColumnDef
-        /// </summary>
-        public static DateTimeAPColumnDef CompletedTime1Def {
-            get {
-                return APDBDef.WorkflowTask.CompletedTime1;
-            }
-        }
-        
-        /// <summary>
-        /// Comment
-        /// </summary>
-        [StringLength(1000)]
-        public virtual string Comment {
-            get {
-                return _comment;
-            }
-            set {
-                _comment = value;
-            }
-        }
-        
-        /// <summary>
-        /// Comment APColumnDef
-        /// </summary>
-        public static StringAPColumnDef CommentDef {
-            get {
-                return APDBDef.WorkflowTask.Comment;
-            }
-        }
-        
-        /// <summary>
-        /// IsSign
-        /// </summary>
-        public virtual int IsSign {
-            get {
-                return _isSign;
-            }
-            set {
-                _isSign = value;
-            }
-        }
-        
-        /// <summary>
-        /// IsSign APColumnDef
-        /// </summary>
-        public static Int32APColumnDef IsSignDef {
-            get {
-                return APDBDef.WorkflowTask.IsSign;
-            }
-        }
-        
-        /// <summary>
-        /// Status
-        /// </summary>
-        public virtual int Status {
-            get {
-                return _status;
-            }
-            set {
-                _status = value;
-            }
-        }
-        
-        /// <summary>
-        /// Status APColumnDef
-        /// </summary>
-        public static Int32APColumnDef StatusDef {
-            get {
-                return APDBDef.WorkflowTask.Status;
-            }
-        }
-        
-        /// <summary>
-        /// Note
-        /// </summary>
-        [StringLength(1000)]
-        public virtual string Note {
-            get {
-                return _note;
-            }
-            set {
-                _note = value;
-            }
-        }
-        
-        /// <summary>
-        /// Note APColumnDef
-        /// </summary>
-        public static StringAPColumnDef NoteDef {
-            get {
-                return APDBDef.WorkflowTask.Note;
-            }
-        }
-        
-        /// <summary>
-        /// Sort
-        /// </summary>
-        public virtual int Sort {
-            get {
-                return _sort;
-            }
-            set {
-                _sort = value;
-            }
-        }
-        
-        /// <summary>
-        /// Sort APColumnDef
-        /// </summary>
-        public static Int32APColumnDef SortDef {
-            get {
-                return APDBDef.WorkflowTask.Sort;
-            }
-        }
-        
-        /// <summary>
-        /// SubFlowGroupID
-        /// </summary>
-        public virtual System.Guid SubFlowGroupID {
-            get {
-                return _subFlowGroupID;
-            }
-            set {
-                _subFlowGroupID = value;
-            }
-        }
-        
-        /// <summary>
-        /// SubFlowGroupID APColumnDef
-        /// </summary>
-        public static GuidAPColumnDef SubFlowGroupIDDef {
-            get {
-                return APDBDef.WorkflowTask.SubFlowGroupID;
-            }
-        }
-        
-        /// <summary>
-        /// WorkflowTaskTableDef APTableDef
-        /// </summary>
-        public static APDBDef.WorkflowTaskTableDef TableDef {
-            get {
-                return APDBDef.WorkflowTask;
-            }
-        }
-        
-        /// <summary>
-        /// WorkflowTaskTableDef APSqlAsteriskExpr
-        /// </summary>
-        public static APSqlAsteriskExpr Asterisk {
-            get {
-                return APDBDef.WorkflowTask.Asterisk;
-            }
-        }
-        
-        /// <summary>
-        /// Assignment.
-        /// </summary>
-        public virtual void Assignment(WorkflowTask data) {
-            TaskId = data.TaskId;
-            PrevID = data.PrevID;
-            PrevStepID = data.PrevStepID;
-            FlowId = data.FlowId;
-            StepID = data.StepID;
-            StepName = data.StepName;
-            SenderName = data.SenderName;
-            ReceiveName = data.ReceiveName;
-            InstanceID = data.InstanceID;
-            GroupID = data.GroupID;
-            Type = data.Type;
-            Title = data.Title;
-            SenderID = data.SenderID;
-            ReceiveID = data.ReceiveID;
-            SenderTime = data.SenderTime;
-            ReceiveTime = data.ReceiveTime;
-            OpenTime = data.OpenTime;
-            CompletedTime = data.CompletedTime;
-            CompletedTime1 = data.CompletedTime1;
-            Comment = data.Comment;
-            IsSign = data.IsSign;
-            Status = data.Status;
-            Note = data.Note;
-            Sort = data.Sort;
-            SubFlowGroupID = data.SubFlowGroupID;
-        }
-        
-        /// <summary>
-        /// Compare equals.
-        /// </summary>
-        public virtual bool CompareEquals(WorkflowTask data) {
-            if ((TaskId != data.TaskId)) {
-                return false;
-            }
-            if ((PrevID != data.PrevID)) {
-                return false;
-            }
-            if ((PrevStepID != data.PrevStepID)) {
-                return false;
-            }
-            if ((FlowId != data.FlowId)) {
-                return false;
-            }
-            if ((StepID != data.StepID)) {
-                return false;
-            }
-            if ((StepName != data.StepName)) {
-                return false;
-            }
-            if ((SenderName != data.SenderName)) {
-                return false;
-            }
-            if ((ReceiveName != data.ReceiveName)) {
-                return false;
-            }
-            if ((InstanceID != data.InstanceID)) {
-                return false;
-            }
-            if ((GroupID != data.GroupID)) {
-                return false;
-            }
-            if ((Type != data.Type)) {
-                return false;
-            }
-            if ((Title != data.Title)) {
-                return false;
-            }
-            if ((SenderID != data.SenderID)) {
-                return false;
-            }
-            if ((ReceiveID != data.ReceiveID)) {
-                return false;
-            }
-            if ((SenderTime != data.SenderTime)) {
-                return false;
-            }
-            if ((ReceiveTime != data.ReceiveTime)) {
-                return false;
-            }
-            if ((OpenTime != data.OpenTime)) {
-                return false;
-            }
-            if ((CompletedTime != data.CompletedTime)) {
-                return false;
-            }
-            if ((CompletedTime1 != data.CompletedTime1)) {
-                return false;
-            }
-            if ((Comment != data.Comment)) {
-                return false;
-            }
-            if ((IsSign != data.IsSign)) {
-                return false;
-            }
-            if ((Status != data.Status)) {
-                return false;
-            }
-            if ((Note != data.Note)) {
-                return false;
-            }
-            if ((Sort != data.Sort)) {
-                return false;
-            }
-            if ((SubFlowGroupID != data.SubFlowGroupID)) {
-                return false;
-            }
-            return true;
-        }
-        
-        /// <summary>
-        /// Insert Data.
-        /// </summary>
-        public virtual void Insert() {
-            APBplDef.WorkflowTaskBpl.Insert(((WorkflowTask)(this)));
-        }
-        
-        /// <summary>
-        /// Update Data.
-        /// </summary>
-        public virtual void Update() {
-            APBplDef.WorkflowTaskBpl.Update(((WorkflowTask)(this)));
-        }
-        
-        /// <summary>
-        /// Update Data.
-        /// </summary>
-        public static void UpdatePartial(System.Guid taskId, Object metadata) {
-            APBplDef.WorkflowTaskBpl.UpdatePartial(taskId, metadata);
-        }
-        
-        /// <summary>
-        /// Delete data by primary key.
-        /// </summary>
-        public static void PrimaryDelete(System.Guid taskId) {
-            APBplDef.WorkflowTaskBpl.PrimaryDelete(taskId);
-        }
-        
-        /// <summary>
-        /// Delete data by condition.
-        /// </summary>
-        public static void ConditionDelete(APSqlWherePhrase condition) {
-            APBplDef.WorkflowTaskBpl.ConditionDelete(condition);
-        }
-        
-        /// <summary>
-        /// Query count by condition.
-        /// </summary>
-        public static int ConditionQueryCount(APSqlWherePhrase condition) {
-            return APBplDef.WorkflowTaskBpl.ConditionQueryCount(condition);
-        }
-        
-        /// <summary>
-        /// Get data by PK.
-        /// </summary>
-        public static WorkflowTask PrimaryGet(System.Guid taskId) {
-            return APBplDef.WorkflowTaskBpl.PrimaryGet(taskId);
-        }
-        
-        /// <summary>
-        /// Query by condition.
-        /// </summary>
-        public static List<WorkflowTask> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take, int skip) {
-            return APBplDef.WorkflowTaskBpl.ConditionQuery(condition, orderBy, take, skip);
-        }
-        
-        /// <summary>
-        /// Query by condition.
-        /// </summary>
-        public static List<WorkflowTask> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy, int take) {
-            return APBplDef.WorkflowTaskBpl.ConditionQuery(condition, orderBy, take);
-        }
-        
-        /// <summary>
-        /// Query by condition.
-        /// </summary>
-        public static List<WorkflowTask> ConditionQuery(APSqlWherePhrase condition, APSqlOrderPhrase orderBy) {
-            return APBplDef.WorkflowTaskBpl.ConditionQuery(condition, orderBy);
-        }
-        
-        /// <summary>
-        /// Get all data.
-        /// </summary>
-        public static List<WorkflowTask> GetAll() {
-            return APBplDef.WorkflowTaskBpl.GetAll();
-        }
-    }
-    
-    /// <summary>
-    /// 流程任务（专属于第三方工作流）
-    /// </summary>
-    [Serializable()]
-    public partial class WorkflowTask : WorkflowTaskBase {
-        
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        public WorkflowTask() {
-        }
-        
-        /// <summary>
-        /// Constructor with all field values.
-        /// </summary>
-        public WorkflowTask(
-                    System.Guid taskId, 
-                    System.Guid prevID, 
-                    System.Guid prevStepID, 
-                    System.Guid flowId, 
-                    System.Guid stepID, 
-                    string stepName, 
-                    string senderName, 
-                    string receiveName, 
-                    string instanceID, 
-                    System.Guid groupID, 
-                    int type, 
-                    string title, 
-                    System.Guid senderID, 
-                    System.Guid receiveID, 
-                    System.DateTime senderTime, 
-                    System.DateTime receiveTime, 
-                    System.DateTime openTime, 
-                    System.DateTime completedTime, 
-                    System.DateTime completedTime1, 
-                    string comment, 
-                    int isSign, 
-                    int status, 
-                    string note, 
-                    int sort, 
-                    System.Guid subFlowGroupID) : 
-                base(taskId, prevID, prevStepID, flowId, stepID, stepName, senderName, receiveName, instanceID, groupID, type, title, senderID, receiveID, senderTime, receiveTime, openTime, completedTime, completedTime1, comment, isSign, status, note, sort, subFlowGroupID) {
         }
     }
     
