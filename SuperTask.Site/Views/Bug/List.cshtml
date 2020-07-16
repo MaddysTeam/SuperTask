@@ -1,0 +1,328 @@
+﻿@{
+	var pageTitle = ViewBag.Title = "我的任务";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var requestTaskType = Request["BugType"] ?? string.Empty;
+	var requestTaskStatus = Request["BugStatus"] ?? string.Empty;
+	//var requestTaskRange = Request["TaskRange"] ?? string.Empty;
+	var statusList = DictionaryCache.Cached(BugKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "任务状态", Value = TaskKeys.SelectAll.ToString() }).ToList();
+	var typeList = DictionaryCache.Cached(BugKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "任务类型", Value = TaskKeys.SelectAll.ToString() }).ToList();
+	var levelList = DictionaryCache.Cached(BugKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "程度", Value = TaskKeys.SelectAll.ToString() }).ToList();
+	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId");
+}
+@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+	<style>
+		.searchable-select {
+			min-width: 100px;
+		}
+	</style>
+}
+
+<div class="content-wrapper">
+
+	<!-- main -->
+	<div class="content">
+		<div class="row" style="margin-bottom:20px; margin-top:10px;">
+
+			<!-- 项目筛选下拉框 -->
+			<div class="col-md-2">
+				<div class="form-horizontal">
+					<div class="FormGroup">
+						@Html.DropDownList("dpProjects", projectsSelectList, new { @class = "form-control dropdown-myProjects" })
+					</div>
+				</div>
+			</div>
+			<!-- /任务搜索框 -->
+
+			<div class="col-md-9 row" style="border:1px solid gray; margin-left:2%; padding:5px;">
+
+				<div class="col-md-1">
+					<div class="form-horizontal">
+						<div class="FormGroup">
+							<a id="showAll" class="btn btn-info">所有</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-2">
+					<div class="form-horizontal">
+						<div class="FormGroup">
+							@Html.DropDownList("dpLevels", levelList, new { @class = "form-control dropdown-taskLevels", })
+						</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="form-horizontal">
+						<div class="FormGroup">
+							@Html.DropDownList("dpStatus", statusList, new { @class = "form-control dropdown-taskStatus", })
+						</div>
+					</div>
+				</div>
+
+
+				<div class="col-sm-3">
+					<div class="form-horizontal">
+						<div class="FormGroup" style="float:left">
+							<input type="text" placeholder="BugID/名称" class="form-control txt-taskName " id="txtName" />
+						</div>
+						<div>
+							<a class="btn btn-info" id="btnSearch">搜索</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-sm-2 text-center line-height: 70px;">
+					<div class="form-horizontal">
+						<div class="FormGroup" style="line-height: 35px;">
+							<a href="#" id="assign" class="btn">指派给我</a>
+							<input type="hidden" id="hidAssgin" />
+						</div>
+					</div>
+				</div>
+				<!-- /搜索按钮 -->
+			</div>
+
+
+		</div>
+
+		<div class="row">
+			<div class="col-md-2">
+				
+			</div>
+			<div class="row col-md-9" style="margin-left:1%;">
+				<div class="btn-group" style="position:relative">
+					<div style="position:absolute;top:20px; width:200px; z-index:99">
+						<a class="btn btn-success" id="start" data-url="@Url.Action("MultipleConfirm","Bug")">确认</a>
+						<a class="btn btn-success" id="start" data-url="@Url.Action("MultipleFix","Bug")">解决</a>
+					</div>
+				</div>
+				<div class="table-responsive">
+					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
+						<thead>
+							<tr>
+								<th data-formatter="checkbox"></th>
+								<th data-column-id="SortId">ID</th>
+								<th data-column-id="BugLevel">程度</th>
+								<th data-column-id="BugName" data-formatter="link">bug名称</th>
+								<th data-column-id="BugType">类型</th>
+								<th data-column-id="BugStatus">状态</th>
+								<th data-column-id="Manager">指派给</th>
+								<th data-column-id="FixDate" data-formatter="DateOnly">完成时间</th>
+								<th data-column-id="Creator">创建人</th>
+								<th data-column-id="CreateDate" data-formatter="DateOnly">开始时间</th>
+								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	<!-- /main -->
+
+</div>
+
+
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal fade" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+@section Scripts{
+	<script>
+		function getGlobalRequest() {
+			return {
+				projectId: $('#dpProjects').val(),
+				levelId: $('#dpLevels').val(),
+				typeId: $('#dpTypes').val(),
+				statusId: $('#dpStatus').val(),
+				isAssign: $('#hidAssgin').val() != '',
+				isJoin: $('#hidJoin').val() != '',
+				taskName: $('#txtName').val(),
+			};
+		}
+
+		@*function isPlan(status) {
+			return status == '@TaskKeys.PlanStatus';
+		}
+
+		function isNotComplete(status) {
+			return status != '@TaskKeys.CompleteStatus' && status != '@TaskKeys.CloseStatus';
+		}
+
+		function isNotClose(status) {
+			return status != '@TaskKeys.CloseStatus';
+		}*@
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: window.location.href,
+
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+				formatters: {
+					'checkbox': function (column, row) {
+						var currentUserId = '@Html.GetUserProfile().UserId';
+						if (currentUserId == row.ManagerId)
+							return '<input type="checkbox" class="checkbox" data-row-id="'+row.TaskId+'" />'
+					},
+					'link': function (column, row) {
+						var url = '@Url.Action("Detail", "Bug")?id=' + row.BugId;
+						var link = '<a href="' + url + '">' + row.BugName + '</a>'
+						if (row.IsParent)
+							link += '&nbsp;&nbsp;<span class="text-align:right isParnet"><i class="fa fa-minus-square-o btn-hide-child" style="cursor:pointer"></i><i class="fa fa-plus-square-o btn-show-child" style="cursor:pointer"></i>'
+						return link;
+					},
+					'commands': function (column, row) {
+						var currentUserId = '@Html.GetUserProfile().UserId';
+						if (currentUserId != row.ManagerId)
+							return '';
+
+						var id = row.TaskId;
+						var isParent = row.IsParent;
+						var status = row.TaskStatus;
+						var projectId = $('#dpProjects').val();
+						var confirmButtonStr = '<a data-url="@Url.Action("Confirm", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-start">确认</a> ';
+						var fixButtonStr = '<a data-url="@Url.Action("Fix", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-complete">解决</a> ' ;
+						var EditButtonStr = '<a  data-url="@Url.Action("Edit", "Bug")?id=' + id + '" class="btn btn-lg btn-info btn-journal">编辑</a> ' ;
+						var closeButtonStr ='<a data-url="@Url.Action("Relative", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-complete">关联</a> ';
+
+						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.taskName + '" data-row-id="' + id + '" data-row-active="' + row.actived + '">' +
+							statusButtonStr +
+							completeButtonStr +
+							closeButtonStr +
+							'<a target="_blank" href="@Url.Action("Edit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-close">编辑</a> ' +
+							journalButtonStr +
+							subTaskButtonStr +
+							'</div>';
+					},
+				},
+			});
+		}
+
+		$(function () {
+
+			isLoaded = false;
+
+			$('#showAll').click(function () {
+				$('#dpLevels,#dpStatus,#dpTypes').val('@TaskKeys.SelectAll');
+				$('#hidAssgin,#txtName').val('');
+				$('#bootgrid').bootgrid('reload');
+			});
+
+			$('#assign').click(function () {
+				$('#hidAssgin').val('true');
+				$('#bootgrid').bootgrid('reload');
+			});
+
+			$('#btnSearch').click(function () {
+				$('#bootgrid').bootgrid('reload');
+			});
+
+			$('#dpProjects').searchableSelect({
+				afterSelectItem: function (v) {
+					if (isLoaded) {
+						$('#bootgrid').bootgrid('reload');
+					}
+				}
+			});
+
+			$('#dpLevels,#dpStatus,#dpTypes').change(function () {
+				$('#bootgrid').bootgrid('reload');
+			});
+
+			var grid = $('#bootgrid');
+			grid.bootgrid(getGridOptions())
+				.on('loaded.rs.jquery.bootgrid', function () {
+
+					isLoaded = true;
+
+					grid.find('.btn-subTasks,.btn-journal').on('click', function (e) {
+						var url = $(this).data('url');
+						var $proxy = $('#modelProxy');
+						$proxy
+							.data('url', url)
+							.trigger('click');
+					});
+
+					grid.find('.btn-start,.btn-complete').on('click', function () {
+						var url = $(this).data('url');
+
+						$.post(url, function () {
+							grid.bootgrid('reload')
+						})
+					});
+
+					grid.find('.btn-hide-child').click(function () {
+						let $this = $(this);
+						$(this).hide()
+							    .parent()
+							    .find('.btn-show-child').show();
+						let siblings = $this.parents('tr').next();
+						while (siblings.children().length > 0) {
+							if (siblings.find('.isParnet').length > 0)
+								break;
+							else {
+								siblings.hide();
+							}
+							siblings = siblings.next();
+						}
+					});
+
+					grid.find('.btn-show-child').hide().click(function () {
+						$this = $(this);
+						$(this).hide()
+							    .parent()
+							    .find('.btn-hide-child').show();
+						var siblings = $this.parents('tr').next();
+						while (siblings.children().length > 0) {
+							if (siblings.find('.isParnet').length > 0)
+								break;
+							else {
+								siblings.show();
+							}
+							siblings = siblings.next();
+						}
+					});
+						
+					//bind checkbox column
+					$('th:first').html('<input type="checkbox" class="checkAll" />').find('.checkAll').click(function () {
+						grid.find('.checkbox').click();
+					});
+
+					// multiple start,complete and close tasks 
+					$('#start,#complete,#close').off('click').on('click', function () {
+						result = [];
+						grid.find('.checkbox').each(function (i) {
+							$this = $(this);
+							if ($this.is(':checked')) {
+								result.push($this.data('rowId'));
+							}
+						});
+
+						if (result.length > 0) {
+							$.post($(this).data('url'), { ids: result }, function () {
+								grid.bootgrid('reload')
+							});
+						}
+						else {
+							alert('请先勾选bug！')
+						}
+					});
+
+				});
+
+			$('.search').hide();
+
+		});
+
+	</script>
+}

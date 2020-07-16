@@ -602,6 +602,27 @@ namespace TheSite.Controllers
 		}
 
 
+		//POST-Ajax  TaskV2/GetProjectTasks
+
+		[HttpPost]
+		public ActionResult GetProjectTasks(Guid projectId)
+		{
+			var all = TaskHelper.GetProjectTasks(projectId, db);
+			var parents = all?.FindAll(x => x.IsParent);
+			var results= new List<WorkTask>();
+			foreach(var item in parents)
+			{
+				results.Add(item);
+				results.AddRange(parents.FindAll(x => x.ParentId == item.TaskId));
+			}
+
+			return Json(new {
+				rows = results
+			});
+			
+		}
+
+
 		#region [private]
 
 

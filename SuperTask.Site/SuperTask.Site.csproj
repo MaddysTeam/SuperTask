@@ -286,6 +286,7 @@
     <Compile Include="Business\DataDef\Resource.cs" />
     <Compile Include="Business\DataDef\Review.cs" />
     <Compile Include="Business\DataDef\Advice.cs" />
+    <Compile Include="Business\DataDef\Bug.cs" />
     <Compile Include="Business\DataDef\Role.cs" />
     <Compile Include="Business\DataDef\Account.cs" />
     <Compile Include="Business\DataDef\UserInfo.cs" />
@@ -325,6 +326,7 @@
     <Compile Include="Business\Helper\Keys\ReviewKeys.cs" />
     <Compile Include="Business\Helper\Keys\RoleKeys.cs" />
     <Compile Include="Business\Helper\Keys\ShareFolderKeys.cs" />
+    <Compile Include="Business\Helper\Keys\BugKeys.cs" />
     <Compile Include="Business\Helper\Keys\TaskKeys.cs" />
     <Compile Include="Business\Helper\MilestoneHelper.cs" />
     <Compile Include="Business\Helper\PaymentsHelper.cs" />
@@ -365,6 +367,7 @@
     <Compile Include="Business\Utilities\wangsu\FileUploader.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdviceController.cs" />
+    <Compile Include="Controllers\BugController.cs" />
     <Compile Include="Controllers\TaskV2Controller.cs" />
     <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
@@ -1997,6 +2000,8 @@
     <Content Include="Views\TaskV2\_subTaskExecutor.cshtml" />
     <Content Include="Views\TaskV2\JournalEdit.cshtml" />
     <Content Include="Views\TaskV2\_subTaskList.cshtml" />
+    <Content Include="Views\Bug\List.cshtml" />
+    <Content Include="Views\Bug\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

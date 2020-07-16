@@ -430,7 +430,9 @@
 					
 					<add name="BugId" columnName="ID" type="Guid"  primaryKey="true" display="bugID" />
 					<add name="SortId" columnName="SortId" type="int" isNullable="true" comment="排序Id" />
-					<add name="BugLevel"  columnName="Level" type="int"  isNullable="true"  defaultValue="1" display="bug级别" />
+					<add name="Projectid" columnName="ProjectId" type="Guid" display="项目ID" />
+					<add name="BugName" columnName="Name" type="String" dataLength="300"  isNullable="false"  display="bug名称" />
+					<add name="BugLevel"  columnName="Level" type="Guid"  isNullable="true" display="bug级别" />
 					<add name="BugType"  columnName="Type" type="Guid"  isNullable="true"   display="bug类型" />
 					<add name="BugStatus"  columnName="Status" type="Guid"  isNullable="true"  display="bug状态" />
 					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true"  display="bug负责人ID" />
@@ -440,7 +442,10 @@
 					<add name="Browser" columnName="BrowserId" type="Guid"  isNullable="true"  display="浏览器ID" />
 					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
 					<add name="FixDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="解决时间" />
-					
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
+					<add name="DynamicComment1" columnName="Content" type="String" dataLength="1000"  isNullable="true"  display="评价1" />
+					<add name="DynamicComment2" columnName="Content" type="String" dataLength="1000"  isNullable="true"  display="评价2" />
+
 				</columns>
 			</table>
 

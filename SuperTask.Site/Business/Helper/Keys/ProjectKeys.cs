@@ -10,7 +10,7 @@ namespace Business.Helper
    public static class ProjectKeys
    {
 
-      public static Guid SelectAll = Guid.Parse("F96E81D7-5B44-A26C-BE35-45FCBA6BE8DE");
+	public static Guid SelectAll => AppKeys.SelectAll;
 
       //项目状态类型组ID
       public static Guid ProjectStatusKeyGuid = Guid.Parse("DF2ACD4F-A45D-4C36-9CAF-C2E3D5C9DD2C");

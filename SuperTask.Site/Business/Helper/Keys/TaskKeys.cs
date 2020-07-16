@@ -47,7 +47,7 @@ namespace Business.Helper
 		public static Guid LevelGuid = Guid.Parse("c1587ca0-0aba-4cd4-ae21-46e81e3caa79");
 
 
-		public static Guid SelectAll = Guid.Parse("F96E81D7-5B44-A26C-BE35-45FCBA6BE8DE");
+		public static Guid SelectAll => AppKeys.SelectAll;
 
 
 		public static string GetTypeKeyByValue(Guid val) => DictionaryHelper.GetDicById(TypeGuid, val).Title;
