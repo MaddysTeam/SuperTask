@@ -441,10 +441,10 @@
 					<add name="SystemId" columnName="SystemId" type="Guid"  isNullable="true"  display="系统ID" />
 					<add name="Browser" columnName="BrowserId" type="Guid"  isNullable="true"  display="浏览器ID" />
 					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
-					<add name="FixDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="解决时间" />
+					<add name="FixDate" columnName="FixDate" type="DateTime" defaultValue="DateTime.Now"  display="解决时间" />
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
-					<add name="DynamicComment1" columnName="Content" type="String" dataLength="1000"  isNullable="true"  display="评价1" />
-					<add name="DynamicComment2" columnName="Content" type="String" dataLength="1000"  isNullable="true"  display="评价2" />
+					<add name="DynamicComment1" columnName="DynamicComment1" type="String" dataLength="1000"  isNullable="true"  display="评价1" />
+					<add name="DynamicComment2" columnName="DynamicComment2" type="String" dataLength="1000"  isNullable="true"  display="评价2" />
 
 				</columns>
 			</table>

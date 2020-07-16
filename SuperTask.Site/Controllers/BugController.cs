@@ -25,6 +25,9 @@ namespace TheSite.Controllers
 
 		public ActionResult List()
 		{
+
+         ViewBag.Projects = MyJoinedProjects();
+
 			return View();
 		}
 
@@ -42,7 +45,7 @@ namespace TheSite.Controllers
 					 b.ManagerId, u.UserName, u2.UserName.As("creator"))
 			   .from(b,
 			   u.JoinInner(u.UserId == b.ManagerId),
-			   u.JoinInner(u2.UserId == b.CreatorId)
+			   u2.JoinInner(u2.UserId == b.CreatorId)
 			   )
 			   .where(b.Projectid == projectId);
 
@@ -76,15 +79,15 @@ namespace TheSite.Controllers
 			}
 
 
-			if (levelId != BugKeys.SelectAll)
+			if (levelId != AppKeys.SelectAll)
 			{
 				results = results.FindAll(b => b.BugLevel == levelId);
 			}
-			if (typeId != TaskKeys.SelectAll)
+			if (typeId != AppKeys.SelectAll)
 			{
 				results = results.FindAll(b => b.BugType == typeId);
 			}
-			if (statusId != TaskKeys.SelectAll)
+			if (statusId != AppKeys.SelectAll)
 			{
 				results = results.FindAll(t => t.BugStatus == statusId);
 			}

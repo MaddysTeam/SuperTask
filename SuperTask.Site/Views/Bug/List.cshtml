@@ -5,9 +5,9 @@
 	var requestTaskType = Request["BugType"] ?? string.Empty;
 	var requestTaskStatus = Request["BugStatus"] ?? string.Empty;
 	//var requestTaskRange = Request["TaskRange"] ?? string.Empty;
-	var statusList = DictionaryCache.Cached(BugKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "任务状态", Value = TaskKeys.SelectAll.ToString() }).ToList();
-	var typeList = DictionaryCache.Cached(BugKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "任务类型", Value = TaskKeys.SelectAll.ToString() }).ToList();
-	var levelList = DictionaryCache.Cached(BugKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "程度", Value = TaskKeys.SelectAll.ToString() }).ToList();
+	var statusList = DictionaryCache.Cached(BugKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "bug状态", Value = BugKeys.SelectAll.ToString() }).ToList();
+	var typeList = DictionaryCache.Cached(BugKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "bug类型", Value = BugKeys.SelectAll.ToString() }).ToList();
+	var levelList = DictionaryCache.Cached(BugKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "bug 程度", Value = BugKeys.SelectAll.ToString() }).ToList();
 	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId");
 }
 @section Css{
@@ -47,14 +47,21 @@
 				<div class="col-sm-2">
 					<div class="form-horizontal">
 						<div class="FormGroup">
-							@Html.DropDownList("dpLevels", levelList, new { @class = "form-control dropdown-taskLevels", })
+							@Html.DropDownList("dpLevels", levelList, new { @class = "form-control", })
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-2">
+					<div class="form-horizontal">
+						<div class="FormGroup">
+							@Html.DropDownList("dpTypes", typeList, new { @class = "form-control", })
 						</div>
 					</div>
 				</div>
 				<div class="col-md-2">
 					<div class="form-horizontal">
 						<div class="FormGroup">
-							@Html.DropDownList("dpStatus", statusList, new { @class = "form-control dropdown-taskStatus", })
+							@Html.DropDownList("dpStatus", statusList, new { @class = "form-control", })
 						</div>
 					</div>
 				</div>
@@ -145,7 +152,7 @@
 				statusId: $('#dpStatus').val(),
 				isAssign: $('#hidAssgin').val() != '',
 				isJoin: $('#hidJoin').val() != '',
-				taskName: $('#txtName').val(),
+				//taskName: $('#txtName').val(),
 			};
 		}
 
