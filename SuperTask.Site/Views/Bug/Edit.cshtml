@@ -1,8 +1,6 @@
 ﻿@model Bug
 @{
-//var subTasks = ViewBag.SubTask as List<WorkTask>;
-var attahcments = ViewBag.Attahcments as List<Attachment>;
-//var isCompeleteOrClose = Model.IsCompleteStatus || Model.IsCloseStatus;
+	var attahcments = ViewBag.Attahcments as List<Attachment>;
 }
 
 <style>
@@ -12,294 +10,267 @@ var attahcments = ViewBag.Attahcments as List<Attachment>;
 </style>
 
 
-<div class="row" style="margin-top:20px;margin-bottom:20px;">
-	<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List","TaskV2")">返回</a>
-	<div class="col-md-6">
-		<h4>@Model.SortId - @Model.BugLevel - @Model.BugName</h4>
+<div class="modal-dialog" style="width:95%;">
+	<div class="row" style="margin-top:20px;margin-bottom:20px;">
+		@*<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List", "TaskV2")">返回</a>*@
+		@if (!Model.BugId.IsEmpty())
+		{
+			<div class="col-md-6">
+				<h4>@Model.SortId - @Model.BugLevel - @Model.BugName</h4>
+			</div>
+		}
 	</div>
-</div>
-<div class="row">
+	<div class="row">
 
-	<!-- widget -->
-	<div class="widget details col-md-7 col-md-offset-1">
+		<!-- widget -->
+		<div class="widget details col-md-7 col-md-offset-1">
 
-		<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
+			<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
 
-		<form id="taskForm" class="form-horizontal" action="@Url.Action("Edit","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="bugForm" class="form-horizontal" action="@Url.Action("Edit","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
 
-			<div class="widget-content">
+				<div class="widget-content">
 
-				<div class="row editTaskInfo">
-					<fieldset class="col-sm-12">
-						@Html.HiddenFor(t => t.Projectid)
-						@Html.HiddenFor(t => t.SortId)
-						@Html.HiddenFor(t => t.BugId)
+					<div class="row editTaskInfo">
+						<fieldset class="col-sm-12">
+							@Html.HiddenFor(t => t.Projectid)
+							@Html.HiddenFor(t => t.SortId)
+							@Html.HiddenFor(t => t.BugId)
 
-						<div class="form-group">
-							@Html.LabelFor(t => t.BugName, new { @class = "control-label col-md-2" })
-							<div class="col-md-9">
-								@Html.TextBoxFor(t => t.BugName, new { @class = "form-control" })
+							<div class="form-group">
+								@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
+								<div class="col-md-2">
+									@Html.DropDownListFor(t => t.Projectid,
+									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId", null, SelectListHelper.Default),
+									new { @class = "form-control dropdown-project" })
+								</div>
+								@Html.ValidationMessageFor(t => t.Projectid)
+							</div>
+
+							<div class="form-group">
+								@Html.LabelFor(t => t.BugName, new { @class = "control-label col-md-2" })
+								<div class="col-md-9">
+									@Html.TextBoxFor(t => t.BugName, new { @class = "form-control" })
+								</div>
 								@Html.ValidationMessageFor(t => t.BugName)
 							</div>
-						</div>
 
-						<div class="form-group">
-							@Html.LabelFor(t => t, new { @class = "control-label col-md-2" })
-							<div class="col-md-9">
-								<span class="form-control details-text" style="background-color:#eee;">@Model.BugName</span>
-							</div>
-						</div>
-
-						<div class="form-group">
-							@Html.LabelFor(t => t, new { @class = "control-label col-md-2" })
-							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.BugStatus,
-									DictionaryCache.Cached(TaskKeys.StatusGuid)
-														.GetSelectListById(Guid.Empty),
-									new { @class = "form-control dropdown-taskStatus" })
-							</div>
-						</div>
-
-						<div class="form-group">
-							@Html.LabelFor(t => t.BugType, new { @class = "control-label col-md-2" })
-							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.BugType,
-									DictionaryCache.Cached(TaskKeys.TypeGuid)
-														.GetSelectListById(Guid.Empty),
-									new { @class = "form-control dropdown-taskType" })
-							</div>
-							@Html.LabelFor(t => t.BugLevel, new { @class = "control-label col-md-2	" })
-							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.BugLevel,
-									DictionaryCache.Cached(TaskKeys.LevelGuid)
-														.GetSelectListById(Guid.Empty),
-									new { @class = "form-control dropdown-taskLevel" })
-							</div>
-						</div>
-
-						@*<div class="form-group">
-							@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2 text-align:left" })
-							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.ManagerId,
-									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
-									new { @class = "form-control dropdown-project2" })
-							</div>
-
-							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-2 text-align:left" })
-							<div class="col-md-2">
-								@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
-							</div>
-							@Html.Label("实际消耗", new { @class = "control-label col-md-2 text-align:left" })
-							<div class="col-md-1">
-								@Html.Label("WorkHours", Model.WorkHours.ToString(), new { @class = "form-control " })
-							</div>
-							@if (!isCompeleteOrClose)
-							{
-							
-							}
-						</div>*@
-						@*@if (Model.IsParent)
-						{
-							<div class="form-group subTaskExecutor">
-								<div class="col-md-2 col-md-offset-2">
-									<a href="#" class="btn btn-info" onclick="addSubTaskExecutor()">新增执行人<i class="fa fa-plus"> </i></a>
-								</div>
-							</div>
-						}*@
-						@*@foreach (var item in ViewBag.SubTask as List<WorkTask>)
-						{
-							<div class="form-group subTaskExecutor" data-task-id="@item.TaskId">
-								@Html.Label("执行人", new { @class = "control-label col-md-2 text-align:left" })
+							<div class="form-group">
+								@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2" })
 								<div class="col-md-2">
-									@Html.DropDownList("ExecutorId",
-									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == item.ManagerId.ToString()),
+									@Html.DropDownList("ManagerId",
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == Model.ManagerId.ToString(), SelectListHelper.Default),
 									new { @class = "form-control" })
 								</div>
+								@Html.ValidationMessageFor(t => t.ManagerId)
+							</div>
 
-								@Html.Label("预计消耗", new { @class = "control-label col-md-2 text-align:left" })
+							<div class="form-group">
+								@*@Html.LabelFor(t => t.BugStatus, new { @class = "control-label col-md-2" })
 								<div class="col-md-2">
-									@Html.TextBox("EstimateWorkHours", item.EstimateWorkHours, new { @class = "form-control" })
+									@Html.DropDownListFor(t => t.BugStatus,
+									DictionaryCache.Cached(BugKeys.StatusGuid)
+														.GetSelectListById(Guid.Empty),
+									new { @class = "form-control dropdown-taskStatus" })
+								</div>*@
+								@Html.LabelFor(t => t.BugType, new { @class = "control-label col-md-2" })
+								<div class="col-md-2">
+									@Html.DropDownListFor(t => t.BugType,
+									DictionaryCache.Cached(BugKeys.TypeGuid)
+														.GetSelectListById(Guid.Empty),
+									new { @class = "form-control dropdown-taskType" })
 								</div>
-
-								@Html.Label("实际消耗", new { @class = "control-label col-md-2 text-align:left" })
-								<div class="col-md-1">
-									@Html.Label("WorkHours", item.WorkHours.ToString(), new { @class = "form-control " })
-								</div>
-								<div>
-									<a href="#" class="btn btn-info" onclick="removeSubTaskExecutor(this)"><i class="fa fa-minus"> </i></a>
-								</div>
-								@Html.Hidden("SubTaskId", item.TaskId)
-							</div>
-						}*@
-
-						@*<div class="form-group">
-							@Html.LabelFor(t => t.Description, new { @class = "control-label col-md-2" })
-							<div class="col-md-9">
-								@Html.TextAreaFor(t => t.Description, 12, 2, new { @class = "form-control" })
-								@Html.ValidationMessageFor(t => t.Description)
-							</div>
-						</div>*@
-
-						<div class="form-group">
-							@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileName" })
-							@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePath" })
-							<label class="col-md-2 control-label">上传文件</label>
-							<div class="col-md-3">
-								<input style="visibility:hidden;position:absolute;" />
-								<div class="input-group">
-									<label id="uploadName" class="form-control oversize uploadName"></label>
-									<span class="input-group-btn">
-										<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
-									</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="form-group">
-							@Html.Label("已上传", new { @class = "control-label col-md-2" })
-							<div class="col-md-9">
-								@foreach (var item in attahcments)
-								{
-									<div><a href="@item.Url">@item.RealName</a></div>
-								}
-							</div>
-						</div>
-
-						@*<div class="form-group">
-							@Html.Label("预估开始结束时间", new { @class = "control-label col-md-2" })
-							<div class="col-md-3">
-								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-									@Html.TextBoxFor(t => t.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control startDate" })
-									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								@Html.LabelFor(t => t.BugLevel, new { @class = "control-label col-md-2	" })
+								<div class="col-md-2">
+									@Html.DropDownListFor(t => t.BugLevel,
+									DictionaryCache.Cached(BugKeys.LevelGuid)
+												   .GetSelectListById(Guid.Empty),
+									new { @class = "form-control dropdown-taskLevel" })
 								</div>
 							</div>
 
-							<div class="col-md-3">
-								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-									@Html.TextBoxFor(t => t.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
-									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+							<div class="form-group">
+								@Html.LabelFor(t => t.BrowserName, new { @class = "control-label col-md-2" })
+								<div class="col-md-2">
+									@Html.DropDownListFor(t => t.BrowserId,
+									DictionaryCache.Cached(BugKeys.BrowserGuid)
+												   .GetSelectListById(Guid.Empty, SelectListHelper.Default),
+									new { @class = "form-control dropdown-taskLevel" })
+								</div>
+								@Html.LabelFor(t => t.SystemName, new { @class = "control-label col-md-2" })
+								<div class="col-md-2">
+									@Html.DropDownListFor(t => t.SystemId,
+									DictionaryCache.Cached(BugKeys.SystemGuid)
+												   .GetSelectListById(Guid.Empty, SelectListHelper.Default),
+									new { @class = "form-control dropdown-taskLevel" })
 								</div>
 							</div>
-						</div>*@
 
-						@*<div class="form-group">
-							@Html.Label("实际开始结束时间", new { @class = "control-label col-md-2" })
-							<div class="col-md-3">
-								<span class="form-control details-text" style="background-color:#eee;">@(Model.RealEndDate <= DateTime.MinValue ? " " : Model.RealStartDate.ToString("yyyy-MM-dd")) </span>
+							<div class="form-group">
+								@Html.LabelFor(t => t.Content, new { @class = "control-label col-md-2" })
+								<div class="col-md-9">
+									@Html.TextAreaFor(t => t.Content, 12, 2, new { @class = "form-control" })
+									@Html.ValidationMessageFor(t => t.Content)
+								</div>
 							</div>
-							<div class="col-md-3">
-								<span class="form-control details-text" style="background-color:#eee;">@(Model.RealEndDate <= DateTime.MinValue ? " " : Model.RealEndDate.ToString("yyyy-MM-dd"))</span>
+
+
+
+							<div class="form-group">
+								@Html.Label("关联任务", new { @class = "control-label col-md-2" })
+								<div class="col-md-2">
+									@Html.DropDownListFor(t => t.BugLevel,
+									DictionaryCache.Cached(BugKeys.LevelGuid)
+												   .GetSelectListById(Guid.Empty),
+									new { @class = "form-control dropdown-taskLevel" })
+								</div>
 							</div>
-						</div>*@
 
-						<div class="input-group center-block">
-							<button class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
-							<a class="btn btn-info col-md-3" href="@Url.Action("List","TaskV2")">取消</a>
-						</div>
+							<div class="form-group">
+								@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileName" })
+								@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePath" })
+								<label class="col-md-2 control-label">上传文件</label>
+								<div class="col-md-3">
+									<input style="visibility:hidden;position:absolute;" />
+									<div class="input-group">
+										<label id="uploadName" class="form-control oversize uploadName"></label>
+										<span class="input-group-btn">
+											<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
+										</span>
+									</div>
+								</div>
+							</div>
 
-					</fieldset>
+							@if (attahcments != null && attahcments.Count > 0)
+							{
+								<div class="form-group">
+									@Html.Label("已上传", new { @class = "control-label col-md-2" })
+									<div class="col-md-9">
+										@foreach (var item in attahcments)
+										{
+											<div><a href="@item.Url">@item.RealName</a></div>
+										}
+									</div>
+								</div>
+							}
+
+							<div class="input-group center-block">
+								<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
+								<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
+							</div>
+
+						</fieldset>
+
+					</div>
 
 				</div>
 
-			</div>
+			</form>
 
-		</form>
+		</div>
+
 
 	</div>
-
-	@Html.Partial("_subTaskList")
-
-
 </div>
-@section Modals{
-	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
-	<!-- Modal start -->
-	<div class="modal fade" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
-	</div>
-	<!-- Modal end -->
-}
-@section Scripts{
-	<script>
-
-		$(function () {
-
-			ajaxSubmitForm($('#taskForm'), true);
-
-			//fix bug
-			$('#btnEditJournal').click();
-
-			var $grid = $('#childTaskgrid');
-			$grid.bootgrid(getGridOptions())
-				.on('loaded.rs.jquery.bootgrid', function () {
-					$('.search,.actions').hide();
-
-					$grid.find('.editManager').click(function () {
-						$this = $(this);
-						$this.parent().hide();
-						var managerId = $this.parent().data("rowId");
-						$this.parent().after($('#ExecutorId').clone().val(managerId)); // show select and set current manager
-					});
-				});
 
 
-			//文件上传
-			$('.dropzone.file').dropzone({
-				addedContainer: '#flyArea',
-				dictResponseError: '上传出错',
-				uploadMultiple: false,
-				maxFilesize: 200,
-				init: function () {
-					this.on('success', function (file, data) {
-						$('.fileName').val(data.filename);
-						$('.filePath').val(data.url);
-						setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
-					});
-					this.on('error', function (file, message) {
-						popupMessage({ result: 'error', msg: message });
-					});
-				}
-			});
+<script src="~/assets/plugins/ckeditor_4.14.1_standard/ckeditor/ckeditor.js"></script>
 
-			$('#btn-upload').click(function () {
-				$('.dropzone.file').trigger('click');
-			});
+<script>
 
+	$(function () {
+
+		ajaxSubmitForm($('#bugForm'), true);
+
+		//
+
+		//var $grid = $('#childTaskgrid');
+		//$grid.bootgrid(getGridOptions())
+		//	.on('loaded.rs.jquery.bootgrid', function () {
+		//		$('.search,.actions').hide();
+
+		//		$grid.find('.editManager').click(function () {
+		//			$this = $(this);
+		//			$this.parent().hide();
+		//			var managerId = $this.parent().data("rowId");
+		//			$this.parent().after($('#ExecutorId').clone().val(managerId)); // show select and set current manager
+		//		});
+		//	});
+
+
+		//富文本编辑器初始化
+		var myEditor=CKEDITOR.replace('Content', {
+			height: 400,
+			//此处设置局部配置
+			filebrowserBrowseUrl: '@Url.Action("UploadFile", "Attachment")',
+			filebrowserUploadUrl: '@Url.Action("UploadFile", "Attachment")',
+			filebrowserImageUploadUrl: '@Url.Action("UploadFile", "Attachment")'
+		});
+
+		$('#submit').click(function () {
+			$('#Content').val(myEditor.getData());
 		});
 
 
 
-		
+		//文件上传
+		$('.dropzone.file').dropzone({
+			addedContainer: '#flyArea',
+			dictResponseError: '上传出错',
+			uploadMultiple: false,
+			maxFilesize: 200,
+			init: function () {
+				this.on('success', function (file, data) {
+					$('.fileName').val(data.filename);
+					$('.filePath').val(data.url);
+					setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
+				});
+				this.on('error', function (file, message) {
+					popupMessage({ result: 'error', msg: message });
+				});
+			}
+		});
 
-		function getGlobalRequest() {
-			return {
-				parentId: ''
-			};
-		}
+		$('#btn-upload').click(function () {
+			$('.dropzone.file').trigger('click');
+		});
 
-		function afterDialogSuccess() {
-			$('#childTaskgrid').bootgrid('reload');
-		}
+	});
 
-		function getGridOptions() {
-			return $.extend(true, {}, gridOptions, {
 
-				url: '@Url.Action("GetChildTasks", "TaskV2")',
 
-				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
 
-				formatters: {
 
-					'commands': function (column, row) {
-						var managerId = row.ManagerId;
-						var isParent = row.IsParent;
+	function getGlobalRequest() {
+		return {
+			parentId: ''
+		};
+	}
 
-						return '<div data-row-id="' + managerId + '">' + row.Manager + '&nbsp;&nbsp;&nbsp;<a href="#" class="editManager hidden"><i class="fa fa-pencil"> </i></a><div>';
-					}
+	function afterDialogSuccess() {
+		$('#childTaskgrid').bootgrid('reload');
+	}
+
+	function getGridOptions() {
+		return $.extend(true, {}, gridOptions, {
+
+			url: '@Url.Action("GetChildTasks", "TaskV2")',
+
+			requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+			formatters: {
+
+				'commands': function (column, row) {
+					var managerId = row.ManagerId;
+					var isParent = row.IsParent;
+
+					return '<div data-row-id="' + managerId + '">' + row.Manager + '&nbsp;&nbsp;&nbsp;<a href="#" class="editManager hidden"><i class="fa fa-pencil"> </i></a><div>';
 				}
-			});
-		}
+			}
+		});
+	}
 
 
 
-	</script>
-}
+</script>
+

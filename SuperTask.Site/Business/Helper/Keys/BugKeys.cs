@@ -30,6 +30,18 @@ namespace Business.Helper
 		/// </summary>
 		public static Guid StatusGuid = Guid.Parse("584eec94-dc05-4aa7-9365-02a43e93b2e8");
 
+
+		/// <summary>
+		/// 浏览器
+		/// </summary>
+		public static Guid BrowserGuid = Guid.Parse("ef30641f-fd3e-4311-a501-a63468803f9f");
+
+
+		/// <summary>
+		/// 操作系统
+		/// </summary>
+		public static Guid SystemGuid = Guid.Parse("ac04cc26-2550-48ea-8857-a459ffe4a3e0");
+
 	}
 
 }

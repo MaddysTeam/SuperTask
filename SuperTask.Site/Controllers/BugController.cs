@@ -138,25 +138,43 @@ namespace TheSite.Controllers
 			// 关联的任务id
 			ViewBag.RelativeTaskId = db.TaskBugsDal.ConditionQuery(tb.BugId == id,null,null,null).FirstOrDefault();
 
-			return View(bug);
+			return PartialView(bug);
 		}
 
 		[HttpPost]
+		[ValidateInput(false)]
 		public ActionResult Edit(Bug bug, FormCollection collection)
 		{
+			if (!ModelState.IsValid)
+			{
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
+
+			var user = GetUserInfo();
+
 			db.BeginTrans();
 
 			try
 			{
 				if (bug.BugId.IsEmptyGuid())
 				{
+					bug.BugId = Guid.NewGuid();
+					bug.CreateDate = DateTime.Now;
+					bug.CreatorId = user.UserId;
+
 					db.BugDal.Insert(bug);
 				}
 				else
 				{
 					bug.ModifyDate = DateTime.Now;
+
 					db.BugDal.Update(bug);
 				}
+
+				AttachmentHelper.UploadBugsAttachment(bug, db);
 
 				db.Commit();
 			}

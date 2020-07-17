@@ -137,7 +137,7 @@ namespace TheSite.Controllers
 
          var query = APQuery.select(a.Asterisk, u.UserName, p.ProjectName, t.TaskName.As("TaskName"))
             .from(a,
-            t.JoinInner(t.TaskId == a.TaskId),
+            t.JoinInner(t.TaskId == a.ItemId),
             u.JoinInner(a.PublishUserId == u.UserId),
             p.JoinInner(p.ProjectId == a.Projectid)
             );

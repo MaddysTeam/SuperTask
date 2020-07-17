@@ -16,10 +16,11 @@ namespace TheSite.Controllers
 
 		// AJAX-POST: /Attachment/UploadFile
 
+
 		[HttpPost]
 		public ActionResult UploadFile(HttpPostedFileBase file)
 		{
-			ThrowNotAjax();
+			//ThrowNotAjax();
 
 			try
 			{

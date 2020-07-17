@@ -16,9 +16,25 @@ namespace Business.Helper
 			var attachment = task.CurrentAttachment;
 			if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
 			{
-				attachment.TaskId = task.TaskId;
+				attachment.ItemId = task.TaskId;
 				attachment.Projectid = task.Projectid;
 				attachment.PublishUserId = task.ManagerId;
+				attachment.UploadDate = DateTime.Now;
+				attachment.AttachmentId = Guid.NewGuid();
+
+				db.AttachmentDal.Insert(attachment);
+			}
+		}
+
+
+		public static void UploadBugsAttachment(Bug bug, APDBDef db)
+		{
+			var attachment = bug.CurrentAttachment;
+			if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
+			{
+				attachment.ItemId = bug.BugId;
+				attachment.Projectid = bug.Projectid;
+				attachment.PublishUserId = bug.ManagerId;
 				attachment.UploadDate = DateTime.Now;
 				attachment.AttachmentId = Guid.NewGuid();
 
@@ -30,7 +46,7 @@ namespace Business.Helper
 		public static IList<Attachment> GetAttachments(Guid projectId, Guid taskId, APDBDef db)
 		{
 			var a = APDBDef.Attachment;
-			return db.AttachmentDal.ConditionQuery(a.Projectid == projectId & a.TaskId == taskId, null, null, null);
+			return db.AttachmentDal.ConditionQuery(a.Projectid == projectId & a.ItemId == taskId, null, null, null);
 		}
 
 

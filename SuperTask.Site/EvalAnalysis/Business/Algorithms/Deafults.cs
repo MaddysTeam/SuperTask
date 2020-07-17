@@ -258,7 +258,7 @@ namespace TheSite.EvalAnalysis
 				 var period = EvalPeriod.PrimaryGet(paras.PeriodId);
 				 var tasks = Util.GetWorkTaskByWorkJournal(paras);//获取当前考核期内的所有任务
 				 var result = APQuery.select(t.TaskId, t.TaskStatus, a.AttachmentId.As("attachmentId"))
-								.from(t, a.JoinLeft(a.TaskId == t.TaskId))
+								.from(t, a.JoinLeft(a.ItemId == t.TaskId))
 								.where(a.UploadDate >= period.BeginDate
 									& a.UploadDate <= period.EndDate
 									& t.ManagerId == paras.TargetId

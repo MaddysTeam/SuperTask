@@ -11,7 +11,7 @@ namespace Business.Helper
    public class SelectListHelper
    {
 
-      public static SelectListItem Default = new SelectListItem { Text="-- 请选择 --" , Value="-1" };
+      public static SelectListItem Default = new SelectListItem { Text="请选择" , Value=AppKeys.SelectAll.ToString() };
 
       public static List<SelectListItem> GetSelectItems<T>(IEnumerable<T> source,string textField, string valueField,Func<object,bool> isChecked=null, SelectListItem defaultItem=null) where T:class
       {

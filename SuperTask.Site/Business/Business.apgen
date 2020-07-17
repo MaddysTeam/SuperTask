@@ -430,16 +430,16 @@
 					
 					<add name="BugId" columnName="ID" type="Guid"  primaryKey="true" display="bugID" />
 					<add name="SortId" columnName="SortId" type="int" isNullable="true" comment="排序Id" />
-					<add name="Projectid" columnName="ProjectId" type="Guid" display="项目ID" />
-					<add name="BugName" columnName="Name" type="String" dataLength="300"  isNullable="false"  display="bug名称" />
-					<add name="BugLevel"  columnName="Level" type="Guid"  isNullable="true" display="bug级别" />
-					<add name="BugType"  columnName="Type" type="Guid"  isNullable="true"   display="bug类型" />
-					<add name="BugStatus"  columnName="Status" type="Guid"  isNullable="true"  display="bug状态" />
-					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true"  display="bug负责人ID" />
+					<add name="Projectid" columnName="ProjectId" type="Guid"  required="true" display="项目ID" />
+					<add name="BugName" columnName="Name" type="String" required="true" dataLength="300"   display="bug名称" />
+					<add name="BugLevel"  columnName="Level" type="Guid"   required="true" isNullable="true" display="bug级别" />
+					<add name="BugType"  columnName="Type" type="Guid"  required="true"  isNullable="true"   display="bug类型" />
+					<add name="BugStatus"  columnName="Status" type="Guid"  required="true"    display="bug状态" />
+					<add name="ManagerId" columnName="ManagerId" type="Guid"  required="true"    display="bug负责人ID" />
 					<add name="Content" columnName="Content" type="String" dataLength="40000"  isNullable="true"  display="bug内容" />
 					<add name="CreatorId" columnName="CreatorId" type="Guid"   isNullable="true" display="任务创建者ID" />
 					<add name="SystemId" columnName="SystemId" type="Guid"  isNullable="true"  display="系统ID" />
-					<add name="Browser" columnName="BrowserId" type="Guid"  isNullable="true"  display="浏览器ID" />
+					<add name="BrowserId" columnName="BrowserId" type="Guid"  isNullable="true"  display="浏览器ID" />
 					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
 					<add name="FixDate" columnName="FixDate" type="DateTime" defaultValue="DateTime.Now"  display="解决时间" />
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
@@ -499,9 +499,9 @@
 
 					<add name="AttachmentId" columnName="ID" type="Guid"  primaryKey="true" comment="附件ID"></add>
 					<add name="Projectid"  type="Guid"  comment="项目ID"></add>
-					<add name="TaskId"  type="Guid"  required="true" comment="任务ID"></add>
-					<add name="CategoryId" type="Guid" required="true" isNullable="true" comment="文件种类ID" ></add>
-					<add name="RealName" type="string" dataLength="40" required="true" display="真实姓名"/>
+					<add name="ItemId"  type="Guid"  comment="任务ID"></add>
+					<add name="CategoryId" type="Guid" isNullable="true" comment="文件种类ID" ></add>
+					<add name="RealName" type="string" dataLength="40"  display="真实姓名"/>
 					<add name="Url" type="string"  dataLength="255" display="文件上传地址路径" />
 					<add name="FileExtName" type="string"  dataLength="10" display="附件后缀名" />
 					<add name="UploadDate" type="DateTime"  display="文件上传时间"/>

@@ -46,7 +46,7 @@ namespace Business.Config
       // 当前APP类型为项目管理系统，在AppLibrary里指定
       public static Guid ThisAPPType = Guid.Parse("dd3adc7f-a55c-3c58-9caf-d3a2b7a9dd8b");
 
-      //public static string SelectAll = "-1";
+      public static string SelectAll = "-1";
 
       public static DateTime StartDayPerMonth = DateTime.Now.AddMonths(-1);
 

@@ -292,7 +292,7 @@ namespace TheSite.Controllers
 
          ViewBag.Resource = db.AccountDal.ConditionQuery(ac.Status == 0, null, null, null); //可用资源
 
-         ViewBag.Attachments = db.AttachmentDal.ConditionQuery(a.TaskId == task.TaskId, null, null, null);
+         ViewBag.Attachments = db.AttachmentDal.ConditionQuery(a.ItemId == task.TaskId, null, null, null);
 
          ViewBag.StandardItems = db.TaskStandardItemDal.ConditionQuery(null, st.SortId.Asc, null, null);
 

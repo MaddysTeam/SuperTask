@@ -138,7 +138,7 @@ namespace Business
       {
          if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
          {
-            attachment.TaskId = task.TaskId;
+            attachment.ItemId = task.TaskId;
             attachment.Projectid = task.Projectid;
             attachment.PublishUserId = task.ManagerId;
             attachment.UploadDate = DateTime.Now;

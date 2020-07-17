@@ -181,7 +181,7 @@ namespace TheSite.Controllers
 
          var project = ProjectrHelper.GetCurrentProject(projectId);
          var attachment = new Attachment();
-         attachment.TaskId = taskId;
+         attachment.ItemId = taskId;
          attachment.Projectid = projectId;
          attachment.PublishUserId = GetUserInfo().UserId;
          attachment.UploadDate = DateTime.Now;

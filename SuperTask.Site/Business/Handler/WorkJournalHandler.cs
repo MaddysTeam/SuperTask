@@ -82,7 +82,7 @@ namespace Business
          {
             att.AttachmentId = Guid.NewGuid();
             att.Projectid = journal.Projectid;
-            att.TaskId = journal.TaskId;
+            att.ItemId = journal.TaskId;
             att.PublishUserId = journal.UserId;
             att.UploadDate = DateTime.Now;
 

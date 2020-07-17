@@ -15,7 +15,30 @@ namespace Business
 
 		public string Creator { get; set; }
 
+		[Display(Name ="项目")]
+		public string ProjectName { get; set; }
+
+		[Display(Name = "浏览器")]
+		public string BrowserName { get; set; }
+
+		[Display(Name = "操作系统")]
+		public string SystemName { get; set; }
+
 		public Attachment CurrentAttachment { get; set; }
+
+		[Required]
+		public override string BugName
+		{
+			get
+			{
+				return base.BugName;
+			}
+
+			set
+			{
+				base.BugName = value;
+			}
+		}
 
 	}
 
