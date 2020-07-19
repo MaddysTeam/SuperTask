@@ -430,6 +430,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AjaxResults.cs" />
+    <Compile Include="Models\OperationHistoryViewModel.cs" />
+    <Compile Include="Models\BugViewModels.cs" />
     <Compile Include="Models\ChgPwdViewModels.cs" />
     <Compile Include="Models\ShareFolderViewModels.cs" />
     <Compile Include="Models\LeaderModel.cs" />
@@ -2002,6 +2004,14 @@
     <Content Include="Views\TaskV2\_subTaskList.cshtml" />
     <Content Include="Views\Bug\List.cshtml" />
     <Content Include="Views\Bug\Edit.cshtml" />
+    <Content Include="Views\Bug\_confirm.cshtml" />
+    <Content Include="Views\Bug\_resolve.cshtml" />
+    <Content Include="Views\Bug\_relative.cshtml" />
+    <Content Include="Views\Bug\_multipleConfirm.cshtml" />
+    <Content Include="Views\Bug\Add.cshtml" />
+    <Content Include="Views\Bug\_taskList.cshtml" />
+    <Content Include="Views\Bug\Detail.cshtml" />
+    <Content Include="Views\Bug\_multipleResolve.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

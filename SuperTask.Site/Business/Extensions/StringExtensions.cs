@@ -10,6 +10,12 @@ namespace Business
    public static class StringExtensions
    {
 
+      public static bool IsEmptyOrNull(this string str)
+      {
+         return string.IsNullOrEmpty(str);
+      }
+
+
       public static Guid ToGuid(this string str,Guid defaultValue)
       {
          var guid = Guid.Empty;
@@ -46,6 +52,26 @@ namespace Business
          }
 
          return false;
+      }
+
+   }
+
+
+   public static class StringArrayExtensions
+   {
+
+      public static IEnumerable<Guid> ConvertToGuidEnumerable(this string[] guids)
+      {
+         foreach(var item in guids)
+         {
+            yield return item.ToGuid(Guid.Empty);
+         }
+      }
+
+
+      public static Guid[] ConvertToGuidArray(this string[] guids)
+      {
+         return ConvertToGuidEnumerable(guids).ToArray();
       }
 
    }

@@ -379,8 +379,8 @@ namespace TheSite.Controllers
 			});
 		}
 
+
 		//GET TaskV2/Detail
-		//POST-Ajax TaskV2/Detail
 
 		public ActionResult Detail(Guid id)
 		{
@@ -607,6 +607,10 @@ namespace TheSite.Controllers
 		[HttpPost]
 		public ActionResult GetProjectTasks(Guid projectId)
 		{
+         if (projectId.IsEmptyGuid())
+         {
+            return Json(new { });
+         }
 			var all = TaskHelper.GetProjectTasks(projectId, db);
 			var parents = all?.FindAll(x => x.IsParent);
 			var results= new List<WorkTask>();
@@ -616,8 +620,8 @@ namespace TheSite.Controllers
 				results.AddRange(parents.FindAll(x => x.ParentId == item.TaskId));
 			}
 
-			return Json(new {
-				rows = results
+         return Json(new {
+            rows = results.Select(x => new { id = x.TaskId, text = x.TaskName }).ToList()
 			});
 			
 		}

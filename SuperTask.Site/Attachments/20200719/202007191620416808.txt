@@ -1,0 +1,15 @@
+sudo rm -rf /var/redis/6379/*
+sudo rm -rf /var/redis/6380/*
+sudo rm -rf /etc/redis-cluster/*
+sudo rm  /var/run/redis_6379.pid
+sudo rm  /var/run/redis_6380.pid
+
+ps -ef|grep redis
+
+-- 一共3个服务器,一台一台执行
+service redis_6379 start
+service redis_6380 start
+
+
+
+./redis-cli --cluster create 172.31.12.55:6379 172.31.12.55:6380 172.31.12.56:6379 172.31.12.56:6380 172.31.12.57:6379 172.31.12.57:6380 -a czzp1qaz2wsx3edc4rfv --cluster-replicas 1

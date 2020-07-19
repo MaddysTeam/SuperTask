@@ -4,11 +4,10 @@
 
 	var requestTaskType = Request["BugType"] ?? string.Empty;
 	var requestTaskStatus = Request["BugStatus"] ?? string.Empty;
-	//var requestTaskRange = Request["TaskRange"] ?? string.Empty;
 	var statusList = DictionaryCache.Cached(BugKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "bug状态", Value = BugKeys.SelectAll.ToString() }).ToList();
 	var typeList = DictionaryCache.Cached(BugKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "bug类型", Value = BugKeys.SelectAll.ToString() }).ToList();
 	var levelList = DictionaryCache.Cached(BugKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "bug 程度", Value = BugKeys.SelectAll.ToString() }).ToList();
-	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId");
+	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId",null, new SelectListItem { Text = "选择项目", Value = BugKeys.SelectAll.ToString() });
 }
 @section Css{
 	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
@@ -99,8 +98,9 @@
 			<div class="row col-md-9" style="margin-left:1%;">
 				<div class="btn-group" style="position:relative">
 					<div style="position:absolute;top:20px; width:200px; z-index:99">
-						<a class="btn btn-success" id="start" data-url="@Url.Action("MultipleConfirm","Bug")">确认</a>
-						<a class="btn btn-success" id="start" data-url="@Url.Action("MultipleFix","Bug")">解决</a>
+						<a class="btn btn-info" id="confirm" data-url="@Url.Action("MultipleConfirm","Bug")">确认</a>
+						<a class="btn btn-success" id="resolve" data-url="@Url.Action("MultipleResolve","Bug")">解决</a>
+						<a class="btn btn-warning" id="relative" data-url="@Url.Action("MultipleRelative","Bug")">关联</a>
 					</div>
 				</div>
 				<div class="table-responsive">
@@ -109,10 +109,10 @@
 							<tr>
 								<th data-formatter="checkbox"></th>
 								<th data-column-id="SortId">ID</th>
-								<th data-column-id="BugLevel">程度</th>
+								<th data-column-id="Level">程度</th>
 								<th data-column-id="BugName" data-formatter="link">bug名称</th>
-								<th data-column-id="BugType">类型</th>
-								<th data-column-id="BugStatus">状态</th>
+								<th data-column-id="Type">类型</th>
+								<th data-column-id="Status">状态</th>
 								<th data-column-id="Manager">指派给</th>
 								<th data-column-id="FixDate" data-formatter="DateOnly">完成时间</th>
 								<th data-column-id="Creator">创建人</th>
@@ -152,21 +152,8 @@
 				statusId: $('#dpStatus').val(),
 				isAssign: $('#hidAssgin').val() != '',
 				isJoin: $('#hidJoin').val() != '',
-				//taskName: $('#txtName').val(),
 			};
 		}
-
-		@*function isPlan(status) {
-			return status == '@TaskKeys.PlanStatus';
-		}
-
-		function isNotComplete(status) {
-			return status != '@TaskKeys.CompleteStatus' && status != '@TaskKeys.CloseStatus';
-		}
-
-		function isNotClose(status) {
-			return status != '@TaskKeys.CloseStatus';
-		}*@
 
 		function getGridOptions() {
 			return $.extend(true, {}, gridOptions, {
@@ -177,38 +164,31 @@
 
 				formatters: {
 					'checkbox': function (column, row) {
-						var currentUserId = '@Html.GetUserProfile().UserId';
-						if (currentUserId == row.ManagerId)
-							return '<input type="checkbox" class="checkbox" data-row-id="'+row.TaskId+'" />'
+							return '<input type="checkbox" class="checkbox" data-row-id="'+row.BugId+'" />'
 					},
 					'link': function (column, row) {
 						var url = '@Url.Action("Detail", "Bug")?id=' + row.BugId;
 						var link = '<a href="' + url + '">' + row.BugName + '</a>'
-						if (row.IsParent)
-							link += '&nbsp;&nbsp;<span class="text-align:right isParnet"><i class="fa fa-minus-square-o btn-hide-child" style="cursor:pointer"></i><i class="fa fa-plus-square-o btn-show-child" style="cursor:pointer"></i>'
 						return link;
 					},
 					'commands': function (column, row) {
 						var currentUserId = '@Html.GetUserProfile().UserId';
-						if (currentUserId != row.ManagerId)
-							return '';
+						//if (currentUserId != row.ManagerId)
+						//	return '';
 
-						var id = row.TaskId;
-						var isParent = row.IsParent;
-						var status = row.TaskStatus;
+						var id = row.BugId;
+						var status = row.bugStatus;
 						var projectId = $('#dpProjects').val();
-						var confirmButtonStr = '<a data-url="@Url.Action("Confirm", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-start">确认</a> ';
-						var fixButtonStr = '<a data-url="@Url.Action("Fix", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-complete">解决</a> ' ;
-						var EditButtonStr = '<a  data-url="@Url.Action("Edit", "Bug")?id=' + id + '" class="btn btn-lg btn-info btn-journal">编辑</a> ' ;
-						var closeButtonStr ='<a data-url="@Url.Action("Relative", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-complete">关联</a> ';
+						var confirmButtonStr = '<a data-url="@Url.Action("Confirm", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-confirm">确认</a> ';
+						var fixButtonStr = '<a data-url="@Url.Action("Resolve", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-resolve">解决</a> ' ;
+						var EditButtonStr = '<a target="_blank"  href="@Url.Action("Edit", "Bug")?id=' + id + '" class="btn btn-lg btn-info btn-edit">编辑</a> ' ;
+						var closeButtonStr ='<a data-url="@Url.Action("Relative", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-relative">关联</a> ';
 
-						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.taskName + '" data-row-id="' + id + '" data-row-active="' + row.actived + '">' +
-							statusButtonStr +
-							completeButtonStr +
-							closeButtonStr +
-							'<a target="_blank" href="@Url.Action("Edit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-close">编辑</a> ' +
-							journalButtonStr +
-							subTaskButtonStr +
+						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.BugName + '" data-row-id="' + id +  '">' +
+							confirmButtonStr +
+							fixButtonStr +
+							EditButtonStr+
+							closeButtonStr+
 							'</div>';
 					},
 				},
@@ -252,7 +232,7 @@
 
 					isLoaded = true;
 
-					grid.find('.btn-subTasks,.btn-journal').on('click', function (e) {
+					grid.find('.btn-confirm,.btn-resolve,.btn-relative').on('click', function (e) {
 						var url = $(this).data('url');
 						var $proxy = $('#modelProxy');
 						$proxy
@@ -268,45 +248,13 @@
 						})
 					});
 
-					grid.find('.btn-hide-child').click(function () {
-						let $this = $(this);
-						$(this).hide()
-							    .parent()
-							    .find('.btn-show-child').show();
-						let siblings = $this.parents('tr').next();
-						while (siblings.children().length > 0) {
-							if (siblings.find('.isParnet').length > 0)
-								break;
-							else {
-								siblings.hide();
-							}
-							siblings = siblings.next();
-						}
-					});
-
-					grid.find('.btn-show-child').hide().click(function () {
-						$this = $(this);
-						$(this).hide()
-							    .parent()
-							    .find('.btn-hide-child').show();
-						var siblings = $this.parents('tr').next();
-						while (siblings.children().length > 0) {
-							if (siblings.find('.isParnet').length > 0)
-								break;
-							else {
-								siblings.show();
-							}
-							siblings = siblings.next();
-						}
-					});
-						
 					//bind checkbox column
 					$('th:first').html('<input type="checkbox" class="checkAll" />').find('.checkAll').click(function () {
 						grid.find('.checkbox').click();
 					});
 
-					// multiple start,complete and close tasks 
-					$('#start,#complete,#close').off('click').on('click', function () {
+					// multiple start,complete and close tasks
+					$('#confirm,#resolve,#relative').off('click').on('click', function () {
 						result = [];
 						grid.find('.checkbox').each(function (i) {
 							$this = $(this);
@@ -316,9 +264,12 @@
 						});
 
 						if (result.length > 0) {
-							$.post($(this).data('url'), { ids: result }, function () {
-								grid.bootgrid('reload')
-							});
+							var projectId = $('#dpProjects').val();
+							var url = $(this).data('url') + "?ids=" + result.join(',') + '&projectId=' + projectId;
+							var $proxy = $('#modelProxy');
+							$proxy
+								.data('url', url)
+								.trigger('click');
 						}
 						else {
 							alert('请先勾选bug！')

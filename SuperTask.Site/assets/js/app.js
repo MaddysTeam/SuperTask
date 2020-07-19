@@ -269,7 +269,6 @@ function bindDropDownByAjax(dp, url, para, cb, dv) {
 	});
 }
 
-
 function initTableCheckbox(tableId) {
 	var table = '#' + tableId;
 	var $thr = $(table + ' thead tr');
@@ -313,6 +312,22 @@ function initTableCheckbox(tableId) {
 	$tbr.click(function () {
 		$(this).find('input').click();
 	});
+}
+
+
+
+function initCKEditor(containerId, config) {
+	config=$.extend( {
+		height: 300,
+		//config here
+		filebrowserBrowseUrl: '/Attachment/CKEditorUploadFile',
+		filebrowserUploadUrl: '/Attachment/CKEditorUploadFile',
+		filebrowserImageUploadUrl: '/Attachment/CKEditorUploadFile'
+	},config);
+	var myEditor = CKEDITOR.replace(containerId, config);
+	var content = $('#' + containerId).val();
+	myEditor.setData(content);
+	return myEditor;
 }
 
 //function ajaxBindFileUpload() {

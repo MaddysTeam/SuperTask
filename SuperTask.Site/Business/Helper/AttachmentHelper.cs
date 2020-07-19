@@ -27,26 +27,27 @@ namespace Business.Helper
 		}
 
 
-		public static void UploadBugsAttachment(Bug bug, APDBDef db)
+		public static void UploadBugsAttachment(Bug bug,Guid publishUserId, APDBDef db)
 		{
 			var attachment = bug.CurrentAttachment;
 			if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
 			{
 				attachment.ItemId = bug.BugId;
 				attachment.Projectid = bug.Projectid;
-				attachment.PublishUserId = bug.ManagerId;
+				attachment.PublishUserId = publishUserId;
 				attachment.UploadDate = DateTime.Now;
 				attachment.AttachmentId = Guid.NewGuid();
+            attachment.RealName = string.Empty;
 
 				db.AttachmentDal.Insert(attachment);
 			}
 		}
 
 
-		public static IList<Attachment> GetAttachments(Guid projectId, Guid taskId, APDBDef db)
+		public static IList<Attachment> GetAttachments(Guid projectId, Guid itemId, APDBDef db)
 		{
 			var a = APDBDef.Attachment;
-			return db.AttachmentDal.ConditionQuery(a.Projectid == projectId & a.ItemId == taskId, null, null, null);
+			return db.AttachmentDal.ConditionQuery(a.Projectid == projectId & a.ItemId == itemId, null, null, null);
 		}
 
 

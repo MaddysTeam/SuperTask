@@ -5,6 +5,7 @@ using System.Web;
 
 namespace Business
 {
+
    public static class GuidExtension
    {
 
@@ -14,4 +15,5 @@ namespace Business
       }
 
    }
+
 }

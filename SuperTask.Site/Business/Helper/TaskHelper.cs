@@ -17,10 +17,6 @@ namespace Business.Helper
 														 & t.TaskStatus != TaskKeys.DeleteStatus, t.SortId.Asc, null, null);
 		}
 
-
-	
-
-
 		public static List<WorkTask> GetProjectUserTasks(Guid projectId, Guid userId, APDBDef db)
 		{
 			return db.WorkTaskDal.ConditionQuery(t.Projectid == projectId
@@ -28,13 +24,36 @@ namespace Business.Helper
 														 & t.TaskStatus != TaskKeys.DeleteStatus, t.SortId.Asc, null, null);
 		}
 
-
 		public static List<WorkTask> GetProjectLeafTasks(Guid projectId, Guid userId, APDBDef db)
 		{
 			return GetProjectUserTasks(projectId, userId, db)
 				  .Where(t => t.TaskStatus != TaskKeys.DeleteStatus & t.ParentId.IsEmpty())
 				  .ToList();
 		}
+
+
+      /// <summary>
+      /// write by huachao 2020.07.17.
+      /// Get project task and its sub tasks
+      /// </summary>
+      /// <param name="projectId"></param>
+      /// <param name="db"></param>
+      /// <returns></returns>
+      public static List<WorkTask> GetProjectTaskAndItsSubTask(Guid projectId,APDBDef db)
+      {
+         if (projectId.IsEmptyGuid())
+            return new List<WorkTask>();
+         var all = GetProjectTasks(projectId, db);
+         var parents = all?.FindAll(x => x.IsParent);
+         var results = new List<WorkTask>();
+         foreach (var item in parents)
+         {
+            results.Add(item);
+            results.AddRange(parents.FindAll(x => x.ParentId == item.TaskId));
+         }
+
+         return results;
+      }
 
 
 		/// <summary>

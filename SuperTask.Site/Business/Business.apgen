@@ -443,8 +443,10 @@
 					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
 					<add name="FixDate" columnName="FixDate" type="DateTime" defaultValue="DateTime.Now"  display="解决时间" />
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
-					<add name="DynamicComment1" columnName="DynamicComment1" type="String" dataLength="1000"  isNullable="true"  display="评价1" />
-					<add name="DynamicComment2" columnName="DynamicComment2" type="String" dataLength="1000"  isNullable="true"  display="评价2" />
+					<add name="ConfirmResult" columnName="ConfirmResultId" type="Guid" isNullable="true" comment="确认结果" />
+					<add name="ResolveStatus" columnName="ResolveStatus" type="Guid" isNullable="true" comment="处理状态" />
+					<!--<add name="DynamicComment1" columnName="DynamicComment1" type="String" dataLength="1000"  isNullable="true"  display="评价1" />
+					<add name="DynamicComment2" columnName="DynamicComment2" type="String" dataLength="1000"  isNullable="true"  display="评价2" />-->
 
 				</columns>
 			</table>
@@ -453,9 +455,23 @@
 			<table name="TaskBugs">
 				<columns>
 					
-				<add name="TaskId" columnName="TaskId" type="Guid" isNullable="true"  />
-				<add name="BugId" columnName="BugId" type="Guid" isNullable="true"   />
+				<add name="TaskId" columnName="TaskId" type="Guid"  />
+				<add name="BugId" columnName="BugId" type="Guid"   />
 					
+				</columns>
+			</table>
+
+			<table name="Operation">
+				<columns>
+
+					<add name="ProjectId" columnName="ProjectId" type="Guid"   />
+					<add name="ItemId" columnName="ItemId" type="Guid"   />
+					<add name="OperationType" columnName="Type" type="Guid"  />
+					<add name="OperationResult" columnName="Result" type="Guid"  />
+					<add name="OperationDate" columnName="OperationDate" type="DateTime"  />
+					<add name="Assgin" columnName="Assgin" type="Guid"   isNullable="true" />
+					<add name="Content" columnName="Content" type="String" dataLength="40000"  isNullable="true" />
+						
 				</columns>
 			</table>
 			
