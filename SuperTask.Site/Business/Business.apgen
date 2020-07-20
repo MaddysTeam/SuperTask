@@ -423,7 +423,7 @@
 				</columns>
 			</table>
 
-			<!-- Bugs -->
+			<!-- Bugs 2020-07 build-->
 
 			<table name="Bug">
 				<columns>
@@ -452,6 +452,7 @@
 			</table>
 
 			<!-- Relation between task and bugs -->
+
 			<table name="TaskBugs">
 				<columns>
 					
@@ -460,6 +461,16 @@
 					
 				</columns>
 			</table>
+
+
+			<table name="Requirement" comment="需求">
+				<columns>
+
+				</columns>
+			</table>
+
+
+			<!-- Operation -->
 
 			<table name="Operation">
 				<columns>

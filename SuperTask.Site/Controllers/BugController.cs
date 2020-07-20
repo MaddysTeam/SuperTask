@@ -248,7 +248,12 @@ namespace TheSite.Controllers
          var operationHistory = new List<OperationHistoryViewModel>();
          foreach (var item in operations)
          {
-            operationHistory.Add(new OperationHistoryViewModel { Date = item.OperationDate.ToString("yyyy-MM-dd"), Content = "", Operator = GetUserInfo().RealName });
+				operationHistory.Add(new OperationHistoryViewModel {
+					Date = item.OperationDate.ToString("yyyy-MM-dd"),
+					Operator = GetUserInfo().RealName,
+					ResultId = item.OperationResult,	
+			   }
+			);
          }
 
          bug.OperationHistory = operationHistory;
@@ -269,7 +274,7 @@ namespace TheSite.Controllers
       {
          Bug bug = db.BugDal.PrimaryGet(id);
 
-         var existConfrim = GetOperation(bug.BugId, BugKeys.BugResolve);
+         var existConfrim = GetOperation(bug.BugId, BugKeys.BugResolveGuid);
 
          return PartialView("_resolve",
            new BugResolveViewModel
@@ -311,7 +316,7 @@ namespace TheSite.Controllers
 
                foreach (var id in ids)
                {
-                  db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugResolve, model.Status.Value, DateTime.Now, assignId, model.Remark));
+                  db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugResolveGuid, model.Status.Value, DateTime.Now, assignId, model.Remark));
 
                   db.BugDal.UpdatePartial(id, new { ResolveStatus = model.Status, BugStatus = model.Status == BugKeys.Resolving ? BugKeys.readyToResolve : BugKeys.hasResolve });
                }
@@ -344,7 +349,7 @@ namespace TheSite.Controllers
       {
          Bug bug = db.BugDal.PrimaryGet(id);
 
-         var existConfrim = GetOperation(bug.BugId, BugKeys.BugConfirm);
+         var existConfrim = GetOperation(bug.BugId, BugKeys.BugConfirmGuid);
 
          return PartialView("_confirm",
             new BugConfrimViewModel
@@ -396,7 +401,7 @@ namespace TheSite.Controllers
 
                foreach (var id in ids)
                {
-                  db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugConfirm, model.Result.Value, DateTime.Now, assignId, model.Remark));
+                  db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugConfirmGuid, model.Result.Value, DateTime.Now, assignId, model.Remark));
 
                   db.BugDal.UpdatePartial(id, new { ConfirmResult = model.Result, BugStatus = model.Result == BugKeys.ConfrimYes ? BugKeys.readyToResolve : BugKeys.hasResolve });
                }
