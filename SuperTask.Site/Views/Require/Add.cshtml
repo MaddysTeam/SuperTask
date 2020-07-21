@@ -36,7 +36,7 @@
 
 							<div class="form-group">
 								@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
-								<div class="col-md-2">
+								<div class="col-md-3">
 									@Html.DropDownListFor(t => t.Projectid,
 									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId", null, SelectListHelper.Default),
 									new { @class = "form-control dropdown-project" })
@@ -47,14 +47,14 @@
 							<div class="form-group">
 								@Html.LabelFor(t => t.RequireName, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.TextBoxFor(t => t.RequireName, new { @class = "form-control", @placeholder = "Require名称" })
+									@Html.TextBoxFor(t => t.RequireName, new { @class = "form-control", @placeholder = "需求名称" })
 								</div>
 								@Html.ValidationMessageFor(t => t.RequireName)
 							</div>
 
 							<div class="form-group">
 								@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2" })
-								<div class="col-md-2">
+								<div class="col-md-3">
 									@Html.DropDownList("ManagerId",
 									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == Model.ManagerId.ToString(), SelectListHelper.Default),
 									new { @class = "form-control" })
@@ -62,27 +62,27 @@
 								@Html.ValidationMessageFor(t => t.ManagerId)
 
 								@Html.LabelFor(t => t.RequireSource, new { @class = "control-label col-md-2" })
-								<div class="col-md-2">
-									@*@Html.DropDownListFor(t => t.RequireSource,
+								<div class="col-md-3">
+									@Html.DropDownListFor(t => t.RequireSource,
 									DictionaryCache.Cached(RequireKeys.SourceGuid)
 													.GetSelectListById(Guid.Empty, SelectListHelper.Default),
-									new { @class = "form-control dropdown-taskLevel" })*@
+									new { @class = "form-control dropdown-taskLevel" })
 								</div>
 								
 							</div>
 
 							<div class="form-group">
 								@Html.LabelFor(t => t.RequireLevel, new { @class = "control-label col-md-2	" })
-								<div class="col-md-2">
-									@*@Html.DropDownListFor(t => t.RequireLevel,
+								<div class="col-md-3">
+									@Html.DropDownListFor(t => t.RequireLevel,
 									DictionaryCache.Cached(RequireKeys.LevelGuid)
 													.GetSelectListById(Guid.Empty),
-									new { @class = "form-control dropdown-taskLevel" })*@
+									new { @class = "form-control dropdown-taskLevel" })
 								</div>
 								@Html.LabelFor(t => t.EstimateEndDate, new { @class = "control-label col-md-2" })
-								<div class="col-md-2">
+								<div class="col-md-3">
 									<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-										@Html.TextBoxFor(t => t.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
+										@Html.TextBoxFor(t => t.EstimateEndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
 										<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 									</div>
 								</div>
@@ -90,9 +90,14 @@
 
 							<div class="form-group">
 								@Html.LabelFor(t=>t.CC, new { @class = "control-label col-md-2" })
-								<div class="col-md-4">
+								<div class="col-md-3">
 
-									<select id="cc" class="form-control new-select" multiple="multiple"></select>
+									<select id="ccUsers" class="form-control new-select" multiple="multiple">
+										@foreach(var user in ViewBag.Users as List<UserInfo>){
+											<option value="@user.UserId" >@user.RealName</option>
+										}
+
+									</select>
 
 								</div>
 							</div>
@@ -134,10 +139,27 @@
 										@foreach (var item in attahcments)
 										{
 											<div><a href="@item.Url">@item.RealName</a></div>
-}
+										}
 									</div>
 								</div>
 							}
+
+							<div class="form-group">
+								@Html.LabelFor(t => t.ProgramStartDate, new { @class = "control-label col-md-2	" })
+								<div class="col-md-3">
+									<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+										@Html.TextBoxFor(t => t.ProgramStartDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
+										<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+									</div>
+								</div>
+								@Html.LabelFor(t => t.ProgramEndDate, new { @class = "control-label col-md-2" })
+								<div class="col-md-3">
+									<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+										@Html.TextBoxFor(t => t.ProgramEndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
+										<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+									</div>
+								</div>
+							</div>
 
 							<div class="input-group center-block">
 								<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
@@ -171,8 +193,9 @@
 		var myEditor2 = initCKEditor('StandardContent');
 
 		$('#submit').click(function () {
-			$('#RelativeTaskIds').val($('#tasks').val());
+			$('#CC').val($('#ccUsers').val());
 			$('#Description').val(myEditor.getData());
+			$('#StandardContent').val(myEditor2.getData());
 		});
 
 
@@ -200,28 +223,9 @@
 		});
 
 
-		$('#cc').select2({
-			data: [],	
+		$('#ccUsers').select2({
 			placeholder: "请选择"
 		});
-
-
-		//bind changed event for project dropdown
-		@*$('#Projectid').on('change', function () {
-			var projectId = $(this).val();
-			// remove previous select value
-			$('#tasks').children().remove();
-			// post data for tasks from service side
-			$.post('@Url.Action("GetProjectTasks","TaskV2")', { projectId: projectId }, function (data) {
-				if (data.rows) {
-					var selectTaskIds = '@Model.RelativeTaskIds'.split(',');
-					$('#tasks').select2({
-						data: data.rows,
-						placeholder: "请选择"
-					}).val(selectTaskIds).trigger('change'); // bind relative task data
-				}
-			});
-		}).change();*@
 
 	});
 

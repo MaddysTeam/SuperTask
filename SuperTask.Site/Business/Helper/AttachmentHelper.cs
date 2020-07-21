@@ -37,7 +37,7 @@ namespace Business.Helper
 				attachment.PublishUserId = publishUserId;
 				attachment.UploadDate = DateTime.Now;
 				attachment.AttachmentId = Guid.NewGuid();
-                attachment.RealName = string.Empty;
+            attachment.RealName = string.Empty;
 
 				db.AttachmentDal.Insert(attachment);
 			}

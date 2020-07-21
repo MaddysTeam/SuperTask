@@ -483,9 +483,9 @@
 					<add name="EndDate" columnName="EndDate" type="DateTime" defaultValue="DateTime.Now"  display="实际结束时间" />
 					<add name="ProgramStartDate" columnName="ProgramStartDate" type="DateTime" defaultValue="DateTime.Now"  display="开发开始时间" />
 					<add name="ProgramEndDate" columnName="ProgramEndDate" type="DateTime" defaultValue="DateTime.Now"  display="开发结束时间" />
-					<add name="ModifiedBy" columnName="ModifiedBy" type="Guid"   isNullable="true" display="任务修改者ID" />
-					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
-					<add name="EstimateEndDate" columnName="EstimateEndDate" type="Guid" isNullable="true" display="期望交付时间" />
+					<add name="ModifiedBy" columnName="ModifiedBy" type="Guid" isNullable="true" display="任务修改者ID" />
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  isNullable="true"  display="最近修改时间" />
+					<add name="EstimateEndDate" columnName="EstimateEndDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now" display="期望交付时间" />
 					<add name="CC" columnName="CC" type="string" dataLength="2000" isNullable="true" display="抄送人员" />
 				
 				</columns>

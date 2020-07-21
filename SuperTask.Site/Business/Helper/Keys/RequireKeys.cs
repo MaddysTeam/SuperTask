@@ -16,20 +16,20 @@ namespace Business.Helper
 		/// <summary>
 		/// 需求级别,需要Dictionary表里创建，需要用于下拉框的数据
 		/// </summary>
-		public static Guid LevelGuid = Guid.Parse("");
+		public static Guid LevelGuid = Guid.Parse("5ef78a98-8cfd-4d32-ae6d-bbf8c2a0149b");
 
 
 		/// <summary>
 		/// 需求类型
 		/// </summary>
-		public static Guid TypeGuid = Guid.Parse("");
+		public static Guid TypeGuid = Guid.Parse("de32ab4b-5256-4e37-8a5a-27b03cde3d6c");
 
 
 		/// <summary>
 		/// 需求状态
 		/// </summary>
-		public static Guid StatusGuid = Guid.Parse("");
-		//public static Guid readyToConfirm = Guid.Parse("4f82664e-7642-4abe-a106-43c15f9bd6ba");
+		public static Guid StatusGuid = Guid.Parse("d420df47-9a81-484f-a514-66f1c6e150e9");
+		public static Guid readyToReview = Guid.Parse("ba73ce64-5cf7-4192-bc78-9a4c206c84f1");
 		//public static Guid readyToResolve = Guid.Parse("75548d58-c8a4-49ba-8b34-bf4b8d01d806");
 		//public static Guid hasResolve = Guid.Parse("abc0668e-15e7-4662-b478-3bd39fb28fbe");
 		//public static Guid hasClose = Guid.Parse("584eec94-dc05-4aa7-9365-02a43e93b2e8");
@@ -37,7 +37,7 @@ namespace Business.Helper
 		/// <summary>
 		/// 需求来源
 		/// </summary>
-		public static Guid SourceGuid = Guid.Parse("");
+		public static Guid SourceGuid = Guid.Parse("53be8f58-8bbe-4f8a-a367-daa48de728cc");
 
 
 

@@ -32,7 +32,7 @@ namespace TheSite.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult List(Guid projectId, Guid levelId, Guid typeId, Guid statusId, bool isAssign,bool isJoin,
+		public ActionResult List(Guid projectId, Guid levelId, Guid statusId, bool isAssign,bool isJoin,
 					 int current, int rowCount, AjaxOrder sort, string searchPhrase)
 		{
 			ThrowNotAjax();
@@ -85,10 +85,10 @@ namespace TheSite.Controllers
 			{
 				results = results.FindAll(b => b.RequireLevel == levelId);
 			}
-			if (typeId != AppKeys.SelectAll)
-			{
-				results = results.FindAll(b => b.RequireType == typeId);
-			}
+			//if (typeId != AppKeys.SelectAll)
+			//{
+			//	results = results.FindAll(b => b.RequireType == typeId);
+			//}
 			if (statusId != AppKeys.SelectAll)
 			{
 				results = results.FindAll(t => t.RequireStatus == statusId);
@@ -173,8 +173,9 @@ namespace TheSite.Controllers
 					require.RequireId = Guid.NewGuid();
 					require.CreateDate = DateTime.Now;
 					require.CreatorId = user.UserId;
+               require.RequireStatus = RequireKeys.readyToReview;
 
-					db.RequireDal.Insert(require);
+               db.RequireDal.Insert(require);
 				}
 				else
 				{
@@ -190,20 +191,6 @@ namespace TheSite.Controllers
 
 				//add user to project resurce if not exits
 				ResourceHelper.AddUserToResourceIfNotExist(require.Projectid, Guid.Empty, require.ManagerId, ResourceKeys.OtherType, db);
-
-				//add relative bug tasks
-				//string[] relativeTaskIds = bug.RelativeTaskIds.Split(',');
-				//if (relativeTaskIds.Length > 0)
-				//{
-				//	var taskIds = relativeTaskIds.ConvertToGuidArray().ToArray();
-				//	db.TaskBugsDal.ConditionDelete(tb.TaskId.In(taskIds));
-
-				//	foreach (var taskId in taskIds)
-				//	{
-				//		db.TaskBugsDal.Insert(new TaskBugs { BugId = bug.BugId, TaskId = taskId });
-				//	}
-
-				//}
 
 
 				db.Commit();

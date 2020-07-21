@@ -28,9 +28,9 @@ namespace Business
 
       public string Level => RequireKeys.GetLevelByValue(RequireLevel);
 
-      public string Type => BugKeys.GetTypeKeyByValue(RequireType);
+      public string Type => RequireKeys.GetTypeKeyByValue(RequireType);
 
-      public string Status => BugKeys.GetStatusKeyByValue(RequireStatus);
+      public string Status => RequireKeys.GetStatusKeyByValue(RequireStatus);
 
 
       public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
