@@ -1,12 +1,12 @@
 ﻿@{
-	var pageTitle = ViewBag.Title = "bug列表";
+	var pageTitle = ViewBag.Title = "需求列表";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 
-	var requestTaskType = Request["BugType"] ?? string.Empty;
-	var requestTaskStatus = Request["BugStatus"] ?? string.Empty;
-	var statusList = DictionaryCache.Cached(BugKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "bug状态", Value = BugKeys.SelectAll.ToString() }).ToList();
-	var typeList = DictionaryCache.Cached(BugKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "bug类型", Value = BugKeys.SelectAll.ToString() }).ToList();
-	var levelList = DictionaryCache.Cached(BugKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "bug 程度", Value = BugKeys.SelectAll.ToString() }).ToList();
+	var requestTaskType = Request["RequireType"] ?? string.Empty;
+	var requestTaskStatus = Request["RequireStatus"] ?? string.Empty;
+	var statusList = DictionaryCache.Cached(BugKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "需求状态", Value = BugKeys.SelectAll.ToString() }).ToList();
+	var typeList = DictionaryCache.Cached(BugKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "需求类型", Value = BugKeys.SelectAll.ToString() }).ToList();
+	var levelList = DictionaryCache.Cached(BugKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "需求优先级", Value = BugKeys.SelectAll.ToString() }).ToList();
 	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId",null, new SelectListItem { Text = "选择项目", Value = BugKeys.SelectAll.ToString() });
 }
 @section Css{
@@ -98,9 +98,8 @@
 			<div class="row col-md-9" style="margin-left:1%;">
 				<div class="btn-group" style="position:relative">
 					<div style="position:absolute;top:20px; width:200px; z-index:99">
-						<a class="btn btn-info" id="confirm" data-url="@Url.Action("MultipleConfirm","Bug")">确认</a>
-						<a class="btn btn-success" id="resolve" data-url="@Url.Action("MultipleResolve","Bug")">解决</a>
-						<a class="btn btn-warning" id="relative" data-url="@Url.Action("MultipleRelative","Bug")">关联</a>
+						<a class="btn btn-info" id="review" data-url="@Url.Action("Reivew","Require")">审核</a>
+						<a class="btn btn-success" id="close" data-url="@Url.Action("Close","Require")">关闭</a>
 					</div>
 				</div>
 				<div class="table-responsive">
@@ -109,14 +108,14 @@
 							<tr>
 								<th data-formatter="checkbox"></th>
 								<th data-column-id="SortId">ID</th>
-								<th data-column-id="Level">程度</th>
-								<th data-column-id="BugName" data-formatter="link">bug名称</th>
+								<th data-column-id="Level">优先级</th>
+								<th data-column-id="RequireName" data-formatter="link">需求名称</th>
 								<th data-column-id="Type">类型</th>
 								<th data-column-id="Status">状态</th>
 								<th data-column-id="Manager">指派给</th>
-								<th data-column-id="FixDate" data-formatter="DateOnly">完成时间</th>
-								<th data-column-id="Creator">创建人</th>
 								<th data-column-id="CreateDate" data-formatter="DateOnly">开始时间</th>
+								<th data-column-id="Creator">创建人</th>
+								<th data-column-id="CreateDate" data-formatter="DateOnly">期望交付时间</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
 							</tr>
 						</thead>
@@ -173,22 +172,21 @@
 					},
 					'commands': function (column, row) {
 						var currentUserId = '@Html.GetUserProfile().UserId';
-						//if (currentUserId != row.ManagerId)
-						//	return '';
-
 						var id = row.BugId;
 						var status = row.bugStatus;
 						var projectId = $('#dpProjects').val();
-						var confirmButtonStr = '<a data-url="@Url.Action("Confirm", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-confirm">确认</a> ';
-						var fixButtonStr = '<a data-url="@Url.Action("Resolve", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-resolve">解决</a> ' ;
-						var EditButtonStr = '<a target="_blank"  href="@Url.Action("Edit", "Bug")?id=' + id + '" class="btn btn-lg btn-info btn-edit">编辑</a> ' ;
-						var closeButtonStr ='<a data-url="@Url.Action("Relative", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-relative">关联</a> ';
+						var reviewButtonStr = '<a data-url="@Url.Action("Review", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-review">评审</a> ';
+						var handleButtonStr = '<a data-url="@Url.Action("Handle", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-handle">处理</a> ' ;
+						var EditButtonStr = '<a target="_blank"  href="@Url.Action("Edit", "Require")?id=' + id + '" class="btn btn-lg btn-info btn-edit">编辑</a> ' ;
+						var closeButtonStr ='<a data-url="@Url.Action("Close", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-close">关闭</a> ';
+						var taskButtonStr = '<a data-url="@Url.Action("Add", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-task">创建任务</a> ';
 
 						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.BugName + '" data-row-id="' + id +  '">' +
-							confirmButtonStr +
-							fixButtonStr +
-							EditButtonStr+
-							closeButtonStr+
+							reviewButtonStr +
+							handleButtonStr +
+							EditButtonStr +
+							closeButtonStr +
+							taskButtonStr +
 							'</div>';
 					},
 				},
@@ -232,7 +230,7 @@
 
 					isLoaded = true;
 
-					grid.find('.btn-confirm,.btn-resolve,.btn-relative').on('click', function (e) {
+					grid.find('.btn-review,.btn-close,.btn-handle,.btn-task').on('click', function (e) {
 						var url = $(this).data('url');
 						var $proxy = $('#modelProxy');
 						$proxy
@@ -254,7 +252,7 @@
 					});
 
 					// multiple start,complete and close tasks
-					$('#confirm,#resolve,#relative').off('click').on('click', function () {
+					$('#review,#close').off('click').on('click', function () {
 						result = [];
 						grid.find('.checkbox').each(function (i) {
 							$this = $(this);

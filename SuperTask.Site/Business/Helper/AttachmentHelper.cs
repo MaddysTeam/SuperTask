@@ -37,7 +37,24 @@ namespace Business.Helper
 				attachment.PublishUserId = publishUserId;
 				attachment.UploadDate = DateTime.Now;
 				attachment.AttachmentId = Guid.NewGuid();
-            attachment.RealName = string.Empty;
+                attachment.RealName = string.Empty;
+
+				db.AttachmentDal.Insert(attachment);
+			}
+		}
+
+
+		public static void UploadRequireAttachment(Require require, Guid publishUserId, APDBDef db)
+		{
+			var attachment = require.CurrentAttachment;
+			if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
+			{
+				attachment.ItemId = require.RequireId;
+				attachment.Projectid = require.Projectid;
+				attachment.PublishUserId = publishUserId;
+				attachment.UploadDate = DateTime.Now;
+				attachment.AttachmentId = Guid.NewGuid();
+				attachment.RealName = string.Empty;
 
 				db.AttachmentDal.Insert(attachment);
 			}

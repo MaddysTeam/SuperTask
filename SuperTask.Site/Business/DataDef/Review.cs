@@ -1,16 +1,12 @@
 ﻿using Business.Helper;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TheSite.Models;
 
 namespace Business
 {
 
-   public partial class Review
+	public partial class Review
    {
 
       public string Sender { get; set; }
@@ -35,39 +31,6 @@ namespace Business
 
       public string GetStatus(int val)
          => ReviewKeys.GetStatusKeyByValue(val);
-
-
-      public static Dictionary<Guid, string> ReturnUrlsAfterReview => new Dictionary<Guid, string>
-      {
-         {ReviewKeys.ReviewTypeForPjStart,"/Project/AfterProjectStartSubimitReview" },
-         {ReviewKeys.ProjectRequestFailed,"/Project/AfterReviewFail"},
-
-         {ReviewKeys.ReviewTypeForTkChanged,"/Task/AfterEditReview" },
-         {ReviewKeys.ReviewTypeForTkSubmit,"/Task/AfterSubmitReview" },
-         {ReviewKeys.TaskRequestFailed,"/Task/AfterReviewFail"},
-
-         {ReviewKeys.ReviewTypeForStoneTaskChanged,"/ProjectStoneTask/AfterEditReview" },
-         {ReviewKeys.ReviewTypeForStoneTaskSubmit,"/ProjectStoneTask/AfterSubmitReview" },
-         {ReviewKeys.StoneTaskRequestFailed,"/ProjectStoneTask/AfterReviewFail"},
-      };
-
-      public static Dictionary<Guid, string> ReturnUrlsAfterSend => new Dictionary<Guid, string>
-      {
-         {ReviewKeys.ReviewTypeForPjStart,"/Project/AfterProjectStartReviewSend" },
-
-         {ReviewKeys.ReviewTypeForTkChanged,"/Task/AfterEditReviewSend" },
-         {ReviewKeys.ReviewTypeForTkSubmit,"/Task/AfterSubmitReviewSend" },
-
-         {ReviewKeys.ReviewTypeForStoneTaskChanged,"/ProjectStoneTask/AfterEditReviewSend" },
-         {ReviewKeys.ReviewTypeForStoneTaskSubmit,"/ProjectStoneTask/AfterSubmitReviewSend" },
-      };
-
-
-      public static Dictionary<string, Dictionary<Guid, string>> ReviewStrategy => new Dictionary<string, Dictionary<Guid, string>>
-      {
-         {"completed", ReturnUrlsAfterReview},
-         {"submit", ReturnUrlsAfterSend},
-      };
 
 
       public Result Validate()

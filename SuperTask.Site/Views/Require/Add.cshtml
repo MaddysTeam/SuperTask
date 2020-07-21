@@ -1,4 +1,4 @@
-﻿@model Bug
+﻿@model Require
 @{
 	var attahcments = ViewBag.Attahcments as List<Attachment>;
 }
@@ -19,7 +19,7 @@
 
 			<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
 
-			<form id="bugForm" class="form-horizontal" action="@Url.Action("Edit","Bug")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="RequireForm" class="form-horizontal" action="@Url.Action("Edit","Require")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 				<div class="widget-content">
 					<div>
@@ -29,9 +29,9 @@
 						<fieldset class="col-sm-12">
 
 							@Html.HiddenFor(t => t.SortId)
-							@Html.HiddenFor(t => t.BugId)
-							@Html.HiddenFor(x => x.RelativeTaskIds)
-							@Html.HiddenFor(x => x.BugStatus)
+							@Html.HiddenFor(t => t.RequireId)
+							@*@Html.HiddenFor(x => x.RelativeTaskIds)*@
+							@Html.HiddenFor(x => x.RequireStatus)
 
 
 							<div class="form-group">
@@ -45,11 +45,11 @@
 							</div>
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.BugName, new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t => t.RequireName, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.TextBoxFor(t => t.BugName, new { @class = "form-control", @placeholder = "bug名称" })
+									@Html.TextBoxFor(t => t.RequireName, new { @class = "form-control", @placeholder = "Require名称" })
 								</div>
-								@Html.ValidationMessageFor(t => t.BugName)
+								@Html.ValidationMessageFor(t => t.RequireName)
 							</div>
 
 							<div class="form-group">
@@ -60,58 +60,54 @@
 									new { @class = "form-control" })
 								</div>
 								@Html.ValidationMessageFor(t => t.ManagerId)
+
+								@Html.LabelFor(t => t.RequireSource, new { @class = "control-label col-md-2" })
+								<div class="col-md-2">
+									@*@Html.DropDownListFor(t => t.RequireSource,
+									DictionaryCache.Cached(RequireKeys.SourceGuid)
+													.GetSelectListById(Guid.Empty, SelectListHelper.Default),
+									new { @class = "form-control dropdown-taskLevel" })*@
+								</div>
+								
 							</div>
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.BugType, new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t => t.RequireLevel, new { @class = "control-label col-md-2	" })
 								<div class="col-md-2">
-									@Html.DropDownListFor(t => t.BugType,
-									DictionaryCache.Cached(BugKeys.TypeGuid)
-														.GetSelectListById(Guid.Empty),
-									new { @class = "form-control dropdown-taskType" })
-								</div>
-								@Html.LabelFor(t => t.BugLevel, new { @class = "control-label col-md-2	" })
-								<div class="col-md-2">
-									@Html.DropDownListFor(t => t.BugLevel,
-									DictionaryCache.Cached(BugKeys.LevelGuid)
+									@*@Html.DropDownListFor(t => t.RequireLevel,
+									DictionaryCache.Cached(RequireKeys.LevelGuid)
 													.GetSelectListById(Guid.Empty),
-									new { @class = "form-control dropdown-taskLevel" })
+									new { @class = "form-control dropdown-taskLevel" })*@
 								</div>
-							</div>
-
-							<div class="form-group">
-								@Html.LabelFor(t => t.BrowserName, new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t => t.EstimateEndDate, new { @class = "control-label col-md-2" })
 								<div class="col-md-2">
-									@Html.DropDownListFor(t => t.BrowserId,
-									DictionaryCache.Cached(BugKeys.BrowserGuid)
-													.GetSelectListById(Guid.Empty, SelectListHelper.Default),
-									new { @class = "form-control dropdown-taskLevel" })
-								</div>
-								@Html.LabelFor(t => t.SystemName, new { @class = "control-label col-md-2" })
-								<div class="col-md-2">
-									@Html.DropDownListFor(t => t.SystemId,
-									DictionaryCache.Cached(BugKeys.SystemGuid)
-													.GetSelectListById(Guid.Empty, SelectListHelper.Default),
-									new { @class = "form-control dropdown-taskLevel" })
+									<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+										@Html.TextBoxFor(t => t.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
+										<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+									</div>
 								</div>
 							</div>
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Content, new { @class = "control-label col-md-2" })
-								<div class="col-md-9">
-									@Html.TextAreaFor(t => t.Content, 12, 2, new { @class = "form-control" })
-									@Html.ValidationMessageFor(t => t.Content)
-								</div>
-							</div>
-
-
-
-							<div class="form-group">
-								@Html.Label("关联任务", new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t=>t.CC, new { @class = "control-label col-md-2" })
 								<div class="col-md-4">
 
-									<select id="tasks" class="form-control new-select" multiple="multiple"></select>
+									<select id="cc" class="form-control new-select" multiple="multiple"></select>
 
+								</div>
+							</div>
+
+							<div class="form-group">
+								@Html.LabelFor(t => t.Description, new { @class = "control-label col-md-2" })
+								<div class="col-md-9">
+									@Html.TextAreaFor(t => t.Description, 12, 2, new { @class = "form-control" })
+								</div>
+							</div>
+
+							<div class="form-group">
+								@Html.LabelFor(t => t.StandardContent, new { @class = "control-label col-md-2" })
+								<div class="col-md-9">
+									@Html.TextAreaFor(t => t.StandardContent, 6, 2, new { @class = "form-control" })
 								</div>
 							</div>
 
@@ -168,14 +164,15 @@
 
 	$(function () {
 
-		ajaxSubmitForm($('#bugForm'), true);
+		ajaxSubmitForm($('#RequireForm'), true);
 
 		//initial ckeditor
-		var myEditor = initCKEditor('Content');
+		var myEditor = initCKEditor('Description');
+		var myEditor2 = initCKEditor('StandardContent');
 
 		$('#submit').click(function () {
 			$('#RelativeTaskIds').val($('#tasks').val());
-			$('#Content').val(myEditor.getData());
+			$('#Description').val(myEditor.getData());
 		});
 
 
@@ -203,8 +200,14 @@
 		});
 
 
+		$('#cc').select2({
+			data: [],	
+			placeholder: "请选择"
+		});
+
+
 		//bind changed event for project dropdown
-		$('#Projectid').on('change', function () {
+		@*$('#Projectid').on('change', function () {
 			var projectId = $(this).val();
 			// remove previous select value
 			$('#tasks').children().remove();
@@ -218,7 +221,7 @@
 					}).val(selectTaskIds).trigger('change'); // bind relative task data
 				}
 			});
-		}).change();
+		}).change();*@
 
 	});
 

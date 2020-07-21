@@ -34,6 +34,17 @@ namespace Business.Helper
 			return projects;
 		}
 
+
+		/// <summary>
+		/// 某用户参与的所有可用项目，不包含被关闭和被删除的项目
+		/// </summary>
+		/// <param name="userId">用户id</param>
+		/// <param name="db"></param>
+		/// <returns></returns>
+		public static List<Project> UserJoinedAvailableProject(Guid userId,APDBDef db) =>
+			UserJoinedProjects(userId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus & p.ProjectStatus != ProjectKeys.DeleteStatus);
+	
+
 		/// <summary>
 		/// 通过项目id获取当前的项目数据
 		/// </summary>

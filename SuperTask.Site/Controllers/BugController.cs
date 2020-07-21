@@ -21,10 +21,10 @@ namespace TheSite.Controllers
       static APDBDef.WorkTaskTableDef t = APDBDef.WorkTask;
       static APDBDef.OperationTableDef o = APDBDef.Operation;
 
-      //GET  /Task/List
-      //POST-AJAX /Task/List
+		//GET  /Bug/List
+		//POST-AJAX /Bug/List
 
-      public ActionResult List()
+		public ActionResult List()
       {
 
          ViewBag.Projects = MyJoinedProjects();
@@ -124,10 +124,10 @@ namespace TheSite.Controllers
       }
 
 
-      //GET  /Task/Edit
-      //POST-AJAX /Task/Edit
+		//GET  /Bug/Edit
+		//POST-AJAX /Bug/Edit
 
-      public ActionResult Edit(Guid? id)
+		public ActionResult Edit(Guid? id)
       {
          // 所有人员
          ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
@@ -274,7 +274,7 @@ namespace TheSite.Controllers
       {
          Bug bug = db.BugDal.PrimaryGet(id);
 
-         var existConfrim = GetOperation(bug.BugId, BugKeys.BugResolveGuid);
+         var existConfrim = OperationHelper.GetOperation(bug.BugId, BugKeys.BugResolveGuid);
 
          return PartialView("_resolve",
            new BugResolveViewModel
@@ -349,7 +349,7 @@ namespace TheSite.Controllers
       {
          Bug bug = db.BugDal.PrimaryGet(id);
 
-         var existConfrim = GetOperation(bug.BugId, BugKeys.BugConfirmGuid);
+         var existConfrim = OperationHelper.GetOperation(bug.BugId, BugKeys.BugConfirmGuid);
 
          return PartialView("_confirm",
             new BugConfrimViewModel
@@ -452,10 +452,6 @@ namespace TheSite.Controllers
          var subQuery = APQuery.select(tb.TaskId).from(tb).where(tb.BugId == bugId);
          return db.WorkTaskDal.ConditionQuery(t.TaskId.In(subQuery), null, null, null);
       }
-
-      private Operation GetOperation(Guid itemId, Guid opertaionType)
-        => db.OperationDal.ConditionQuery(o.ItemId == itemId & o.OperationType == opertaionType, o.OperationDate.Desc, null, null).FirstOrDefault();
-
 
    }
 

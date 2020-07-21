@@ -50,7 +50,7 @@
 								@Html.LabelFor(t => t.Result, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.DropDownListFor(t => t.Result,
-									DictionaryCache.Cached(BugKeys.BugConfirm)
+									DictionaryCache.Cached(BugKeys.BugConfirmGuid)
 													.GetSelectListById(Guid.Empty),
 									new { @class = "form-control" })
 								</div>

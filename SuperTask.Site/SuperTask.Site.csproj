@@ -277,6 +277,7 @@
     <Compile Include="Business\Business.apgen.cs" />
     <Compile Include="Business\Cache\ThisAppCache.cs" />
     <Compile Include="Business\Config\ThisApp.cs" />
+    <Compile Include="Business\DataDef\Require.cs" />
     <Compile Include="Business\DataDef\DictionaryCache.cs" />
     <Compile Include="Business\DataDef\Project.cs" />
     <Compile Include="Business\DataDef\Payments.cs" />
@@ -311,6 +312,7 @@
     <Compile Include="Business\Handler\WorkJournalHandler.cs" />
     <Compile Include="Business\Helper\AttachmentHelper.cs" />
     <Compile Include="Business\Helper\AppConfigHelper.cs" />
+    <Compile Include="Business\Helper\Keys\RequireKeys.cs" />
     <Compile Include="Business\Helper\Keys\StatisticalKeys.cs" />
     <Compile Include="Business\Helper\Keys\PaymentsKeys.cs" />
     <Compile Include="Business\Helper\Keys\AlertKeys.cs" />
@@ -328,6 +330,7 @@
     <Compile Include="Business\Helper\Keys\ShareFolderKeys.cs" />
     <Compile Include="Business\Helper\Keys\BugKeys.cs" />
     <Compile Include="Business\Helper\Keys\TaskKeys.cs" />
+    <Compile Include="Business\Helper\OperationHelper.cs" />
     <Compile Include="Business\Helper\MilestoneHelper.cs" />
     <Compile Include="Business\Helper\PaymentsHelper.cs" />
     <Compile Include="Business\Helper\ProjcetStoneTaskHelper.cs" />
@@ -367,6 +370,7 @@
     <Compile Include="Business\Utilities\wangsu\FileUploader.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdviceController.cs" />
+    <Compile Include="Controllers\RequireController.cs" />
     <Compile Include="Controllers\BugController.cs" />
     <Compile Include="Controllers\TaskV2Controller.cs" />
     <Compile Include="Controllers\ReviewController.cs" />
@@ -430,6 +434,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AjaxResults.cs" />
+    <Compile Include="Models\RequireViewModels.cs" />
     <Compile Include="Models\OperationHistoryViewModel.cs" />
     <Compile Include="Models\BugViewModels.cs" />
     <Compile Include="Models\ChgPwdViewModels.cs" />
@@ -2012,6 +2017,17 @@
     <Content Include="Views\Bug\_taskList.cshtml" />
     <Content Include="Views\Bug\Detail.cshtml" />
     <Content Include="Views\Bug\_multipleResolve.cshtml" />
+    <Content Include="Views\Require\_review.cshtml" />
+    <Content Include="Views\Require\_multipleReview.cshtml" />
+    <Content Include="Views\Require\_handle.cshtml" />
+    <Content Include="Views\Require\_taskList.cshtml" />
+    <Content Include="Views\Require\Add.cshtml" />
+    <Content Include="Views\Require\Detail.cshtml" />
+    <Content Include="Views\Require\Edit.cshtml" />
+    <Content Include="Views\Require\List.cshtml" />
+    <Content Include="Views\Require\_close.cshtml" />
+    <Content Include="Views\Require\_multipleClose.cshtml" />
+    <Content Include="Views\Require\_bugList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

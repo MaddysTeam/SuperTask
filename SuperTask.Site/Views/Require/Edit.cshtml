@@ -9,9 +9,12 @@
 	}
 </style>
 
-
-<div class="modal-dialog" style="width:95%;">
-
+<div class="row" style="margin-top:20px;margin-bottom:20px;">
+	<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List","Bug")">返回Bug列表</a>
+	<div class="col-md-6">
+		<h4>@Model.SortId - @Model.Level - @Model.BugName</h4>
+	</div>
+</div>
 	<div class="row">
 
 		<!-- widget -->
@@ -19,12 +22,10 @@
 
 			<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
 
-			<form id="bugForm" class="form-horizontal" action="@Url.Action("Edit","Bug")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="bugForm" class="form-horizontal" action="@Url.Action("Edit","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 				<div class="widget-content">
-					<div>
-						<hr />
-					</div>
+
 					<div class="row editTaskInfo">
 						<fieldset class="col-sm-12">
 
@@ -63,6 +64,13 @@
 							</div>
 
 							<div class="form-group">
+								@*@Html.LabelFor(t => t.BugStatus, new { @class = "control-label col-md-2" })
+									<div class="col-md-2">
+										@Html.DropDownListFor(t => t.BugStatus,
+										DictionaryCache.Cached(BugKeys.StatusGuid)
+															.GetSelectListById(Guid.Empty),
+										new { @class = "form-control dropdown-taskStatus" })
+									</div>*@
 								@Html.LabelFor(t => t.BugType, new { @class = "control-label col-md-2" })
 								<div class="col-md-2">
 									@Html.DropDownListFor(t => t.BugType,
@@ -157,88 +165,95 @@
 			</form>
 
 		</div>
+
+
+
+		@Html.Partial("_taskList",Model.RelativeTasks)
+
+	
 	</div>
-</div>
+
+@section Scripts{
+
+	<script src="~/assets/plugins/ckeditor_4.14.1_standard/ckeditor/ckeditor.js"></script>
+	<script src="~/assets/plugins/select2-4.0.2/js/select2.min.js"></script>
+
+	<script>
+
+		$(function () {
+
+			ajaxSubmitForm($('#bugForm'), true);
+
+			//initial ckeditor
+			var myEditor = initCKEditor('Content');
+
+			$('#submit').click(function () {
+				$('#RelativeTaskIds').val($('#tasks').val());
+				$('#Content').val(myEditor.getData());
+			});
 
 
-<script src="~/assets/plugins/ckeditor_4.14.1_standard/ckeditor/ckeditor.js"></script>
-<script src="~/assets/plugins/select2-4.0.2/js/select2.min.js"></script>
 
-<script>
-
-	$(function () {
-
-		ajaxSubmitForm($('#bugForm'), true);
-
-		//initial ckeditor
-		var myEditor = initCKEditor('Content');
-
-		$('#submit').click(function () {
-			$('#RelativeTaskIds').val($('#tasks').val());
-			$('#Content').val(myEditor.getData());
-		});
-
-
-
-		//bind files uploader
-		$('.dropzone.file').dropzone({
-			addedContainer: '#flyArea',
-			dictResponseError: '上传出错',
-			uploadMultiple: false,
-			maxFilesize: 200,
-			init: function () {
-				this.on('success', function (file, data) {
-					$('.fileName').val(data.filename);
-					$('.filePath').val(data.url);
-					setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
-				});
-				this.on('error', function (file, message) {
-					popupMessage({ result: 'error', msg: message });
-				});
-			}
-		});
-
-		$('#btn-upload').click(function () {
-			$('.dropzone.file').trigger('click');
-		});
-
-
-		//bind changed event for project dropdown
-		$('#Projectid').on('change', function () {
-			var projectId = $(this).val();
-			// remove previous select value
-			$('#tasks').children().remove();
-			// post data for tasks from service side
-			$.post('@Url.Action("GetProjectTasks","TaskV2")', { projectId: projectId }, function (data) {
-				if (data.rows) {
-					var selectTaskIds = '@Model.RelativeTaskIds'.split(',');
-					$('#tasks').select2({
-						data: data.rows,
-						placeholder: "请选择"
-					}).val(selectTaskIds).trigger('change'); // bind relative task data
+			//bind files uploader
+			$('.dropzone.file').dropzone({
+				addedContainer: '#flyArea',
+				dictResponseError: '上传出错',
+				uploadMultiple: false,
+				maxFilesize: 200,
+				init: function () {
+					this.on('success', function (file, data) {
+						$('.fileName').val(data.filename);
+						$('.filePath').val(data.url);
+						setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
+					});
+					this.on('error', function (file, message) {
+						popupMessage({ result: 'error', msg: message });
+					});
 				}
 			});
-		}).change();
 
-	});
+			$('#btn-upload').click(function () {
+				$('.dropzone.file').trigger('click');
+			});
 
 
-	function afterDialogSuccess() {
-		$('#firstModal').modal('hide');
-		$('#bootgrid').bootgrid('reload');
-	}
+			//bind changed event for project dropdown
+			@*$('#Projectid').on('change', function () {
+				var projectId = $(this).val();
+				// remove previous select value
+				$('#tasks').children().remove();
+				// post data for tasks from service side
+				$.post('@Url.Action("GetProjectTasks","TaskV2")', { projectId: projectId }, function (data) {
+					if (data.rows) {
+						var selectTaskIds = '@Model.RelativeTaskIds'.split(',');
+						$('#tasks').select2({
+							data: data.rows,
+							placeholder: "请选择"
+						}).val(selectTaskIds).trigger('change'); // bind relative task data
+					}
+				});
+			}).change();*@
 
-	function bindMulitSelection(dropdown) {
-		$(dropdown).select2({
-			language: {
-				noResults: function (param) {
-					return "暂无数据";
-				}
-			}
 		});
-	}
 
 
+		function afterDialogSuccess() {
+			$('#firstModal').modal('hide');
+			$('#childTaskgrid').bootgrid('reload');
+		}
 
-</script>
+		function bindMulitSelection(dropdown) {
+			$(dropdown).select2({
+				language: {
+					noResults: function (param) {
+						return "暂无数据";
+					}
+				}
+			});
+		}
+
+
+	</script>
+
+}
 

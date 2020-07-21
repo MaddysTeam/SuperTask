@@ -463,9 +463,31 @@
 			</table>
 
 
-			<table name="Requirement" comment="需求">
+			<table name="Require" comment="需求">
 				<columns>
 
+					<add name="RequireId" columnName="ID" type="Guid"  primaryKey="true"  />
+					<add name="SortId" columnName="SortId" type="int" isNullable="true" comment="排序Id" />
+					<add name="Projectid" columnName="ProjectId" type="Guid"  required="true" display="项目ID" />
+					<add name="RequireName" columnName="Name" type="String" required="true" dataLength="300"   display="需求名称" />
+					<add name="RequireLevel"  columnName="Level" type="Guid"   required="true" isNullable="true" display="优先级" />
+					<add name="RequireType"  columnName="Type" type="Guid"  required="true"  isNullable="true"   display="需求类型" />
+					<add name="RequireStatus"  columnName="Status" type="Guid"  required="true"    display="状态" />
+					<add name="RequireSource"  columnName="Source" type="Guid"  required="true"    display="需求来源" />
+					<add name="ManagerId" columnName="ManagerId" type="Guid"  required="true"    display="指派人员" />
+					<add name="Description" columnName="Description" type="String" dataLength="40000"  isNullable="true"  display="需求描述" />
+					<add name="StandardContent" columnName="StandardContent" type="String" dataLength="40000"  isNullable="true"  display="验收标准" />
+					<add name="CreatorId" columnName="CreatorId" type="Guid"   isNullable="true" display="创建者ID" />
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
+					<add name="StartDate" columnName="StartDate" type="DateTime" defaultValue="DateTime.Now"  display="实际开始时间" />
+					<add name="EndDate" columnName="EndDate" type="DateTime" defaultValue="DateTime.Now"  display="实际结束时间" />
+					<add name="ProgramStartDate" columnName="ProgramStartDate" type="DateTime" defaultValue="DateTime.Now"  display="开发开始时间" />
+					<add name="ProgramEndDate" columnName="ProgramEndDate" type="DateTime" defaultValue="DateTime.Now"  display="开发结束时间" />
+					<add name="ModifiedBy" columnName="ModifiedBy" type="Guid"   isNullable="true" display="任务修改者ID" />
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime"  isNullable="true"  display="最近修改时间" />
+					<add name="EstimateEndDate" columnName="EstimateEndDate" type="Guid" isNullable="true" display="期望交付时间" />
+					<add name="CC" columnName="CC" type="string" dataLength="2000" isNullable="true" display="抄送人员" />
+				
 				</columns>
 			</table>
 

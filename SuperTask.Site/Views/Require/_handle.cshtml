@@ -1,5 +1,7 @@
-﻿@model BugResolveViewModel
-
+﻿@model Bug
+@{
+	var attahcments = ViewBag.Attahcments as List<Attachment>;
+}
 <link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
 <style>
 	.dropzonePop {
@@ -15,25 +17,28 @@
 		<!-- widget -->
 		<div class="widget details col-md-7 col-md-offset-1">
 
-			<form id="bugForm" class="form-horizontal" action="@Url.Action("Resolve","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="bugForm" class="form-horizontal" action="@Url.Action("Edit","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 				<div class="widget-content">
 
 					<div class="row">
-						<h4>bug 确认</h4>
-						<hr />
+					<h4>bug 关联</h4>
+					 <hr />
 					</div>
 
 					<div class="row editTaskInfo">
 						<fieldset class="col-sm-12">
 
-							@Html.HiddenFor(t => t.BugIds)
-							@Html.HiddenFor(t => t.ProjectId)
+							@Html.HiddenFor(t => t.SortId)
+							@Html.HiddenFor(t => t.BugId)
+							@Html.HiddenFor(x => x.RelativeTaskIds)
+							@Html.HiddenFor(x => x.BugStatus)
+
 
 							<div class="form-group">
 								@Html.LabelFor(t => t.SortId, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.Label("BugID", Model.SortId.ToString(), new { @class = "form-control" })
+									@Html.Label("BugID",Model.SortId.ToString(), new { @class = "form-control" })
 								</div>
 								@Html.ValidationMessageFor(t => t.BugName)
 							</div>
@@ -41,26 +46,34 @@
 							<div class="form-group">
 								@Html.LabelFor(t => t.BugName, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.Label("BugName", Model.BugName, new { @class = "form-control" })
+								@Html.Label("BugName", Model.BugName, new { @class = "form-control" })
 								</div>
 								@Html.ValidationMessageFor(t => t.BugName)
 							</div>
 
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Status, new { @class = "control-label col-md-2" })
-								<div class="col-md-9">
-									@Html.DropDownListFor(t => t.Status,
-									DictionaryCache.Cached(BugKeys.BugResolveGuid)
-													.GetSelectListById(Guid.Empty),
+								@Html.LabelFor(t => t.BrowserName, new { @class = "control-label col-md-2" })
+								<div class="col-md-3">
+									@Html.DropDownListFor(t => t.BrowserId,
+									DictionaryCache.Cached(BugKeys.BrowserGuid)
+													.GetSelectListById(Guid.Empty, SelectListHelper.Default),
+									new { @class = "form-control" })
+								</div>
+
+								@Html.LabelFor(t => t.SystemId, new { @class = "control-label col-md-2" })
+								<div class="col-md-3">
+									@Html.DropDownListFor(t => t.SystemId,
+									DictionaryCache.Cached(BugKeys.SystemGuid)
+													.GetSelectListById(Guid.Empty, SelectListHelper.Default),
 									new { @class = "form-control" })
 								</div>
 							</div>
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Remark, new { @class = "control-label col-md-2" })
+								@Html.Label("", "备注", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.TextAreaFor(t => t.Remark, 12, 2, new { @class = "form-control" })
+									@Html.TextArea("Remark", "", 12, 2, new { @class = "form-control" })
 								</div>
 							</div>
 
@@ -93,11 +106,7 @@
 
 		ajaxSubmitForm($('#bugForm'), true);
 
-		myEditor = initCKEditor('Remark');
-
-		$('#submit').click(function () {
-			$('#Remark').val(myEditor.getData());
-		});
+		initCKEditor('Remark');
 
 	});
 
