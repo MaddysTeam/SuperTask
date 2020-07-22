@@ -231,6 +231,7 @@ namespace TheSite.Controllers
 					Date = item.OperationDate.ToyyMMdd(),
 					Operator = GetUserInfo().RealName,
 					ResultId = item.OperationResult,
+					Result = RequireKeys.OperationResultDic[item.OperationResult],
 				}
 			);
 			}

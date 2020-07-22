@@ -251,6 +251,7 @@ namespace TheSite.Controllers
 				operationHistory.Add(new OperationHistoryViewModel {
 					Date = item.OperationDate.ToString("yyyy-MM-dd"),
 					Operator = GetUserInfo().RealName,
+					Result= BugKeys.OperationResultDic[item.OperationResult],
 					ResultId = item.OperationResult,	
 			   }
 			);

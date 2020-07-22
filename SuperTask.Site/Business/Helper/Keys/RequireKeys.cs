@@ -55,6 +55,7 @@ namespace Business.Helper
 
 		public static Dictionary<Guid, string> OperationResultDic = new Dictionary<Guid, string>
 		{
+		 { RequireKeys.ReviewWaiting,"待评审" },
 		  { RequireKeys.ReviewSuccess,"评审通过" },
 		  { RequireKeys.ReviewFail, "评审不通过" },
 		  //{ RequireKeys.Resolved, "已经处理了这个bug" },

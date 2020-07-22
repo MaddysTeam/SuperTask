@@ -20,7 +20,9 @@ namespace TheSite.Models
 
 		public Guid ResultId { get; set; }
 
-		public virtual string Display => string.Format("{0}  , {1}   ,{2}", Date, Operator, BugKeys.OperationResultDic[this.ResultId]);
+		public string Result { get; set; }
+
+		public virtual string Display => string.Format("{0}  , {1}   ,{2}", Date, Operator, Result);
 
 	}
 
