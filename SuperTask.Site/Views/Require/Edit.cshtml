@@ -38,6 +38,7 @@
 							@Html.HiddenFor(t => t.Creator)
 							@Html.HiddenFor(t => t.CreateDate)
 							@Html.HiddenFor(t=>t.CC)
+							@Html.HiddenFor(t=>t.ReviewStatus)
 
 							<div class="form-group">
 								@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
@@ -158,17 +159,17 @@
 							}
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.ProgramStartDate, new { @class = "control-label col-md-2	" })
+								@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-2	" })
 								<div class="col-md-3">
 									<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-										@Html.TextBoxFor(t => t.ProgramStartDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
+										@Html.TextBoxFor(t => t.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
 										<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 									</div>
 								</div>
-								@Html.LabelFor(t => t.ProgramEndDate, new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t => t.EndDate, new { @class = "control-label col-md-2" })
 								<div class="col-md-3">
 									<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-										@Html.TextBoxFor(t => t.ProgramEndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
+										@Html.TextBoxFor(t => t.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
 										<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 									</div>
 								</div>

@@ -30,15 +30,18 @@ namespace Business.Helper
 		/// </summary>
 		public static Guid StatusGuid = Guid.Parse("d420df47-9a81-484f-a514-66f1c6e150e9");
 		public static Guid readyToReview = Guid.Parse("ba73ce64-5cf7-4192-bc78-9a4c206c84f1");
-		//public static Guid readyToResolve = Guid.Parse("75548d58-c8a4-49ba-8b34-bf4b8d01d806");
-		//public static Guid hasResolve = Guid.Parse("abc0668e-15e7-4662-b478-3bd39fb28fbe");
-		//public static Guid hasClose = Guid.Parse("584eec94-dc05-4aa7-9365-02a43e93b2e8");
+
 
 		/// <summary>
 		/// 需求来源
 		/// </summary>
 		public static Guid SourceGuid = Guid.Parse("53be8f58-8bbe-4f8a-a367-daa48de728cc");
 
+
+		public static Guid ReviewResultGuid = Guid.Parse("3b3d0ea9-6f74-4ece-b54e-9ea5243f7e6f");
+		public static Guid ReviewWaiting = Guid.Parse("d110708b-0780-41a2-83be-f460216e6f7c");
+		public static Guid ReviewSuccess = Guid.Parse("2f7cff64-9e82-4890-a660-dadcd01b65c2");
+		public static Guid ReviewFail = Guid.Parse("78909727-4d47-4799-88a9-ac140968ec49");
 
 
 		public static string GetTypeKeyByValue(Guid val) => DictionaryHelper.GetDicById(TypeGuid, val).Title;
@@ -47,14 +50,16 @@ namespace Business.Helper
 
 		public static string GetLevelByValue(Guid val) => DictionaryHelper.GetDicById(LevelGuid, val).Title;
 
+		public static string GetReviewResultByValue(Guid val) => DictionaryHelper.GetDicByValue(ReviewResultGuid, val).Title;
 
-		//public static Dictionary<Guid, string> OperationResultDic = new Dictionary<Guid, string>
-		//{
-		//  { BugKeys.ConfrimYes,"确定了这个bug" },
-		//  { BugKeys.ConfirmNo, "否定了这个bug" },
-		//  { BugKeys.Resolved, "已经处理了这个bug" },
-		//  { BugKeys.Resolving, "正在处理这个bug" }
-		//};
+
+		public static Dictionary<Guid, string> OperationResultDic = new Dictionary<Guid, string>
+		{
+		  { RequireKeys.ReviewSuccess,"评审通过" },
+		  { RequireKeys.ReviewFail, "评审不通过" },
+		  //{ RequireKeys.Resolved, "已经处理了这个bug" },
+		  //{ RequireKeys.Resolving, "正在处理这个bug" }
+		};
 
 	}
 

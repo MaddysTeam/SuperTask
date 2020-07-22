@@ -477,17 +477,19 @@
 					<add name="ManagerId" columnName="ManagerId" type="Guid"  required="true"    display="指派人员" />
 					<add name="Description" columnName="Description" type="String" dataLength="40000"  isNullable="true"  display="需求描述" />
 					<add name="StandardContent" columnName="StandardContent" type="String" dataLength="40000"  isNullable="true"  display="验收标准" />
-					<add name="CreatorId" columnName="CreatorId" type="Guid"   isNullable="true" display="创建者ID" />
-					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建时间" />
-					<add name="StartDate" columnName="StartDate" type="DateTime" defaultValue="DateTime.Now"  display="实际开始时间" />
-					<add name="EndDate" columnName="EndDate" type="DateTime" defaultValue="DateTime.Now"  display="实际结束时间" />
-					<add name="ProgramStartDate" columnName="ProgramStartDate" type="DateTime" defaultValue="DateTime.Now"  display="开发开始时间" />
-					<add name="ProgramEndDate" columnName="ProgramEndDate" type="DateTime" defaultValue="DateTime.Now"  display="开发结束时间" />
+					<add name="CreatorId" columnName="CreatorId" type="Guid"   isNullable="true" display="创建人" />
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建日期" />
+					<add name="StartDate" columnName="StartDate" type="DateTime" defaultValue="DateTime.Now"  display="实际开始日期" />
+					<add name="EndDate" columnName="EndDate" type="DateTime" defaultValue="DateTime.Now"  display="实际结束日期" />
+					<add name="CloseDate" columnName="CloseDate" type="DateTime"   display="关闭日期" />
 					<add name="ModifiedBy" columnName="ModifiedBy" type="Guid" isNullable="true" display="任务修改者ID" />
-					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  isNullable="true"  display="最近修改时间" />
-					<add name="EstimateEndDate" columnName="EstimateEndDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now" display="期望交付时间" />
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  isNullable="true"  display="最近修改日期" />
+					<add name="EstimateEndDate" columnName="EstimateEndDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now" display="期望交付日期" />
+					<add name="ReviewDate" columnName="EvalDate" type="DateTime" isNullable="true"  display="评审日期" />
+					<add name="WorkHours" columnName="WorkHours" type="int" defaultValue="0"  display="实际消耗" />
 					<add name="CC" columnName="CC" type="string" dataLength="2000" isNullable="true" display="抄送人员" />
-				
+					<add name="ReviewStatus"  columnName="ReviewStatus" type="Guid"    display="审核状态" />
+
 				</columns>
 			</table>
 

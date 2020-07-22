@@ -13,8 +13,8 @@ using TheSite.Models;
 namespace TheSite.Controllers
 {
 
-   public class RequireController : BaseController
-   {
+	public class RequireController : BaseController
+	{
 
 		static APDBDef.RequireTableDef re = APDBDef.Require;
 		static APDBDef.UserInfoTableDef u = APDBDef.UserInfo;
@@ -32,7 +32,7 @@ namespace TheSite.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult List(Guid projectId, Guid levelId, Guid statusId, bool isAssign,bool isJoin,
+		public ActionResult List(Guid projectId, Guid levelId, Guid statusId, bool isAssign, bool isJoin,
 					 int current, int rowCount, AjaxOrder sort, string searchPhrase)
 		{
 			ThrowNotAjax();
@@ -173,9 +173,10 @@ namespace TheSite.Controllers
 					require.RequireId = Guid.NewGuid();
 					require.CreateDate = DateTime.Now;
 					require.CreatorId = user.UserId;
-               require.RequireStatus = RequireKeys.readyToReview;
+					require.RequireStatus = RequireKeys.readyToReview;
+					require.ReviewStatus = RequireKeys.ReviewWaiting;
 
-               db.RequireDal.Insert(require);
+					db.RequireDal.Insert(require);
 				}
 				else
 				{
@@ -227,7 +228,7 @@ namespace TheSite.Controllers
 			{
 				operationHistory.Add(new OperationHistoryViewModel
 				{
-					Date = item.OperationDate.ToString("yyyy-MM-dd"),
+					Date = item.OperationDate.ToyyMMdd(),
 					Operator = GetUserInfo().RealName,
 					ResultId = item.OperationResult,
 				}
@@ -235,8 +236,6 @@ namespace TheSite.Controllers
 			}
 
 			require.OperationHistory = operationHistory;
-
-			//require.RelativeTasks.AddRange(GetRelativeTasks(id));
 
 			ViewBag.Attahcments = AttachmentHelper.GetAttachments(require.Projectid, require.RequireId, db);
 
@@ -247,15 +246,73 @@ namespace TheSite.Controllers
 		//GET Require/Review
 		//POST-AJAX Require/Review
 
-		public ActionResult Review()
+		public ActionResult Review(Guid id)
 		{
-			return View();
+			Require require = db.RequireDal.PrimaryGet(id);
+
+			var existReviewResult = OperationHelper.GetOperation(require.RequireId, RequireKeys.ReviewResultGuid);
+
+			return PartialView("_review",
+			   new OperationViewModel
+			   {
+				   Id = require.RequireId.ToString(),
+				   Name = require.RequireName,
+				   ProjectId = require.Projectid,
+				   SortId = require.SortId,
+				   Remark = existReviewResult?.Content,
+				   Result = existReviewResult?.OperationResult,
+			   });
+		}
+
+
+		public ActionResult MultipleReview(string ids, Guid projectId)
+		{
+			return PartialView("_multipleReview", new OperationViewModel { Id = ids, ProjectId = projectId });
 		}
 
 		[HttpPost]
-		public ActionResult Review(RequireReviewViewModel model)
+		[ValidateInput(false)]
+		public ActionResult Review(OperationViewModel model)
 		{
-			return Json(new { });
+			if (!ModelState.IsValid || !model.IsValid())
+			{
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
+
+			db.BeginTrans();
+
+			try
+			{
+				Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
+				Guid assignId = GetUserInfo().UserId;
+
+				foreach (var id in ids)
+				{
+					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.ReviewResultGuid, model.Result.Value, DateTime.Now, assignId, model.Remark));
+
+					db.RequireDal.UpdatePartial(id, new { ReviewStatus = model.Result});
+				}
+
+				db.Commit();
+			}
+			catch(Exception e)
+			{
+				db.Rollback();
+
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
+
+
+			return Json(new
+			{
+				result = AjaxResults.Success
+			});
 		}
 
 
@@ -264,11 +321,11 @@ namespace TheSite.Controllers
 
 		public ActionResult Handle()
 		{
-			return View();
+			return View("_handle");
 		}
 
 		[HttpPost]
-		public ActionResult Handle(RequireHandleViewModel model)
+		public ActionResult Handle(OperationViewModel model)
 		{
 			return Json(new { });
 		}
@@ -283,7 +340,7 @@ namespace TheSite.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Close(CloseViewModel model)
+		public ActionResult Close(OperationViewModel model)
 		{
 			return Json(new { });
 		}

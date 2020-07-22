@@ -1,4 +1,4 @@
-﻿@model BugConfrimViewModel
+﻿@model OperationViewModel
 
 <link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
 <style>
@@ -15,35 +15,33 @@
 		<!-- widget -->
 		<div class="widget details col-md-7 col-md-offset-1">
 
-			<form id="bugForm" class="form-horizontal" action="@Url.Action("Confirm","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="requireForm" class="form-horizontal" action="@Url.Action("Review","Require")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 				<div class="widget-content">
 
 					<div class="row">
-						<h4>bug 确认</h4>
+						<h4>需求评审</h4>
 						<hr />
 					</div>
 
 					<div class="row editTaskInfo">
 						<fieldset class="col-sm-12">
 
-							@Html.HiddenFor(t => t.BugIds)
 							@Html.HiddenFor(t => t.ProjectId)
+							@Html.HiddenFor(t => t.Id)
 
 							<div class="form-group">
 								@Html.LabelFor(t => t.SortId, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.Label("BugID", Model.SortId.ToString(), new { @class = "form-control" })
+									@Html.Label("", Model.SortId.ToString(), new { @class = "form-control" })
 								</div>
-								@Html.ValidationMessageFor(t => t.BugName)
 							</div>
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.BugName, new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t => t.Name, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.Label("BugName", Model.BugName, new { @class = "form-control" })
+									@Html.Label("", Model.Name, new { @class = "form-control" })
 								</div>
-								@Html.ValidationMessageFor(t => t.BugName)
 							</div>
 
 
@@ -51,7 +49,7 @@
 								@Html.LabelFor(t => t.Result, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.DropDownListFor(t => t.Result,
-									DictionaryCache.Cached(BugKeys.BugConfirmGuid)
+									DictionaryCache.Cached(RequireKeys.ReviewResultGuid)
 													.GetSelectListById(Guid.Empty),
 									new { @class = "form-control" })
 								</div>
@@ -91,7 +89,7 @@
 
 	$(function () {
 
-		ajaxSubmitForm($('#bugForm'), true);
+		ajaxSubmitForm($('#requireForm'), true);
 
 		myEditor = initCKEditor('Remark');
 

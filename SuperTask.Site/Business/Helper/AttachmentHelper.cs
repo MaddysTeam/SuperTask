@@ -37,7 +37,7 @@ namespace Business.Helper
 				attachment.PublishUserId = publishUserId;
 				attachment.UploadDate = DateTime.Now;
 				attachment.AttachmentId = Guid.NewGuid();
-            attachment.RealName = string.Empty;
+				attachment.RealName = bug.CurrentAttachment?.RealName;
 
 				db.AttachmentDal.Insert(attachment);
 			}
@@ -54,7 +54,7 @@ namespace Business.Helper
 				attachment.PublishUserId = publishUserId;
 				attachment.UploadDate = DateTime.Now;
 				attachment.AttachmentId = Guid.NewGuid();
-				attachment.RealName = string.Empty;
+				attachment.RealName = require.CurrentAttachment?.RealName;
 
 				db.AttachmentDal.Insert(attachment);
 			}
