@@ -502,7 +502,8 @@
 					<add name="ProjectId" columnName="ProjectId" type="Guid"   />
 					<add name="ItemId" columnName="ItemId" type="Guid"   />
 					<add name="OperationType" columnName="Type" type="Guid"  />
-					<add name="OperationResult" columnName="Result" type="Guid"  />
+					<add name="OperationResult" columnName="Result" type="String"  dataLength="500"/>
+					<add name="OperationResult2" columnName="Result2" type="String" dataLength="500"  />
 					<add name="OperationDate" columnName="OperationDate" type="DateTime"  />
 					<add name="Assgin" columnName="Assgin" type="Guid"   isNullable="true" />
 					<add name="Content" columnName="Content" type="String" dataLength="40000"  isNullable="true" />

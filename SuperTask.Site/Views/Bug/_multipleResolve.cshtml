@@ -16,7 +16,7 @@
 		<div class="widget details col-md-7 col-md-offset-1">
 
 			<form id="bugForm" class="form-horizontal" action="@Url.Action("Resolve","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
-				@Html.HiddenFor(t => t.BugIds)
+				@Html.HiddenFor(t => t.Id)
 				@Html.HiddenFor(t => t.ProjectId)
 
 				<div class="widget-content">
@@ -29,27 +29,10 @@
 					<div class="row editTaskInfo">
 						<fieldset class="col-sm-12">
 
-							@*<div class="form-group">
-									@Html.Label("","", new { @class = "control-label col-md-2" })
-									<div class="col-md-9">
-										@Html.Label("BugID",Model.SortId.ToString(), new { @class = "form-control" })
-									</div>
-									@Html.ValidationMessageFor(t => t.BugName)
-								</div>
-
-								<div class="form-group">
-									@Html.LabelFor(t => t.BugName, new { @class = "control-label col-md-2" })
-									<div class="col-md-9">
-									@Html.Label("BugName", Model.BugName, new { @class = "form-control" })
-									</div>
-									@Html.ValidationMessageFor(t => t.BugName)
-								</div>*@
-
-
 							<div class="form-group">
-								@Html.LabelFor(t => t.Status, new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t => t.Result, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.DropDownListFor(t => t.Status,
+									@Html.DropDownListFor(t => t.Result,
 									DictionaryCache.Cached(BugKeys.BugResolveGuid)
 													.GetSelectListById(Guid.Empty),
 									new { @class = "form-control" })

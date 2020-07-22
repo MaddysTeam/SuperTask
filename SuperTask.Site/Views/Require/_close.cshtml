@@ -1,4 +1,4 @@
-﻿@model BugConfrimViewModel
+﻿	@model OperationViewModel
 
 <link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
 <style>
@@ -20,14 +20,14 @@
 				<div class="widget-content">
 
 					<div class="row">
-						<h4>bug 确认</h4>
+						<h4>需求关闭</h4>
 						<hr />
 					</div>
 
 					<div class="row editTaskInfo">
 						<fieldset class="col-sm-12">
 
-							@Html.HiddenFor(t => t.BugIds)
+							@Html.HiddenFor(t => t.Id)
 							@Html.HiddenFor(t => t.ProjectId)
 
 							<div class="form-group">
@@ -35,25 +35,12 @@
 								<div class="col-md-9">
 									@Html.Label("BugID", Model.SortId.ToString(), new { @class = "form-control" })
 								</div>
-								@Html.ValidationMessageFor(t => t.BugName)
 							</div>
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.BugName, new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t => t.Name, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.Label("BugName", Model.BugName, new { @class = "form-control" })
-								</div>
-								@Html.ValidationMessageFor(t => t.BugName)
-							</div>
-
-
-							<div class="form-group">
-								@Html.LabelFor(t => t.Result, new { @class = "control-label col-md-2" })
-								<div class="col-md-9">
-									@Html.DropDownListFor(t => t.Result,
-									DictionaryCache.Cached(BugKeys.BugConfirmGuid)
-													.GetSelectListById(Guid.Empty),
-									new { @class = "form-control" })
+									@Html.Label("需求名称", Model.Name, new { @class = "form-control" })
 								</div>
 							</div>
 
@@ -66,7 +53,7 @@
 
 
 							<div class="input-group center-block">
-								<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
+								<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">关闭</button>
 								<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
 							</div>
 

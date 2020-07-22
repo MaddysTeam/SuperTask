@@ -1,4 +1,4 @@
-﻿@model BugResolveViewModel
+﻿@model OperationViewModel
 
 <link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
 <style>
@@ -15,8 +15,8 @@
 		<!-- widget -->
 		<div class="widget details col-md-7 col-md-offset-1">
 
-			<form id="bugForm" class="form-horizontal" action="@Url.Action("Resolve","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
-				@Html.HiddenFor(t => t.BugIds)
+			<form id="bugForm" class="form-horizontal" action="@Url.Action("Review","Require")" role="form" data-after-success="afterDialogSuccess()" style="">
+				@Html.HiddenFor(t => t.Id)
 				@Html.HiddenFor(t => t.ProjectId)
 
 				<div class="widget-content">
@@ -47,10 +47,10 @@
 
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Status, new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t => t.Result, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.DropDownListFor(t => t.Status,
-									DictionaryCache.Cached(BugKeys.BugResolveGuid)
+									@Html.DropDownListFor(t => t.Result,
+									DictionaryCache.Cached(RequireKeys.ReviewResultGuid)
 													.GetSelectListById(Guid.Empty),
 									new { @class = "form-control" })
 								</div>

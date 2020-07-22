@@ -231,7 +231,7 @@ namespace TheSite.Controllers
 					Date = item.OperationDate.ToyyMMdd(),
 					Operator = GetUserInfo().RealName,
 					ResultId = item.OperationResult,
-					Result = RequireKeys.OperationResultDic[item.OperationResult],
+					Result = RequireKeys.OperationResultDic[item.OperationResult.ToGuid(Guid.Empty)],
 				}
 			);
 			}
@@ -251,18 +251,9 @@ namespace TheSite.Controllers
 		{
 			Require require = db.RequireDal.PrimaryGet(id);
 
-			var existReviewResult = OperationHelper.GetOperation(require.RequireId, RequireKeys.ReviewResultGuid);
+         var viewModel = MappingOperationViewModel(require);
 
-			return PartialView("_review",
-			   new OperationViewModel
-			   {
-				   Id = require.RequireId.ToString(),
-				   Name = require.RequireName,
-				   ProjectId = require.Projectid,
-				   SortId = require.SortId,
-				   Remark = existReviewResult?.Content,
-				   Result = existReviewResult?.OperationResult,
-			   });
+         return PartialView("_review",viewModel);
 		}
 
 
@@ -292,9 +283,9 @@ namespace TheSite.Controllers
 
 				foreach (var id in ids)
 				{
-					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.ReviewResultGuid, model.Result.Value, DateTime.Now, assignId, model.Remark));
+					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.ReviewResultGuid, model.Result,null, DateTime.Now, assignId, model.Remark));
 
-					db.RequireDal.UpdatePartial(id, new { ReviewStatus = model.Result});
+					db.RequireDal.UpdatePartial(id, new {ReviewDate= DateTime.Now, ReviewStatus = model.Result});
 				}
 
 				db.Commit();
@@ -320,25 +311,71 @@ namespace TheSite.Controllers
 		//GET Require/Handle
 		//POST-AJAX Require/Handle
 
-		public ActionResult Handle()
+		public ActionResult Handle(Guid id)
 		{
-			return View("_handle");
+         Require require = db.RequireDal.PrimaryGet(id);
+
+         var viewModel = MappingOperationViewModel(require);
+
+         return PartialView("_handle", viewModel);
 		}
 
 		[HttpPost]
 		public ActionResult Handle(OperationViewModel model)
 		{
-			return Json(new { });
-		}
+         if (!ModelState.IsValid || !model.IsValid())
+         {
+            return Json(new
+            {
+               result = AjaxResults.Error
+            });
+         }
+
+         db.BeginTrans();
+
+         try
+         {
+            Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
+            Guid assignId = GetUserInfo().UserId;
+
+            foreach (var id in ids)
+            {
+               db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.ReviewResultGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
+
+               db.RequireDal.UpdatePartial(id, new { ReviewStatus = model.Result });
+            }
+
+            db.Commit();
+         }
+         catch (Exception e)
+         {
+            db.Rollback();
+
+            return Json(new
+            {
+               result = AjaxResults.Error
+            });
+         }
+
+
+         return Json(new
+         {
+            result = AjaxResults.Success
+         });
+      }
 
 
 		//GET Require/Close
 		//POST-AJAX Require/Close
 
-		public ActionResult Close()
+		public ActionResult Close(Guid id)
 		{
-			return View();
-		}
+         Require require = db.RequireDal.PrimaryGet(id);
+
+         var viewModel = MappingOperationViewModel(require);
+
+         return PartialView("_close", viewModel);
+      }
 
 		[HttpPost]
 		public ActionResult Close(OperationViewModel model)
@@ -349,6 +386,25 @@ namespace TheSite.Controllers
 
 		private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedAvailableProject(GetUserInfo().UserId, db);
 
-	}
+      private OperationViewModel MappingOperationViewModel(Require require)
+      {
+         if (require == null)
+            return new OperationViewModel();
+
+         var existReviewResult = OperationHelper.GetOperation(require.RequireId, RequireKeys.ReviewResultGuid);
+
+         return 
+            new OperationViewModel
+            {
+               Id = require.RequireId.ToString(),
+               Name = require.RequireName,
+               ProjectId = require.Projectid,
+               SortId = require.SortId,
+               Remark = existReviewResult.Content,
+               Result = existReviewResult.OperationResult,
+            };
+      }
+
+   }
 
 }

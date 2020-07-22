@@ -21,10 +21,10 @@ namespace TheSite.Controllers
       static APDBDef.WorkTaskTableDef t = APDBDef.WorkTask;
       static APDBDef.OperationTableDef o = APDBDef.Operation;
 
-		//GET  /Bug/List
-		//POST-AJAX /Bug/List
+      //GET  /Bug/List
+      //POST-AJAX /Bug/List
 
-		public ActionResult List()
+      public ActionResult List()
       {
 
          ViewBag.Projects = MyJoinedProjects();
@@ -124,10 +124,10 @@ namespace TheSite.Controllers
       }
 
 
-		//GET  /Bug/Edit
-		//POST-AJAX /Bug/Edit
+      //GET  /Bug/Edit
+      //POST-AJAX /Bug/Edit
 
-		public ActionResult Edit(Guid? id)
+      public ActionResult Edit(Guid? id)
       {
          // 所有人员
          ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
@@ -248,13 +248,14 @@ namespace TheSite.Controllers
          var operationHistory = new List<OperationHistoryViewModel>();
          foreach (var item in operations)
          {
-				operationHistory.Add(new OperationHistoryViewModel {
-					Date = item.OperationDate.ToString("yyyy-MM-dd"),
-					Operator = GetUserInfo().RealName,
-					Result= BugKeys.OperationResultDic[item.OperationResult],
-					ResultId = item.OperationResult,	
-			   }
-			);
+            operationHistory.Add(new OperationHistoryViewModel
+            {
+               Date = item.OperationDate.ToString("yyyy-MM-dd"),
+               Operator = GetUserInfo().RealName,
+               Result = BugKeys.OperationResultDic[item.OperationResult.ToGuid(Guid.Empty)],
+               ResultId = item.OperationResult,
+            }
+         );
          }
 
          bug.OperationHistory = operationHistory;
@@ -280,18 +281,18 @@ namespace TheSite.Controllers
          return PartialView("_resolve",
            new BugResolveViewModel
            {
-              BugIds = bug.BugId.ToString(),
-              BugName = bug.BugName,
+              Id = bug.BugId.ToString(),
+              Name = bug.BugName,
               ProjectId = bug.Projectid,
               SortId = bug.SortId,
               Remark = existConfrim?.Content,
-              Status = existConfrim?.OperationResult,
+              Result = existConfrim?.OperationResult,
            });
       }
 
       public ActionResult MultipleResolve(string ids, Guid projectId)
       {
-         return PartialView("_multipleResolve", new BugResolveViewModel { BugIds = ids, ProjectId = projectId });
+         return PartialView("_multipleResolve", new BugResolveViewModel { Id = ids, ProjectId = projectId });
       }
 
       [HttpPost]
@@ -299,27 +300,24 @@ namespace TheSite.Controllers
       public ActionResult Resolve(BugResolveViewModel model)
       {
          if (!ModelState.IsValid)
-            return Json(new{result = AjaxResults.Error});
+            return Json(new { result = AjaxResults.Error });
 
          if (model.ProjectId.IsEmpty())
             return Json(new { result = AjaxResults.Error });
 
-         if (model != null && !model.BugIds.IsEmptyOrNull())
+         if (model != null && !model.Id.IsEmptyOrNull())
          {
-            // var existConfrims = db.OperationDal.ConditionQuery(o.ProjectId == model.ProjectId, null, null, null);
-
             db.BeginTrans();
 
             try
             {
-               Guid[] ids = model.BugIds.Split(',').ConvertToGuidArray();
+               Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
                Guid assignId = GetUserInfo().UserId;
 
                foreach (var id in ids)
                {
-                  db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugResolveGuid, model.Status.Value, DateTime.Now, assignId, model.Remark));
-
-                  db.BugDal.UpdatePartial(id, new { ResolveStatus = model.Status, BugStatus = model.Status == BugKeys.Resolving ? BugKeys.readyToResolve : BugKeys.hasResolve });
+                  db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugResolveGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
+                  db.BugDal.UpdatePartial(id, new { ResolveStatus = model.Result, BugStatus = model.Result.ToGuid(Guid.Empty) == BugKeys.Resolving ? BugKeys.readyToResolve : BugKeys.hasResolve });
                }
 
                db.Commit();
@@ -355,8 +353,8 @@ namespace TheSite.Controllers
          return PartialView("_confirm",
             new BugConfrimViewModel
             {
-               BugIds = bug.BugId.ToString(),
-               BugName = bug.BugName,
+               Id = bug.BugId.ToString(),
+               Name = bug.BugName,
                ProjectId = bug.Projectid,
                SortId = bug.SortId,
                Remark = existConfrim?.Content,
@@ -364,9 +362,9 @@ namespace TheSite.Controllers
             });
       }
 
-      public ActionResult MultipleConfirm(string ids,Guid projectId)
+      public ActionResult MultipleConfirm(string ids, Guid projectId)
       {
-         return PartialView("_multipleConfirm", new BugConfrimViewModel { BugIds = ids,ProjectId=projectId });
+         return PartialView("_multipleConfirm", new BugConfrimViewModel { Id = ids, ProjectId = projectId });
       }
 
       [HttpPost]
@@ -389,7 +387,7 @@ namespace TheSite.Controllers
             });
          }
 
-         if (model != null && !model.BugIds.IsEmptyOrNull())
+         if (model != null && !model.Id.IsEmptyOrNull())
          {
             // var existConfrims = db.OperationDal.ConditionQuery(o.ProjectId == model.ProjectId, null, null, null);
 
@@ -397,14 +395,14 @@ namespace TheSite.Controllers
 
             try
             {
-               Guid[] ids = model.BugIds.Split(',').ConvertToGuidArray();
+               Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
                Guid assignId = GetUserInfo().UserId;
 
                foreach (var id in ids)
                {
-                  db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugConfirmGuid, model.Result.Value, DateTime.Now, assignId, model.Remark));
+                  db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugConfirmGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
 
-                  db.BugDal.UpdatePartial(id, new { ConfirmResult = model.Result, BugStatus = model.Result == BugKeys.ConfrimYes ? BugKeys.readyToResolve : BugKeys.hasResolve });
+                  db.BugDal.UpdatePartial(id, new { ConfirmResult = model.Result, BugStatus = model.Result.ToGuid(Guid.Empty) == BugKeys.ConfrimYes ? BugKeys.readyToResolve : BugKeys.hasResolve });
                }
 
                db.Commit();

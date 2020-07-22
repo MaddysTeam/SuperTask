@@ -9,63 +9,18 @@ using System.Web;
 namespace TheSite.Models
 {
 
-	public class BugConfrimViewModel
+	public class BugConfrimViewModel: OperationViewModel
 	{
 
-		[Display(Name = "Bug ID")]
-		public int SortId { get; set; }
-
-		[Display(Name = "Bug 名称")]
-		public string BugName { get; set; }
-
-		[Required]
-		public string BugIds { get; set; }
-
-		[Required]
-		public Guid ProjectId { get; set; }
-
-		[Required]
-		[Display(Name = "结果")]
-		public Guid? Result { get; set; }
-
-		[Display(Name = "备注")]
-		public string Remark { get; set; }
-
-		public string ReusltName => BugKeys.GetResultByValue(Result.Value);
+		public override string ReusltName => BugKeys.GetResultByValue(Result.ToGuid(Guid.Empty));
 
 		public string UserRealName { get; set; }
-
-
-
-		public override string ToString()
-		{
-			return string.Format("");
-		}
 
 	}
 
 
-	public class BugResolveViewModel
-	{
-
-		[Display(Name = "Bug ID")]
-		public int SortId { get; set; }
-
-		[Display(Name = "Bug 名称")]
-		public string BugName { get; set; }
-
-		[Required]
-		public string BugIds { get; set; }
-
-		[Required]
-		public Guid ProjectId { get; set; }
-
-		[Required]
-		[Display(Name = "状态")]
-		public Guid? Status { get; set; }
-
-		[Display(Name = "备注")]
-		public string Remark { get; set; }
+	public class BugResolveViewModel : OperationViewModel
+   {
 
 	}
 

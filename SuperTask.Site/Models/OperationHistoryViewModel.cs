@@ -18,7 +18,7 @@ namespace TheSite.Models
 
 		public string Content { get; set; }
 
-		public Guid ResultId { get; set; }
+		public string ResultId { get; set; }
 
 		public string Result { get; set; }
 
@@ -40,9 +40,11 @@ namespace TheSite.Models
 		public Guid ProjectId { get; set; }
 
 		[Required]
-		public Guid? Result { get; set; }
+		public string Result { get; set; }
 
-		[Display(Name = "备注")]
+      public string Result2 { get; set; }
+
+      [Display(Name = "备注")]
 		public string Remark { get; set; }
 
 		public virtual string ReusltName { get; set; } // => RequireKeys.GetReviewResultByValue(Result.Value);
