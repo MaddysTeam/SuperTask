@@ -20,7 +20,7 @@
 	<a href="@Url.Action("List","Require")" class="main-nav-toggle col-md-1 col-lg-offset-2"><i class="fa fa-sticky-note"></i> 需求</a>
 	<a href="@Url.Action("List","TaskV2")" class="main-nav-toggle col-md-1"><i class="fa fa-tasks"></i> 任务</a>
 	<a href="@Url.Action("List","Bug")" class="main-nav-toggle col-md-1"><i class="fa fa-question"></i> BUG</a>
-	<a href="@Url.Action("List","TaskV2")" class="main-nav-toggle col-md-1"><i class="fa fa-question"></i> 发布</a>
+	<a href="@Url.Action("List","TaskV2")" class="main-nav-toggle col-md-1"><i class="fa fa-book"></i> 发布</a>
 
 	@if (Request.Url.AbsoluteUri.IndexOf("/TaskV2/List") >= 0)
 	{
@@ -35,5 +35,10 @@
 	@if (Request.Url.AbsoluteUri.IndexOf("/Require/List") >= 0)
 	{
 		<button class="btn btn-danger  col-lg-offset-4" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Require")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建需求</button>
+	}
+
+	@if (Request.Url.AbsoluteUri.IndexOf("/Publish/List") >= 0)
+	{
+		<button class="btn btn-danger  col-lg-offset-4" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Publish")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建发布申请</button>
 	}
 </div>

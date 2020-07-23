@@ -277,6 +277,7 @@
     <Compile Include="Business\Business.apgen.cs" />
     <Compile Include="Business\Cache\ThisAppCache.cs" />
     <Compile Include="Business\Config\ThisApp.cs" />
+    <Compile Include="Business\DataDef\Publish.cs" />
     <Compile Include="Business\DataDef\Require.cs" />
     <Compile Include="Business\DataDef\DictionaryCache.cs" />
     <Compile Include="Business\DataDef\Project.cs" />
@@ -312,6 +313,7 @@
     <Compile Include="Business\Handler\WorkJournalHandler.cs" />
     <Compile Include="Business\Helper\AttachmentHelper.cs" />
     <Compile Include="Business\Helper\AppConfigHelper.cs" />
+    <Compile Include="Business\Helper\Keys\PublishKeys.cs" />
     <Compile Include="Business\Helper\Keys\RequireKeys.cs" />
     <Compile Include="Business\Helper\Keys\StatisticalKeys.cs" />
     <Compile Include="Business\Helper\Keys\PaymentsKeys.cs" />
@@ -370,6 +372,7 @@
     <Compile Include="Business\Utilities\wangsu\FileUploader.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdviceController.cs" />
+    <Compile Include="Controllers\PublishController.cs" />
     <Compile Include="Controllers\RequireController.cs" />
     <Compile Include="Controllers\BugController.cs" />
     <Compile Include="Controllers\TaskV2Controller.cs" />
@@ -2014,20 +2017,19 @@
     <Content Include="Views\Bug\_relative.cshtml" />
     <Content Include="Views\Bug\_multipleConfirm.cshtml" />
     <Content Include="Views\Bug\Add.cshtml" />
-    <Content Include="Views\Bug\_taskList.cshtml" />
     <Content Include="Views\Bug\Detail.cshtml" />
     <Content Include="Views\Bug\_multipleResolve.cshtml" />
     <Content Include="Views\Require\_review.cshtml" />
     <Content Include="Views\Require\_multipleReview.cshtml" />
     <Content Include="Views\Require\_handle.cshtml" />
-    <Content Include="Views\Require\_taskList.cshtml" />
+    <Content Include="Views\Shared\_taskList.cshtml" />
     <Content Include="Views\Require\Add.cshtml" />
     <Content Include="Views\Require\Detail.cshtml" />
     <Content Include="Views\Require\Edit.cshtml" />
     <Content Include="Views\Require\List.cshtml" />
     <Content Include="Views\Require\_close.cshtml" />
     <Content Include="Views\Require\_multipleClose.cshtml" />
-    <Content Include="Views\Require\_bugList.cshtml" />
+    <Content Include="Views\Shared\_bugList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

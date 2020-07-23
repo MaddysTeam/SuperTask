@@ -421,7 +421,7 @@
 					<add name="IssueDescription" columnName="Description" type="string" dataLength="1000" display="问题项描述" />
 
 				</columns>
-			</table>
+			</table>	 
 
 			<!-- Bugs 2020-07 build-->
 
@@ -451,17 +451,20 @@
 				</columns>
 			</table>
 
-			<!-- Relation between task and bugs -->
+			<!-- Relation between task bugs require and publish  2020-07 build-->
 
-			<table name="TaskBugs">
+			<table name="RTPBRelation">
 				<columns>
-					
+
+				<add name="RequireId" columnName="RequireId" type="Guid"  />
 				<add name="TaskId" columnName="TaskId" type="Guid"  />
 				<add name="BugId" columnName="BugId" type="Guid"   />
-					
+				<add name="PublishId" columnName="PublishId" type="Guid"   />
+
 				</columns>
 			</table>
 
+			<!-- Require 2020-07 build-->
 
 			<table name="Require" comment="需求">
 				<columns>
@@ -493,8 +496,30 @@
 				</columns>
 			</table>
 
+			<!-- Publish 2020-07 build -->
 
-			<!-- Operation -->
+			<table name="Publish" comment="发布">
+				<columns>
+
+					<add name="PublishId" columnName="ID" type="Guid"  primaryKey="true"  />
+					<add name="SortId" columnName="SortId" type="int" isNullable="true" comment="排序Id" />
+					<add name="Projectid" columnName="ProjectId" type="Guid"  required="true" display="项目ID" />
+					<add name="PublishName" columnName="Name" type="String" required="true" dataLength="300"   display="发布版本" />
+					<add name="PublishType"  columnName="Type" type="Guid"  required="true"  isNullable="true"   display="发布类型" />
+					<add name="PublishStatus"  columnName="Status" type="Guid"  required="true"    display="状态" />
+					<add name="ManagerId" columnName="ManagerId" type="Guid"  required="true"    display="指派人员" />
+					<add name="EndDate" columnName="EndDate" type="DateTime" display="完成日期" />
+					<add name="CreatorId" columnName="CreatorId" type="Guid"   isNullable="true" display="创建人" />
+					<add name="CreateDate" columnName="CreateDate" type="DateTime" defaultValue="DateTime.Now"  display="创建日期" />
+					<add name="ModifiedBy" columnName="ModifiedBy" type="Guid" isNullable="true" display="任务修改者ID" />
+					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  isNullable="true"  display="最近修改日期" />
+					<add name="CloseDate" columnName="CloseDate" type="DateTime"   display="关闭日期" />
+					<add name="Description" columnName="Description" type="String" dataLength="40000"  isNullable="true"  display="发布申请描述" />
+
+				</columns>
+			</table>
+
+			<!-- Operation 2020-07 build -->
 
 			<table name="Operation">
 				<columns>

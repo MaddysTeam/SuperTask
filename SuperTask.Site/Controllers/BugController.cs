@@ -17,7 +17,7 @@ namespace TheSite.Controllers
    {
       static APDBDef.BugTableDef b = APDBDef.Bug;
       static APDBDef.UserInfoTableDef u = APDBDef.UserInfo;
-      static APDBDef.TaskBugsTableDef tb = APDBDef.TaskBugs;
+      static APDBDef.RTPBRelationTableDef tb = APDBDef.RTPBRelation;
       static APDBDef.WorkTaskTableDef t = APDBDef.WorkTask;
       static APDBDef.OperationTableDef o = APDBDef.Operation;
 
@@ -206,11 +206,11 @@ namespace TheSite.Controllers
             if (relativeTaskIds.Length > 0)
             {
                var taskIds = relativeTaskIds.ConvertToGuidArray().ToArray();
-               db.TaskBugsDal.ConditionDelete(tb.TaskId.In(taskIds));
+               db.RTPBRelationDal.ConditionDelete(tb.TaskId.In(taskIds));
 
                foreach (var taskId in taskIds)
                {
-                  db.TaskBugsDal.Insert(new TaskBugs { BugId = bug.BugId, TaskId = taskId });
+                  db.RTPBRelationDal.Insert(new RTPBRelation { BugId = bug.BugId, TaskId = taskId });
                }
 
             }

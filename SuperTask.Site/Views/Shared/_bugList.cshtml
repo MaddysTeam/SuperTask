@@ -1,21 +1,21 @@
-﻿@model List<WorkTask>
+﻿@model List<Bug>
 <div class="widget col-md-3" style="margin-left:20px;">
-	<div style="margin-top:10px;margin-bottom:10px;">关联任务</div>
+	<div style="margin-top:10px;margin-bottom:10px;">关联Bug</div>
 	<table id="relativeTask" class="table table-striped table-hover table-dark-header">
 		<thead>
 			<tr>
 				<th data-column-id="SortId">ID</th>
-				<th data-column-id="TaskName">任务名称</th>
+				<th data-column-id="TaskName">Bug名称</th>
 				<th data-column-id="Manager" data-formatter="commands">指派给</th>
 				<th data-column-id="Status">状态</th>
 			</tr>
 		</thead>
 		<tbody>
-		  @foreach(WorkTask item in Model)
+		  @foreach(Bug item in Model)
 		  {
 			  <tr>
 				  <td>@item.SortId</td>
-				  <td>@item.TaskName</td>
+				  <td>@item.BugName</td>
 	  			  <td>@item.Manager</td>
 				  <td>@item.Status</td>
 			  </tr>

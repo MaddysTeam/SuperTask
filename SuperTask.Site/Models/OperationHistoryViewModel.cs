@@ -42,9 +42,9 @@ namespace TheSite.Models
 		[Required]
 		public string Result { get; set; }
 
-      public string Result2 { get; set; }
+		public string Result2 { get; set; }
 
-      [Display(Name = "备注")]
+		[Display(Name = "备注")]
 		public string Remark { get; set; }
 
 		public virtual string ReusltName { get; set; } // => RequireKeys.GetReviewResultByValue(Result.Value);
@@ -52,7 +52,7 @@ namespace TheSite.Models
 
 		public bool IsValid()
 		{
-			return !string.IsNullOrEmpty(Id)  && !ProjectId.IsEmpty() && Result!=null;
+			return !string.IsNullOrEmpty(Id) && !ProjectId.IsEmpty() && Result != null;
 		}
 	}
 

@@ -17,40 +17,39 @@
 		<!-- widget -->
 		<div class="widget details col-md-7 col-md-offset-1">
 
-			<form id="bugForm" class="form-horizontal" action="@Url.Action("Edit","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="bugForm" class="form-horizontal" action="@Url.Action("Handle","Require")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 				<div class="widget-content">
 
 					<div class="row">
-					<h4>bug 关联</h4>
+					<h4>需求处理</h4>
 					 <hr />
 					</div>
 
 					<div class="row editTaskInfo">
 						<fieldset class="col-sm-12">
 
-							@Html.HiddenFor(t => t.SortId)
+							@Html.HiddenFor(t => t.ProjectId)
 							@Html.HiddenFor(t => t.Id)
 
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.SortId, new { @class = "control-label col-md-2" })
+								@Html.Label("需求ID", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.Label("BugID",Model.SortId.ToString(), new { @class = "form-control" })
+									@Html.Label("",Model.SortId.ToString(), new { @class = "form-control" })
 								</div>
 							</div>
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Name, new { @class = "control-label col-md-2" })
+								@Html.Label("需求名称", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 								@Html.Label("BugName", Model.Name, new { @class = "form-control" })
 								</div>
-								@Html.ValidationMessageFor(t => t.Name)
 							</div>
 
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Result, new { @class = "control-label col-md-2" })
+								@Html.Label("需求状态", new { @class = "control-label col-md-2" })
 								<div class="col-md-3">
 									@Html.DropDownListFor(t => t.Result,
 									DictionaryCache.Cached(RequireKeys.StatusGuid)
@@ -59,7 +58,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								@Html.LabelFor(t => t.Result2, new { @class = "control-label col-md-2" })
+								@Html.Label("本次消耗", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.TextBoxFor(t => t.Result2, new { @class = "form-control", @placeholder = "本次消耗" })
 								</div>

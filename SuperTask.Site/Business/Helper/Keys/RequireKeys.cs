@@ -28,29 +28,29 @@ namespace Business.Helper
 		/// </summary>
 		public static Guid StatusGuid = Guid.Parse("d420df47-9a81-484f-a514-66f1c6e150e9");
 		public static Guid readyToReview = Guid.Parse("ba73ce64-5cf7-4192-bc78-9a4c206c84f1");
+		public static Guid Close = Guid.Parse("93d2126a-5aae-4fba-9a89-8c11125ed3b5");
+		public static Guid InTest = Guid.Parse("A1C5A8EF-789C-4F43-89F7-2A83488837C3");
 
 		/// <summary>
 		/// 需求来源
 		/// </summary>
 		public static Guid SourceGuid = Guid.Parse("53be8f58-8bbe-4f8a-a367-daa48de728cc");
 
-      /// <summary>
-      /// 评审结果
-      /// </summary>
-      public static Guid ReviewResultGuid = Guid.Parse("3b3d0ea9-6f74-4ece-b54e-9ea5243f7e6f");
+		/// <summary>
+		/// 评审结果
+		/// </summary>
+		public static Guid ReviewResultGuid = Guid.Parse("3b3d0ea9-6f74-4ece-b54e-9ea5243f7e6f");
 		public static Guid ReviewWaiting = Guid.Parse("d110708b-0780-41a2-83be-f460216e6f7c");
 		public static Guid ReviewSuccess = Guid.Parse("2f7cff64-9e82-4890-a660-dadcd01b65c2");
 		public static Guid ReviewFail = Guid.Parse("78909727-4d47-4799-88a9-ac140968ec49");
 
-      /// <summary>
-      /// 需求处理
-      /// </summary>
-      public static Guid ReviewHandleGuid = Guid.Empty;
+		/// <summary>
+		/// 需求处理
+		/// </summary>
+		public static Guid ReviewHandleGuid = Guid.Parse("13715897-a68a-4f32-a8cc-e0cd60fab689");
 
 
-
-
-      public static string GetTypeKeyByValue(Guid val) => DictionaryHelper.GetDicById(TypeGuid, val).Title;
+		public static string GetTypeKeyByValue(Guid val) => DictionaryHelper.GetDicById(TypeGuid, val).Title;
 
 		public static string GetStatusKeyByValue(Guid val) => DictionaryHelper.GetDicById(StatusGuid, val).Title;
 
@@ -64,8 +64,9 @@ namespace Business.Helper
 		 { RequireKeys.ReviewWaiting,"待评审" },
 		  { RequireKeys.ReviewSuccess,"评审通过" },
 		  { RequireKeys.ReviewFail, "评审不通过" },
-		  //{ RequireKeys.Resolved, "已经处理了这个bug" },
-		  //{ RequireKeys.Resolving, "正在处理这个bug" }
+		  { RequireKeys.Close, "关闭了需求" },
+		  { RequireKeys.InTest,"更改了需求状态，当前状态：测试中"},
+		  { RequireKeys.ReviewHandleGuid,"处理了需求，更改了需求状态"}
 		};
 
 	}

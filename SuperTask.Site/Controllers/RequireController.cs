@@ -251,9 +251,9 @@ namespace TheSite.Controllers
 		{
 			Require require = db.RequireDal.PrimaryGet(id);
 
-         var viewModel = MappingOperationViewModel(require);
+			var viewModel = MappingOperationViewModel(require, RequireKeys.ReviewResultGuid);
 
-         return PartialView("_review",viewModel);
+			return PartialView("_review", viewModel);
 		}
 
 
@@ -283,14 +283,14 @@ namespace TheSite.Controllers
 
 				foreach (var id in ids)
 				{
-					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.ReviewResultGuid, model.Result,null, DateTime.Now, assignId, model.Remark));
+					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.ReviewResultGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
 
-					db.RequireDal.UpdatePartial(id, new {ReviewDate= DateTime.Now, ReviewStatus = model.Result});
+					db.RequireDal.UpdatePartial(id, new { ReviewDate = DateTime.Now, ReviewStatus = model.Result });
 				}
 
 				db.Commit();
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				db.Rollback();
 
@@ -313,56 +313,60 @@ namespace TheSite.Controllers
 
 		public ActionResult Handle(Guid id)
 		{
-         Require require = db.RequireDal.PrimaryGet(id);
+			Require require = db.RequireDal.PrimaryGet(id);
 
-         var viewModel = MappingOperationViewModel(require);
+			var viewModel = MappingOperationViewModel(require, RequireKeys.ReviewHandleGuid);
 
-         return PartialView("_handle", viewModel);
+			return PartialView("_handle", viewModel);
 		}
 
 		[HttpPost]
 		public ActionResult Handle(OperationViewModel model)
 		{
-         if (!ModelState.IsValid || !model.IsValid())
-         {
-            return Json(new
-            {
-               result = AjaxResults.Error
-            });
-         }
+			if (!ModelState.IsValid || !model.IsValid())
+			{
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
 
-         db.BeginTrans();
-
-         try
-         {
-            Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
-            Guid assignId = GetUserInfo().UserId;
-
-            foreach (var id in ids)
-            {
-               db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.ReviewResultGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
-
-               db.RequireDal.UpdatePartial(id, new { ReviewStatus = model.Result });
-            }
-
-            db.Commit();
-         }
-         catch (Exception e)
-         {
-            db.Rollback();
-
-            return Json(new
-            {
-               result = AjaxResults.Error
-            });
-         }
+			Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
+			Guid assignId = GetUserInfo().UserId;
+			var existsReviews = db.RequireDal.ConditionQuery(re.RequireId.In(ids), null, null, null);
 
 
-         return Json(new
-         {
-            result = AjaxResults.Success
-         });
-      }
+			db.BeginTrans();
+
+			try
+			{
+				int workhours = 0;
+				foreach (var item in existsReviews)
+				{
+					db.OperationDal.Insert(new Operation(model.ProjectId, item.RequireId, RequireKeys.ReviewHandleGuid, model.Result, model.Result2, DateTime.Now, assignId, model.Remark));
+
+					int.TryParse(model.Result2, out workhours);
+					db.RequireDal.UpdatePartial(item.RequireId, new { ReviewDate = DateTime.Now, RequireStatus = model.Result, WorkHours = item.WorkHours + workhours });
+				}
+
+				db.Commit();
+			}
+			catch (Exception e)
+			{
+				db.Rollback();
+
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
+
+
+			return Json(new
+			{
+				result = AjaxResults.Success
+			});
+		}
 
 
 		//GET Require/Close
@@ -370,41 +374,81 @@ namespace TheSite.Controllers
 
 		public ActionResult Close(Guid id)
 		{
-         Require require = db.RequireDal.PrimaryGet(id);
+			Require require = db.RequireDal.PrimaryGet(id);
 
-         var viewModel = MappingOperationViewModel(require);
+			var viewModel = MappingOperationViewModel(require, RequireKeys.StatusGuid);
+			viewModel.Result = RequireKeys.Close.ToString();
 
-         return PartialView("_close", viewModel);
-      }
+			return PartialView("_close", viewModel);
+		}
 
 		[HttpPost]
+		[ValidateInput(false)]
 		public ActionResult Close(OperationViewModel model)
 		{
-			return Json(new { });
+			if (!ModelState.IsValid || !model.IsValid())
+			{
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
+
+			db.BeginTrans();
+
+			try
+			{
+				Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
+				Guid assignId = GetUserInfo().UserId;
+
+				foreach (var id in ids)
+				{
+					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.StatusGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
+
+					db.RequireDal.UpdatePartial(id, new { RequireStatus = model.Result.ToGuid(Guid.Empty), CloseDate=DateTime.Now });
+				}
+
+				db.Commit();
+			}
+			catch (Exception e)
+			{
+				db.Rollback();
+
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
+
+
+			return Json(new
+			{
+				result = AjaxResults.Success
+			});
 		}
 
 
 		private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedAvailableProject(GetUserInfo().UserId, db);
 
-      private OperationViewModel MappingOperationViewModel(Require require)
-      {
-         if (require == null)
-            return new OperationViewModel();
+		private OperationViewModel MappingOperationViewModel(Require require,Guid operationTypeId)
+		{
+			if (require == null)
+				return new OperationViewModel();
 
-         var existReviewResult = OperationHelper.GetOperation(require.RequireId, RequireKeys.ReviewResultGuid);
+			var existReviewResult = OperationHelper.GetOperation(require.RequireId, operationTypeId);
 
-         return 
-            new OperationViewModel
-            {
-               Id = require.RequireId.ToString(),
-               Name = require.RequireName,
-               ProjectId = require.Projectid,
-               SortId = require.SortId,
-               Remark = existReviewResult.Content,
-               Result = existReviewResult.OperationResult,
-            };
-      }
+			return
+			   new OperationViewModel
+			   {
+				   Id = require.RequireId.ToString(),
+				   Name = require.RequireName,
+				   ProjectId = require.Projectid,
+				   SortId = require.SortId,
+				   Remark = existReviewResult?.Content,
+				   Result = existReviewResult?.OperationResult,
+			   };
+		}
 
-   }
+	}
 
 }

@@ -1,4 +1,4 @@
-﻿	@model OperationViewModel
+﻿@model OperationViewModel
 
 <link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
 <style>
@@ -15,7 +15,7 @@
 		<!-- widget -->
 		<div class="widget details col-md-7 col-md-offset-1">
 
-			<form id="bugForm" class="form-horizontal" action="@Url.Action("Confirm","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="bugForm" class="form-horizontal" action="@Url.Action("Close","Require")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 				<div class="widget-content">
 
@@ -29,23 +29,24 @@
 
 							@Html.HiddenFor(t => t.Id)
 							@Html.HiddenFor(t => t.ProjectId)
+							@Html.HiddenFor(t => t.Result)
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.SortId, new { @class = "control-label col-md-2" })
+								@Html.Label("需求ID", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.Label("BugID", Model.SortId.ToString(), new { @class = "form-control" })
+									@Html.Label("需求ID", Model.SortId.ToString(), new { @class = "form-control" })
 								</div>
 							</div>
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Name, new { @class = "control-label col-md-2" })
+								@Html.Label("需求名称", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.Label("需求名称", Model.Name, new { @class = "form-control" })
 								</div>
 							</div>
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Remark, new { @class = "control-label col-md-2" })
+								@Html.Label("备注", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.TextAreaFor(t => t.Remark, 12, 2, new { @class = "form-control" })
 								</div>

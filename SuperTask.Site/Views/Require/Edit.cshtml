@@ -188,15 +188,12 @@
 
 			</form>
 
-
-
 		</div>
-
-
 
 		@Html.Partial("_taskList",Model.RelativeTasks)
 
-	
+		@Html.Partial("_bugList", Model.RelativeBugs)
+
 	</div>
 
 @section Scripts{
@@ -255,7 +252,7 @@
 		function afterDialogSuccess() {
 			//$('#firstModal').modal('hide');
 			//$('#childTaskgrid').bootgrid('reload');
-			alert();
+			//alert();
 		}
 
 		function bindMulitSelection(dropdown) {

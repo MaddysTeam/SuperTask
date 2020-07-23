@@ -61,6 +61,23 @@ namespace Business.Helper
 		}
 
 
+		public static void UploadPublishAttachment(Publish publish, Guid publishUserId, APDBDef db)
+		{
+			var attachment = publish.CurrentAttachment;
+			if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
+			{
+				attachment.ItemId = publish.PublishId;
+				attachment.Projectid = publish.Projectid;
+				attachment.PublishUserId = publishUserId;
+				attachment.UploadDate = DateTime.Now;
+				attachment.AttachmentId = Guid.NewGuid();
+				attachment.RealName = publish.CurrentAttachment?.RealName;
+
+				db.AttachmentDal.Insert(attachment);
+			}
+		}
+
+
 		public static IList<Attachment> GetAttachments(Guid projectId, Guid itemId, APDBDef db)
 		{
 			var a = APDBDef.Attachment;
