@@ -320,9 +320,9 @@ function initCKEditor(containerId, config) {
 	config=$.extend( {
 		height: 300,
 		//config here
-		filebrowserBrowseUrl: '/Attachment/CKEditorUploadFile',
-		filebrowserUploadUrl: '/Attachment/CKEditorUploadFile',
-		filebrowserImageUploadUrl: '/Attachment/CKEditorUploadFile'
+		filebrowserBrowseUrl: '/Attachment/CKEditorUploadFile/?temp=1',
+		filebrowserUploadUrl: '/Attachment/CKEditorUploadFile/?temp=1',
+		filebrowserImageUploadUrl: '/Attachment/CKEditorUploadFile/?temp=1'
 	},config);
 	var myEditor = CKEDITOR.replace(containerId, config);
 	var content = $('#' + containerId).val();

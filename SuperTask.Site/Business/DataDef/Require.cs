@@ -32,8 +32,8 @@ namespace Business
 
 		public string Status => RequireKeys.GetStatusKeyByValue(RequireStatus);
 
-		[Display(Name = "评审结果")]
-		public string ReviewResult => RequireKeys.GetReviewResultByValue(ReviewStatus);
+		//[Display(Name = "评审结果")]
+		//public string ReviewResult => RequireKeys.GetReviewResultByValue(ReviewStatus);
 
 		public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
 

@@ -27,11 +27,12 @@ namespace XzNursery.Admin
              defaults: new { controller = "Account", action = "Login", id = UrlParameter.Optional }
          );
 
-         routes.MapRoute(
-            name: "CkEditor",
-            url: "CKEditorUploadFile&responseType=json",
-            defaults: new { controller = "Attachment", action = "CKEditorUploadFile" }
-        );
+        // routes.MapRoute(
+        //    name: "CkEditor",
+        //    url: "/Attachment/CKEditorUploadFile&responseType=json",
+        //    defaults: new { controller = "Attachment", action = "CKEditorUploadFile" }
+        //);
+
       }
 
    }

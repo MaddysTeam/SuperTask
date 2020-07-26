@@ -142,7 +142,7 @@ namespace TheSite.Controllers
             bug = db.BugDal.PrimaryGet(id.Value);
 
             // 关联的任务
-            var relativeTasks = GetRelativeTasks(id.Value);
+            var relativeTasks = RTPBRelationHelper.GetBugRelativeTasks(id.Value,db);
             bug.RelativeTaskIds = string.Join(",", relativeTasks.Select(x => x.TaskId));
             bug.RelativeTasks = relativeTasks;
 
@@ -260,7 +260,7 @@ namespace TheSite.Controllers
 
          bug.OperationHistory = operationHistory;
 
-         bug.RelativeTasks = GetRelativeTasks(id);
+         bug.RelativeTasks = RTPBRelationHelper.GetBugRelativeTasks(id, db);
 
          ViewBag.Attahcments = AttachmentHelper.GetAttachments(bug.Projectid, bug.BugId, db);
 
@@ -445,12 +445,6 @@ namespace TheSite.Controllers
 
 
       private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedProjects(GetUserInfo().UserId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus & p.ProjectStatus != ProjectKeys.DeleteStatus);
-
-      private List<WorkTask> GetRelativeTasks(Guid bugId)
-      {
-         var subQuery = APQuery.select(tb.TaskId).from(tb).where(tb.BugId == bugId);
-         return db.WorkTaskDal.ConditionQuery(t.TaskId.In(subQuery), null, null, null);
-      }
 
    }
 

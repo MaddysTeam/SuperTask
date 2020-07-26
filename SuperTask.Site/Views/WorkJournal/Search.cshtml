@@ -185,12 +185,12 @@
 
 						if (row.hasAttachment)
 							str += '<button data-url="' + row.attachmentUrl + '" class="btn btn-lg btn-warning btn-save btn-download">附件下载</button> ';
-						if (row.taskStatus=='@TaskKeys.ProcessStatus')
-							str += '<button data-taskid="' + row.taskId + '" data-url="@Url.Action("WorkTaskReviewRequest", "Review")" class="btn btn-lg btn-info btn-submitRequest">提交任务</button> ';
-						else if (row.taskStatus == '@TaskKeys.ReviewStatus')
+						@*if (row.taskStatus=='@TaskKeys.ProcessStatus')
+							str += '<button data-taskid="' + row.taskId + '" data-url="@Url.Action("WorkTaskReviewRequest", "Review")" class="btn btn-lg btn-info btn-submitRequest">提交任务</button> ';*@
+						@*else if (row.taskStatus == '@TaskKeys.ReviewStatus')
 							str += '<button class="btn btn-lg disable">审核中</button> ';
 						else if (row.taskStatus == '@TaskKeys.DeleteStatus')
-							str += '<button class="btn btn-lg disable">已删除</button> ';
+							str += '<button class="btn btn-lg disable">已删除</button> ';*@
 						str += '</div>';
 
 						return str;

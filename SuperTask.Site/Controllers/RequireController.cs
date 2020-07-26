@@ -174,7 +174,6 @@ namespace TheSite.Controllers
 					require.CreateDate = DateTime.Now;
 					require.CreatorId = user.UserId;
 					require.RequireStatus = RequireKeys.readyToReview;
-					require.ReviewStatus = RequireKeys.ReviewWaiting;
 
 					db.RequireDal.Insert(require);
 				}
@@ -280,12 +279,12 @@ namespace TheSite.Controllers
 			{
 				Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
 				Guid assignId = GetUserInfo().UserId;
-
-				foreach (var id in ids)
+            Guid reviewStats = RequireKeys.KeysMapping[model.Result.ToGuid(Guid.Empty)];
+            foreach (var id in ids)
 				{
 					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.ReviewResultGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
 
-					db.RequireDal.UpdatePartial(id, new { ReviewDate = DateTime.Now, ReviewStatus = model.Result });
+					db.RequireDal.UpdatePartial(id, new { ReviewDate = DateTime.Now, RequireStatus = reviewStats });
 				}
 
 				db.Commit();
@@ -315,12 +314,13 @@ namespace TheSite.Controllers
 		{
 			Require require = db.RequireDal.PrimaryGet(id);
 
-			var viewModel = MappingOperationViewModel(require, RequireKeys.ReviewHandleGuid);
+			var viewModel = MappingOperationViewModel(require, RequireKeys.HandleGuid);
 
 			return PartialView("_handle", viewModel);
 		}
 
 		[HttpPost]
+      [ValidateInput(false)]
 		public ActionResult Handle(OperationViewModel model)
 		{
 			if (!ModelState.IsValid || !model.IsValid())
@@ -341,12 +341,13 @@ namespace TheSite.Controllers
 			try
 			{
 				int workhours = 0;
-				foreach (var item in existsReviews)
+            Guid handleStatsGuid = RequireKeys.KeysMapping[model.Result.ToGuid(Guid.Empty)];
+            foreach (var item in existsReviews)
 				{
-					db.OperationDal.Insert(new Operation(model.ProjectId, item.RequireId, RequireKeys.ReviewHandleGuid, model.Result, model.Result2, DateTime.Now, assignId, model.Remark));
+					db.OperationDal.Insert(new Operation(model.ProjectId, item.RequireId, RequireKeys.HandleGuid, model.Result, model.Result2, DateTime.Now, assignId, model.Remark));
 
 					int.TryParse(model.Result2, out workhours);
-					db.RequireDal.UpdatePartial(item.RequireId, new { ReviewDate = DateTime.Now, RequireStatus = model.Result, WorkHours = item.WorkHours + workhours });
+					db.RequireDal.UpdatePartial(item.RequireId, new { ReviewDate = DateTime.Now, RequireStatus = handleStatsGuid, WorkHours = item.WorkHours + workhours });
 				}
 
 				db.Commit();
@@ -428,7 +429,27 @@ namespace TheSite.Controllers
 		}
 
 
-		private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedAvailableProject(GetUserInfo().UserId, db);
+      //POST-Ajax  Requires/GetProjectRequires
+
+      [HttpPost]
+      public ActionResult GetProjectRequires(Guid projectId)
+      {
+         if (projectId.IsEmptyGuid())
+         {
+            return Json(new { });
+         }
+
+         var results = db.RequireDal.ConditionQuery(re.Projectid == projectId, null, null, null);
+
+         return Json(new
+         {
+            rows = results.Select(x => new { id = x.RequireId, text = x.RequireName }).ToList()
+         });
+
+      }
+
+
+      private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedAvailableProject(GetUserInfo().UserId, db);
 
 		private OperationViewModel MappingOperationViewModel(Require require,Guid operationTypeId)
 		{

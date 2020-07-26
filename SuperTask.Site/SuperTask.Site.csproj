@@ -315,6 +315,7 @@
     <Compile Include="Business\Helper\AppConfigHelper.cs" />
     <Compile Include="Business\Helper\Keys\PublishKeys.cs" />
     <Compile Include="Business\Helper\Keys\RequireKeys.cs" />
+    <Compile Include="Business\Helper\Keys\RTPBRelationKeys.cs" />
     <Compile Include="Business\Helper\Keys\StatisticalKeys.cs" />
     <Compile Include="Business\Helper\Keys\PaymentsKeys.cs" />
     <Compile Include="Business\Helper\Keys\AlertKeys.cs" />
@@ -332,6 +333,7 @@
     <Compile Include="Business\Helper\Keys\ShareFolderKeys.cs" />
     <Compile Include="Business\Helper\Keys\BugKeys.cs" />
     <Compile Include="Business\Helper\Keys\TaskKeys.cs" />
+    <Compile Include="Business\Helper\RTPBRelationHelper.cs" />
     <Compile Include="Business\Helper\OperationHelper.cs" />
     <Compile Include="Business\Helper\MilestoneHelper.cs" />
     <Compile Include="Business\Helper\PaymentsHelper.cs" />
@@ -2030,6 +2032,16 @@
     <Content Include="Views\Require\_close.cshtml" />
     <Content Include="Views\Require\_multipleClose.cshtml" />
     <Content Include="Views\Shared\_bugList.cshtml" />
+    <Content Include="Views\Publish\_multipleClose.cshtml" />
+    <Content Include="Views\Publish\_close.cshtml" />
+    <Content Include="Views\Publish\_multipleHandle.cshtml" />
+    <Content Include="Views\Publish\_handle.cshtml" />
+    <Content Include="Views\Publish\Add.cshtml" />
+    <Content Include="Views\Publish\Detail.cshtml" />
+    <Content Include="Views\Publish\Edit.cshtml" />
+    <Content Include="Views\Publish\List.cshtml" />
+    <Content Include="Views\Shared\_requireList.cshtml" />
+    <Content Include="Views\Publish\_relative.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

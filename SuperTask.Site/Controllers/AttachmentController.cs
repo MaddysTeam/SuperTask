@@ -124,13 +124,11 @@ namespace TheSite.Controllers
 
             files.SaveAs(Path.Combine(mappedDir, fileName));
 
-            string url = savepath + fileName;
-
             return Json(new
             {
                uploaded = 1,
                fileName = fileName,
-               url
+               url = savepath + "/" + fileName,
             });
          }
          catch (Exception ex)

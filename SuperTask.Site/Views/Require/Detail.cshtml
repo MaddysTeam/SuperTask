@@ -81,21 +81,21 @@
 							@Html.Label(Model.EvalDateStr, new { @class = "form-control" })
 						</div>
 
-						@Html.LabelFor(t => t.ReviewResult, new { @class = "control-label col-md-2" })
-						<div class="col-md-2">
-							@Html.Label(Model.ReviewResult, new { @class = "form-control" })
-						</div>
-					</div>
-
-					<div class="form-group">
 						@Html.LabelFor(x => x.EstimateEndDate, new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
 							@Html.Label(Model.EstimateEndDateStr, new { @class = "form-control" })
 						</div>
+					</div>
 
+					<div class="form-group">
 						@Html.LabelFor(x => x.WorkHours, new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
 							@Html.Label(Model.WorkHours.ToString(), new { @class = "form-control" })
+						</div>
+
+						@Html.LabelFor(x => x.CloseDate, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							@Html.Label(Model.CloseDateStr, new { @class = "form-control" })
 						</div>
 					</div>
 
@@ -108,11 +108,6 @@
 						@Html.LabelFor(x => x.EndDate, new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
 							@Html.Label(Model.EndDateStr, new { @class = "form-control" })
-						</div>
-
-						@Html.LabelFor(x => x.CloseDate, new { @class = "control-label col-md-2" })
-						<div class="col-md-2">
-							@Html.Label(Model.CloseDateStr, new { @class = "form-control" })
 						</div>
 					</div>
 

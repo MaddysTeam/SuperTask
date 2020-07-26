@@ -18,19 +18,23 @@ namespace Business
 
 		public Attachment CurrentAttachment { get; set; }
 
-		public string Type => RequireKeys.GetTypeKeyByValue(PublishType);
+		public string Type => PublishKeys.GetTypeKeyByValue(PublishType);
 
-		public string Status => RequireKeys.GetStatusKeyByValue(PublishStatus);
+		public string Status => PublishKeys.GetStatusKeyByValue(PublishStatus);
 
 		public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
 
-		public List<WorkTask> RelativeTasks => new List<WorkTask>();
+		public List<WorkTask> RelativeTasks { get; set; } = new List<WorkTask>();
 
 		public List<Bug> RelativeBugs => new List<Bug>();
 
 		public List<Require> RelativeRequires = new List<Require>();
 
-		[Required]
+      public string RelativeTaskIds { get; set; }
+
+      public string RelativeRequireIds { get; set; }
+
+      [Required]
 		public override string PublishName
 		{
 			get
@@ -46,9 +50,11 @@ namespace Business
 
 		public string EndDateStr => this.EndDate.ToyyMMdd();
 
+      [Display(Name ="关闭日期")]
 		public string CloseDateStr => this.CloseDate.ToyyMMdd();
 
-		public string CreateDateStr => this.CreateDate.ToyyMMdd();
+      [Display(Name = "创建日期")]
+      public string CreateDateStr => this.CreateDate.ToyyMMdd();
 
 	}
 

@@ -460,7 +460,8 @@
 				<add name="TaskId" columnName="TaskId" type="Guid"  />
 				<add name="BugId" columnName="BugId" type="Guid"   />
 				<add name="PublishId" columnName="PublishId" type="Guid"   />
-
+				<add name="TypeId" columnName="TypeId" type="Guid"   />
+					
 				</columns>
 			</table>
 
@@ -491,8 +492,7 @@
 					<add name="ReviewDate" columnName="EvalDate" type="DateTime" isNullable="true"  display="评审日期" />
 					<add name="WorkHours" columnName="WorkHours" type="int" defaultValue="0"  display="实际消耗" />
 					<add name="CC" columnName="CC" type="string" dataLength="2000" isNullable="true" display="抄送人员" />
-					<add name="ReviewStatus"  columnName="ReviewStatus" type="Guid"    display="审核状态" />
-
+					
 				</columns>
 			</table>
 
