@@ -17,13 +17,15 @@
 
 <div class="row" style="margin-top:20px;margin-bottom:20px;">
 	<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List","Require")">返回需求列表</a>
-	<div class="col-md-4">
+	<div class="col-md-3">
 		<h5>@Model.SortId - @Model.Level - @Model.ProjectName - @Model.RequireName</h5>
 	</div>
 
 	<div class="buttons col-md-4">
 
-
+		<a class="btn btn-danger"  id="emergencyReview" data-url="@Url.Action("EmergencyReview", "Require", new { id = Model.RequireId })">加急审批</a>
+		<a class="btn btn-info" id="review" data-url="@Url.Action("Review", "Require", new { id = Model.RequireId })">评审</a>
+		<a class="btn btn-success" id="task" data-url="@Url.Action("Add", "TaskV2",new { requireId = Model.RequireId , projectId=Model.Projectid})">创建任务</a>
 		<a class="btn btn-warning " href="@Url.Action("Edit", "Require", new { id = Model.RequireId })">修改</a>
 
 	</div>
@@ -33,8 +35,6 @@
 	<!-- widget -->
 	<div class="widget details col-md-7 col-md-offset-1">
 
-		<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
-
 		<form id="taskForm" class="form-horizontal" action="@Url.Action("EditDetail","TaskV2")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 			<div class="widget-content">
@@ -43,7 +43,6 @@
 					@Html.HiddenFor(t => t.Projectid)
 					@Html.HiddenFor(t => t.SortId)
 					@Html.HiddenFor(t => t.RequireId)
-
 					<div class="form-group">
 						@Html.LabelFor(t => t.RequireName, new { @class = "control-label col-md-2" })
 						<div class="col-md-9">
@@ -175,17 +174,20 @@
 @section Scripts{
 	<script>
 
-		@*$(function () {
-
-			$('#childTaskgrid').bootgrid(getGridOptions())
-				.on('loaded.rs.jquery.bootgrid', function () {
-					$('.search,.actions').hide();
-				});
+		$(function () {
+				
+			$('#review,#emergencyReview,#task	').on('click', function () {
+				var url = $(this).data('url');
+				var $proxy = $('#modelProxy');
+				$proxy
+					.data('url', url)
+					.trigger('click');
+			});
 
 		});
 
 
-		function getGlobalRequest() {
+		@*function getGlobalRequest() {
 			return {
 				parentId: '@Model.TaskId'
 			};
@@ -203,6 +205,10 @@
 			});
 		}*@
 
+		
+		function popup(){
+			
+		}
 
 	</script>
 }

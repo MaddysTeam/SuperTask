@@ -143,7 +143,8 @@ namespace TheSite.Controllers
 			ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
 			ViewBag.Projects = MyJoinedProjects();
 
-			return View(new WorkTask { ManagerId = GetUserInfo().UserId });
+			var currentProjectID = Request["projectId"];
+			return View(new WorkTask { ManagerId = GetUserInfo().UserId,Projectid= currentProjectID.ToGuid(Guid.Empty) });
 		}
 
 		public ActionResult AddSubTask(Guid projectId, Guid parentId)
@@ -155,6 +156,7 @@ namespace TheSite.Controllers
 		}
 
 		[HttpPost]
+		[ValidateInput(false)]
 		public ActionResult Add(WorkTask task, FormCollection collection)
 		{
 			if (task.Validate().IsSuccess)
@@ -196,6 +198,7 @@ namespace TheSite.Controllers
 								TaskStatus = TaskKeys.PlanStatus
 							};
 
+							//create subtask
 							db.WorkTaskDal.Insert(subTask);
 
 							//create subtask journal
@@ -217,6 +220,13 @@ namespace TheSite.Controllers
 
 					//add user to project resurce if not exits
 					ResourceHelper.AddUserToResourceIfNotExist(task.Projectid, task.TaskId, task.ManagerId, ResourceKeys.OtherType, db);
+
+					//add relative items TODO:  sub task do not need bind any relative items now
+					var requires = task.RelativeRequireIds?.Split(',');
+					RTPBRelationHelper.BindRelationBetweenRequiresAndTask(requires.ConvertToGuidArray(), task.TaskId, db);
+
+					var bugs = task.RelativeBugIds?.Split(',');
+					RTPBRelationHelper.BindRelationBetweenBugsAndTask(bugs.ConvertToGuidArray(), task.TaskId, db);
 
 
 					db.Commit();
@@ -259,6 +269,7 @@ namespace TheSite.Controllers
 		{
 			var task = WorkTask.PrimaryGet(id);
 			task.ProjectName = MyJoinedProjects().Find(x => x.ProjectId == task.Projectid)?.ProjectName;
+			task.RelativeRequireIds = RTPBRelationHelper.GetTaskRelativeRequireIds(id, db);
 
 			ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
 			ViewBag.SubTask = TaskHelper.GetAllChildren(id, db, t.CreateDate.Desc).FindAll(x => !x.IsDelteStatus);
@@ -268,10 +279,10 @@ namespace TheSite.Controllers
 		}
 
 		[HttpPost]
+		[ValidateInput(false)]
 		public ActionResult Edit(WorkTask task, FormCollection collection)
 		{
 			db.BeginTrans();
-
 
 			try
 			{
@@ -360,6 +371,13 @@ namespace TheSite.Controllers
 				//upload attachments
 				AttachmentHelper.UploadTaskAttachment(task, db);
 
+				//add relative items TODO:  sub task do not need bind any relative items now
+				var requires = task.RelativeRequireIds?.Split(',');
+				RTPBRelationHelper.BindRelationBetweenRequiresAndTask(requires.ConvertToGuidArray(), task.TaskId, db);
+
+				var bugs = task.RelativeBugIds?.Split(',');
+				RTPBRelationHelper.BindRelationBetweenBugsAndTask(bugs.ConvertToGuidArray(), task.TaskId, db);
+
 
 				db.Commit();
 			}
@@ -414,20 +432,27 @@ namespace TheSite.Controllers
 		//POST-Ajax TaskV2/Start
 		//POST-Ajax TaskV2/MultipleStart
 
-		[HttpPost]
 		public ActionResult Start(Guid id)
 		{
-			APQuery.update(t)
-				 .set(t.TaskStatus.SetValue(TaskKeys.ProcessStatus))
-				 .set(t.RealStartDate.SetValue(DateTime.Now))
-				 .where(t.TaskId == id)
-			   .execute(db);
+			return PartialView("_start");
+		}
 
-			return Json(new
-			{
-				result = AjaxResults.Success,
-				msg = Success.Task.EDIT_SUCCESS
-			});
+		[HttpPost]
+		public ActionResult Start(OperationViewModel model)
+		{
+			//APQuery.update(t)
+			//	 .set(t.TaskStatus.SetValue(TaskKeys.ProcessStatus))
+			//	 .set(t.RealStartDate.SetValue(DateTime.Now))
+			//	 .where(t.TaskId == id)
+			//   .execute(db);
+
+			//return Json(new
+			//{
+			//	result = AjaxResults.Success,
+			//	msg = Success.Task.EDIT_SUCCESS
+			//});
+
+			return null;
 		}
 
 		[HttpPost]

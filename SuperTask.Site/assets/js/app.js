@@ -314,8 +314,6 @@ function initTableCheckbox(tableId) {
 	});
 }
 
-
-
 function initCKEditor(containerId, config) {
 	config=$.extend( {
 		height: 300,
@@ -330,80 +328,26 @@ function initCKEditor(containerId, config) {
 	return myEditor;
 }
 
-//function ajaxBindFileUpload() {
-//	// dropzone
-//	Dropzone.autoDiscover = false;
-//	$('.dropzone').dropzone({
-//		addedContainer: '#flyArea',
-//		dictResponseError: '上传出错',
-//		dictFileTooBig: '上传文件大小({{filesize}}MiB) 最大文件大小 ({{maxFilesize}}MiB)',
-//		uploadMultiple: false,
-//		maxFilesize: 200,
-//		init: function () {
-//			this.on("processing", function (i) {
-//				$('.progress').remove();
-//				$('#uploadName').parent().parent().append(function () {
-//					return '<div class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"><span class="sr-only"></span></div></div>';
-//				})
-//			})
-//			this.on("totaluploadprogress", function (file, progress, bytesSent) {
-//				$(".progress-bar").css("width", parseInt(file) + "%");
-//			})
-//			this.on('success', function (file, data) {
-//				var url = $('#AttachmentUrl').val();
-//				url = url.length > 0 ? url + "|" : url;
-//				var name = $('#AttachmentName').val();
-//				name = name.length > 0 ? name + "|" : name;
-//				$('#AttachmentUrl').val(url + data.url);
-//				$('#AttachmentName').val(name + data.filename);
-//				var showName = data.filename.length > 40 ? data.filename.substring(0, 37) + "..." : data.filename;
-//				$('#uploadName').append('<p><label title="' + data.filename + '">' + showName + '</label> <button type="button" class="btn btn-danger btn-xs btn-delete" onclick="delAttachment(this)">删除</button></p>');
-//				//setTimeout(function () {  }, 1000);
-//			});
-//			this.on('error', function (file, message) {
-//				popupMessage({ result: 'error', msg: message });
-//			});
-//		}
-//	});
+function initDropZone() {
+	//文件上传
+	$('.dropzone.file').dropzone({
+		addedContainer: '#flyArea',
+		dictResponseError: '上传出错',
+		uploadMultiple: false,
+		maxFilesize: 200,
+		init: function () {
+			this.on('success', function (file, data) {
+				$('.fileName').val(data.filename);
+				$('.filePath').val(data.url);
+				setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
+			});
+			this.on('error', function (file, message) {
+				popupMessage({ result: 'error', msg: message });
+			});
+		}
+	});
 
-//	// proxy click event to dropzone.
-//	$('#btn-upload').on('click', function () {
-//		$('.dropzone').trigger('click');
-//		$(".progress").hide();
-//		$(".progress-bar").attr('style', 'width:0%');
-//	});
-//}
-
-////	删除附件
-
-//function delAttachment(e) {
-
-//	var current = $('.btn-delete').index(e);
-
-//	var name = $('#AttachmentName').val();
-//	var url = $('#AttachmentUrl').val();
-
-//	var nameArray = name.split('|');
-//	var tempName = '';
-//	$.each(nameArray, function (index, item) {
-//		if (current != index) {
-//			tempName += item + '|';
-//		}
-//	})
-
-//	var urlArray = url.split('|');
-//	var tempUrl = '';
-//	$.each(urlArray, function (index, item) {
-//		if (current != index) {
-//			tempUrl += item + '|';
-//		}
-//	})
-
-//	tempName = tempName.length > 0 ? tempName.substring(0, tempName.lastIndexOf('|')) : tempName;
-//	tempUrl = tempUrl.length > 0 ? tempUrl.substring(0, tempUrl.lastIndexOf('|')) : tempUrl;
-
-//	$('#AttachmentName').val(tempName);
-//	$('#AttachmentUrl').val(tempUrl);
-//	$('#uploadName p:eq(' + current + ')').remove();
-//	$(".progress").remove();
-//}
+	$('#btn-upload').click(function () {
+		$('.dropzone.file').trigger('click');
+	});
+}

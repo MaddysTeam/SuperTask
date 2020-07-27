@@ -4,7 +4,7 @@
 	var attahcments = ViewBag.Attahcments as List<Attachment>;
 	var isCompeleteOrClose = Model.IsCompleteStatus || Model.IsCloseStatus;
 }
-
+<link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
 <style>
 	.dropzonePop {
 		display: none;
@@ -37,6 +37,9 @@
 						@Html.HiddenFor(t => t.ParentId)
 						@Html.HiddenFor(t => t.IsParent)
 						@Html.HiddenFor(t => t.WorkHours)
+						@Html.HiddenFor(t => t.RelativeRequireIds)
+						@Html.HiddenFor(t => t.RelativeBugIds)
+						@Html.HiddenFor(t => t.RelativePublishIds)
 
 						<div class="form-group">
 							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-2" })
@@ -98,9 +101,9 @@
 							</div>
 							@if (!isCompeleteOrClose)
 							{
-							@*<div>
-								<a id="btnEditJournal" data-toggle="ajax-modal" data-url="@Url.Action("JournalEdit", "TaskV2", new { id = Model.TaskId })" data-target="#firstModal" class="btn btn-info"><i class="fa fa-clock-o"> </i></a>
-							</div>*@
+								@*<div>
+										<a id="btnEditJournal" data-toggle="ajax-modal" data-url="@Url.Action("JournalEdit", "TaskV2", new { id = Model.TaskId })" data-target="#firstModal" class="btn btn-info"><i class="fa fa-clock-o"> </i></a>
+									</div>*@
 							}
 						</div>
 						@if (Model.IsParent)
@@ -149,7 +152,7 @@
 							@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileName" })
 							@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePath" })
 							<label class="col-md-2 control-label">上传文件</label>
-							<div class="col-md-3">
+							<div class="col-md-5">
 								<input style="visibility:hidden;position:absolute;" />
 								<div class="input-group">
 									<label id="uploadName" class="form-control oversize uploadName"></label>
@@ -161,12 +164,19 @@
 						</div>
 
 						<div class="form-group">
-							@Html.Label("已上传", new { @class = "control-label col-md-2" })
-							<div class="col-md-9">
-								@foreach (var item in attahcments)
-								{
-									<div><a href="@item.Url">@item.RealName</a></div>
-								}
+							@Html.Label("关联需求", new { @class = "control-label  col-md-2" })
+							<div class="col-md-2">
+								<select id="requires" class="form-control new-select" multiple="multiple"></select>
+							</div>
+
+							@Html.Label("关联bug", new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
+								<select id="bugs" class="form-control new-select" multiple="multiple"></select>
+							</div>
+
+							@Html.Label("关联发布", new { @class = "control-label col-md-2 text-left" })
+							<div class="col-md-2">
+								<select id="publishs" class="form-control new-select" multiple="multiple"></select>
 							</div>
 						</div>
 
@@ -224,53 +234,38 @@
 	<!-- Modal end -->
 }
 @section Scripts{
+
+	<script src="~/assets/plugins/ckeditor_4.14.1_standard/ckeditor/ckeditor.js"></script>
+	<script src="~/assets/plugins/select2-4.0.2/js/select2.min.js"></script>
 	<script>
 
 		$(function () {
 
+			//submit form by ajax
 			ajaxSubmitForm($('#taskForm'), true);
+
+			//initial ckeditor
+			var myEditor = initCKEditor('Description');
+			$('#submit').click(function () {
+				$('#RelativeRequireIds').val($('#requires').val());
+				$('#RelativeBugIds').val($('#bugs').val());
+				$('#RelativePublishIds').val($('#publishs').val());
+				$('#Description').val(myEditor.getData());
+			});
 
 			//fix bug
 			$('#btnEditJournal').click();
 
-			var $grid = $('#childTaskgrid');
-			$grid.bootgrid(getGridOptions())
-				.on('loaded.rs.jquery.bootgrid', function () {
-					$('.search,.actions').hide();
+			// init drop zone
+			initDropZone();
 
-					$grid.find('.editManager').click(function () {
-						$this = $(this);
-						$this.parent().hide();
-						var managerId = $this.parent().data("rowId");
-						$this.parent().after($('#ExecutorId').clone().val(managerId)); // show select and set current manager
-					});
-				});
-
-
-			//文件上传
-			$('.dropzone.file').dropzone({
-				addedContainer: '#flyArea',
-				dictResponseError: '上传出错',
-				uploadMultiple: false,
-				maxFilesize: 200,
-				init: function () {
-					this.on('success', function (file, data) {
-						$('.fileName').val(data.filename);
-						$('.filePath').val(data.url);
-						setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
-					});
-					this.on('error', function (file, message) {
-						popupMessage({ result: 'error', msg: message });
-					});
-				}
-			});
-
-			$('#btn-upload').click(function () {
-				$('.dropzone.file').trigger('click');
-			});
+			// load relative items
+			var projectId = '@Model.Projectid';
+			bindRequiresDropDown(projectId);
+			bindBugsDropDown(projectId);
+			bindPublishsDropDown(projectId);
 
 		});
-
 
 
 		function addSubTaskExecutor() {
@@ -278,7 +273,6 @@
 				$('.subTaskExecutor:last').after(html);
 			})
 		}
-
 
 		function removeSubTaskExecutor(obj) {
 			var taskId = $(obj).parents('.subTaskExecutor').data('taskId');
@@ -292,36 +286,52 @@
 			}
 		}
 
-		function getGlobalRequest() {
-			return {
-				parentId: '@Model.TaskId'
-			};
-		}
-
 		function afterDialogSuccess() {
 			$('#childTaskgrid').bootgrid('reload');
 		}
 
-		function getGridOptions() {
-			return $.extend(true, {}, gridOptions, {
-
-				url: '@Url.Action("GetChildTasks", "TaskV2")',
-
-				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
-
-				formatters: {
-
-					'commands': function (column, row) {
-						var managerId = row.ManagerId;
-						var isParent = row.IsParent;
-
-						return '<div data-row-id="' + managerId + '">' + row.Manager + '&nbsp;&nbsp;&nbsp;<a href="#" class="editManager hidden"><i class="fa fa-pencil"> </i></a><div>';
-					}
+		function bindRequiresDropDown(projectId) {
+			// remove previous select value
+			$('#requires').children().remove();
+			// post data for tasks from service side
+			$.post('@Url.Action("GetProjectRequires", "Require")', { projectId: projectId }, function (data) {
+				if (data.rows) {
+					var selectRequireIds = '@Model.RelativeRequireIds'.split(',');
+					$('#requires').select2({
+						data: data.rows,
+						placeholder: "请选择"
+					}).val(selectRequireIds).trigger('change'); // bind relative task data
 				}
 			});
 		}
 
+		function bindBugsDropDown(projectId) {
+			// remove previous select value
+			$('#bugs').children().remove();
+			// post data for tasks from service side
+			$.post('@Url.Action("GetProjectBugs", "Bug")', { projectId: projectId }, function (data) {
+				if (data.rows) {
+					$('#bugs').select2({
+						data: data.rows,
+						placeholder: "请选择"
+					}).trigger('change'); // bind relative bug data
+				}
+			});
+		}
 
+		function bindPublishsDropDown(projectId) {
+			// remove previous select value
+			$('#publishs').children().remove();
+			// post data for tasks from service side
+			$.post('@Url.Action("GetProjectPublishs", "Publish")', { projectId: projectId }, function (data) {
+				if (data.rows) {
+					$('#publishs').select2({
+						data: data.rows,
+						placeholder: "请选择"
+					}).trigger('change'); // bind relative bug data
+				}
+			});
+		}	
 
 	</script>
 }

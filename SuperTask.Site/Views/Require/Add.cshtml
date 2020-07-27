@@ -181,29 +181,8 @@
 			$('#StandardContent').val(myEditor2.getData());
 		});
 
-
-
 		//bind files uploader
-		$('.dropzone.file').dropzone({
-			addedContainer: '#flyArea',
-			dictResponseError: '上传出错',
-			uploadMultiple: false,
-			maxFilesize: 200,
-			init: function () {
-				this.on('success', function (file, data) {
-					$('.fileName').val(data.filename);
-					$('.filePath').val(data.url);
-					setTimeout(function () { $('#uploadName').html(data.filename); }, 1000);
-				});
-				this.on('error', function (file, message) {
-					popupMessage({ result: 'error', msg: message });
-				});
-			}
-		});
-
-		$('#btn-upload').click(function () {
-			$('.dropzone.file').trigger('click');
-		});
+		initDropZone();
 
 
 		$('#ccUsers').select2({

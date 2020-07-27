@@ -1,8 +1,11 @@
 ﻿@model WorkTask
 @{
 	Layout = null;
+	var requireId = Request["requireId"] ?? string.Empty;
+	var projectId = Request["projectId"] ?? string.Empty;
 }
 
+<link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
 <style>
 	.dropzonePop {
 		display: none;
@@ -21,7 +24,11 @@
 
 				<div class="row editTaskInfo">
 					<fieldset class="col-sm-12">
-					@Html.HiddenFor(x=>x.ParentId)
+						@Html.HiddenFor(x => x.ParentId)
+						@Html.HiddenFor(x => x.RelativeRequireIds)
+						@Html.HiddenFor(x => x.RelativeBugIds)
+						@Html.HiddenFor(x => x.RelativePublishIds)
+
 						<div class="form-group projectsDropdown">
 							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
@@ -58,11 +65,11 @@
 
 							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-2 text-align:left" })
 							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.V2Level ,
+								@Html.DropDownListFor(t => t.V2Level,
 									DictionaryCache.Cached(TaskKeys.LevelGuid)
 														.GetSelectListById(Guid.Empty),
 									new { @class = "form-control dropdown-taskLevel" })
-							</div>				
+							</div>
 						</div>
 						<div class="form-group">
 							@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-2" })
@@ -120,25 +127,40 @@
 							</div>
 						</div>
 
+						<div class="form-group">
+							@Html.Label("关联需求", new { @class = "control-label  col-md-2" })
+							<div class="col-md-1">
+								<select id="requires" class="form-control new-select" multiple="multiple"></select>
+							</div>
 
+							@Html.Label("关联bug", new { @class = "control-label col-md-1" })
+							<div class="col-md-1">
+								<select id="bugs" class="form-control new-select" multiple="multiple"></select>
+							</div>
 
-						@*<div class="form-group">
-								@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileName" })
-								@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePath" })
-								<label class="col-md-2 control-label">上传文件</label>
-								<div class="col-md-3">
-									<input style="visibility:hidden;position:absolute;" />
-									<div class="input-group">
-										<label id="uploadName" class="form-control oversize uploadName hidden"></label>
-										<span class="input-group-btn">
-											<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
-										</span>
-									</div>
+							@Html.Label("关联发布", new { @class = "control-label col-md-1" })
+							<div class="col-md-1">
+								<select id="publishs" class="form-control new-select" multiple="multiple"></select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							@Html.HiddenFor(t => t.CurrentAttachment.RealName, new { @class = "fileName" })
+							@Html.HiddenFor(t => t.CurrentAttachment.Url, new { @class = "filePath" })
+							<label class="col-md-2 control-label">上传文件</label>
+							<div class="col-md-5">
+								<input style="visibility:hidden;position:absolute;" />
+								<div class="input-group">
+									<label id="uploadName" class="form-control oversize uploadName"></label>
+									<span class="input-group-btn">
+										<button class="btn btn-danger" type="button" id="btn-upload">附件上传</button>
+									</span>
 								</div>
-							</div>*@
+							</div>
+						</div>
 
 						<div class="input-group center-block">
-							<button class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
+							<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
 							<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
 						</div>
 
@@ -155,12 +177,26 @@
 
 </div>
 
+<script src="~/assets/plugins/ckeditor_4.14.1_standard/ckeditor/ckeditor.js"></script>
+<script src="~/assets/plugins/select2-4.0.2/js/select2.min.js"></script>
 <script>
 	$(function () {
 
-		ajaxSubmitForm($('.modal-dialog form'),true);
+		//submit form by ajax
+		ajaxSubmitForm($('.modal-dialog form'), true);
 
-		showParentTasks();
+		//initial ckeditor
+		var myEditor = initCKEditor('Description');
+		$('#submit').click(function () {
+			$('#RelativeRequireIds').val($('#requires').val());
+			$('#RelativeBugIds').val($('#bugs').val());
+			$('#RelativePublishIds').val($('#publishs').val());
+			$('#Description').val(myEditor.getData());
+		});
+
+		// bind project dropdown event
+		bindProjectDropdown();
+
 
 		if ($('#hasParnetTask').is(':checked')) {
 			$('.parentTasks').show();
@@ -186,6 +222,10 @@
 			}
 		});
 
+
+		//文件上传
+		initDropZone();
+
 	});
 
 
@@ -202,22 +242,68 @@
 		})
 	}
 
-
-	function bindTasksDropDown(projectId) {
-		console.log($("#ParentId").val());
-		var $dp = $('.dropdown-parnetTasks');
-		bindDropDownByAjax($dp, '@Url.Action("GetLeafTasks", "TaskV2")', { projectId: projectId }, function (o) {
-			if ($('#hasParnetTask').is(':checked'))
-			{
-				$('#ParentId').val(o);
-			}
-		}, $("#ParentId").val());
-	}
-
-	function showParentTasks(door) {
+	function bindProjectDropdown(door) {
 		$('.dropdown-project').searchableSelect({
 			afterSelectItem: function (v) {
 				bindTasksDropDown(v);
+				bindRequiresDropDown(v);
+				bindBugsDropDown(v);
+				bindPublishsDropDown(v);
+			}
+		});
+	}
+
+	function bindTasksDropDown(projectId) {
+		var $dp = $('.dropdown-parnetTasks');
+		bindDropDownByAjax($dp, '@Url.Action("GetLeafTasks", "TaskV2")', { projectId: projectId }, function (o) {
+			if ($('#hasParnetTask').is(':checked')) {
+				$('#ParentId').val(o);
+			}
+		}, $("#ParentId").val());
+	}	
+
+	function bindRequiresDropDown(projectId) {
+		var requireId = '@requireId';
+		if (projectId != '@projectId')
+			requireId = '';
+		// remove previous select value
+		$('#requires').children().remove();
+		// post data for tasks from service side
+		$.post('@Url.Action("GetProjectRequires", "Require")', { projectId: projectId }, function (data) {
+			if (data.rows) {
+				var selectRequireIds = requireId.split(',');
+				$('#requires').select2({
+					data: data.rows,
+					placeholder: "请选择"
+				}).val(selectRequireIds).trigger('change'); // bind relative task data
+			}
+		});
+	}
+
+	function bindBugsDropDown(projectId) {
+		// remove previous select value
+		$('#bugs').children().remove();
+		// post data for tasks from service side
+		$.post('@Url.Action("GetProjectBugs", "Bug")', { projectId: projectId }, function (data) {	
+			if (data.rows) {
+				$('#bugs').select2({
+					data: data.rows,
+					placeholder: "请选择"
+				}).trigger('change'); // bind relative bug data
+			}
+		});
+	}
+
+	function bindPublishsDropDown(projectId) {
+		// remove previous select value
+		$('#publishs').children().remove();
+		// post data for tasks from service side
+		$.post('@Url.Action("GetProjectPublishs", "Publish")', { projectId: projectId }, function (data) {
+			if (data.rows) {
+				$('#publishs').select2({
+					data: data.rows,
+					placeholder: "请选择"
+				}).trigger('change'); // bind relative bug data
 			}
 		});
 	}

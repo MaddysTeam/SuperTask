@@ -34,26 +34,20 @@ namespace Business
 		[Display(Name = "子类型")]
 		public string SubType { get; set; }
 
- 
-      public string V2LevelTitle => TaskKeys.GetV2LevelByValue(V2Level);
 
-      public string Type => TaskKeys.GetTypeKeyByValue(TaskType);
+		public string V2LevelTitle => TaskKeys.GetV2LevelByValue(V2Level);
 
-      // public string Status => TaskKeys.GetStatusKeyByValue(TaskStatus);
+		public string Type => TaskKeys.GetTypeKeyByValue(TaskType);
 
-      public bool IsPlanStatus => TaskStatus == TaskKeys.PlanStatus;
+		public bool IsPlanStatus => TaskStatus == TaskKeys.PlanStatus;
 
 		public bool IsProcessStatus => TaskStatus == TaskKeys.ProcessStatus;
 
 		public bool IsCompleteStatus => TaskStatus == TaskKeys.CompleteStatus;
 
-      public bool IsCloseStatus => TaskStatus == TaskKeys.CloseStatus;
+		public bool IsCloseStatus => TaskStatus == TaskKeys.CloseStatus;
 
 		public bool IsDelteStatus => TaskStatus == TaskKeys.DeleteStatus;
-
-		//public bool IsTempEditStatus => TaskStatus == TaskKeys.TaskTempEditStatus;
-
-		//public bool IsReviewStatus => TaskStatus == TaskKeys.ReviewStatus;
 
 		public bool IsProjectTaskType => TaskType != TaskKeys.TempTaskType;
 
@@ -133,6 +127,24 @@ namespace Business
 		/// </summary>
 		public double StandardWorkhours { get; set; }
 
+		/// <summary>
+		/// 相关需求id  TODO:20200727 
+		/// </summary>
+		public string RelativeRequireIds { get; set; }
+
+		/// <summary>
+		/// 相关bug id TODO:20200727  
+		/// </summary>
+		public string RelativeBugIds { get; set; }
+
+		/// <summary>
+		/// 相关发布 id TODO:20200727  
+		/// </summary>
+		public string RelativePublishIds { get; set; }
+
+
+		public List<Require> RelativeRequires { get; set; }
+
 	}
 
 	public partial class WorkTask
@@ -165,11 +177,11 @@ namespace Business
 			RateOfProgress = 100;
 		}
 
-      public  virtual void Close(DateTime closeDate)
-      {
-         CloseDate = closeDate;
-         SetStatus(TaskKeys.CloseStatus);
-      }
+		public virtual void Close(DateTime closeDate)
+		{
+			CloseDate = closeDate;
+			SetStatus(TaskKeys.CloseStatus);
+		}
 
 		public void SetParentProgress()
 		{

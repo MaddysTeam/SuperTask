@@ -170,7 +170,7 @@
 						var handleButtonStr = '<a data-url="@Url.Action("Handle", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-handle">处理</a> ' ;
 						var EditButtonStr = '<a target="_blank"  href="@Url.Action("Edit", "Require")?id=' + id + '" class="btn btn-lg btn-info btn-edit">编辑</a> ' ;
 						var closeButtonStr ='<a data-url="@Url.Action("Close", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-close">关闭</a> ';
-						var taskButtonStr = '<a data-url="@Url.Action("Add", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-task">创建任务</a> ';
+						var taskButtonStr = '<a data-url="@Url.Action("Add", "TaskV2")?requireId=' + id + '&projectId=' + projectId + '" class="btn btn-lg btn-success btn-task">创建任务</a> ';
 
 						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.RequireName + '" data-row-id="' + id + '">' +
 							reviewButtonStr +

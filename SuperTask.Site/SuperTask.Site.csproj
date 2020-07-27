@@ -2042,6 +2042,7 @@
     <Content Include="Views\Publish\List.cshtml" />
     <Content Include="Views\Shared\_requireList.cshtml" />
     <Content Include="Views\Publish\_relative.cshtml" />
+    <Content Include="Views\TaskV2\_start.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

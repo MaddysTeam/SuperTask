@@ -135,6 +135,9 @@ namespace TheSite.Controllers
 			if (id != null && !id.Value.IsEmpty())
 			{
 				require = db.RequireDal.PrimaryGet(id.Value);
+				var relativeTasks = RTPBRelationHelper.GetRequireRelativeTasks(id.Value, db);
+				//require.RelativeTaskIds = string.Join(",", relativeTasks.Select(x => x.TaskId));
+				require.RelativeTasks = relativeTasks;
 
 				return View("Edit", require);
 			}
@@ -237,6 +240,8 @@ namespace TheSite.Controllers
 
 			require.OperationHistory = operationHistory;
 
+			require.RelativeTasks = RTPBRelationHelper.GetRequireRelativeTasks(id, db);
+
 			ViewBag.Attahcments = AttachmentHelper.GetAttachments(require.Projectid, require.RequireId, db);
 
 			return View(require);
@@ -279,8 +284,8 @@ namespace TheSite.Controllers
 			{
 				Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
 				Guid assignId = GetUserInfo().UserId;
-            Guid reviewStats = RequireKeys.KeysMapping[model.Result.ToGuid(Guid.Empty)];
-            foreach (var id in ids)
+				Guid reviewStats = RequireKeys.KeysMapping[model.Result.ToGuid(Guid.Empty)];
+				foreach (var id in ids)
 				{
 					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.ReviewResultGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
 
@@ -320,7 +325,7 @@ namespace TheSite.Controllers
 		}
 
 		[HttpPost]
-      [ValidateInput(false)]
+		[ValidateInput(false)]
 		public ActionResult Handle(OperationViewModel model)
 		{
 			if (!ModelState.IsValid || !model.IsValid())
@@ -341,8 +346,8 @@ namespace TheSite.Controllers
 			try
 			{
 				int workhours = 0;
-            Guid handleStatsGuid = RequireKeys.KeysMapping[model.Result.ToGuid(Guid.Empty)];
-            foreach (var item in existsReviews)
+				Guid handleStatsGuid = RequireKeys.KeysMapping[model.Result.ToGuid(Guid.Empty)];
+				foreach (var item in existsReviews)
 				{
 					db.OperationDal.Insert(new Operation(model.ProjectId, item.RequireId, RequireKeys.HandleGuid, model.Result, model.Result2, DateTime.Now, assignId, model.Remark));
 
@@ -406,7 +411,7 @@ namespace TheSite.Controllers
 				{
 					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.StatusGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
 
-					db.RequireDal.UpdatePartial(id, new { RequireStatus = model.Result.ToGuid(Guid.Empty), CloseDate=DateTime.Now });
+					db.RequireDal.UpdatePartial(id, new { RequireStatus = model.Result.ToGuid(Guid.Empty), CloseDate = DateTime.Now });
 				}
 
 				db.Commit();
@@ -429,29 +434,29 @@ namespace TheSite.Controllers
 		}
 
 
-      //POST-Ajax  Requires/GetProjectRequires
+		//POST-Ajax  Requires/GetProjectRequires
 
-      [HttpPost]
-      public ActionResult GetProjectRequires(Guid projectId)
-      {
-         if (projectId.IsEmptyGuid())
-         {
-            return Json(new { });
-         }
+		[HttpPost]
+		public ActionResult GetProjectRequires(Guid projectId)
+		{
+			if (projectId.IsEmptyGuid())
+			{
+				return Json(new { });
+			}
 
-         var results = db.RequireDal.ConditionQuery(re.Projectid == projectId, null, null, null);
+			var results = db.RequireDal.ConditionQuery(re.Projectid == projectId, null, null, null);
 
-         return Json(new
-         {
-            rows = results.Select(x => new { id = x.RequireId, text = x.RequireName }).ToList()
-         });
+			return Json(new
+			{
+				rows = results.Select(x => new { id = x.RequireId, text = x.RequireName }).ToList()
+			});
 
-      }
+		}
 
 
-      private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedAvailableProject(GetUserInfo().UserId, db);
+		private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedAvailableProject(GetUserInfo().UserId, db);
 
-		private OperationViewModel MappingOperationViewModel(Require require,Guid operationTypeId)
+		private OperationViewModel MappingOperationViewModel(Require require, Guid operationTypeId)
 		{
 			if (require == null)
 				return new OperationViewModel();

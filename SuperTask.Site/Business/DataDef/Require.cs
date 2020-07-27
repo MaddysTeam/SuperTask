@@ -37,7 +37,7 @@ namespace Business
 
 		public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
 
-		public List<WorkTask> RelativeTasks => new List<WorkTask>();
+		public List<WorkTask> RelativeTasks { get; set; } = new List<WorkTask>();
 
 		public List<Bug> RelativeBugs => new List<Bug>();
 
