@@ -265,10 +265,8 @@
 
 					grid.find('.btn-start,.btn-complete').on('click', function () {
 						var url = $(this).data('url');
-
-						$.post(url, function () {
-							grid.bootgrid('reload')
-						})
+						var $proxy = $('#modelProxy');
+						$proxy.data('url',url).trigger('click')
 					});
 
 					grid.find('.btn-hide-child').click(function () {

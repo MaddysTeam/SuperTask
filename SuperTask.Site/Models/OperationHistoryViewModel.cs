@@ -39,10 +39,12 @@ namespace TheSite.Models
 		[Required]
 		public Guid ProjectId { get; set; }
 
-		[Required]
+		//[Required]
 		public string Result { get; set; }
 
 		public string Result2 { get; set; }
+
+      public Guid GuidResult { get; set; }
 
 		[Display(Name = "备注")]
 		public string Remark { get; set; }
@@ -52,7 +54,7 @@ namespace TheSite.Models
 
 		public bool IsValid()
 		{
-			return !string.IsNullOrEmpty(Id) && !ProjectId.IsEmpty() && Result != null;
+			return !string.IsNullOrEmpty(Id) && !ProjectId.IsEmpty();
 		}
 	}
 

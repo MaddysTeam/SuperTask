@@ -143,9 +143,9 @@ namespace Business
 		public string RelativePublishIds { get; set; }
 
 
-		public List<Require> RelativeRequires { get; set; }
+      public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
 
-	}
+   }
 
 	public partial class WorkTask
 	{

@@ -11,7 +11,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		  @foreach(Bug item in Model)
+		  @foreach(Bug item in Model??new List<Bug>())
 		  {
 			  <tr>
 				  <td>@item.SortId</td>

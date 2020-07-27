@@ -15,7 +15,7 @@
 		<!-- widget -->
 		<div class="widget details col-md-7 col-md-offset-1">
 
-			<form id="requireForm" class="form-horizontal" action="@Url.Action("Review","Require")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="taskForm" class="form-horizontal" action="@Url.Action("Start","TaskV2")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 				<div class="widget-content">
 
@@ -48,10 +48,9 @@
 							<div class="form-group">
 								@Html.Label("指派给", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@*@Html.DropDownListFor(t => t.Result,
-									DictionaryCache.Cached(RequireKeys.ReviewResultGuid)
-													.GetSelectListById(Guid.Empty),
-									new { @class = "form-control" })*@
+								@Html.DropDownListFor(t => t.GuidResult,
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
+									new { @class = "form-control dropdown-project2" })
 								</div>
 							</div>
 
@@ -99,7 +98,7 @@
 
 	$(function () {
 
-		ajaxSubmitForm($('#requireForm'), true);
+		ajaxSubmitForm($('#taskForm'), true);
 
 		myEditor = initCKEditor('Remark');
 

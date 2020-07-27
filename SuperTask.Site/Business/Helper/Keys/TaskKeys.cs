@@ -131,6 +131,25 @@ namespace Business.Helper
 
 		public static Guid SearchByPersonal => Guid.Parse("C0797B23-521C-E8B5-041A-C039ABB17C20"); //TODO Add in dic
 
-	}
+      // 2020-07-27 by huachao
+
+      public static Guid StartActionGuid => Guid.Parse("407dc6e0-8a81-4ab9-b405-3b5e98da749a");
+
+      //public static Dictionary<Guid, Guid> HandleMapping => new Dictionary<Guid, Guid>
+      //{
+      //  // {HandleReady,Ready }, {HandleSuccess,Success }, {HandleFail,Fail}
+      //};
+
+      public static Dictionary<Guid, string> OperationResultDic = new Dictionary<Guid, string>
+      {
+         { StartActionGuid,"启动了任务" },
+         //{ HandleSuccess,"发布成功" },
+         //{ HandleFail, "发布失败" },
+         //{ Close, "关闭发布" },
+         //{RelativeGuid,"变更了发布关联" }
+      };
+
+
+   }
 
 }

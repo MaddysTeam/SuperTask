@@ -320,7 +320,8 @@ function initCKEditor(containerId, config) {
 		//config here
 		filebrowserBrowseUrl: '/Attachment/CKEditorUploadFile/?temp=1',
 		filebrowserUploadUrl: '/Attachment/CKEditorUploadFile/?temp=1',
-		filebrowserImageUploadUrl: '/Attachment/CKEditorUploadFile/?temp=1'
+		filebrowserImageUploadUrl: '/Attachment/CKEditorUploadFile/?temp=1',
+		disallowedContent : 'img{width,height};img[width,height]'
 	},config);
 	var myEditor = CKEDITOR.replace(containerId, config);
 	var content = $('#' + containerId).val();
