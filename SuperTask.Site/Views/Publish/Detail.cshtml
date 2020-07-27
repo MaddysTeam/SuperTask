@@ -1,0 +1,192 @@
+﻿@model Publish
+@{
+	//var users = ViewBag.Users as List<UserInfo>;
+	//var manager =users.Find(x => x.UserId == Model.ManagerId);
+	var attahcments = ViewBag.Attahcments as List<Attachment>;
+}
+
+<style>
+	.dropzonePop {
+		display: none;
+	}
+</style>
+
+@section Css{
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
+}
+
+<div class="row" style="margin-top:20px;margin-bottom:20px;">
+	<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List","Publish")">返回发布列表</a>
+	<div class="col-md-4">
+		<h5>@Model.SortId - @Model.ProjectName - @Model.PublishName</h5>
+	</div>
+
+	<div class="buttons col-md-4">
+
+	
+		<a class="btn btn-warning " href="@Url.Action("Edit", "Publish", new { id = Model.PublishId })">修改</a>
+
+	</div>
+</div>
+<div class="row">
+
+	<!-- widget -->
+	<div class="widget details col-md-7 col-md-offset-1">
+
+		<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
+
+		<form id="taskForm" class="form-horizontal"  role="form" data-after-success="afterDialogSuccess()" style="">
+
+			<div class="widget-content">
+
+				<div class="row editTaskInfo">
+					@*@Html.HiddenFor(t => t.Projectid)
+					@Html.HiddenFor(t => t.SortId)
+					@Html.HiddenFor(t => t.PublishId)*@
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.PublishName, new { @class = "control-label col-md-2" })
+						<div class="col-md-9">
+							@Html.Label(Model.PublishName, new { @class = "form-control" })
+						</div>
+					</div>
+
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.ManagerId, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							@Html.Label(Model.Manager, new { @class = "form-control" })
+						</div>
+
+						@*@Html.LabelFor(t => t.CreatorId, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							@Html.Label(Model.Creator, new { @class = "form-control" })
+						</div>*@
+
+					</div>
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.PublishType, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							@Html.Label(Model.Type, new { @class = "form-control" })
+						</div>
+						@Html.LabelFor(t => t.PublishStatus, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							@Html.Label(Model.Status, new { @class = "form-control" })
+						</div>
+					</div>
+
+					<div class="form-group">
+						@Html.LabelFor(x=>x.CloseDateStr, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+						@Html.Label(Model.CloseDateStr, new { @class = "form-control" })
+						</div>
+					</div>
+
+			
+					<div class="form-group">
+						@Html.LabelFor(t=>t.CreatorId, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							@Html.Label(Model.Creator, new { @class = "form-control" })
+						</div>
+
+					   @Html.LabelFor(t=>t.CreateDateStr, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							@Html.Label( Model.CreateDateStr, new { @class = "form-control" })
+						</div>
+					</div>
+
+					<hr />
+
+					<div class="col-md-12">
+						@Html.LabelFor(t => t.Description, new { @class = "control-label"  })
+						<p></p>
+						 <div class="alert">
+							 @*@Html.TextArea("", Html.Raw(Model.Content).ToString(), 12,2,new { @class = "form-control", @readonly = "readonly"  })*@
+				 			@Html.Raw(Model.Description)
+						 </div>
+						@*@Html.TextAreaFor(t =>Html.Raw(t.Content), 12, 2, new { @class = "form-control", @readonly = "readonly" })*@
+					</div>
+
+					<div class="col-md-12">
+						@Html.Label("附件", new { @class = "control-label" })
+						<p></p>
+						<div class="alert alert-info alert-dismissable">
+							@foreach (var item in attahcments)
+							{
+								<div><a href="@item.Url">@item.RealName</a></div>
+							}
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+		</form>
+
+
+	</div>
+
+	@Html.Partial("_taskList",Model.RelativeTasks)
+	@Html.Partial("_requireList", Model.RelativeRequires)
+
+	<div class="widget col-md-7 col-md-offset-1">
+		<div class="widget-content row">
+			@Html.Label("历史记录", new { @class = "control-label col-md-12" })
+			<div class="col-md-12">
+				@foreach(var item in Model.OperationHistory)
+				{
+					<a>@item.Display </a><br />
+				}
+				@*@Html.TextArea("logs", "logs", 6, 2, new { @class = "form-control", @readonly = "readonly" })*@
+			</div>
+		</div>
+	</div>
+
+
+</div>
+@section Plugins{
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Modals{
+	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
+	<!-- Modal start -->
+	<div class="modal fade" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	</div>
+	<!-- Modal end -->
+}
+@section Scripts{
+	<script>
+
+		@*$(function () {
+
+			$('#childTaskgrid').bootgrid(getGridOptions())
+				.on('loaded.rs.jquery.bootgrid', function () {
+					$('.search,.actions').hide();
+				});
+
+		});
+
+
+		function getGlobalRequest() {
+			return {
+				parentId: '@Model.TaskId'
+			};
+		}
+
+		function getGridOptions() {
+			return $.extend(true, {}, gridOptions, {
+
+				url: '@Url.Action("GetChildTasks", "TaskV2")',
+
+				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
+
+				formatters: {
+				},
+			});
+		}*@
+
+
+	</script>
+}

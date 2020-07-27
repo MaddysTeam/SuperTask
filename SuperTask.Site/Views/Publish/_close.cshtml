@@ -1,0 +1,100 @@
+﻿@model OperationViewModel
+
+<link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
+<style>
+	.dropzonePop {
+		display: none;
+	}
+</style>
+
+
+<div class="modal-dialog" style="width:95%;">
+
+	<div class="row">
+
+		<!-- widget -->
+		<div class="widget details col-md-7 col-md-offset-1">
+
+			<form id="bugForm" class="form-horizontal" action="@Url.Action("Close","Publish")" role="form" data-after-success="afterDialogSuccess()" style="">
+				@Html.HiddenFor(t => t.Id)
+				@Html.HiddenFor(t => t.ProjectId)
+				@Html.HiddenFor(t=>t.Result)
+
+				<div class="widget-content">
+
+					<div class="row">
+						<h4>发布 关闭</h4>
+						<hr />
+					</div>
+
+					<div class="row editTaskInfo">
+						<fieldset class="col-sm-12">
+
+							<div class="form-group">
+									@Html.Label("","发布ID", new { @class = "control-label col-md-2" })
+									<div class="col-md-9">
+										@Html.Label("ID",Model.SortId.ToString(), new { @class = "form-control" })
+									</div>
+								</div>
+
+								<div class="form-group">
+									@Html.Label("发布版本", new { @class = "control-label col-md-2" })
+									<div class="col-md-9">
+									@Html.Label("Name", Model.Name, new { @class = "form-control" })
+									</div>
+								</div>
+
+							<div class="form-group">
+								@Html.LabelFor(t => t.Remark, new { @class = "control-label col-md-2" })
+								<div class="col-md-9">
+									@Html.TextAreaFor(t => t.Remark, 12, 2, new { @class = "form-control" })
+								</div>
+							</div>
+
+
+							<div class="input-group center-block">
+								<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
+								<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
+							</div>
+
+						</fieldset>
+
+					</div>
+
+				</div>
+
+			</form>
+
+		</div>
+
+
+	</div>
+</div>
+
+
+<script src="~/assets/plugins/ckeditor_4.14.1_standard/ckeditor/ckeditor.js"></script>
+<script src="~/assets/plugins/select2-4.0.2/js/select2.min.js"></script>
+
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('#bugForm'), true);
+
+		myEditor = initCKEditor('Remark');
+
+		$('#submit').click(function () {
+			$('#Remark').val(myEditor.getData());
+		});
+
+	});
+
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+
+
+</script>

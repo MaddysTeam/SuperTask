@@ -1,0 +1,150 @@
+﻿@model OperationViewModel
+@{
+	var attahcments = ViewBag.Attahcments as List<Attachment>;
+}
+<link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
+<style>
+	.dropzonePop {
+		display: none;
+	}
+</style>
+
+
+<div class="modal-dialog" style="width:95%;">
+
+	<div class="row">
+
+		<!-- widget -->
+		<div class="widget details col-md-7 col-md-offset-1">
+
+			<form id="PublishForm" class="form-horizontal" action="@Url.Action("Relative","Publish")" role="form" data-after-success="afterDialogSuccess()" style="">
+
+				<div class="widget-content">
+
+					<div class="row">
+						<h4>发布 关联</h4>
+						<hr />
+					</div>
+
+					<div class="row editTaskInfo">
+						<fieldset class="col-sm-12">
+
+							@Html.HiddenFor(t => t.SortId)
+							@Html.HiddenFor(t => t.Id)
+							@Html.HiddenFor(t => t.ProjectId)
+							@Html.HiddenFor(t => t.Result)
+							@Html.HiddenFor(t => t.Result2)
+
+
+							<div class="form-group">
+								@Html.LabelFor(t => t.Id, new { @class = "control-label col-md-2" })
+								<div class="col-md-9">
+									@Html.Label("Id", Model.SortId.ToString(), new { @class = "form-control" })
+								</div>
+							</div>
+
+							<div class="form-group">
+								@Html.LabelFor(t => t.Name, new { @class = "control-label col-md-2" })
+								<div class="col-md-9">
+									@Html.Label("Name", Model.Name, new { @class = "form-control" })
+								</div>
+							</div>
+
+
+							<div class="form-group">
+								@Html.Label("关联任务", new { @class = "control-label col-md-2" })
+								<div class="col-md-3">
+									<select id="tasks" class="form-control new-select" multiple="multiple"></select>
+								</div>
+
+								@Html.Label("关联需求", new { @class = "control-label col-md-2" })
+								<div class="col-md-3">
+									<select id="requires" class="form-control new-select" multiple="multiple"></select>
+								</div>
+							</div>
+
+							<div class="form-group">
+								@Html.Label("", "备注", new { @class = "control-label col-md-2" })
+								<div class="col-md-9">
+									@Html.TextArea("Remark", "", 12, 2, new { @class = "form-control" })
+								</div>
+							</div>
+
+
+							<div class="input-group center-block">
+								<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
+								<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
+							</div>
+
+						</fieldset>
+
+					</div>
+
+				</div>
+
+			</form>
+
+		</div>
+
+
+	</div>
+</div>
+
+
+<script src="~/assets/plugins/ckeditor_4.14.1_standard/ckeditor/ckeditor.js"></script>
+<script src="~/assets/plugins/select2-4.0.2/js/select2.min.js"></script>
+
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('#PublishForm'), true);
+
+		initCKEditor('Remark');
+
+		var projectId = $('#ProjectId').val();
+		bindTasks(projectId);
+		bindRequires(projectId);
+
+
+		$('#submit').on('click', function () {
+			$('#Result').val($('#tasks').val());
+			$('#Result2').val($('#requires').val())
+		})
+
+	});
+
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+	function bindTasks(projectId) {
+		$.post('@Url.Action("GetProjectTasks","TaskV2")', { projectId: projectId }, function (data) {
+			if (data.rows) {
+				var selectTaskIds = '@Model.Result'.split(',');
+				$('#tasks').select2({
+					data: data.rows,
+					placeholder: "请选择"
+				}).val(selectTaskIds).trigger('change'); // bind relative task data
+			}
+		});
+	}
+
+	function bindRequires(projectId) {
+		$.post('@Url.Action("GetProjectRequires", "Require")', { projectId: projectId }, function (data) {
+			if (data.rows) {
+				var selectTaskIds = '@Model.Result2'.split(',');
+				$('#requires').select2({
+					data: data.rows,
+					placeholder: "请选择"
+				}).val(selectTaskIds).trigger('change'); // bind relative task data
+			}
+		});
+	}
+
+
+
+</script>
+
