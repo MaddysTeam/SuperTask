@@ -1,0 +1,12 @@
+﻿@model List<OperationHistoryViewModel>
+<div class="widget col-md-7 col-md-offset-1">
+	<div class="widget-content row">
+		@Html.Label("历史记录", new { @class = "control-label col-md-12" })
+		<div class="col-md-12">
+			@foreach (var item in Model)
+			{
+				<a>@item.Display </a><br />
+			}
+		</div>
+	</div>
+</div>

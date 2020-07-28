@@ -1,0 +1,103 @@
+﻿@model OperationViewModel
+
+<link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
+<style>
+	.dropzonePop {
+		display: none;
+	}
+</style>
+
+
+<div class="modal-dialog" style="width:95%;">
+
+	<div class="row">
+
+		<!-- widget -->
+		<div class="widget details col-md-7 col-md-offset-1">
+
+			<form id="bugForm" class="form-horizontal" action="@Url.Action("Complete","TaskV2")" role="form" data-after-success="afterDialogSuccess()" style="">
+				@Html.HiddenFor(t => t.Id)
+				@Html.HiddenFor(t => t.ProjectId)
+
+				<div class="widget-content">
+
+					<div class="row">
+						<h4>任务完成</h4>
+						<hr />
+					</div>
+
+					<div class="row editTaskInfo">
+						<fieldset class="col-sm-12">
+							@*<div class="form-group">
+								@Html.Label("指派给", new { @class = "control-label col-md-2" })
+								<div class="col-md-9">
+									@Html.DropDownListFor(t => t.GuidResult,
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
+									new { @class = "form-control dropdown-project2" })
+								</div>
+							</div>*@
+
+							<div class="form-group">
+								@Html.Label("完成时间", new { @class = "control-label col-md-2" })
+								<div class="col-md-9">
+									<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+										@Html.TextBoxFor(t => t.Result2, "{0:yyyy-MM-dd}", new { @class = "form-control startDate" })
+										<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								@Html.LabelFor(t => t.Remark, new { @class = "control-label col-md-2" })
+								<div class="col-md-9">
+									@Html.TextAreaFor(t => t.Remark, 12, 2, new { @class = "form-control" })
+								</div>
+							</div>
+
+
+							<div class="input-group center-block">
+								<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
+								<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
+							</div>
+
+						</fieldset>
+
+					</div>
+
+				</div>
+
+			</form>
+
+		</div>
+
+
+	</div>
+</div>
+
+
+<script src="~/assets/plugins/ckeditor_4.14.1_standard/ckeditor/ckeditor.js"></script>
+<script src="~/assets/plugins/select2-4.0.2/js/select2.min.js"></script>
+
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('#bugForm'), true);
+
+		myEditor = initCKEditor('Remark');
+
+		$('#submit').click(function () {
+			$('#Remark').val(myEditor.getData());
+		});
+
+	});
+
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+		$('#bootgrid').bootgrid('reload');
+	}
+
+
+
+</script>

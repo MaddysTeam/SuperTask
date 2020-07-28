@@ -28,6 +28,8 @@ namespace Business
 
       public string RelativeTaskIds { get; set; }
 
+      public string RelativeRequireIds { get; set; }
+
       public string ConfirmRemark { get; set; }
 
       public string ResolveRemark { get; set; }
@@ -42,6 +44,8 @@ namespace Business
       public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
 
       public List<WorkTask> RelativeTasks { get; set; } = new List<WorkTask>();
+
+      public List<Require> RelativeRequires { get; set; } = new List<Require>();
 
 
       [Required]

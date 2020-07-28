@@ -1,4 +1,5 @@
-﻿<div class="widget col-md-3" style="margin-left:20px;">
+﻿@model List<WorkTask>
+<div class="widget col-md-3" style="margin-left:20px;">
 	<div style="margin-top:10px;margin-bottom:10px;">子任务</div>
 	<table id="childTaskgrid" class="table table-striped table-hover table-dark-header">
 		<thead>
@@ -9,6 +10,17 @@
 				<th data-column-id="Status">状态</th>
 			</tr>
 		</thead>
+		<tbody>
+			@foreach (WorkTask item in Model ?? new List<WorkTask>())
+			{
+				<tr>
+					<td>@item.SortId</td>
+					<td>@item.TaskName</td>
+					<td>@item.Manager</td>
+					<td>@item.Status</td>
+				</tr>
+			}
+		</tbody>
 	</table>
 
 </div>

@@ -1,6 +1,10 @@
 ﻿@model WorkTask
 @{
 	var users = ViewBag.Users as List<UserInfo>;
+	var bugs = ViewBag.Bugs as List<Bug>;
+	var requires = ViewBag.Requires as List<Require>;
+	var publishs = ViewBag.Publishs as List<Publish>;
+	var subTasks = ViewBag.SubTasks as List<WorkTask>;
 	var manager =users.Find(x => x.UserId == Model.ManagerId);
 	var attahcments = ViewBag.Attahcments as List<Attachment>;
 }
@@ -180,27 +184,20 @@
 
 				</div>
 
+				
 			</div>
-
+		
 		</form>
-
-
+	
+		
 	</div>
 
-	@Html.Partial("_subTaskList")
+	@Html.Partial("_subTaskList", subTasks)
+   @Html.Partial("_bugList", bugs)
+	@Html.Partial("_requireList", requires)
+	@Html.Partial("_publishList", publishs)
 
-	<div class="widget col-md-7 col-md-offset-1">
-		<div class="widget-content row">
-			@Html.Label("历史记录", new { @class = "control-label col-md-12" })
-			<div class="col-md-12">
-				@foreach (var item in Model.OperationHistory)
-				{
-					<a>@item.Display </a><br />
-				}
-			</div>
-		</div>
-	</div>
-
+	@Html.Partial("_operation", Model.OperationHistory)
 
 </div>
 @section Plugins{
@@ -218,10 +215,10 @@
 
 		$(function () {
 
-			$('#childTaskgrid').bootgrid(getGridOptions())
-				.on('loaded.rs.jquery.bootgrid', function () {
-					$('.search,.actions').hide();
-				});
+			//$('#childTaskgrid').bootgrid(getGridOptions())
+			//	.on('loaded.rs.jquery.bootgrid', function () {
+			//		$('.search,.actions').hide();
+			//	});
 
 		});
 

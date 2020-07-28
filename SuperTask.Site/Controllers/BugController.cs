@@ -143,10 +143,14 @@ namespace TheSite.Controllers
 
 				// 关联的任务
 				var relativeTasks = RTPBRelationHelper.GetBugRelativeTasks(id.Value, db);
-				bug.RelativeTaskIds = string.Join(",", relativeTasks.Select(x => x.TaskId));
-				bug.RelativeTasks = relativeTasks;
+            bug.RelativeTaskIds = RTPBRelationHelper.GetTaskIds(relativeTasks);
+            bug.RelativeTasks = relativeTasks;
 
-				return View("Edit", bug);
+            //var relativeRequires= RTPBRelationHelper.getre
+            bug.RelativeRequireIds = "";
+            bug.RelativeRequires = new List<Require>();
+             
+            return View("Edit", bug);
 			}
 
 			return PartialView("Add", bug);
@@ -201,22 +205,11 @@ namespace TheSite.Controllers
 				//add user to project resurce if not exits
 				ResourceHelper.AddUserToResourceIfNotExist(bug.Projectid, Guid.Empty, bug.ManagerId, ResourceKeys.OtherType, db);
 
-				//add relative bug tasks
-				string[] relativeTaskIds = bug.RelativeTaskIds.Split(',');
-				if (relativeTaskIds.Length > 0)
-				{
-					var taskIds = relativeTaskIds.ConvertToGuidArray().ToArray();
-					db.RTPBRelationDal.ConditionDelete(tb.TaskId.In(taskIds));
-
-					foreach (var taskId in taskIds)
-					{
-						db.RTPBRelationDal.Insert(new RTPBRelation { BugId = bug.BugId, TaskId = taskId });
-					}
-
-				}
+            var taskids = bug.RelativeTaskIds?.Split(',');
+            RTPBRelationHelper.BindRelationBetweenTasksAndBug(taskids.ConvertToGuidArray(), bug.BugId, db);
 
 
-				db.Commit();
+            db.Commit();
 			}
 			catch (Exception e)
 			{
@@ -453,9 +446,9 @@ namespace TheSite.Controllers
 				return Json(new { });
 			}
 
-			var results = db.BugDal.ConditionQuery(b.Projectid == projectId, null, null, null);
+         var results = BugHelper.GetBugsByProjectId(projectId,db);
 
-			return Json(new
+         return Json(new
 			{
 				rows = results.Select(x => new { id = x.BugId, text = x.BugName }).ToList()
 			});

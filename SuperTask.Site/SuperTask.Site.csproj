@@ -313,6 +313,7 @@
     <Compile Include="Business\Handler\WorkJournalHandler.cs" />
     <Compile Include="Business\Helper\AttachmentHelper.cs" />
     <Compile Include="Business\Helper\AppConfigHelper.cs" />
+    <Compile Include="Business\Helper\BugHelper.cs" />
     <Compile Include="Business\Helper\UserHelper.cs" />
     <Compile Include="Business\Helper\Keys\PublishKeys.cs" />
     <Compile Include="Business\Helper\Keys\RequireKeys.cs" />
@@ -2047,6 +2048,10 @@
     <Content Include="Views\TaskV2\_complete.cshtml" />
     <Content Include="Views\TaskV2\_close.cshtml" />
     <Content Include="Views\TaskV2\_multipleStart.cshtml" />
+    <Content Include="Views\TaskV2\_multipleComplete.cshtml" />
+    <Content Include="Views\TaskV2\_multipleClose.cshtml" />
+    <Content Include="Views\Shared\_operation.cshtml" />
+    <Content Include="Views\Shared\_publishList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,6 +1,9 @@
 ﻿@model WorkTask
 @{
-	var subTasks = ViewBag.SubTask as List<WorkTask>;
+	var bugs = ViewBag.Bugs as List<Bug>;
+	var requires = ViewBag.Requires as List<Require>;
+	var publishs = ViewBag.Publishs as List<Publish>;
+	var subTasks = ViewBag.SubTasks as List<WorkTask>;
 	var attahcments = ViewBag.Attahcments as List<Attachment>;
 	var isCompeleteOrClose = Model.IsCompleteStatus || Model.IsCloseStatus;
 }
@@ -114,7 +117,7 @@
 								</div>
 							</div>
 						}
-						@foreach (var item in ViewBag.SubTask as List<WorkTask>)
+						@foreach (var item in ViewBag.SubTasks as List<WorkTask>)
 						{
 							<div class="form-group subTaskExecutor" data-task-id="@item.TaskId">
 								@Html.Label("执行人", new { @class = "control-label col-md-2 text-align:left" })
@@ -200,15 +203,15 @@
 						<div class="form-group">
 							@Html.Label("实际开始结束时间", new { @class = "control-label col-md-2" })
 							<div class="col-md-3">
-								<span class="form-control details-text" style="background-color:#eee;">@(Model.RealEndDate <= DateTime.MinValue ? " " : Model.RealStartDate.ToString("yyyy-MM-dd")) </span>
+								<span class="form-control details-text" style="background-color:#eee;">@(Model.RealStartDateStr) </span>
 							</div>
 							<div class="col-md-3">
-								<span class="form-control details-text" style="background-color:#eee;">@(Model.RealEndDate <= DateTime.MinValue ? " " : Model.RealEndDate.ToString("yyyy-MM-dd"))</span>
+								<span class="form-control details-text" style="background-color:#eee;">@(Model.RealEndDateStr)</span>
 							</div>
 						</div>
 
 						<div class="input-group center-block">
-							<button class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
+							<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
 							<a class="btn btn-info col-md-3" href="@Url.Action("List","TaskV2")">取消</a>
 						</div>
 
@@ -222,7 +225,10 @@
 
 	</div>
 
-	@Html.Partial("_subTaskList")
+	@Html.Partial("_subTaskList", subTasks)
+	@Html.Partial("_bugList", bugs)
+	@Html.Partial("_requireList", requires)
+	@Html.Partial("_publishList", publishs)
 
 </div>
 @section Modals{
@@ -251,9 +257,6 @@
 				$('#RelativePublishIds').val($('#publishs').val());
 				$('#Description').val(myEditor.getData());
 			});
-
-			//fix bug
-			$('#btnEditJournal').click();
 
 			// init drop zone
 			initDropZone();
@@ -286,7 +289,7 @@
 		}
 
 		function afterDialogSuccess() {
-			$('#childTaskgrid').bootgrid('reload');
+			location.href = '@Url.Action("List","TaskV2")';
 		}
 
 		function bindRequiresDropDown(projectId) {
@@ -295,11 +298,11 @@
 			// post data for tasks from service side
 			$.post('@Url.Action("GetProjectRequires", "Require")', { projectId: projectId }, function (data) {
 				if (data.rows) {
-					var selectRequireIds = '@Model.RelativeRequireIds'.split(',');
+					var selectIds = '@Model.RelativeRequireIds'.split(',');
 					$('#requires').select2({
 						data: data.rows,
 						placeholder: "请选择"
-					}).val(selectRequireIds).trigger('change'); // bind relative task data
+					}).val(selectIds).trigger('change'); // bind relative task data
 				}
 			});
 		}
@@ -310,10 +313,11 @@
 			// post data for tasks from service side
 			$.post('@Url.Action("GetProjectBugs", "Bug")', { projectId: projectId }, function (data) {
 				if (data.rows) {
+					var selectIds = '@Model.RelativeBugIds'.split(',');
 					$('#bugs').select2({
 						data: data.rows,
 						placeholder: "请选择"
-					}).trigger('change'); // bind relative bug data
+					}).val(selectIds).trigger('change'); // bind relative bug data
 				}
 			});
 		}
@@ -324,13 +328,14 @@
 			// post data for tasks from service side
 			$.post('@Url.Action("GetProjectPublishs", "Publish")', { projectId: projectId }, function (data) {
 				if (data.rows) {
+					var selectIds = '@Model.RelativePublishIds'.split(',');
 					$('#publishs').select2({
 						data: data.rows,
 						placeholder: "请选择"
-					}).trigger('change'); // bind relative bug data
+					}).val(selectIds).trigger('change'); // bind relative bug data
 				}
 			});
-		}	
+		}
 
 	</script>
 }

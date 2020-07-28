@@ -142,8 +142,15 @@ namespace Business
 		/// </summary>
 		public string RelativePublishIds { get; set; }
 
-
+      /// <summary>
+      /// 操作历史 TODO:20200727  
+      /// </summary>
       public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
+
+
+      public string RealStartDateStr => this.RealStartDate.ToyyMMdd();
+
+      public string RealEndDateStr => this.RealEndDate.ToyyMMdd();
 
    }
 
