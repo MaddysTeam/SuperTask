@@ -1,4 +1,4 @@
-﻿@{
+﻿	@{
 	var pageTitle = ViewBag.Title = "我的任务";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 
@@ -317,9 +317,11 @@
 						});
 
 						if (result.length > 0) {
-							$.post($(this).data('url'), { ids: result }, function () {
-								grid.bootgrid('reload')
-							});
+							var projectId = $('#dpProjects').val();
+							ids= result.join(',');
+							var url = $(this).data('url') + '?ids=' + ids + '&projectId=' + projectId;
+							var $proxy = $('#modelProxy');
+							$proxy.data('url', url).trigger('click')
 						}
 						else {
 							alert('请先勾选任务！')

@@ -56,10 +56,10 @@ namespace Business.Helper
 
 		public static string GetFileTypeKeyByValue(Guid val) => DictionaryHelper.GetDicById(FileTypeGuid, val).Title;
 
-      public static string GetV2LevelByValue(Guid val) => DictionaryHelper.GetDicById(LevelGuid, val).Title;
+		public static string GetV2LevelByValue(Guid val) => DictionaryHelper.GetDicById(LevelGuid, val).Title;
 
 
-      public static Guid DeleteStatus => Guid.Parse("CC3CDC7F-A46D-3C58-9CAF-D3A2B7C9AB8D");
+		public static Guid DeleteStatus => Guid.Parse("CC3CDC7F-A46D-3C58-9CAF-D3A2B7C9AB8D");
 
 		public static Guid PlanStatus => Guid.Parse("CC3CDC7F-A46D-3C58-9CAF-D3A2B7C9AB5D");
 
@@ -131,25 +131,29 @@ namespace Business.Helper
 
 		public static Guid SearchByPersonal => Guid.Parse("C0797B23-521C-E8B5-041A-C039ABB17C20"); //TODO Add in dic
 
-      // 2020-07-27 by huachao
+		// 2020-07-27 by huachao
 
-      public static Guid StartActionGuid => Guid.Parse("407dc6e0-8a81-4ab9-b405-3b5e98da749a");
+		public static Guid StartActionGuid => Guid.Parse("407dc6e0-8a81-4ab9-b405-3b5e98da749a");
 
-      //public static Dictionary<Guid, Guid> HandleMapping => new Dictionary<Guid, Guid>
-      //{
-      //  // {HandleReady,Ready }, {HandleSuccess,Success }, {HandleFail,Fail}
-      //};
+		public static Guid CompleteActionGuid => Guid.Parse("ccc99cd2-9495-4d82-9f89-da50d71123c4");
 
-      public static Dictionary<Guid, string> OperationResultDic = new Dictionary<Guid, string>
-      {
-         { StartActionGuid,"启动了任务" },
-         //{ HandleSuccess,"发布成功" },
-         //{ HandleFail, "发布失败" },
+		public static Guid CloseActionGuid => Guid.Parse("cfc4d21e-8997-4a83-87a0-25c8a9bcc9a5");
+
+		//public static Dictionary<Guid, Guid> HandleMapping => new Dictionary<Guid, Guid>
+		//{
+		//  // {HandleReady,Ready }, {HandleSuccess,Success }, {HandleFail,Fail}
+		//};
+
+		public static Dictionary<Guid, string> OperationResultDic = new Dictionary<Guid, string>
+	  {
+		 { StartActionGuid,"启动了任务" },
+		 { CompleteActionGuid,"完成了任务及其子任务" },
+         { CloseActionGuid, "关闭了任务" },
          //{ Close, "关闭发布" },
          //{RelativeGuid,"变更了发布关联" }
       };
 
 
-   }
+	}
 
 }

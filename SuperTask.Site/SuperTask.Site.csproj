@@ -2044,6 +2044,9 @@
     <Content Include="Views\Publish\_multipleClose.cshtml" />
     <Content Include="Views\Publish\_multipleHandle.cshtml" />
     <Content Include="Views\Publish\_relative.cshtml" />
+    <Content Include="Views\TaskV2\_complete.cshtml" />
+    <Content Include="Views\TaskV2\_close.cshtml" />
+    <Content Include="Views\TaskV2\_multipleStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

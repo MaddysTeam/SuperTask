@@ -338,7 +338,7 @@ namespace TheSite.Controllers
 
 			Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
 			Guid assignId = GetUserInfo().UserId;
-			var existsReviews = db.RequireDal.ConditionQuery(re.RequireId.In(ids), null, null, null);
+			var existsRequires = db.RequireDal.ConditionQuery(re.RequireId.In(ids), null, null, null);
 
 
 			db.BeginTrans();
@@ -347,7 +347,7 @@ namespace TheSite.Controllers
 			{
 				int workhours = 0;
 				Guid handleStatsGuid = RequireKeys.KeysMapping[model.Result.ToGuid(Guid.Empty)];
-				foreach (var item in existsReviews)
+				foreach (var item in existsRequires)
 				{
 					db.OperationDal.Insert(new Operation(model.ProjectId, item.RequireId, RequireKeys.HandleGuid, model.Result, model.Result2, DateTime.Now, assignId, model.Remark));
 

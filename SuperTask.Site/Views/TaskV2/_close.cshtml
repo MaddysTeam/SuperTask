@@ -15,12 +15,12 @@
 		<!-- widget -->
 		<div class="widget details col-md-7 col-md-offset-1">
 
-			<form id="taskForm" class="form-horizontal" action="@Url.Action("Start","TaskV2")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="taskForm" class="form-horizontal" action="@Url.Action("Close","TaskV2")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 				<div class="widget-content">
 
 					<div class="row">
-						<h4>任务启动</h4>
+						<h4>任务关闭</h4>
 						<hr />
 					</div>
 
@@ -46,23 +46,12 @@
 
 
 							<div class="form-group">
-								@Html.Label("指派给", new { @class = "control-label col-md-2" })
+								@Html.Label("总计工时", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-								@Html.DropDownListFor(t => t.GuidResult,
-									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
-									new { @class = "form-control dropdown-project2" })
+								@Html.Label("",Model.Result, new { @class = " form-control col-md-2" })
 								</div>
 							</div>
 
-							<div class="form-group">
-								@Html.Label("开始日期", new { @class = "control-label col-md-2" })
-								<div class="col-md-9">
-									<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
-										@Html.TextBoxFor(t => t.Result2, "{0:yyyy-MM-dd}", new { @class = "form-control startDate" })
-										<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-									</div>
-								</div>
-							</div>
 
 							<div class="form-group">
 								@Html.Label("备注", new { @class = "control-label col-md-2" })

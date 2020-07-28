@@ -15,40 +15,24 @@
 		<!-- widget -->
 		<div class="widget details col-md-7 col-md-offset-1">
 
-			<form id="taskForm" class="form-horizontal" action="@Url.Action("Start","TaskV2")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="bugForm" class="form-horizontal" action="@Url.Action("Start","TaskV2")" role="form" data-after-success="afterDialogSuccess()" style="">
+				@Html.HiddenFor(t => t.Id)
+				@Html.HiddenFor(t => t.ProjectId)
 
 				<div class="widget-content">
 
 					<div class="row">
-						<h4>任务启动</h4>
+						<h4>任务开始</h4>
 						<hr />
 					</div>
 
 					<div class="row editTaskInfo">
 						<fieldset class="col-sm-12">
-
-							@Html.HiddenFor(t => t.ProjectId)
-							@Html.HiddenFor(t => t.Id)
-
 							<div class="form-group">
-								@Html.Label("任务ID", new { @class = "control-label col-md-2" })
-								<div class="col-md-9">
-									@Html.Label("", Model.SortId.ToString(), new { @class = "form-control" })
-								</div>
-							</div>
 
-							<div class="form-group">
-								@Html.Label("任务名称", new { @class = "control-label col-md-2" })
-								<div class="col-md-9">
-									@Html.Label("", Model.Name, new { @class = "form-control" })
-								</div>
-							</div>
-
-
-							<div class="form-group">
 								@Html.Label("指派给", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-								@Html.DropDownListFor(t => t.GuidResult,
+									@Html.DropDownListFor(t => t.GuidResult,
 									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
 									new { @class = "form-control dropdown-project2" })
 								</div>
@@ -65,7 +49,7 @@
 							</div>
 
 							<div class="form-group">
-								@Html.Label("备注", new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t => t.Remark, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.TextAreaFor(t => t.Remark, 12, 2, new { @class = "form-control" })
 								</div>
@@ -73,7 +57,7 @@
 
 
 							<div class="input-group center-block">
-								<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">评审</button>
+								<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
 								<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
 							</div>
 
@@ -93,12 +77,13 @@
 
 
 <script src="~/assets/plugins/ckeditor_4.14.1_standard/ckeditor/ckeditor.js"></script>
+<script src="~/assets/plugins/select2-4.0.2/js/select2.min.js"></script>
 
 <script>
 
 	$(function () {
 
-		ajaxSubmitForm($('#taskForm'), true);
+		ajaxSubmitForm($('#bugForm'), true);
 
 		myEditor = initCKEditor('Remark');
 
@@ -117,4 +102,3 @@
 
 
 </script>
-
