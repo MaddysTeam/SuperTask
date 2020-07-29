@@ -57,16 +57,17 @@
 									new { @class = "form-control" })
 								</div>
 							</div>
-							@*<div class="form-group">
-								@Html.Label("本次消耗", new { @class = "control-label col-md-2" })
-								<div class="col-md-9">
-									@Html.TextBoxFor(t => t.Result2, new { @class = "form-control", @placeholder = "本次消耗" })
-								</div>
-							</div>*@
 							<div class="form-group">
 								@Html.Label("本次消耗", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.TextBoxFor(t => t.Result2, new { @class = "form-control", @placeholder = "本次消耗" })
+								</div>
+							</div>
+							<div class="form-group endDate">
+								@Html.Label("完成时间", new { @class = "control-label col-md-2" })
+								<div class="input-group date col-md-8" style="margin-left:20%" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(t => t.Result3, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 								</div>
 							</div>
 							<div class="form-group">
@@ -106,6 +107,15 @@
 		ajaxSubmitForm($('#bugForm'), true);
 
 		initCKEditor('Remark');
+
+		$('#Result').on('change', function () {
+			var $val = $(this).val();
+			if ($val == '@RequireKeys.HandleDone') {
+				$('.endDate').show();
+			}
+			else
+				$('.endDate').hide();
+		}).change();
 
 	});
 

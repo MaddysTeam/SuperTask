@@ -32,6 +32,7 @@
 						@Html.HiddenFor(t => t.SortId)
 						@Html.HiddenFor(t => t.BugId)
 						@Html.HiddenFor(x => x.RelativeTaskIds)
+						@Html.HiddenFor(x=>x.RelativeRequireIds)
 						@Html.HiddenFor(x => x.BugStatus)
 						@Html.HiddenFor(x => x.CreatorId)
 
@@ -158,7 +159,7 @@
 
 						<div class="input-group center-block">
 							<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
-							<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
+							<a class="btn btn-info col-md-3" href="@Url.Action("List","Bug")" data-dismiss="modal">取消</a>
 						</div>
 
 					</fieldset>
@@ -174,7 +175,7 @@
 
 
 	@Html.Partial("_taskList", Model.RelativeTasks)
-
+	@Html.Partial("_requireList", Model.RelativeRequires)
 
 </div>
 
@@ -194,10 +195,9 @@
 
 			$('#submit').click(function () {
 				$('#RelativeTaskIds').val($('#tasks').val());
+				$('#RelativeRequireIds').val($('#requires').val());
 				$('#Content').val(myEditor.getData());
 			});
-
-
 
 			//bind files uploader
 			$('.dropzone.file').dropzone({
@@ -256,8 +256,8 @@
 
 
 		function afterDialogSuccess() {
-			$('#firstModal').modal('hide');
-			$('#childTaskgrid').bootgrid('reload');
+			//$('#firstModal').modal('hide');
+			//$('#childTaskgrid').bootgrid('reload');
 		}
 
 		function bindMulitSelection(dropdown) {

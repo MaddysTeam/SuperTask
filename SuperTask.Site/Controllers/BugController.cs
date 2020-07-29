@@ -129,6 +129,7 @@ namespace TheSite.Controllers
 
 		public ActionResult Edit(Guid? id)
 		{
+
 			// 所有人员
 			ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
 
@@ -142,15 +143,14 @@ namespace TheSite.Controllers
 				bug = db.BugDal.PrimaryGet(id.Value);
 
 				// 关联的任务
-				var relativeTasks = RTPBRelationHelper.GetBugRelativeTasks(id.Value, db);
-            bug.RelativeTaskIds = RTPBRelationHelper.GetTaskIds(relativeTasks);
-            bug.RelativeTasks = relativeTasks;
+				bug.RelativeTasks = RTPBRelationHelper.GetBugRelativeTasks(id.Value, db);
+				bug.RelativeTaskIds = RTPBRelationHelper.GetTaskIds(bug.RelativeTasks);
 
-            //var relativeRequires= RTPBRelationHelper.getre
-            bug.RelativeRequireIds = "";
-            bug.RelativeRequires = new List<Require>();
-             
-            return View("Edit", bug);
+				// 关联的需求
+				bug.RelativeRequires = RTPBRelationHelper.GetBugRelativeRequires(id.Value, db);
+				bug.RelativeRequireIds = RTPBRelationHelper.GetRequireIds(bug.RelativeRequires);
+
+				return View("Edit", bug);
 			}
 
 			return PartialView("Add", bug);
@@ -184,6 +184,9 @@ namespace TheSite.Controllers
 			{
 				if (bug.BugId.IsEmptyGuid())
 				{
+					var sortId = GetBugMaxSortNo(bug.Projectid, db);
+					bug.SortId = ++sortId;
+
 					bug.BugId = Guid.NewGuid();
 					bug.CreateDate = DateTime.Now;
 					bug.CreatorId = user.UserId;
@@ -205,11 +208,13 @@ namespace TheSite.Controllers
 				//add user to project resurce if not exits
 				ResourceHelper.AddUserToResourceIfNotExist(bug.Projectid, Guid.Empty, bug.ManagerId, ResourceKeys.OtherType, db);
 
-            var taskids = bug.RelativeTaskIds?.Split(',');
-            RTPBRelationHelper.BindRelationBetweenTasksAndBug(taskids.ConvertToGuidArray(), bug.BugId, db);
+				var taskids = bug.RelativeTaskIds?.Split(',');
+				RTPBRelationHelper.BindRelationBetweenTasksAndBug(taskids?.ConvertToGuidArray(), bug.BugId, db);
 
+				var requireIds = bug.RelativeRequireIds?.Split(',');
+				RTPBRelationHelper.BindRelationBetweenRequiresAndBug(requireIds?.ConvertToGuidArray(), bug.BugId, db);
 
-            db.Commit();
+				db.Commit();
 			}
 			catch (Exception e)
 			{
@@ -250,10 +255,14 @@ namespace TheSite.Controllers
 				}
 			 );
 			}
-
+			// bug操作历史记录
 			bug.OperationHistory = operationHistory;
 
+			// 关联的任务
 			bug.RelativeTasks = RTPBRelationHelper.GetBugRelativeTasks(id, db);
+
+			// 关联的需求
+			bug.RelativeRequires = RTPBRelationHelper.GetBugRelativeRequires(id, db);
 
 			ViewBag.Attahcments = AttachmentHelper.GetAttachments(bug.Projectid, bug.BugId, db);
 
@@ -306,11 +315,17 @@ namespace TheSite.Controllers
 				{
 					Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
 					Guid assignId = GetUserInfo().UserId;
+					DateTime fixDate = DateTime.MinValue;
+					DateTime.TryParse(model.Result2, out fixDate);
+					if (model.Result.ToGuid(Guid.Empty) == BugKeys.Resolved && fixDate.IsEmpty())
+					{
+						fixDate = DateTime.Now;
+					}
 
 					foreach (var id in ids)
 					{
 						db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugResolveGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
-						db.BugDal.UpdatePartial(id, new { ResolveStatus = model.Result, BugStatus = model.Result.ToGuid(Guid.Empty) == BugKeys.Resolving ? BugKeys.readyToResolve : BugKeys.hasResolve });
+						db.BugDal.UpdatePartial(id, new { ResolveStatus = model.Result, FixDate = fixDate, BugStatus = model.Result.ToGuid(Guid.Empty) == BugKeys.Resolving ? BugKeys.readyToResolve : BugKeys.hasResolve });
 					}
 
 					db.Commit();
@@ -425,14 +440,70 @@ namespace TheSite.Controllers
 		public ActionResult Relative(Guid id)
 		{
 			Bug bug = db.BugDal.PrimaryGet(id);
+			var model = MappingOperationViewModel(bug, BugKeys.BugRelativeGuid);
 
-			return PartialView("_relative", bug);
+			// 关联的任务
+			bug.RelativeTasks = RTPBRelationHelper.GetBugRelativeTasks(id, db);
+			model.Result = RTPBRelationHelper.GetTaskIds(bug.RelativeTasks);
+
+			// 关联的需求
+			bug.RelativeRequires = RTPBRelationHelper.GetBugRelativeRequires(id, db);
+			model.Result2 = RTPBRelationHelper.GetRequireIds(bug.RelativeRequires);
+
+			return PartialView("_relative", model);
+		}
+
+		public ActionResult MultipleRelative(string ids, Guid projectId)
+		{
+			return PartialView("_multipleRelative", new OperationViewModel { Id = ids, ProjectId = projectId });
 		}
 
 		[HttpPost]
-		public ActionResult Relative(Guid status, string comment)
+		[ValidateInput(false)]
+		public ActionResult Relative(OperationViewModel model)
 		{
-			return Json(new { });
+			if (!ModelState.IsValid || !model.IsValid())
+			{
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
+
+			db.BeginTrans();
+
+			try
+			{
+				Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
+				Guid assignId = GetUserInfo().UserId;
+
+				foreach (var id in ids)
+				{
+					db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugRelativeGuid, BugKeys.BugRelativeGuid.ToString(), null, DateTime.Now, assignId, model.Remark));
+
+					string[] relativeTaskIds = model.Result.Split(',');
+					string[] relativeRequireIds = model.Result2.Split(',');
+					RTPBRelationHelper.BindRelationBetweenTasksAndBug(relativeTaskIds.ConvertToGuidArray(), id, db);
+					RTPBRelationHelper.BindRelationBetweenRequiresAndBug(relativeRequireIds.ConvertToGuidArray(), id, db);
+				}
+
+				db.Commit();
+			}
+			catch (Exception e)
+			{
+				db.Rollback();
+
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
+
+
+			return Json(new
+			{
+				result = AjaxResults.Success
+			});
 		}
 
 
@@ -446,9 +517,9 @@ namespace TheSite.Controllers
 				return Json(new { });
 			}
 
-         var results = BugHelper.GetBugsByProjectId(projectId,db);
+			var results = BugHelper.GetBugsByProjectId(projectId, db);
 
-         return Json(new
+			return Json(new
 			{
 				rows = results.Select(x => new { id = x.BugId, text = x.BugName }).ToList()
 			});
@@ -456,6 +527,39 @@ namespace TheSite.Controllers
 		}
 
 		private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedProjects(GetUserInfo().UserId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus & p.ProjectStatus != ProjectKeys.DeleteStatus);
+
+		private OperationViewModel MappingOperationViewModel(Bug bug, Guid operationTypeId)
+		{
+			if (bug == null)
+				return new OperationViewModel();
+
+			var existReviewResult = OperationHelper.GetOperation(bug.BugId, operationTypeId);
+
+			return
+			   new OperationViewModel
+			   {
+				   Id = bug.BugId.ToString(),
+				   Name = bug.BugName,
+				   ProjectId = bug.Projectid,
+				   SortId = bug.SortId,
+				   Remark = existReviewResult?.Content,
+				   Result = existReviewResult?.OperationResult,
+				   Result2 = existReviewResult?.OperationResult2
+			   };
+		}
+
+		private int GetBugMaxSortNo(Guid projectId, APDBDef db)
+		{
+			var result = APQuery.select(b.SortId.Max().As("SortId"))
+				.from(b)
+				.where(b.Projectid == projectId)
+				.query(db, r => new { sortId = b.SortId.GetValue(r, "SortId") }).FirstOrDefault();
+
+			if (result == null) return 1;
+
+			return result.sortId;
+		}
+
 
 	}
 

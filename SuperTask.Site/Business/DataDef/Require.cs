@@ -20,27 +20,19 @@ namespace Business
 
 		public Attachment CurrentAttachment { get; set; }
 
-		// public string RelativeTaskIds { get; set; }
-
-		//public string ConfirmRemark { get; set; }
-
-		//public string ResolveRemark { get; set; }
-
 		public string Level => RequireKeys.GetLevelByValue(RequireLevel);
 
 		public string Type => RequireKeys.GetTypeKeyByValue(RequireType);
 
 		public string Status => RequireKeys.GetStatusKeyByValue(RequireStatus);
 
-		//[Display(Name = "评审结果")]
-		//public string ReviewResult => RequireKeys.GetReviewResultByValue(ReviewStatus);
-
 		public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
 
 		public List<WorkTask> RelativeTasks { get; set; } = new List<WorkTask>();
 
-		public List<Bug> RelativeBugs => new List<Bug>();
+		public List<Bug> RelativeBugs { get; set; } = new List<Bug>();
 
+		public List<Publish> RelativePublishs { get; set; } = new List<Publish>();
 
 		[Required]
 		public override string RequireName

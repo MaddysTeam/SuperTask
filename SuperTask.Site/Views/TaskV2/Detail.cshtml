@@ -5,7 +5,7 @@
 	var requires = ViewBag.Requires as List<Require>;
 	var publishs = ViewBag.Publishs as List<Publish>;
 	var subTasks = ViewBag.SubTasks as List<WorkTask>;
-	var manager =users.Find(x => x.UserId == Model.ManagerId);
+	var manager = users.Find(x => x.UserId == Model.ManagerId);
 	var attahcments = ViewBag.Attahcments as List<Attachment>;
 }
 
@@ -25,12 +25,13 @@
 		<h5>@Model.SortId - @Model.V2LevelTitle - @Model.ProjectName - @Model.TaskName</h5>
 	</div>
 
-	<div class="buttons col-md-4">
+	<div class="buttons col-md-3">
 
 		@if (Html.GetUserProfile().UserId == Model.ManagerId)
 		{
-		<button class="btn btn-info  col-lg-offset-1 @(!Model.IsParent? "hidden":"")" data-toggle="ajax-modal" data-url="@Url.Action("AddSubTask", "TaskV2", new { parentId = Model.TaskId, projectId = Model.Projectid })" data-target="#firstModal"><i class="fa fa-plus-square"></i>分解任务</button>
-		<a class="btn btn-warning " href="@Url.Action("Edit", "TaskV2", new { id = Model.TaskId })">修改</a>
+			<button class="btn btn-info " data-toggle="ajax-modal" data-url="@Url.Action("JournalEdit", "TaskV2", new { id = Model.TaskId})" data-target="#firstModal"><i class="fa fa-pencil"></i>记录工时</button>
+			<button class="btn btn-danger  @(!Model.IsParent? "hidden":"")" data-toggle="ajax-modal" data-url="@Url.Action("AddSubTask", "TaskV2", new { parentId = Model.TaskId, projectId = Model.Projectid })" data-target="#firstModal"><i class="fa fa-plus-square"></i>分解任务</button>
+			<a class="btn btn-warning " href="@Url.Action("Edit", "TaskV2", new { id = Model.TaskId })">修改</a>
 		}
 	</div>
 </div>
@@ -149,7 +150,7 @@
 						<div class="form-group">
 							@Html.Label("执行人", new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
-								@Html.Label(users.Find(x=>x.UserId==item.ManagerId).UserName,new { @class = "form-control" } )
+								@Html.Label(users.Find(x => x.UserId == item.ManagerId).UserName, new { @class = "form-control" })
 							</div>
 
 							@Html.Label("预估消耗", new { @class = "control-label col-md-2" })
@@ -184,16 +185,16 @@
 
 				</div>
 
-				
+
 			</div>
-		
+
 		</form>
-	
-		
+
+
 	</div>
 
 	@Html.Partial("_subTaskList", subTasks)
-   @Html.Partial("_bugList", bugs)
+	@Html.Partial("_bugList", bugs)
 	@Html.Partial("_requireList", requires)
 	@Html.Partial("_publishList", publishs)
 
@@ -215,31 +216,7 @@
 
 		$(function () {
 
-			//$('#childTaskgrid').bootgrid(getGridOptions())
-			//	.on('loaded.rs.jquery.bootgrid', function () {
-			//		$('.search,.actions').hide();
-			//	});
-
 		});
-
-
-		function getGlobalRequest() {
-			return {
-				parentId: '@Model.TaskId'
-			};
-		}
-
-		function getGridOptions() {
-			return $.extend(true, {}, gridOptions, {
-
-				url: '@Url.Action("GetChildTasks", "TaskV2")',
-
-				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
-
-				formatters: {
-				},
-			});
-		}
 
 
 	</script>

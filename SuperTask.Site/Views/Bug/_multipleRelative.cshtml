@@ -1,7 +1,5 @@
 ﻿@model OperationViewModel
-@{
-	var attahcments = ViewBag.Attahcments as List<Attachment>;
-}
+
 <link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
 <style>
 	.dropzonePop {
@@ -17,39 +15,21 @@
 		<!-- widget -->
 		<div class="widget details col-md-7 col-md-offset-1">
 
-			<form id="bugForm" class="form-horizontal" action="@Url.Action("Relative","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="bugForm" class="form-horizontal" action="@Url.Action("Resolve","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
+				@Html.HiddenFor(t => t.Id)
+				@Html.HiddenFor(t => t.ProjectId)
+				@Html.HiddenFor(t => t.Result)
+				@Html.HiddenFor(t => t.Result2)
 
 				<div class="widget-content">
 
 					<div class="row">
-					<h4>bug 关联</h4>
-					 <hr />
+						<h4>bug 关联</h4>
+						<hr />
 					</div>
 
 					<div class="row editTaskInfo">
 						<fieldset class="col-sm-12">
-
-							@Html.HiddenFor(t => t.SortId)
-							@Html.HiddenFor(t => t.Id)
-							@Html.HiddenFor(x => x.ProjectId)
-							@Html.HiddenFor(t => t.Result)
-							@Html.HiddenFor(t => t.Result2)
-
-							<div class="form-group">
-								@Html.LabelFor(t => t.SortId, new { @class = "control-label col-md-2" })
-								<div class="col-md-9">
-									@Html.Label("BugID",Model.SortId.ToString(), new { @class = "form-control" })
-								</div>
-							</div>
-
-							<div class="form-group">
-								@Html.LabelFor(t => t.Name, new { @class = "control-label col-md-2" })
-								<div class="col-md-9">
-								@Html.Label("BugName", Model.Name, new { @class = "form-control" })
-								</div>
-								@Html.ValidationMessageFor(t => t.Name)
-							</div>
-
 
 							<div class="form-group">
 								@Html.Label("关联任务", new { @class = "control-label col-md-2" })
@@ -64,9 +44,9 @@
 							</div>
 
 							<div class="form-group">
-								@Html.Label("", "备注", new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t => t.Remark, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
-									@Html.TextArea("Remark", "", 12, 2, new { @class = "form-control" })
+									@Html.TextAreaFor(t => t.Remark, 12, 2, new { @class = "form-control" })
 								</div>
 							</div>
 
@@ -100,16 +80,17 @@
 
 		ajaxSubmitForm($('#bugForm'), true);
 
-		initCKEditor('Remark');
+		myEditor = initCKEditor('Remark');
 
 		var projectId = $('#ProjectId').val();
 		bindTasks(projectId);
 		bindRequires(projectId);
 
 		$('#submit').on('click', function () {
+			$('#Remark').val(myEditor.getData());
 			$('#Result').val($('#tasks').val());
 			$('#Result2').val($('#requires').val())
-		})
+		});
 
 	});
 
@@ -118,7 +99,6 @@
 		$('#firstModal').modal('hide');
 		$('#bootgrid').bootgrid('reload');
 	}
-
 
 	function bindTasks(projectId) {
 		$.post('@Url.Action("GetProjectTasks","TaskV2")', { projectId: projectId }, function (data) {
@@ -144,7 +124,4 @@
 		});
 	}
 
-
-
 </script>
-

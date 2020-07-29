@@ -57,6 +57,14 @@
 								</div>
 							</div>
 
+							<div class="form-group fixDate">
+								@Html.Label("解决时间", new { @class = "control-label col-md-2" })
+								<div class="input-group date col-md-8" style="margin-left:20%" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(t => t.Result2, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+
 							<div class="form-group">
 								@Html.LabelFor(t => t.Remark, new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
@@ -98,6 +106,15 @@
 		$('#submit').click(function () {
 			$('#Remark').val(myEditor.getData());
 		});
+
+		$('#Result').on('change', function () {
+			var $val = $(this).val();
+			if ($val == '@BugKeys.Resolved') {
+				$('.fixDate').show();
+			}
+			else
+				$('.fixDate').hide();
+		}).change();
 
 	});
 

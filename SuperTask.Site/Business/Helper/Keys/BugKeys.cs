@@ -66,6 +66,12 @@ namespace Business.Helper
 		public static Guid Resolving = Guid.Parse("66837bba-c0e2-4516-8dd1-04ca778c5737");
 
 
+		/// <summary>
+		/// bug关联
+		/// </summary>
+		public static Guid BugRelativeGuid = Guid.Parse("f01577e8-1856-4401-a61c-5e43341d4a26");
+
+
 		public static string GetTypeKeyByValue(Guid val) => DictionaryHelper.GetDicById(TypeGuid, val).Title;
 
 		public static string GetStatusKeyByValue(Guid val) => DictionaryHelper.GetDicById(StatusGuid, val).Title;
@@ -87,7 +93,8 @@ namespace Business.Helper
 		  { BugKeys.ConfrimYes,"确定了这个bug" },
 		  { BugKeys.ConfirmNo, "否定了这个bug" },
 		  { BugKeys.Resolved, "已经处理了这个bug" },
-		  { BugKeys.Resolving, "正在处理这个bug" }
+		  { BugKeys.Resolving, "正在处理这个bug" },
+		  {BugKeys.BugRelativeGuid,"修改了关联" }
 		};
 
 	}

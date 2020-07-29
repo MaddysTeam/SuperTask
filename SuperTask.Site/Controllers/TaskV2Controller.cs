@@ -385,7 +385,7 @@ namespace TheSite.Controllers
             RTPBRelationHelper.BindRelationBetweenBugsAndTask(bugs.ConvertToGuidArray(), task.TaskId, db);
 
             var publishs = task.RelativePublishIds.Split(',');
-            RTPBRelationHelper.BindRelationBetweenPublishAndTasks(publishs.ConvertToGuidArray(), task.TaskId, db);
+            RTPBRelationHelper.BindRelationBetweenPublishsAndTask(publishs.ConvertToGuidArray(), task.TaskId, db);
 
 
             db.Commit();

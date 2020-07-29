@@ -265,6 +265,11 @@
 
 						if (result.length > 0) {
 							var projectId = $('#dpProjects').val();
+							if (projectId == '@BugKeys.SelectAll') {
+								alert('请选择项目');
+								return false;
+							}
+
 							var url = $(this).data('url') + "?ids=" + result.join(',') + '&projectId=' + projectId;
 							var $proxy = $('#modelProxy');
 							$proxy

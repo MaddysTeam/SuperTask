@@ -135,9 +135,9 @@ namespace TheSite.Controllers
 			if (id != null && !id.Value.IsEmpty())
 			{
 				require = db.RequireDal.PrimaryGet(id.Value);
-				var relativeTasks = RTPBRelationHelper.GetRequireRelativeTasks(id.Value, db);
-				//require.RelativeTaskIds = string.Join(",", relativeTasks.Select(x => x.TaskId));
-				require.RelativeTasks = relativeTasks;
+				require.RelativeTasks = RTPBRelationHelper.GetRequireRelativeTasks(require.RequireId, db);
+				require.RelativeBugs = RTPBRelationHelper.GetRequireRelativeBugs(require.RequireId, db);
+				require.RelativePublishs = RTPBRelationHelper.GetRequireRelativePublishs(require.RequireId, db);
 
 				return View("Edit", require);
 			}
@@ -241,6 +241,8 @@ namespace TheSite.Controllers
 			require.OperationHistory = operationHistory;
 
 			require.RelativeTasks = RTPBRelationHelper.GetRequireRelativeTasks(id, db);
+			require.RelativeBugs = RTPBRelationHelper.GetRequireRelativeBugs(id, db);
+			require.RelativePublishs = RTPBRelationHelper.GetRequireRelativePublishs(id, db);
 
 			ViewBag.Attahcments = AttachmentHelper.GetAttachments(require.Projectid, require.RequireId, db);
 
@@ -346,13 +348,19 @@ namespace TheSite.Controllers
 			try
 			{
 				int workhours = 0;
+				DateTime endDate = DateTime.MinValue;
+				int.TryParse(model.Result2, out workhours);
+				DateTime.TryParse(model.Result3, out endDate);
+				if (model.Result.ToGuid(Guid.Empty) == RequireKeys.HandleDone && endDate == DateTime.MinValue)
+					endDate = DateTime.Now;
+
 				Guid handleStatsGuid = RequireKeys.KeysMapping[model.Result.ToGuid(Guid.Empty)];
+
 				foreach (var item in existsRequires)
 				{
 					db.OperationDal.Insert(new Operation(model.ProjectId, item.RequireId, RequireKeys.HandleGuid, model.Result, model.Result2, DateTime.Now, assignId, model.Remark));
 
-					int.TryParse(model.Result2, out workhours);
-					db.RequireDal.UpdatePartial(item.RequireId, new { ReviewDate = DateTime.Now, RequireStatus = handleStatsGuid, WorkHours = item.WorkHours + workhours });
+					db.RequireDal.UpdatePartial(item.RequireId, new { ReviewDate = DateTime.Now, RequireStatus = handleStatsGuid, WorkHours = item.WorkHours + workhours,EndDate= endDate });
 				}
 
 				db.Commit();
