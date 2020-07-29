@@ -122,10 +122,14 @@ namespace TheSite.Controllers
 			{
 				publish = db.PublishDal.PrimaryGet(id.Value);
 				var relativeTasks = RTPBRelationHelper.GetPublishRelativeTasks(id.Value, db);
-				publish.RelativeTaskIds = string.Join(",", relativeTasks.Select(x => x.TaskId));
-				publish.RelativeTasks = relativeTasks;
+            publish.RelativeTaskIds = RTPBRelationHelper.GetTaskIds(relativeTasks);
+            publish.RelativeTasks = relativeTasks;
 
-				return View("Edit", publish);
+            var relativeRequires = RTPBRelationHelper.GetPublishRelativeRequires(id.Value, db);
+            publish.RelativeRequireIds = RTPBRelationHelper.GetRequireIds(relativeRequires);
+            publish.RelativeRequires = relativeRequires;
+
+            return View("Edit", publish);
 			}
 
 
@@ -160,7 +164,10 @@ namespace TheSite.Controllers
 			{
 				if (publish.PublishId.IsEmptyGuid())
 				{
-					publish.PublishId = Guid.NewGuid();
+               var sortId = GetMaxSortNo(publish.Projectid, db);
+               publish.SortId = ++sortId;
+
+               publish.PublishId = Guid.NewGuid();
 					publish.CreateDate = DateTime.Now;
 					publish.CreatorId = user.UserId;
 					publish.PublishStatus = PublishKeys.StatusGuid;
@@ -186,8 +193,11 @@ namespace TheSite.Controllers
 				string[] relativeTaskIds = publish.RelativeTaskIds.Split(',');
 				RTPBRelationHelper.BindRelationBetweenTasksAndPublish(relativeTaskIds.ConvertToGuidArray(), publish.PublishId, db);
 
+            string[] relativeRequireIds = publish.RelativeRequireIds.Split(',');
+            RTPBRelationHelper.BindRelationBetweenRequiresAndPublish(relativeRequireIds.ConvertToGuidArray(), publish.PublishId, db);
 
-				db.Commit();
+
+            db.Commit();
 			}
 			catch (Exception e)
 			{
@@ -235,7 +245,12 @@ namespace TheSite.Controllers
 			return PartialView("_handle", viewModel);
 		}
 
-		[HttpPost]
+      public ActionResult MultipleHandle(string ids, Guid projectId)
+      {
+         return PartialView("_multipleHandle", new OperationViewModel { Id = ids, ProjectId = projectId });
+      }
+
+      [HttpPost]
 		[ValidateInput(false)]
 		public ActionResult Handle(OperationViewModel model)
 		{
@@ -297,7 +312,13 @@ namespace TheSite.Controllers
 			return PartialView("_close", viewModel);
 		}
 
-		[HttpPost]
+
+      public ActionResult MultipleClose(string ids, Guid projectId)
+      {
+         return PartialView("_multipleClose", new OperationViewModel { Id = ids, ProjectId = projectId });
+      }
+
+      [HttpPost]
 		[ValidateInput(false)]
 		public ActionResult Close(OperationViewModel model)
 		{
@@ -318,7 +339,7 @@ namespace TheSite.Controllers
 
 				foreach (var id in ids)
 				{
-					db.OperationDal.Insert(new Operation(model.ProjectId, id, PublishKeys.StatusGuid, PublishKeys.Close.ToString(), null, DateTime.Now, assignId, model.Remark));
+					db.OperationDal.Insert(new Operation(model.ProjectId, id, PublishKeys.StatusGuid, PublishKeys.HandleClose.ToString(), null, DateTime.Now, assignId, model.Remark));
 
 					db.PublishDal.UpdatePartial(id, new { PublishStatus = PublishKeys.Close, CloseDate = DateTime.Now });
 				}
@@ -351,8 +372,9 @@ namespace TheSite.Controllers
 			Publish publish = db.PublishDal.PrimaryGet(id);
 			var model = MappingOperationViewModel(publish, PublishKeys.RelativeGuid);
 			var relativeTasks = RTPBRelationHelper.GetPublishRelativeTasks(id, db);
-			model.Result = string.Join(",", relativeTasks.Select(x => x.TaskId));  // relative task ids
-			model.Result2 = string.Empty; // relative require ids
+         var relativeRequires = RTPBRelationHelper.GetPublishRelativeRequires(id, db);
+         model.Result = RTPBRelationHelper.GetTaskIds(relativeTasks);  // relative task ids
+         model.Result2 = RTPBRelationHelper.GetRequireIds(relativeRequires); // relative require ids
 
 			return PartialView("_relative", model);
 		}
@@ -382,7 +404,9 @@ namespace TheSite.Controllers
 					string[] relativeTaskIds = model.Result.Split(',');
 					string[] relativeRequireIds = model.Result2.Split(',');
 					RTPBRelationHelper.BindRelationBetweenTasksAndPublish(relativeTaskIds.ConvertToGuidArray(), id, db);
-				}
+               RTPBRelationHelper.BindRelationBetweenRequiresAndPublish(relativeRequireIds.ConvertToGuidArray(), id, db);
+
+            }
 
 				db.Commit();
 			}
@@ -464,6 +488,19 @@ namespace TheSite.Controllers
 			return operationHistory;
 		}
 
-	}
+
+      private int GetMaxSortNo(Guid projectId, APDBDef db)
+      {
+         var result = APQuery.select(p.SortId.Max().As("SortId"))
+            .from(p)
+            .where(p.Projectid == projectId)
+            .query(db, r => new { sortId = p.SortId.GetValue(r, "SortId") }).FirstOrDefault();
+
+         if (result == null) return 1;
+
+         return result.sortId;
+      }
+
+   }
 
 }

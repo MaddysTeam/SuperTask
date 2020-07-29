@@ -62,6 +62,10 @@ namespace Business
          }
       }
 
+      public string FixDateStr => this.FixDate.ToyyMMdd();
+
+      public string CreateDateStr => this.CreateDate.ToyyMMdd();
+
    }
 
 

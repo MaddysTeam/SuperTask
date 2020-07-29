@@ -35,6 +35,8 @@ namespace Business.Helper
       public static Guid HandleReady = Guid.Parse("6ea0dac1-056d-47c0-9bf4-57c3b4c4e08a");
       public static Guid HandleSuccess = Guid.Parse("6d510e62-dc4a-4ab7-be73-2ef72123de64");
       public static Guid HandleFail = Guid.Parse("5f6e38bc-047a-48d5-916b-3462b657ccee");
+      public static Guid HandleClose = Guid.Parse("507d9f53-9f8b-4811-8d71-224248b87109");
+
 
       /// <summary>  
 		/// 关联
@@ -58,7 +60,7 @@ namespace Business.Helper
        { HandleReady,"待发布" },
        { HandleSuccess,"发布成功" },
        { HandleFail, "发布失败" },
-       { Close, "关闭发布" },
+       { HandleClose, "关闭发布" },
        {RelativeGuid,"变更了发布关联" }
 		};
 

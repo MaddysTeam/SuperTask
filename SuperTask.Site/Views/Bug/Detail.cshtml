@@ -60,18 +60,6 @@
 						<div class="col-md-2">
 							@Html.Label(Model.Status, new { @class = "form-control" })
 						</div>
-
-						@*@Html.Label("关闭日期", new { @class = "control-label col-md-2" })
-						<div class="col-md-2">
-							@if (Model.CloseDate <= DateTime.MinValue)
-							{
-								@Html.Label(" ", new { @class = "form-control" })
-							}
-							else
-							{
-								@Html.Label(Model.CloseDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
-							}
-						</div>*@
 					</div>
 
 					<div class="form-group">
@@ -80,11 +68,14 @@
 							@Html.Label(Model.Manager, new { @class = "form-control" })
 						</div>
 
-
-						@Html.Label("","影响版本", new { @class = "control-label col-md-2" })
+						@Html.LabelFor(t => t.BugLevel, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							@Html.Label(Model.Level, new { @class = "form-control" })
+						</div>
+						@*@Html.Label("","影响版本", new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
 							@Html.Label(Model.Manager, new { @class = "form-control" })
-						</div>
+						</div>*@
 						
 					</div>
 
@@ -102,29 +93,15 @@
 					</div>
 
 					<div class="form-group">
-						@Html.Label("关闭日期", new { @class = "control-label col-md-2" })
+						@Html.Label("创建日期", new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
-							@if (Model.FixDate <= DateTime.MinValue)
-							{
-								@Html.Label(" ", new { @class = "form-control" })
-							}
-							else
-							{
-								@Html.Label(Model.FixDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
-							}
+							@Html.Label(Model.CreateDateStr, new { @class = "form-control" })
 						</div>
 
-						@Html.Label("开始日期", new { @class = "control-label col-md-2" })
+						@Html.Label("关闭日期", new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
-							@if (Model.CreateDate <= DateTime.MinValue)
-							{
-								@Html.Label(" ", new { @class = "form-control" })
-							}
-							else
-							{
-								@Html.Label(Model.CreateDate.ToString("yyyy-MM-dd"), new { @class = "form-control" })
-							}
-						</div>
+							@Html.Label(Model.FixDateStr, new { @class = "form-control" })
+						</div>			
 					</div>
 
 					<hr />
@@ -133,10 +110,8 @@
 						@Html.LabelFor(t => t.Content, new { @class = "control-label"  })
 						<p></p>
 						 <div class="alert">
-							 @*@Html.TextArea("", Html.Raw(Model.Content).ToString(), 12,2,new { @class = "form-control", @readonly = "readonly"  })*@
 				 			@Html.Raw(Model.Content)
 						 </div>
-						@*@Html.TextAreaFor(t =>Html.Raw(t.Content), 12, 2, new { @class = "form-control", @readonly = "readonly" })*@
 					</div>
 
 					<div class="col-md-12">
@@ -174,38 +149,4 @@
 	<div class="modal fade" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
 	</div>
 	<!-- Modal end -->
-}
-@section Scripts{
-	<script>
-
-		@*$(function () {
-
-			$('#childTaskgrid').bootgrid(getGridOptions())
-				.on('loaded.rs.jquery.bootgrid', function () {
-					$('.search,.actions').hide();
-				});
-
-		});
-
-
-		function getGlobalRequest() {
-			return {
-				parentId: '@Model.TaskId'
-			};
-		}
-
-		function getGridOptions() {
-			return $.extend(true, {}, gridOptions, {
-
-				url: '@Url.Action("GetChildTasks", "TaskV2")',
-
-				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
-
-				formatters: {
-				},
-			});
-		}*@
-
-
-	</script>
 }

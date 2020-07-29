@@ -32,7 +32,7 @@
 						@Html.HiddenFor(t => t.SortId)
 						@Html.HiddenFor(t => t.BugId)
 						@Html.HiddenFor(x => x.RelativeTaskIds)
-						@Html.HiddenFor(x=>x.RelativeRequireIds)
+						@Html.HiddenFor(x => x.RelativeRequireIds)
 						@Html.HiddenFor(x => x.BugStatus)
 						@Html.HiddenFor(x => x.CreatorId)
 
@@ -56,23 +56,28 @@
 						</div>
 
 						<div class="form-group">
-							@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2" })
+							@Html.LabelFor(t => t.ManagerId, new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
 								@Html.DropDownList("ManagerId",
 									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == Model.ManagerId.ToString(), SelectListHelper.Default),
 									new { @class = "form-control" })
 							</div>
 							@Html.ValidationMessageFor(t => t.ManagerId)
+
+							@Html.LabelFor(t => t.BugStatus, new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
+								@*@Html.DropDownListFor(t => t.BugStatus,
+									DictionaryCache.Cached(BugKeys.StatusGuid)
+														.GetSelectListById(Guid.Empty),
+									new { @class = "form-control dropdown-taskStatus" })*@
+
+									@Html.Label(Model.Status, new { @class = "form-control" })
+							</div>
+
 						</div>
 
 						<div class="form-group">
-							@*@Html.LabelFor(t => t.BugStatus, new { @class = "control-label col-md-2" })
-								<div class="col-md-2">
-									@Html.DropDownListFor(t => t.BugStatus,
-									DictionaryCache.Cached(BugKeys.StatusGuid)
-														.GetSelectListById(Guid.Empty),
-									new { @class = "form-control dropdown-taskStatus" })
-								</div>*@
+
 							@Html.LabelFor(t => t.BugType, new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
 								@Html.DropDownListFor(t => t.BugType,
@@ -156,6 +161,20 @@
 								</div>
 							</div>
 						}
+
+						@if (Model.BugStatus == BugKeys.hasResolve)
+						{
+						<div class="form-group">
+							@Html.LabelFor(t => t.FixDate, new { @class = "control-label col-md-2	" })
+							<div class="col-md-3">
+								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
+									@Html.TextBoxFor(t => t.FixDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
+									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+								</div>
+							</div>
+						</div>
+						}
+
 
 						<div class="input-group center-block">
 							<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
@@ -256,6 +275,7 @@
 
 
 		function afterDialogSuccess() {
+			location.href = location.href;
 			//$('#firstModal').modal('hide');
 			//$('#childTaskgrid').bootgrid('reload');
 		}

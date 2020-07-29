@@ -18,13 +18,13 @@
 			<form id="requireForm" class="form-horizontal" action="@Url.Action("Review","Require")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 				<div class="widget-content">
-
-					<div class="row">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 						<h4>需求评审</h4>
-						<hr />
 					</div>
 
-					<div class="row editTaskInfo">
+
+					<div class="modal-body  row editTaskInfo">
 						<fieldset class="col-sm-12">
 
 							@Html.HiddenFor(t => t.ProjectId)

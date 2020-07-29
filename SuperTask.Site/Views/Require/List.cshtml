@@ -58,15 +58,16 @@
 				</div>
 
 
-				<div class="col-sm-3">
+				<div class="col-sm-2">
 					<div class="form-horizontal">
 						<div class="FormGroup" style="float:left">
 							<input type="text" placeholder="需求ID/名称" class="form-control txt-taskName " id="txtName" />
 						</div>
-						<div>
-							<a class="btn btn-info" id="btnSearch">搜索</a>
-						</div>
 					</div>
+				</div>
+
+				<div class="col-sm-1">
+					<a class="btn btn-info" id="btnSearch">搜索</a>
 				</div>
 
 				<div class="col-sm-2 text-center line-height: 70px;">
@@ -91,7 +92,7 @@
 				<div class="btn-group" style="position:relative">
 					<div style="position:absolute;top:20px; width:200px; z-index:99">
 						<a class="btn btn-info" id="review" data-url="@Url.Action("MultipleReview", "Require")">审核</a>
-						<a class="btn btn-success" id="close" data-url="@Url.Action("MultiplClose","Require")">关闭</a>
+						<a class="btn btn-success" id="close" data-url="@Url.Action("MultipleClose","Require")">关闭</a>
 					</div>
 				</div>
 				<div class="table-responsive">
@@ -128,7 +129,7 @@
 @section Modals{
 	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
 	<!-- Modal start -->
-	<div class="modal fade" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
 	</div>
 	<!-- Modal end -->
 }

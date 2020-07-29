@@ -55,6 +55,7 @@ namespace Business.Helper
       public static Guid HandleDev = Guid.Parse("eb4e5efa-4c51-4e24-aa4e-96d882af5039");
       public static Guid HandleTest = Guid.Parse("65903a6f-7fac-4d32-b5e6-2ab2a9376056");
       public static Guid HandleDone = Guid.Parse("e7b17554-66cc-4823-bd94-ab4764ab0817");
+      public static Guid HandleClose = Guid.Parse("4d5cb32a-d30c-47fc-a254-e5bee1ed1695");
 
       public static string GetTypeKeyByValue(Guid val) => DictionaryHelper.GetDicById(TypeGuid, val).Title;
 
@@ -75,7 +76,7 @@ namespace Business.Helper
         { ReviewWaiting,"待评审" },
         { ReviewSuccess,"评审通过" },
         { ReviewFail, "评审不通过" },
-        { Close, "关闭了需求" },
+        { HandleClose, "关闭了需求" },
         { InTest,"更改了需求状态，当前状态：测试中"},
         { HandleDev,"将状态改为了【开发中】" },
         { HandleTest,"将状态改为了【测试中】" },

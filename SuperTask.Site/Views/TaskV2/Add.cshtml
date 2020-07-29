@@ -21,8 +21,11 @@
 		<form class="form-horizontal" action="@Url.Action("Add","TaskV2")" role="form" data-after-success="afterDialogSuccess()" style="border:1px solid red;margin:auto">
 
 			<div class="widget-content">
-
-				<div class="row editTaskInfo">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4>创建任务</h4>
+				</div>
+				<div class="modal-body row editTaskInfo">
 					<fieldset class="col-sm-12">
 						@Html.HiddenFor(x => x.ParentId)
 						@Html.HiddenFor(x => x.RelativeRequireIds)

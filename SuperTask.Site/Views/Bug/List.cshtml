@@ -66,18 +66,19 @@
 				</div>
 
 
-				<div class="col-sm-3">
+				<div class="col-sm-2">
 					<div class="form-horizontal">
 						<div class="FormGroup" style="float:left">
 							<input type="text" placeholder="BugID/名称" class="form-control txt-taskName " id="txtName" />
 						</div>
-						<div>
-							<a class="btn btn-info" id="btnSearch">搜索</a>
-						</div>
 					</div>
 				</div>
 
-				<div class="col-sm-2 text-center line-height: 70px;">
+				<div class="col-sm-1">
+					<a class="btn btn-info" id="btnSearch">搜索</a>
+				</div>
+
+				<div class="col-sm-1 text-center line-height: 70px;">
 					<div class="form-horizontal">
 						<div class="FormGroup" style="line-height: 35px;">
 							<a href="#" id="assign" class="btn">指派给我</a>
@@ -274,7 +275,7 @@
 							var $proxy = $('#modelProxy');
 							$proxy
 								.data('url', url)
-								.trigger('click');
+								.trigger('click');	
 						}
 						else {
 							alert('请先勾选bug！')

@@ -1,4 +1,4 @@
-﻿@model BugResolveViewModel
+﻿@model OperationViewModel
 
 <link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
 <style>
@@ -22,7 +22,7 @@
 				<div class="widget-content">
 
 					<div class="row">
-						<h4>bug 确认</h4>
+						<h4>发布 处理</h4>
 						<hr />
 					</div>
 
@@ -30,10 +30,10 @@
 						<fieldset class="col-sm-12">
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Result, new { @class = "control-label col-md-2" })
+								@Html.Label("发布状态", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.DropDownListFor(t => t.Result,
-									DictionaryCache.Cached(BugKeys.BugResolveGuid)
+									DictionaryCache.Cached(PublishKeys.HandleGuid)
 													.GetSelectListById(Guid.Empty),
 									new { @class = "form-control" })
 								</div>

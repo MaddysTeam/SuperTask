@@ -59,15 +59,16 @@
 				</div>
 
 
-				<div class="col-sm-3">
+				<div class="col-sm-2">
 					<div class="form-horizontal">
 						<div class="FormGroup" style="float:left">
 							<input type="text" placeholder="发布id/名称" class="form-control txt-taskName " id="txtName" />
 						</div>
-						<div>
-							<a class="btn btn-info" id="btnSearch">搜索</a>
-						</div>
 					</div>
+				</div>
+
+				<div class="col-sm-1">
+					<a class="btn btn-info" id="btnSearch">搜索</a>
 				</div>
 
 				<div class="col-sm-2 text-center line-height: 70px;">
@@ -91,8 +92,8 @@
 			<div class="row col-md-9" style="margin-left:1%;">
 				<div class="btn-group" style="position:relative">
 					<div style="position:absolute;top:20px; width:200px; z-index:99">
-						<a class="btn btn-info" id="handle" data-url="@Url.Action("MultipleConfirm","Publish")">处理</a>
-						<a class="btn btn-success" id="close" data-url="@Url.Action("MultipleResolve","Publish")">关闭</a>
+						<a class="btn btn-info" id="handle" data-url="@Url.Action("MultipleHandle","Publish")">处理</a>
+						<a class="btn btn-success" id="close" data-url="@Url.Action("MultipleClose","Publish")">关闭</a>
 					</div>
 				</div>
 				<div class="table-responsive">

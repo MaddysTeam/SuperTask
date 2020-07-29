@@ -77,7 +77,24 @@ namespace Business.Helper
 		}
 
 
-		public static bool BindRelationBetweenBugsAndTask(Guid[] bugIds, Guid taskId, APDBDef db)
+      public static bool BindRelationBetweenRequiresAndPublish(Guid[] requiredIds, Guid publishId, APDBDef db)
+      {
+         if (requiredIds == null || publishId.IsEmpty())
+            return false;
+
+         db.RTPBRelationDal.ConditionDelete(rtpb.PublishId == publishId & rtpb.TypeId == RTPBRelationKeys.PublishWithRequire);
+
+         foreach (var requireId in requiredIds)
+         {
+            if (!requireId.IsEmpty())
+               db.RTPBRelationDal.Insert(new RTPBRelation() { PublishId = publishId, RequireId = requireId, TypeId = RTPBRelationKeys.PublishWithRequire });
+         }
+
+         return true;
+      }
+
+
+      public static bool BindRelationBetweenBugsAndTask(Guid[] bugIds, Guid taskId, APDBDef db)
 		{
 			if (bugIds == null || taskId.IsEmpty())
 				return false;
@@ -168,7 +185,16 @@ namespace Business.Helper
 			return db.WorkTaskDal.ConditionQuery(t.TaskId.In(subQuery), null, null, null);
 		}
 
-		public static List<Publish> GetTaskRelativePublishs(Guid taskId, APDBDef db)
+      public static List<Require> GetPublishRelativeRequires(Guid publishId, APDBDef db)
+      {
+         if (publishId.IsEmpty())
+            return new List<Require>();
+
+         var subQuery = APQuery.select(rtpb.RequireId).from(rtpb).where(rtpb.PublishId == publishId & rtpb.TypeId == RTPBRelationKeys.PublishWithRequire);
+         return db.RequireDal.ConditionQuery(r.RequireId.In(subQuery), null, null, null);
+      }
+
+      public static List<Publish> GetTaskRelativePublishs(Guid taskId, APDBDef db)
 		{
 			if (taskId.IsEmpty())
 				return new List<Publish>();

@@ -16,7 +16,7 @@
 }
 
 <div class="row" style="margin-top:20px;margin-bottom:20px;">
-	<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List","Publish")">返回发布列表</a>
+	<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List","Publish")">返回列表</a>
 	<div class="col-md-4">
 		<h5>@Model.SortId - @Model.ProjectName - @Model.PublishName</h5>
 	</div>
@@ -131,18 +131,7 @@
 	@Html.Partial("_taskList",Model.RelativeTasks)
 	@Html.Partial("_requireList", Model.RelativeRequires)
 
-	<div class="widget col-md-7 col-md-offset-1">
-		<div class="widget-content row">
-			@Html.Label("历史记录", new { @class = "control-label col-md-12" })
-			<div class="col-md-12">
-				@foreach(var item in Model.OperationHistory)
-				{
-					<a>@item.Display </a><br />
-				}
-				@*@Html.TextArea("logs", "logs", 6, 2, new { @class = "form-control", @readonly = "readonly" })*@
-			</div>
-		</div>
-	</div>
+	@Html.Partial("_operation", Model.OperationHistory)
 
 
 </div>

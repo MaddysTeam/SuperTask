@@ -173,7 +173,10 @@ namespace TheSite.Controllers
 			{
 				if (require.RequireId.IsEmptyGuid())
 				{
-					require.RequireId = Guid.NewGuid();
+               var sortId = GetMaxSortNo(require.Projectid, db);
+               require.SortId = ++sortId;
+
+               require.RequireId = Guid.NewGuid();
 					require.CreateDate = DateTime.Now;
 					require.CreatorId = user.UserId;
 					require.RequireStatus = RequireKeys.readyToReview;
@@ -396,7 +399,12 @@ namespace TheSite.Controllers
 			return PartialView("_close", viewModel);
 		}
 
-		[HttpPost]
+      public ActionResult MultipleClose(string ids, Guid projectId)
+      {
+         return PartialView("_multipleClose", new OperationViewModel { Id = ids, ProjectId = projectId });
+      }
+
+      [HttpPost]
 		[ValidateInput(false)]
 		public ActionResult Close(OperationViewModel model)
 		{
@@ -415,11 +423,11 @@ namespace TheSite.Controllers
 				Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
 				Guid assignId = GetUserInfo().UserId;
 
-				foreach (var id in ids)
+            foreach (var id in ids)
 				{
-					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.StatusGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
+					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.StatusGuid, RequireKeys.HandleClose.ToString() , null, DateTime.Now, assignId, model.Remark));
 
-					db.RequireDal.UpdatePartial(id, new { RequireStatus = model.Result.ToGuid(Guid.Empty), CloseDate = DateTime.Now });
+					db.RequireDal.UpdatePartial(id, new { RequireStatus = RequireKeys.Close, CloseDate = DateTime.Now });
 				}
 
 				db.Commit();
@@ -483,6 +491,19 @@ namespace TheSite.Controllers
 			   };
 		}
 
-	}
+
+      private int GetMaxSortNo(Guid projectId, APDBDef db)
+      {
+         var result = APQuery.select(re.SortId.Max().As("SortId"))
+            .from(re)
+            .where(re.Projectid == projectId)
+            .query(db, r => new { sortId = re.SortId.GetValue(r, "SortId") }).FirstOrDefault();
+
+         if (result == null) return 1;
+
+         return result.sortId;
+      }
+
+   }
 
 }
