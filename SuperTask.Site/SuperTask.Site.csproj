@@ -2053,6 +2053,7 @@
     <Content Include="Views\Shared\_operation.cshtml" />
     <Content Include="Views\Shared\_publishList.cshtml" />
     <Content Include="Views\Bug\_multipleRelative.cshtml" />
+    <Content Include="Views\Require\_hurryup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

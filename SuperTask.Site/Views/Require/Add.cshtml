@@ -68,7 +68,7 @@
 													.GetSelectListById(Guid.Empty, SelectListHelper.Default),
 									new { @class = "form-control dropdown-taskLevel" })
 								</div>
-								
+
 							</div>
 
 							<div class="form-group">
@@ -89,12 +89,20 @@
 							</div>
 
 							<div class="form-group">
-								@Html.LabelFor(t=>t.CC, new { @class = "control-label col-md-2" })
+								@Html.LabelFor(t => t.ReviewerId, new { @class = "control-label col-md-2" })
+								<div class="col-md-3">
+									@Html.DropDownListFor(x => x.ReviewerId,
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", null, SelectListHelper.Default),
+									new { @class = "form-control" })
+								</div>
+
+								@Html.LabelFor(t => t.CC, new { @class = "control-label col-md-2" })
 								<div class="col-md-3">
 
 									<select id="ccUsers" class="form-control new-select" multiple="multiple">
-										@foreach(var user in ViewBag.Users as List<UserInfo>){
-											<option value="@user.UserId" >@user.RealName</option>
+										@foreach (var user in ViewBag.Users as List<UserInfo>)
+										{
+											<option value="@user.UserId">@user.RealName</option>
 										}
 
 									</select>

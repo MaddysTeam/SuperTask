@@ -15,12 +15,12 @@
 		<!-- widget -->
 		<div class="widget details col-md-7 col-md-offset-1">
 
-			<form id="requireForm" class="form-horizontal" action="@Url.Action("Review","Require")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="requireForm" class="form-horizontal" action="@Url.Action("Hurryup","Require")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 				<div class="widget-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-						<h4>需求评审</h4>
+						<h4>需求加急审批</h4>
 					</div>
 
 
@@ -45,19 +45,8 @@
 								</div>
 							</div>
 
-
 							<div class="form-group">
-								@Html.Label("评审结果", new { @class = "control-label col-md-2" })
-								<div class="col-md-9">
-									@Html.DropDownListFor(t => t.Result,
-									DictionaryCache.Cached(RequireKeys.ReviewResultGuid)
-													.GetSelectListById(Guid.Empty),
-									new { @class = "form-control" })
-								</div>
-							</div>
-
-							<div class="form-group">
-								@Html.Label("备注", new { @class = "control-label col-md-2" })
+								@Html.Label("原因", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.TextAreaFor(t => t.Remark, 12, 2, new { @class = "form-control" })
 								</div>
@@ -65,7 +54,7 @@
 
 
 							<div class="input-group center-block">
-								<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">评审</button>
+								<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">提交</button>
 								<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
 							</div>
 

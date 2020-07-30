@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using TheSite.Models;
 
 namespace Business
 {
@@ -49,9 +50,6 @@ namespace Business
 		}
 
 
-		//public string ReviewResult { get; set; } = string.Empty;
-
-
 		public string EvalDateStr => this.ReviewDate.ToyyMMdd();
 
 		public string EstimateEndDateStr => this.EstimateEndDate.ToyyMMdd();
@@ -63,6 +61,30 @@ namespace Business
 		public string CloseDateStr => this.CloseDate.ToyyMMdd();
 
 		public string CreateDateStr => this.CreateDate.ToyyMMdd();
+
+		public bool CanHandle => RequireStatus != RequireKeys.readyToReview && RequireStatus != RequireKeys.Fail;
+
+		public bool IsWaitingForReview => RequireStatus == RequireKeys.readyToReview;
+
+		public bool CanReview(Guid currentId) => currentId == ReviewerId;
+
+
+		// require validate
+
+		public Result Validate()
+		{
+			var message = Success.Task.EDIT_SUCCESS;
+			var result = true;
+
+
+			if (string.IsNullOrEmpty(RequireName))
+			{
+				message = Errors.Task.NOT_ALLOWED_NAME_NULL;
+				result = false;
+			}
+
+			return new Result { IsSuccess = result, Msg = message };
+		}
 
 	}
 

@@ -40,7 +40,7 @@ namespace TheSite.Controllers
 			var user = GetUserInfo();
 			var u2 = APDBDef.UserInfo.As("creator");
 
-			var query = APQuery.select(re.RequireId, re.RequireName, re.RequireType,
+			var query = APQuery.select(re.RequireId, re.RequireName, re.RequireType, re.ReviewerId,re.IsHurry,
 				  re.RequireLevel, re.SortId, re.RequireStatus, re.EstimateEndDate,
 				  re.ManagerId, u.UserName, re.CreateDate, u2.UserName.As("creator"))
 			   .from(re,
@@ -65,6 +65,8 @@ namespace TheSite.Controllers
 				   RequireType = re.RequireType.GetValue(r),
 				   RequireStatus = re.RequireStatus.GetValue(r),
 				   EstimateEndDate = re.EstimateEndDate.GetValue(r),
+				   ReviewerId = re.ReviewerId.GetValue(r),
+				   IsHurry=re.IsHurry.GetValue(r)
 			   }).ToList();
 
 
@@ -165,6 +167,14 @@ namespace TheSite.Controllers
 				});
 			}
 
+			if (require.ReviewerId == BugKeys.SelectAll)
+			{
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
+
 			var user = GetUserInfo();
 
 			db.BeginTrans();
@@ -173,10 +183,10 @@ namespace TheSite.Controllers
 			{
 				if (require.RequireId.IsEmptyGuid())
 				{
-               var sortId = GetMaxSortNo(require.Projectid, db);
-               require.SortId = ++sortId;
+					var sortId = GetMaxSortNo(require.Projectid, db);
+					require.SortId = ++sortId;
 
-               require.RequireId = Guid.NewGuid();
+					require.RequireId = Guid.NewGuid();
 					require.CreateDate = DateTime.Now;
 					require.CreatorId = user.UserId;
 					require.RequireStatus = RequireKeys.readyToReview;
@@ -287,12 +297,14 @@ namespace TheSite.Controllers
 
 			try
 			{
-				Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
 				Guid assignId = GetUserInfo().UserId;
+				var requires = GetRequireListByIds(model.Id);
 				Guid reviewStats = RequireKeys.KeysMapping[model.Result.ToGuid(Guid.Empty)];
-				foreach (var id in ids)
+
+				foreach (var require in requires)
 				{
-					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.ReviewResultGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
+					var id = require.RequireId;
+					db.OperationDal.Insert(new Operation(require.Projectid, id, RequireKeys.ReviewResultGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
 
 					db.RequireDal.UpdatePartial(id, new { ReviewDate = DateTime.Now, RequireStatus = reviewStats });
 				}
@@ -341,10 +353,9 @@ namespace TheSite.Controllers
 				});
 			}
 
-			Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
 			Guid assignId = GetUserInfo().UserId;
-			var existsRequires = db.RequireDal.ConditionQuery(re.RequireId.In(ids), null, null, null);
 
+			var existsRequires = GetRequireListByIds(model.Id);
 
 			db.BeginTrans();
 
@@ -359,11 +370,12 @@ namespace TheSite.Controllers
 
 				Guid handleStatsGuid = RequireKeys.KeysMapping[model.Result.ToGuid(Guid.Empty)];
 
-				foreach (var item in existsRequires)
+				foreach (var require in existsRequires)
 				{
-					db.OperationDal.Insert(new Operation(model.ProjectId, item.RequireId, RequireKeys.HandleGuid, model.Result, model.Result2, DateTime.Now, assignId, model.Remark));
+					var id = require.RequireId;
+					db.OperationDal.Insert(new Operation(require.Projectid, require.RequireId, RequireKeys.HandleGuid, model.Result, model.Result2, DateTime.Now, assignId, model.Remark));
 
-					db.RequireDal.UpdatePartial(item.RequireId, new { ReviewDate = DateTime.Now, RequireStatus = handleStatsGuid, WorkHours = item.WorkHours + workhours,EndDate= endDate });
+					db.RequireDal.UpdatePartial(require.RequireId, new { ReviewDate = DateTime.Now, RequireStatus = handleStatsGuid, WorkHours = require.WorkHours + workhours, EndDate = endDate });
 				}
 
 				db.Commit();
@@ -399,12 +411,12 @@ namespace TheSite.Controllers
 			return PartialView("_close", viewModel);
 		}
 
-      public ActionResult MultipleClose(string ids, Guid projectId)
-      {
-         return PartialView("_multipleClose", new OperationViewModel { Id = ids, ProjectId = projectId });
-      }
+		public ActionResult MultipleClose(string ids, Guid projectId)
+		{
+			return PartialView("_multipleClose", new OperationViewModel { Id = ids, ProjectId = projectId });
+		}
 
-      [HttpPost]
+		[HttpPost]
 		[ValidateInput(false)]
 		public ActionResult Close(OperationViewModel model)
 		{
@@ -416,18 +428,76 @@ namespace TheSite.Controllers
 				});
 			}
 
+			Guid assignId = GetUserInfo().UserId;
+
+			var existsRequires = GetRequireListByIds(model.Id);
+
 			db.BeginTrans();
 
 			try
 			{
-				Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
-				Guid assignId = GetUserInfo().UserId;
-
-            foreach (var id in ids)
+				foreach (var require in existsRequires)
 				{
-					db.OperationDal.Insert(new Operation(model.ProjectId, id, RequireKeys.StatusGuid, RequireKeys.HandleClose.ToString() , null, DateTime.Now, assignId, model.Remark));
-
+					var id = require.RequireId;
+					db.OperationDal.Insert(new Operation(require.Projectid, id, RequireKeys.StatusGuid, RequireKeys.HandleClose.ToString(), null, DateTime.Now, assignId, model.Remark));
 					db.RequireDal.UpdatePartial(id, new { RequireStatus = RequireKeys.Close, CloseDate = DateTime.Now });
+				}
+
+				db.Commit();
+			}
+			catch (Exception e)
+			{
+				db.Rollback();
+
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
+
+
+			return Json(new
+			{
+				result = AjaxResults.Success
+			});
+		}
+
+		//GET Require/Hurryup
+
+		public ActionResult Hurryup(Guid id)
+		{
+			Require require = db.RequireDal.PrimaryGet(id);
+
+			var viewModel = MappingOperationViewModel(require, RequireKeys.Hurryup);
+
+			return PartialView("_hurryup", viewModel);
+		}
+
+		[HttpPost]
+		[ValidateInput(false)]
+		public ActionResult Hurryup(OperationViewModel model)
+		{
+			if (!ModelState.IsValid || !model.IsValid())
+			{
+				return Json(new
+				{
+					result = AjaxResults.Error
+				});
+			}
+
+			Guid assignId = GetUserInfo().UserId;
+
+			var existsRequires = GetRequireListByIds(model.Id);
+
+			db.BeginTrans();
+
+			try
+			{
+				foreach (var require in existsRequires)
+				{
+					var id = require.RequireId;
+					db.OperationDal.Insert(new Operation(require.Projectid, id, RequireKeys.StatusGuid, RequireKeys.Hurryup.ToString(), null, DateTime.Now, assignId, model.Remark));
+					db.RequireDal.UpdatePartial(id, new { RequireStatus = RequireKeys.readyToReview, IsHurry = true  });
 				}
 
 				db.Commit();
@@ -492,18 +562,25 @@ namespace TheSite.Controllers
 		}
 
 
-      private int GetMaxSortNo(Guid projectId, APDBDef db)
-      {
-         var result = APQuery.select(re.SortId.Max().As("SortId"))
-            .from(re)
-            .where(re.Projectid == projectId)
-            .query(db, r => new { sortId = re.SortId.GetValue(r, "SortId") }).FirstOrDefault();
+		private int GetMaxSortNo(Guid projectId, APDBDef db)
+		{
+			var result = APQuery.select(re.SortId.Max().As("SortId"))
+			   .from(re)
+			   .where(re.Projectid == projectId)
+			   .query(db, r => new { sortId = re.SortId.GetValue(r, "SortId") }).FirstOrDefault();
 
-         if (result == null) return 1;
+			if (result == null) return 1;
 
-         return result.sortId;
-      }
+			return result.sortId;
+		}
 
-   }
+
+		private List<Require> GetRequireListByIds(string id)
+		{
+			Guid[] ids = id.Split(',').ConvertToGuidArray(); ;
+			return db.RequireDal.ConditionQuery(re.RequireId.In(ids), null, null, null);
+		}
+
+	}
 
 }

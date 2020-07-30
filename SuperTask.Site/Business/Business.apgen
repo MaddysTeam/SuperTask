@@ -489,9 +489,11 @@
 					<add name="ModifiedBy" columnName="ModifiedBy" type="Guid" isNullable="true" display="任务修改者ID" />
 					<add name="ModifyDate" columnName="ModifyDate" type="DateTime" defaultValue="DateTime.Now"  isNullable="true"  display="最近修改日期" />
 					<add name="EstimateEndDate" columnName="EstimateEndDate" type="DateTime" isNullable="true" defaultValue="DateTime.Now" display="期望交付日期" />
+					<add name="ReviewerId" columnName="ReviewerId" type="Guid"  required="true"  display="评审人" />
 					<add name="ReviewDate" columnName="EvalDate" type="DateTime" isNullable="true"  display="评审日期" />
 					<add name="WorkHours" columnName="WorkHours" type="int" defaultValue="0"  display="实际消耗" />
 					<add name="CC" columnName="CC" type="string" dataLength="2000" isNullable="true" display="抄送人员" />
+					<add name="IsHurry"  columnName="IsHurry" type="bool" isNullable="true" display="是否加急审批"></add>
 					
 				</columns>
 			</table>

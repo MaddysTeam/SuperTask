@@ -304,27 +304,26 @@ namespace TheSite.Controllers
 			if (!ModelState.IsValid)
 				return Json(new { result = AjaxResults.Error });
 
-			if (model.ProjectId.IsEmpty())
-				return Json(new { result = AjaxResults.Error });
-
+			
 			if (model != null && !model.Id.IsEmptyOrNull())
 			{
+				DateTime fixDate = DateTime.MinValue;
+				DateTime.TryParse(model.Result2, out fixDate);
+				if (model.Result.ToGuid(Guid.Empty) == BugKeys.Resolved && fixDate.IsEmpty())
+					fixDate = DateTime.Now;
+
+				Guid assignId = GetUserInfo().UserId;
+
+				var bugs = GetBugListByIds(model.Id);
+
 				db.BeginTrans();
 
 				try
 				{
-					Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
-					Guid assignId = GetUserInfo().UserId;
-					DateTime fixDate = DateTime.MinValue;
-					DateTime.TryParse(model.Result2, out fixDate);
-					if (model.Result.ToGuid(Guid.Empty) == BugKeys.Resolved && fixDate.IsEmpty())
+					foreach (var bug in bugs)
 					{
-						fixDate = DateTime.Now;
-					}
-
-					foreach (var id in ids)
-					{
-						db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugResolveGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
+						var id = bug.BugId;
+						db.OperationDal.Insert(new Operation(bug.Projectid, id, BugKeys.BugResolveGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
 						db.BugDal.UpdatePartial(id, new { ResolveStatus = model.Result, FixDate = fixDate, BugStatus = model.Result.ToGuid(Guid.Empty) == BugKeys.Resolving ? BugKeys.readyToResolve : BugKeys.hasResolve });
 					}
 
@@ -387,28 +386,21 @@ namespace TheSite.Controllers
 				});
 			}
 
-			if (model.ProjectId.IsEmpty())
-			{
-				return Json(new
-				{
-					result = AjaxResults.Error
-				});
-			}
 
 			if (model != null && !model.Id.IsEmptyOrNull())
 			{
-				// var existConfrims = db.OperationDal.ConditionQuery(o.ProjectId == model.ProjectId, null, null, null);
+				Guid assignId = GetUserInfo().UserId;
+
+				var bugs = GetBugListByIds(model.Id);
 
 				db.BeginTrans();
 
 				try
 				{
-					Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
-					Guid assignId = GetUserInfo().UserId;
-
-					foreach (var id in ids)
+					foreach (var bug in bugs)
 					{
-						db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugConfirmGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
+						var id = bug.BugId;
+						db.OperationDal.Insert(new Operation(bug.Projectid, id, BugKeys.BugConfirmGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
 
 						db.BugDal.UpdatePartial(id, new { ConfirmResult = model.Result, BugStatus = model.Result.ToGuid(Guid.Empty) == BugKeys.ConfrimYes ? BugKeys.readyToResolve : BugKeys.hasResolve });
 					}
@@ -470,16 +462,18 @@ namespace TheSite.Controllers
 				});
 			}
 
+			Guid assignId = GetUserInfo().UserId;
+
+			var bugs = GetBugListByIds(model.Id);
+
 			db.BeginTrans();
 
 			try
 			{
-				Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
-				Guid assignId = GetUserInfo().UserId;
-
-				foreach (var id in ids)
+				foreach (var bug in bugs)
 				{
-					db.OperationDal.Insert(new Operation(model.ProjectId, id, BugKeys.BugRelativeGuid, BugKeys.BugRelativeGuid.ToString(), null, DateTime.Now, assignId, model.Remark));
+					var id = bug.BugId;
+					db.OperationDal.Insert(new Operation(bug.Projectid, id, BugKeys.BugRelativeGuid, BugKeys.BugRelativeGuid.ToString(), null, DateTime.Now, assignId, model.Remark));
 
 					string[] relativeTaskIds = model.Result.Split(',');
 					string[] relativeRequireIds = model.Result2.Split(',');
@@ -558,6 +552,13 @@ namespace TheSite.Controllers
 			if (result == null) return 1;
 
 			return result.sortId;
+		}
+
+
+		private List<Bug> GetBugListByIds(string id)
+		{
+			Guid[] ids = id.Split(',').ConvertToGuidArray();;
+			return db.BugDal.ConditionQuery(b.BugId.In(ids), null, null, null);
 		}
 
 

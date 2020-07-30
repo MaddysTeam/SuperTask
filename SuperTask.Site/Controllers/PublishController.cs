@@ -122,14 +122,14 @@ namespace TheSite.Controllers
 			{
 				publish = db.PublishDal.PrimaryGet(id.Value);
 				var relativeTasks = RTPBRelationHelper.GetPublishRelativeTasks(id.Value, db);
-            publish.RelativeTaskIds = RTPBRelationHelper.GetTaskIds(relativeTasks);
-            publish.RelativeTasks = relativeTasks;
+				publish.RelativeTaskIds = RTPBRelationHelper.GetTaskIds(relativeTasks);
+				publish.RelativeTasks = relativeTasks;
 
-            var relativeRequires = RTPBRelationHelper.GetPublishRelativeRequires(id.Value, db);
-            publish.RelativeRequireIds = RTPBRelationHelper.GetRequireIds(relativeRequires);
-            publish.RelativeRequires = relativeRequires;
+				var relativeRequires = RTPBRelationHelper.GetPublishRelativeRequires(id.Value, db);
+				publish.RelativeRequireIds = RTPBRelationHelper.GetRequireIds(relativeRequires);
+				publish.RelativeRequires = relativeRequires;
 
-            return View("Edit", publish);
+				return View("Edit", publish);
 			}
 
 
@@ -164,10 +164,10 @@ namespace TheSite.Controllers
 			{
 				if (publish.PublishId.IsEmptyGuid())
 				{
-               var sortId = GetMaxSortNo(publish.Projectid, db);
-               publish.SortId = ++sortId;
+					var sortId = GetMaxSortNo(publish.Projectid, db);
+					publish.SortId = ++sortId;
 
-               publish.PublishId = Guid.NewGuid();
+					publish.PublishId = Guid.NewGuid();
 					publish.CreateDate = DateTime.Now;
 					publish.CreatorId = user.UserId;
 					publish.PublishStatus = PublishKeys.StatusGuid;
@@ -193,11 +193,11 @@ namespace TheSite.Controllers
 				string[] relativeTaskIds = publish.RelativeTaskIds.Split(',');
 				RTPBRelationHelper.BindRelationBetweenTasksAndPublish(relativeTaskIds.ConvertToGuidArray(), publish.PublishId, db);
 
-            string[] relativeRequireIds = publish.RelativeRequireIds.Split(',');
-            RTPBRelationHelper.BindRelationBetweenRequiresAndPublish(relativeRequireIds.ConvertToGuidArray(), publish.PublishId, db);
+				string[] relativeRequireIds = publish.RelativeRequireIds.Split(',');
+				RTPBRelationHelper.BindRelationBetweenRequiresAndPublish(relativeRequireIds.ConvertToGuidArray(), publish.PublishId, db);
 
 
-            db.Commit();
+				db.Commit();
 			}
 			catch (Exception e)
 			{
@@ -245,12 +245,12 @@ namespace TheSite.Controllers
 			return PartialView("_handle", viewModel);
 		}
 
-      public ActionResult MultipleHandle(string ids, Guid projectId)
-      {
-         return PartialView("_multipleHandle", new OperationViewModel { Id = ids, ProjectId = projectId });
-      }
+		public ActionResult MultipleHandle(string ids, Guid projectId)
+		{
+			return PartialView("_multipleHandle", new OperationViewModel { Id = ids, ProjectId = projectId });
+		}
 
-      [HttpPost]
+		[HttpPost]
 		[ValidateInput(false)]
 		public ActionResult Handle(OperationViewModel model)
 		{
@@ -262,9 +262,10 @@ namespace TheSite.Controllers
 				});
 			}
 
-			Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
+
 			Guid assignId = GetUserInfo().UserId;
-			var existsReviews = db.PublishDal.ConditionQuery(p.PublishId.In(ids), null, null, null);
+
+			var publishs = GetPublishListByIds(model.Id);
 
 
 			db.BeginTrans();
@@ -272,10 +273,11 @@ namespace TheSite.Controllers
 			try
 			{
 				Guid publishStats = PublishKeys.HandleMapping[model.Result.ToGuid(Guid.Empty)];
-				foreach (var item in existsReviews)
+				foreach (var publish in publishs)
 				{
-					db.OperationDal.Insert(new Operation(model.ProjectId, item.PublishId, PublishKeys.HandleGuid, model.Result, model.Result2, DateTime.Now, assignId, model.Remark));
-					db.PublishDal.UpdatePartial(item.PublishId, new { PublishStatus = publishStats });
+					var id = publish.PublishId;
+					db.OperationDal.Insert(new Operation(publish.Projectid, id, PublishKeys.HandleGuid, model.Result, model.Result2, DateTime.Now, assignId, model.Remark));
+					db.PublishDal.UpdatePartial(id, new { PublishStatus = publishStats });
 				}
 
 				db.Commit();
@@ -313,12 +315,12 @@ namespace TheSite.Controllers
 		}
 
 
-      public ActionResult MultipleClose(string ids, Guid projectId)
-      {
-         return PartialView("_multipleClose", new OperationViewModel { Id = ids, ProjectId = projectId });
-      }
+		public ActionResult MultipleClose(string ids, Guid projectId)
+		{
+			return PartialView("_multipleClose", new OperationViewModel { Id = ids, ProjectId = projectId });
+		}
 
-      [HttpPost]
+		[HttpPost]
 		[ValidateInput(false)]
 		public ActionResult Close(OperationViewModel model)
 		{
@@ -330,16 +332,18 @@ namespace TheSite.Controllers
 				});
 			}
 
+			Guid assignId = GetUserInfo().UserId;
+
+			var publishs = GetPublishListByIds(model.Id);
+
 			db.BeginTrans();
 
 			try
 			{
-				Guid[] ids = model.Id.Split(',').ConvertToGuidArray();
-				Guid assignId = GetUserInfo().UserId;
-
-				foreach (var id in ids)
+				foreach (var publish in publishs)
 				{
-					db.OperationDal.Insert(new Operation(model.ProjectId, id, PublishKeys.StatusGuid, PublishKeys.HandleClose.ToString(), null, DateTime.Now, assignId, model.Remark));
+					var id = publish.PublishId;
+					db.OperationDal.Insert(new Operation(publish.Projectid, id, PublishKeys.StatusGuid, PublishKeys.HandleClose.ToString(), null, DateTime.Now, assignId, model.Remark));
 
 					db.PublishDal.UpdatePartial(id, new { PublishStatus = PublishKeys.Close, CloseDate = DateTime.Now });
 				}
@@ -372,9 +376,9 @@ namespace TheSite.Controllers
 			Publish publish = db.PublishDal.PrimaryGet(id);
 			var model = MappingOperationViewModel(publish, PublishKeys.RelativeGuid);
 			var relativeTasks = RTPBRelationHelper.GetPublishRelativeTasks(id, db);
-         var relativeRequires = RTPBRelationHelper.GetPublishRelativeRequires(id, db);
-         model.Result = RTPBRelationHelper.GetTaskIds(relativeTasks);  // relative task ids
-         model.Result2 = RTPBRelationHelper.GetRequireIds(relativeRequires); // relative require ids
+			var relativeRequires = RTPBRelationHelper.GetPublishRelativeRequires(id, db);
+			model.Result = RTPBRelationHelper.GetTaskIds(relativeTasks);  // relative task ids
+			model.Result2 = RTPBRelationHelper.GetRequireIds(relativeRequires); // relative require ids
 
 			return PartialView("_relative", model);
 		}
@@ -404,9 +408,9 @@ namespace TheSite.Controllers
 					string[] relativeTaskIds = model.Result.Split(',');
 					string[] relativeRequireIds = model.Result2.Split(',');
 					RTPBRelationHelper.BindRelationBetweenTasksAndPublish(relativeTaskIds.ConvertToGuidArray(), id, db);
-               RTPBRelationHelper.BindRelationBetweenRequiresAndPublish(relativeRequireIds.ConvertToGuidArray(), id, db);
+					RTPBRelationHelper.BindRelationBetweenRequiresAndPublish(relativeRequireIds.ConvertToGuidArray(), id, db);
 
-            }
+				}
 
 				db.Commit();
 			}
@@ -489,18 +493,25 @@ namespace TheSite.Controllers
 		}
 
 
-      private int GetMaxSortNo(Guid projectId, APDBDef db)
-      {
-         var result = APQuery.select(p.SortId.Max().As("SortId"))
-            .from(p)
-            .where(p.Projectid == projectId)
-            .query(db, r => new { sortId = p.SortId.GetValue(r, "SortId") }).FirstOrDefault();
+		private int GetMaxSortNo(Guid projectId, APDBDef db)
+		{
+			var result = APQuery.select(p.SortId.Max().As("SortId"))
+			   .from(p)
+			   .where(p.Projectid == projectId)
+			   .query(db, r => new { sortId = p.SortId.GetValue(r, "SortId") }).FirstOrDefault();
 
-         if (result == null) return 1;
+			if (result == null) return 1;
 
-         return result.sortId;
-      }
+			return result.sortId;
+		}
 
-   }
+
+		private List<Publish> GetPublishListByIds(string id)
+		{
+			Guid[] ids = id.Split(',').ConvertToGuidArray(); ;
+			return db.PublishDal.ConditionQuery(p.PublishId.In(ids), null, null, null);
+		}
+
+	}
 
 }

@@ -22,9 +22,14 @@
 	</div>
 
 	<div class="buttons col-md-4">
-
-		<a class="btn btn-danger"  id="emergencyReview" data-url="@Url.Action("EmergencyReview", "Require", new { id = Model.RequireId })">加急审批</a>
-		<button class="btn btn-info" id="review" data-url="@Url.Action("Review", "Require", new { id = Model.RequireId })">评审</button>
+		@if (Model.IsWaitingForReview)
+		{
+			<a class="btn btn-danger" id="emergencyReview" data-url="@Url.Action("Hurryup", "Require", new { id = Model.RequireId })">加急审批</a>
+		}
+		 @if (Model.CanReview(Html.GetUserProfile().UserId))
+		{
+		<a class="btn btn-info" id="review" data-url="@Url.Action("Review", "Require", new { id = Model.RequireId })">评审</a>
+		}
 		<a class="btn btn-success" id="task" data-url="@Url.Action("Add", "TaskV2",new { requireId = Model.RequireId , projectId=Model.Projectid})">创建任务</a>
 		<a class="btn btn-warning " href="@Url.Action("Edit", "Require", new { id = Model.RequireId })">修改</a>
 
@@ -69,7 +74,7 @@
 						</div>
 						@Html.LabelFor(x => x.CreateDate, new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
-								@Html.Label(Model.CreateDateStr, new { @class = "form-control" })
+							@Html.Label(Model.CreateDateStr, new { @class = "form-control" })
 						</div>
 
 					</div>
@@ -113,7 +118,7 @@
 					<div class="col-md-12">
 						@Html.LabelFor(t => t.Description, new { @class = "control-label" })
 						<p></p>
-						<div class="alert alert-success"  style="overflow:auto">@Html.Raw(Model.Description)</div>
+						<div class="alert alert-success" style="overflow:auto">@Html.Raw(Model.Description)</div>
 						@*@Html.TextArea("", Html.Raw(Model.Description).ToString(), 12, 2, new { @class = "form-control", @readonly = "readonly" })*@
 					</div>
 					<div class="col-md-12">
@@ -164,7 +169,7 @@
 	<script>
 
 		$(function () {
-				
+
 			$('#review,#emergencyReview,#task').on('click', function () {
 				var url = $(this).data('url');
 				var $proxy = $('#modelProxy');

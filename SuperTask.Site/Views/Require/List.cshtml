@@ -139,7 +139,7 @@
 			return {
 				projectId: $('#dpProjects').val(),
 				levelId: $('#dpLevels').val(),
-			//	typeId: $('#dpTypes').val(),
+				//	typeId: $('#dpTypes').val(),
 				statusId: $('#dpStatus').val(),
 				isAssign: $('#hidAssgin').val() != '',
 				isJoin: $('#hidJoin').val() != '',
@@ -155,7 +155,7 @@
 
 				formatters: {
 					'checkbox': function (column, row) {
-							return '<input type="checkbox" class="checkbox" data-row-id="'+row.RequireId+'" />'
+						return '<input type="checkbox" class="checkbox" data-row-id="' + row.RequireId + '" />'
 					},
 					'link': function (column, row) {
 						var url = '@Url.Action("Detail", "Require")?id=' + row.RequireId;
@@ -167,11 +167,14 @@
 						var id = row.RequireId;
 						var status = row.RequireStatus;
 						var projectId = $('#dpProjects').val();
-						var reviewButtonStr = '<a data-url="@Url.Action("Review", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-review">评审</a> ';
-						var handleButtonStr = '<a data-url="@Url.Action("Handle", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-handle">处理</a> ' ;
-						var EditButtonStr = '<a target="_blank"  href="@Url.Action("Edit", "Require")?id=' + id + '" class="btn btn-lg btn-info btn-edit">编辑</a> ' ;
-						var closeButtonStr ='<a data-url="@Url.Action("Close", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-close">关闭</a> ';
-						var taskButtonStr = '<a data-url="@Url.Action("Add", "TaskV2")?requireId=' + id + '&projectId=' + projectId + '" class="btn btn-lg btn-success btn-task">创建任务</a> ';
+						var isReviewer = row.ReviewerId == currentUserId;
+						var canHandle = row.CanHandle;
+
+						var reviewButtonStr = !isReviewer ? '' : '<a data-url="@Url.Action("Review", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-review">评审</a> ';
+						var handleButtonStr = !canHandle ? '<button class="btn" disable="disable">处理</button>' : '<a data-url="@Url.Action("Handle", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-handle">处理</a> ';
+						var EditButtonStr = '<a target="_blank"  href="@Url.Action("Edit", "Require")?id=' + id + '" class="btn btn-lg btn-info btn-edit">编辑</a> ';
+						var closeButtonStr = '<a data-url="@Url.Action("Close", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-close">关闭</a> ';
+						var taskButtonStr = !canHandle ? '<button class="btn" disable="disable">创建任务</button>' : '<a data-url="@Url.Action("Add", "TaskV2")?requireId=' + id + '&projectId=' + projectId + '" class="btn btn-lg btn-success btn-task">创建任务</a> ';
 
 						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.RequireName + '" data-row-id="' + id + '">' +
 							reviewButtonStr +

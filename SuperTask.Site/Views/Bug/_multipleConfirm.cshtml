@@ -47,7 +47,7 @@
 
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Result, new { @class = "control-label col-md-2" })
+								@Html.Label("确认结果", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.DropDownListFor(t => t.Result,
 									DictionaryCache.Cached(BugKeys.BugConfirmGuid)

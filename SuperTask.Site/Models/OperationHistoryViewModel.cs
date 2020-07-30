@@ -29,14 +29,14 @@ namespace TheSite.Models
 
 	public class OperationViewModel
 	{
-
+		[Required]
 		public string Id { get; set; }
 
 		public string Name { get; set; }
 
 		public int SortId { get; set; }
 
-		[Required]
+		//[Required]
 		public Guid ProjectId { get; set; }
 
 		//[Required]

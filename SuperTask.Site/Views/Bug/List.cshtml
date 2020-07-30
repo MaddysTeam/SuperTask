@@ -101,7 +101,7 @@
 					<div style="position:absolute;top:20px; width:200px; z-index:99">
 						<a class="btn btn-info" id="confirm" data-url="@Url.Action("MultipleConfirm","Bug")">确认</a>
 						<a class="btn btn-success" id="resolve" data-url="@Url.Action("MultipleResolve","Bug")">解决</a>
-						<a class="btn btn-warning" id="relative" data-url="@Url.Action("MultipleRelative","Bug")">关联</a>
+						<a class="btn btn-warning hidden" id="relative" data-url="@Url.Action("MultipleRelative","Bug")">关联</a>
 					</div>
 				</div>
 				<div class="table-responsive">
@@ -115,7 +115,7 @@
 								<th data-column-id="Type">类型</th>
 								<th data-column-id="Status">状态</th>
 								<th data-column-id="Manager">指派给</th>
-								<th data-column-id="FixDate" data-formatter="DateOnly">完成时间</th>
+								<th data-column-id="FixDateStr" >完成时间</th>
 								<th data-column-id="Creator">创建人</th>
 								<th data-column-id="CreateDate" data-formatter="DateOnly">开始时间</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
@@ -180,8 +180,10 @@
 						var id = row.BugId;
 						var status = row.bugStatus;
 						var projectId = $('#dpProjects').val();
+						var isReadyToConfrim = row.ReadyToConfirm;
+
 						var confirmButtonStr = '<a data-url="@Url.Action("Confirm", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-confirm">确认</a> ';
-						var fixButtonStr = '<a data-url="@Url.Action("Resolve", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-resolve">解决</a> ' ;
+						var fixButtonStr = isReadyToConfrim ? '<button class="btn" disable="disable">解决</button>' : '<a data-url="@Url.Action("Resolve", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-resolve">解决</a> ';
 						var EditButtonStr = '<a target="_blank"  href="@Url.Action("Edit", "Bug")?id=' + id + '" class="btn btn-lg btn-info btn-edit">编辑</a> ' ;
 						var closeButtonStr ='<a data-url="@Url.Action("Relative", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-relative">关联</a> ';
 
@@ -266,11 +268,6 @@
 
 						if (result.length > 0) {
 							var projectId = $('#dpProjects').val();
-							if (projectId == '@BugKeys.SelectAll') {
-								alert('请选择项目');
-								return false;
-							}
-
 							var url = $(this).data('url') + "?ids=" + result.join(',') + '&projectId=' + projectId;
 							var $proxy = $('#modelProxy');
 							$proxy

@@ -8,65 +8,69 @@ using System.Web;
 namespace Business
 {
 
-   public partial class Bug
-   {
+	public partial class Bug
+	{
 
-      public string Manager { get; set; }
+		public string Manager { get; set; }
 
-      public string Creator { get; set; }
+		public string Creator { get; set; }
 
-      [Display(Name = "项目")]
-      public string ProjectName => Project.PrimaryGet(Projectid)?.ProjectName;
+		[Display(Name = "项目")]
+		public string ProjectName => Project.PrimaryGet(Projectid)?.ProjectName;
 
-      [Display(Name = "浏览器")]
-      public string BrowserName => BugKeys.GetSystemByValue(BrowserId) ?? string.Empty;
+		[Display(Name = "浏览器")]
+		public string BrowserName => BugKeys.GetSystemByValue(BrowserId) ?? string.Empty;
 
-      [Display(Name = "操作系统")]
-      public string SystemName => BugKeys.GetSystemByValue(SystemId) ?? string.Empty;
+		[Display(Name = "操作系统")]
+		public string SystemName => BugKeys.GetSystemByValue(SystemId) ?? string.Empty;
 
-      public Attachment CurrentAttachment { get; set; }
+		public Attachment CurrentAttachment { get; set; }
 
-      public string RelativeTaskIds { get; set; }
+		public string RelativeTaskIds { get; set; }
 
-      public string RelativeRequireIds { get; set; }
+		public string RelativeRequireIds { get; set; }
 
-      public string ConfirmRemark { get; set; }
+		public string ConfirmRemark { get; set; }
 
-      public string ResolveRemark { get; set; }
+		public string ResolveRemark { get; set; }
 
-      public string Level => BugKeys.GetLevelByValue(BugLevel);
+		public string Level => BugKeys.GetLevelByValue(BugLevel);
 
-      public string Type => BugKeys.GetTypeKeyByValue(BugType);
+		public string Type => BugKeys.GetTypeKeyByValue(BugType);
 
-      public string Status => BugKeys.GetStatusKeyByValue(BugStatus);
-
-
-      public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
-
-      public List<WorkTask> RelativeTasks { get; set; } = new List<WorkTask>();
-
-      public List<Require> RelativeRequires { get; set; } = new List<Require>();
+		public string Status => BugKeys.GetStatusKeyByValue(BugStatus);
 
 
-      [Required]
-      public override string BugName
-      {
-         get
-         {
-            return base.BugName;
-         }
+		public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
 
-         set
-         {
-            base.BugName = value;
-         }
-      }
+		public List<WorkTask> RelativeTasks { get; set; } = new List<WorkTask>();
 
-      public string FixDateStr => this.FixDate.ToyyMMdd();
+		public List<Require> RelativeRequires { get; set; } = new List<Require>();
 
-      public string CreateDateStr => this.CreateDate.ToyyMMdd();
 
-   }
+		[Required]
+		public override string BugName
+		{
+			get
+			{
+				return base.BugName;
+			}
+
+			set
+			{
+				base.BugName = value;
+			}
+		}
+
+		public string FixDateStr => this.FixDate.ToyyMMdd();
+
+		public string CreateDateStr => this.CreateDate.ToyyMMdd();
+
+		public bool ReadyToConfirm => this.BugStatus == BugKeys.readyToConfirm;
+
+		public bool HasDone => this.BugStatus == BugKeys.hasResolve || this.BugStatus == BugKeys.hasClose;
+
+	}
 
 
 
