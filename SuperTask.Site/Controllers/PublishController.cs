@@ -221,15 +221,18 @@ namespace TheSite.Controllers
 
 		public ActionResult Detail(Guid id)
 		{
-			var Publish = db.PublishDal.PrimaryGet(id);
+			var publish = db.PublishDal.PrimaryGet(id);
 			var users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
-			Publish.Manager = users.Find(x => x.UserId == Publish.ManagerId)?.RealName;
-			Publish.Creator = users.Find(x => x.UserId == Publish.CreatorId)?.RealName;
-			Publish.OperationHistory = GetOperationHistoryViewModels(id);
+         publish.Manager = users.Find(x => x.UserId == publish.ManagerId)?.RealName;
+         publish.Creator = users.Find(x => x.UserId == publish.CreatorId)?.RealName;
+         publish.OperationHistory = GetOperationHistoryViewModels(id);
 
-			ViewBag.Attahcments = AttachmentHelper.GetAttachments(Publish.Projectid, Publish.PublishId, db);
+         publish.RelativeTasks = RTPBRelationHelper.GetPublishRelativeTasks(id, db);
+         publish.RelativeRequires = RTPBRelationHelper.GetPublishRelativeRequires(id, db);
 
-			return View(Publish);
+         ViewBag.Attahcments = AttachmentHelper.GetAttachments(publish.Projectid, publish.PublishId, db);
+
+			return View(publish);
 		}
 
 

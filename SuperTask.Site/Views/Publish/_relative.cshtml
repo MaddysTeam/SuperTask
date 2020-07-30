@@ -37,14 +37,14 @@
 
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Id, new { @class = "control-label col-md-2" })
+								@Html.Label("发布Id", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.Label("Id", Model.SortId.ToString(), new { @class = "form-control" })
 								</div>
 							</div>
 
 							<div class="form-group">
-								@Html.LabelFor(t => t.Name, new { @class = "control-label col-md-2" })
+								@Html.Label("发布版本", new { @class = "control-label col-md-2" })
 								<div class="col-md-9">
 									@Html.Label("Name", Model.Name, new { @class = "form-control" })
 								</div>

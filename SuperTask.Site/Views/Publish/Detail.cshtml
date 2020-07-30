@@ -77,6 +77,11 @@
 					</div>
 
 					<div class="form-group">
+						@Html.LabelFor(x => x.EndDateStr, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							@Html.Label(Model.EndDateStr, new { @class = "form-control" })
+						</div>
+
 						@Html.LabelFor(x=>x.CloseDateStr, new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
 						@Html.Label(Model.CloseDateStr, new { @class = "form-control" })
@@ -146,36 +151,5 @@
 	<!-- Modal end -->
 }
 @section Scripts{
-	<script>
-
-		@*$(function () {
-
-			$('#childTaskgrid').bootgrid(getGridOptions())
-				.on('loaded.rs.jquery.bootgrid', function () {
-					$('.search,.actions').hide();
-				});
-
-		});
-
-
-		function getGlobalRequest() {
-			return {
-				parentId: '@Model.TaskId'
-			};
-		}
-
-		function getGridOptions() {
-			return $.extend(true, {}, gridOptions, {
-
-				url: '@Url.Action("GetChildTasks", "TaskV2")',
-
-				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
-
-				formatters: {
-				},
-			});
-		}*@
-
-
-	</script>
+	<script></script>
 }

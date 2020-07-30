@@ -48,7 +48,8 @@ namespace Business
 			}
 		}
 
-		public string EndDateStr => this.EndDate.ToyyMMdd();
+      [Display(Name = "完成日期")]
+      public string EndDateStr => this.EndDate.ToyyMMdd();
 
       [Display(Name ="关闭日期")]
 		public string CloseDateStr => this.CloseDate.ToyyMMdd();
@@ -56,6 +57,7 @@ namespace Business
       [Display(Name = "创建日期")]
       public string CreateDateStr => this.CreateDate.ToyyMMdd();
 
-	}
+
+   }
 
 }

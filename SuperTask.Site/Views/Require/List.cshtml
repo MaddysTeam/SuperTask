@@ -158,8 +158,10 @@
 						return '<input type="checkbox" class="checkbox" data-row-id="' + row.RequireId + '" />'
 					},
 					'link': function (column, row) {
+						var isHurry = row.IsHurry;
 						var url = '@Url.Action("Detail", "Require")?id=' + row.RequireId;
-						var link = '<a href="' + url + '">' + row.RequireName + '</a>'
+						var link = isHurry ? '<a href="' + url + '">' + row.RequireName + '<font color="red">（加急）<font></a>'
+							                : '<a href="' + url + '">' + row.RequireName + '</a>'
 						return link;
 					},
 					'commands': function (column, row) {

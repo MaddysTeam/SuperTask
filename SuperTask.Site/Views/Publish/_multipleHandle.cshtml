@@ -15,7 +15,7 @@
 		<!-- widget -->
 		<div class="widget details col-md-7 col-md-offset-1">
 
-			<form id="bugForm" class="form-horizontal" action="@Url.Action("Resolve","bug")" role="form" data-after-success="afterDialogSuccess()" style="">
+			<form id="bugForm" class="form-horizontal" action="@Url.Action("Handle","Publish")" role="form" data-after-success="afterDialogSuccess()" style="">
 				@Html.HiddenFor(t => t.Id)
 				@Html.HiddenFor(t => t.ProjectId)
 
