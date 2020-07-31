@@ -237,27 +237,21 @@ namespace TheSite.Controllers
 			var users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
 			require.Manager = users.Find(x => x.UserId == require.ManagerId)?.RealName;
 
-			var operations = db.OperationDal.ConditionQuery(o.ItemId == id, o.OperationDate.Desc, null, null);
-			var operationHistory = new List<OperationHistoryViewModel>();
-			foreach (var item in operations)
-			{
-				operationHistory.Add(new OperationHistoryViewModel
-				{
-					Date = item.OperationDate.ToyyMMdd(),
-					Operator = GetUserInfo().RealName,
-					ResultId = item.OperationResult,
-					Result = RequireKeys.OperationResultDic[item.OperationResult.ToGuid(Guid.Empty)],
-				}
-			);
-			}
 
-			require.OperationHistory = operationHistory;
+			// require操作历史记录
+			require.OperationHistory = OperationHelper.GetOperationHistoryViewModels(
+			   id,
+			   GetUserInfo(),
+			   t => RequireKeys.OperationResultDic[t.OperationResult.ToGuid(Guid.Empty)],
+			   db
+			   );
 
 			require.RelativeTasks = RTPBRelationHelper.GetRequireRelativeTasks(id, db);
 			require.RelativeBugs = RTPBRelationHelper.GetRequireRelativeBugs(id, db);
 			require.RelativePublishs = RTPBRelationHelper.GetRequireRelativePublishs(id, db);
 
 			ViewBag.Attahcments = AttachmentHelper.GetAttachments(require.Projectid, require.RequireId, db);
+			ViewBag.Users = users;
 
 			return View(require);
 		}

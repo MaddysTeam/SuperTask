@@ -32,6 +32,11 @@ namespace Business
 			return date.IsEmpty() ? " " : date.ToString("yyyy-MM-dd");
 		}
 
+		public static String ToyyMMddHHmmss(this DateTime date)
+		{
+			return date.IsEmpty() ? " " : date.ToString("yyyy-MM-dd HH:mm:ss");
+		}
+
 		//public static DateTime DateFormat(this DateTime date)
 		//{
 		//	return date.IsEmpty() ? Da : new DateTime(date.ToString("yyyy-MM-dd"));

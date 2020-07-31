@@ -18,25 +18,34 @@ namespace Business.Helper
 			return db.OperationDal.ConditionQuery(o.ItemId == itemId & o.OperationType == opertaionType, o.OperationDate.Desc, null, null).FirstOrDefault();
 		}
 
-      public static List<OperationHistoryViewModel> GetOperationHistoryViewModels(Guid id, UserInfo user, Func<Guid,string> result, APDBDef db)
-      {
-         var o = APDBDef.Operation;
-         var operations = db.OperationDal.ConditionQuery(o.ItemId == id, o.OperationDate.Desc, null, null);
-         var operationHistory = new List<OperationHistoryViewModel>();
-         foreach (var item in operations)
-         {
-            operationHistory.Add(new OperationHistoryViewModel
-            {
-               Date = item.OperationDate.ToyyMMdd(),
-               Operator = user.RealName,
-               ResultId = item.OperationResult,
-               Result = result(item.OperationType) // 这里比较特殊，任务的操作结果就是操作类型
-            }
-          );
-         }
-         return operationHistory;
-      }
 
-   }
+		/// <summary>
+		/// get operation history view models data
+		/// </summary>
+		/// <param name="id">item id like task, require , bug and publish </param>
+		/// <param name="user"></param>
+		/// <param name="result"></param>
+		/// <param name="db"></param>
+		/// <returns></returns>
+		public static List<OperationHistoryViewModel> GetOperationHistoryViewModels(Guid id, UserInfo user, Func<Operation, string> result, APDBDef db)
+		{
+			var o = APDBDef.Operation;
+			var operations = db.OperationDal.ConditionQuery(o.ItemId == id, o.OperationDate.Desc, null, null);
+			var operationHistory = new List<OperationHistoryViewModel>();
+			foreach (var item in operations)
+			{
+				operationHistory.Add(new OperationHistoryViewModel
+				{
+					Date = item.OperationDate.ToyyMMddHHmmss(),
+					Operator = user.RealName,
+					ResultId = item.OperationResult,
+					Result = result(item)
+				}
+			  );
+			}
+			return operationHistory;
+		}
+
+	}
 
 }

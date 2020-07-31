@@ -114,6 +114,12 @@
 							@Html.Label(Model.EndDateStr, new { @class = "form-control" })
 						</div>
 					</div>
+					<div class="form-group">
+						@Html.LabelFor(x => x.WorkHours, new { @class = "control-label col-md-2" })
+						<div class="col-md-2">
+							<a id="handle" href="#" data-url="@Url.Action("Handle", "Require",new { id=Model.RequireId})"><i class="fa fa-clock-o"></i></a>
+						</div>
+					</div>
 
 					<div class="col-md-12">
 						@Html.LabelFor(t => t.Description, new { @class = "control-label" })
@@ -170,7 +176,7 @@
 
 		$(function () {
 
-			$('#review,#emergencyReview,#task').on('click', function () {
+			$('#review,#emergencyReview,#task,#handle').on('click', function () {
 				var url = $(this).data('url');
 				var $proxy = $('#modelProxy');
 				$proxy

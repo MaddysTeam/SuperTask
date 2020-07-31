@@ -242,21 +242,13 @@ namespace TheSite.Controllers
 			var users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
 			bug.Manager = users.Find(x => x.UserId == bug.ManagerId)?.RealName;
 
-			var operations = db.OperationDal.ConditionQuery(o.ItemId == id, o.OperationDate.Desc, null, null);
-			var operationHistory = new List<OperationHistoryViewModel>();
-			foreach (var item in operations)
-			{
-				operationHistory.Add(new OperationHistoryViewModel
-				{
-					Date = item.OperationDate.ToString("yyyy-MM-dd"),
-					Operator = GetUserInfo().RealName,
-					Result = BugKeys.OperationResultDic[item.OperationResult.ToGuid(Guid.Empty)],
-					ResultId = item.OperationResult,
-				}
-			 );
-			}
 			// bug操作历史记录
-			bug.OperationHistory = operationHistory;
+			bug.OperationHistory = OperationHelper.GetOperationHistoryViewModels(
+			   id,
+			   GetUserInfo(),
+			   t => BugKeys.OperationResultDic[t.OperationResult.ToGuid(Guid.Empty)],
+			   db
+			   );
 
 			// 关联的任务
 			bug.RelativeTasks = RTPBRelationHelper.GetBugRelativeTasks(id, db);
@@ -304,7 +296,7 @@ namespace TheSite.Controllers
 			if (!ModelState.IsValid)
 				return Json(new { result = AjaxResults.Error });
 
-			
+
 			if (model != null && !model.Id.IsEmptyOrNull())
 			{
 				DateTime fixDate = DateTime.MinValue;
@@ -557,7 +549,7 @@ namespace TheSite.Controllers
 
 		private List<Bug> GetBugListByIds(string id)
 		{
-			Guid[] ids = id.Split(',').ConvertToGuidArray();;
+			Guid[] ids = id.Split(',').ConvertToGuidArray(); ;
 			return db.BugDal.ConditionQuery(b.BugId.In(ids), null, null, null);
 		}
 

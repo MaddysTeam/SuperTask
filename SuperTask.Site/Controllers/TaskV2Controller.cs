@@ -416,7 +416,7 @@ namespace TheSite.Controllers
          task.OperationHistory = OperationHelper.GetOperationHistoryViewModels(
             id,
             GetUserInfo(),
-            t => TaskKeys.OperationResultDic[t],
+            t => TaskKeys.OperationResultDic[t.OperationType],
             db
             );
 

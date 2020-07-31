@@ -1,4 +1,7 @@
 ﻿@model List<WorkTask>
+@{
+	var users = ViewBag.Users as List<UserInfo> ?? new List<UserInfo>();
+}
 <div class="widget col-md-3" style="margin-left:20px;">
 	<div style="margin-top:10px;margin-bottom:10px;">关联任务</div>
 	<table id="relativeTask" class="table table-striped table-hover table-dark-header">
@@ -11,15 +14,15 @@
 			</tr>
 		</thead>
 		<tbody>
-		  @foreach(WorkTask item in Model)
-		  {
-			  <tr>
-				  <td>@item.SortId</td>
-				  <td>@item.TaskName</td>
-	  			  <td>@item.Manager</td>
-				  <td>@item.Status</td>
-			  </tr>
-		  }
+			@foreach (WorkTask item in Model)
+			{
+				<tr>
+					<td>@item.SortId</td>
+					<td>@item.TaskName</td>
+					<td>@item.Manager</td>
+					<td>@item.Status</td>
+				</tr>
+			}
 		</tbody>
 	</table>
 
