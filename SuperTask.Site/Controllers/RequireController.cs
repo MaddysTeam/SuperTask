@@ -126,8 +126,8 @@ namespace TheSite.Controllers
 
 		public ActionResult Edit(Guid? id)
 		{
-			// 所有人员
-			ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
+         // 所有人员
+         ViewBag.Users = UserHelper.GetAvailableUser(db);
 
 			// 我参与的项目
 			ViewBag.Projects = MyJoinedProjects();

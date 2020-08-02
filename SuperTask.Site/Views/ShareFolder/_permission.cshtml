@@ -1,0 +1,112 @@
+﻿@model FolderPemissionViewModel
+@{ 
+
+}
+<link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
+<div class="modal-dialog modal-lg">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i>编辑权限</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			<form class="form-horizontal" action="@Url.Action("Edit", "ShareFolder")" role="form" data-after-success="afterDialogSuccess()">
+				<div class="row">
+					<fieldset class="col-sm-12">
+						@Html.HiddenFor(f => f.FolderId)
+						@Html.HiddenFor(f => f.PermissionIds)
+						@Html.HiddenFor(f => f.UserIds)
+
+						<div class="form-group">
+							@Html.LabelFor(f => f.FolderName, new { @class = "control-label col-md-3" })
+							<div class="col-md-9">
+								@Html.Label(Model.FolderName, new { @class = "form-control" })
+							</div>
+						</div>
+
+						@if (!Model.FolderId.IsEmpty())
+						{
+
+						}
+
+						<div class="form-group">
+							@Html.Label("选择用户", new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
+								<select id="users" class="form-control new-select" multiple="multiple">
+									@foreach (var user in ViewBag.Users as List<UserInfo>)
+									{
+										if (Model.UserIds != null && Model.UserIds.Contains(user.UserId.ToString()))
+										{
+											<option value="@user.UserId" selected>@user.RealName</option>
+                              }
+										else
+										{
+											<option value="@user.UserId">@user.RealName</option>
+										}
+									}
+
+								</select>
+							</div>
+
+							@Html.Label("选择权限", new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
+								<select id="permissions" class="form-control new-select" multiple="multiple">
+									@foreach (var permission in ViewBag.Permissions as List<Dictionary>)
+									{
+										if (Model.PermissionIds != null && Model.PermissionIds.Contains(permission.ID.ToString()))
+										{
+											<option value="@permission.ID" selected>@permission.Title</option>
+}
+										else
+										{
+											<option value="@permission.ID">@permission.Title</option>
+}
+									}
+
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-9 col-lg-offset-3">
+								<button type="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 保存</button>
+								<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+<script src="~/assets/plugins/select2-4.0.2/js/select2.min.js"></script>
+<script>
+
+	$(function () {
+
+		ajaxSubmitForm($('.modal-dialog form'));
+
+		$('#submit').click(function () {
+			$('#PermissionIds').val($('#permissions').val());
+			$('#UserIds').val($('#users').val());
+		});
+
+
+		$('#users,#permissions').select2({
+			placeholder: "请选择"
+		});
+
+	})
+
+	function afterDialogSuccess() {
+		$('#firstModal').modal('hide');
+	}
+
+</script>

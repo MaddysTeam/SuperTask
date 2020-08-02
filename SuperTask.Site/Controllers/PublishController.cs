@@ -231,8 +231,9 @@ namespace TheSite.Controllers
          publish.RelativeRequires = RTPBRelationHelper.GetPublishRelativeRequires(id, db);
 
          ViewBag.Attahcments = AttachmentHelper.GetAttachments(publish.Projectid, publish.PublishId, db);
+         ViewBag.Users = users;
 
-			return View(publish);
+         return View(publish);
 		}
 
 

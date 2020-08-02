@@ -170,8 +170,9 @@ namespace TheSite.Controllers
 
 			if (bug.Projectid == BugKeys.SelectAll)
 			{
-				return Json(new
-				{
+            return Json(new
+            {
+               msg = Errors.Bug.MUST_SELECT_PROJECT,
 					result = AjaxResults.Error
 				});
 			}
@@ -239,7 +240,7 @@ namespace TheSite.Controllers
 		public ActionResult Detail(Guid id)
 		{
 			var bug = Bug.PrimaryGet(id);
-			var users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
+         var users = UserHelper.GetAvailableUser(db);
 			bug.Manager = users.Find(x => x.UserId == bug.ManagerId)?.RealName;
 
 			// bug操作历史记录
@@ -257,6 +258,7 @@ namespace TheSite.Controllers
 			bug.RelativeRequires = RTPBRelationHelper.GetBugRelativeRequires(id, db);
 
 			ViewBag.Attahcments = AttachmentHelper.GetAttachments(bug.Projectid, bug.BugId, db);
+         ViewBag.Users = users;
 
 			return View(bug);
 		}

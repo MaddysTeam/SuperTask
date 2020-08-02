@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Business;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -33,5 +34,20 @@ namespace TheSite.Models
 		public bool canPreview { get; set; }
 		public bool isMyFile { get; set; }
 	}
+
+   public class FolderPemissionViewModel
+   {
+      public Guid FolderId { get; set; }
+      public Guid FileId { get; set; }
+      public string UserIds { get; set; }
+      public string PermissionIds { get; set; }
+      public bool IsRecusive { get; set; }
+      public string FolderName { get; set; }
+
+      public Guid[] UserGuids => PermissionIds?.Split(',')?.ConvertToGuidArray();
+      public Guid[] PermissionGuids => PermissionIds?.Split(',')?.ConvertToGuidArray();
+
+   }
+
 
 }

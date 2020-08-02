@@ -277,6 +277,7 @@
     <Compile Include="Business\Business.apgen.cs" />
     <Compile Include="Business\Cache\ThisAppCache.cs" />
     <Compile Include="Business\Config\ThisApp.cs" />
+    <Compile Include="Business\DataDef\Folder.cs" />
     <Compile Include="Business\DataDef\Publish.cs" />
     <Compile Include="Business\DataDef\Require.cs" />
     <Compile Include="Business\DataDef\DictionaryCache.cs" />
@@ -2054,6 +2055,7 @@
     <Content Include="Views\Shared\_publishList.cshtml" />
     <Content Include="Views\Bug\_multipleRelative.cshtml" />
     <Content Include="Views\Require\_hurryup.cshtml" />
+    <Content Include="Views\ShareFolder\_permission.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

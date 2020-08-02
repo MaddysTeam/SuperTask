@@ -19,7 +19,7 @@
 				<tr>
 					<td>@item.SortId</td>
 					<td>@item.RequireName</td>
-					<td>@item.Manager</td>
+					<td>@(string.IsNullOrEmpty(item.Manager) ? users?.First(x => x.UserId == item.ManagerId)?.RealName : item.Manager)</td>
 					<td>@item.Status</td>
 				</tr>
 			}

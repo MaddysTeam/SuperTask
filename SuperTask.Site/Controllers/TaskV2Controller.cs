@@ -269,8 +269,8 @@ namespace TheSite.Controllers
       {
          var task = WorkTask.PrimaryGet(id);
          task.ProjectName = MyJoinedProjects().Find(x => x.ProjectId == task.Projectid)?.ProjectName;
-        
-         ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
+
+         ViewBag.Users = UserHelper.GetAvailableUser(db);
          ViewBag.SubTasks = TaskHelper.GetAllChildren(id, db, t.CreateDate.Desc).FindAll(x => !x.IsDelteStatus);
          ViewBag.Attahcments = AttachmentHelper.GetAttachments(task.Projectid, task.TaskId, db);
          ViewBag.Bugs = RTPBRelationHelper.GetTaskRelativeBugs(id, db);
@@ -793,25 +793,6 @@ namespace TheSite.Controllers
                Result2 = existReviewResult?.OperationResult2
             };
       }
-
-
-      //private List<OperationHistoryViewModel> GetOperationHistoryViewModels(Guid id)
-      //{
-      //   var operations = db.OperationDal.ConditionQuery(o.ItemId == id, o.OperationDate.Desc, null, null);
-      //   var operationHistory = new List<OperationHistoryViewModel>();
-      //   foreach (var item in operations)
-      //   {
-      //      operationHistory.Add(new OperationHistoryViewModel
-      //      {
-      //         Date = item.OperationDate.ToyyMMdd(),
-      //         Operator = GetUserInfo().RealName,
-      //         ResultId = item.OperationResult,
-      //         Result = PublishKeys.OperationResultDic[item.OperationResult.ToGuid(Guid.Empty)],
-      //      }
-      //    );
-      //   }
-      //   return operationHistory;
-      //}
 
       #endregion
 

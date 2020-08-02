@@ -178,6 +178,21 @@ namespace Business.Helper
          public const string DUPLICATE_FILE_NAME = "已有重复的文件名称！";
       }
 
+      public class Bug
+      {
+         public const string MUST_SELECT_PROJECT = "必须选择项目";
+      }
+
+      public class Require
+      {
+
+      }
+
+      public class Publish
+      {
+
+      }
+
 	}
 
 

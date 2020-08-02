@@ -813,7 +813,6 @@
 				</columns>
 			</table>
 
-
 			<!--<table name="EvalPeriodTable" comment="考核-周期-考核表">
 				<columns>
 
@@ -859,6 +858,7 @@
 			</table>
 
 			<!-- 2018-06-20-->
+			
 			<table name="EvalSubmitResult" comment="评价-最终-结果">
 				<columns>
 
@@ -875,6 +875,7 @@
 
 				</columns>
 			</table>
+			
 			<!-- Shared Folder -->
 
 			<table name="Folder"  comment="文件夹">
@@ -903,6 +904,21 @@
 
 				</columns>
 			</table>
+
+			<table name="FolderPermission">
+				<columns>
+					
+					<add name="FolderId"  columnName="ID" type="Guid" primaryKey="true" display="文件夹ID" />
+					<add name="FolderFileId" columnName="ID" type="Guid" primaryKey="true"></add>
+					<add name="UserId"  columnName="ID" type="Guid" primaryKey="true" display="文件夹ID" />
+					<add name="PermissionId"  columnName="ID" type="Guid" primaryKey="true" display="文件夹ID" />
+					
+				</columns>
+			</table>
+			
+			
+
+			<!--<table name="Document"></table>-->
 
 			<!-- Advice 2018-07-10 add-->
 			<table name="Advice" comment="建议">
