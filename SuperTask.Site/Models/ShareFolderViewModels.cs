@@ -42,9 +42,10 @@ namespace TheSite.Models
       public string UserIds { get; set; }
       public string PermissionIds { get; set; }
       public bool IsRecusive { get; set; }
+	  [Display(Name ="文件夹")]
       public string FolderName { get; set; }
 
-      public Guid[] UserGuids => PermissionIds?.Split(',')?.ConvertToGuidArray();
+      public Guid[] UserGuids => UserIds?.Split(',')?.ConvertToGuidArray();
       public Guid[] PermissionGuids => PermissionIds?.Split(',')?.ConvertToGuidArray();
 
    }

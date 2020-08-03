@@ -5,7 +5,7 @@
 }
 @section Css{
 	<link href="~/assets/plugins/jstree-3.2.1/themes/default/style.min.css" rel="stylesheet" />
-   <link href="~/assets/css/plugins.css" rel="stylesheet" />
+	<link href="~/assets/css/plugins.css" rel="stylesheet" />
 }
 <style>
 	.jstree-themeicon-custom {
@@ -22,12 +22,12 @@
 
 			<!-- explorer nav -->
 			<div class="col-md-4">
-				<div class="widget" >
+				<div class="widget">
 
 					<div class="widget-header"></div>
-					<div class="widget-content navigator"  >
+					<div class="widget-content navigator">
 						<div>
-							<input type="text"  id="search_file_node" class="form-control"/>
+							<input type="text" id="search_file_node" class="form-control" />
 						</div>
 						<div class="explorer-nav">
 
@@ -76,7 +76,7 @@
 							</ul>
 						</div>
 					</div>
-					<div class="widget-content row  explore-body" >
+					<div class="widget-content row  explore-body">
 						<div class="col-xs-12 ">
 							<div class="center-block"><i class="fa fa-folder-open"></i></div>
 						</div>
@@ -117,14 +117,14 @@
 		});
 
 		var currentFolderId;
-		var folders = [], files = [], searchFolders = [], searchFiles = [],copyFiles=[];
+		var folders = [], files = [], searchFolders = [], searchFiles = [], copyFiles = [];
 		var folderOptions = {
 			items: [
 			  { text: '打开', onclick: function (e) { openFolder(e.data['folderId']); } },
 			  { text: '删除', onclick: function (e) { delFolder(e.data['folderId'], currentFolderId); } },
 			  { text: '重命名', onclick: function (e) { editFolder(e.data['folderId']); } },
 			  { divider: true },
-			  { text: '设置权限', onclick: function (e) { alert('功能还在研发中'); } }
+			  { text: '设置权限', onclick: function (e) { editPermission(e.data['folderId']) } }
 			]
 		};
 		var fileOptions = {
@@ -154,7 +154,7 @@
 		var fileStr = function (file) {
 			if (!file) return '';
 			var fileClassName = file && file.isMyFile ? 'myFile' : 'file';
-			return '<div class="item col-lg-2 col-sm-2 col-xs-4" id="'+file.id+'" title="' + file.name + '">' +
+			return '<div class="item col-lg-2 col-sm-2 col-xs-4" id="' + file.id + '" title="' + file.name + '">' +
 									'<div class="btn06 ' + fileClassName + '" data-file-id="' + file.id + '" data-file-path="' + file.path + '" data-attachment-id="' + file.attachmentId + '">' +
 									  '<img src="' + file.coverPath + '" />' +
 										'<div class="ovrly"></div>' +
@@ -180,7 +180,7 @@
 			showFolderFiles(folderId);
 		}
 
-		function delFolder(folderId,currentFolderId) {
+		function delFolder(folderId, currentFolderId) {
 			if (confirm("@Success.Folder.CONFIRM_DELETE")) {
 				$.post('@Url.Action("Delete", "ShareFolder")', { id: folderId }, function () {
 					loadData(function () {
@@ -196,6 +196,12 @@
 			$('#modelProxy')
 				.data('url', '@Url.Action("Edit","ShareFolder")?id=' + folderId)
 				.trigger('click');
+		}
+
+		function editPermission(folderId, fileId) {
+			$('#modelProxy')
+			.data('url', '@Url.Action("SetPermission", "ShareFolder")?id=' + folderId)
+			.trigger('click');
 		}
 
 		function bindFolderClick() {
@@ -281,7 +287,7 @@
 
 		function sendToFolder(itemId) {
 			$('#modelProxy')
-				.data('url', '@Url.Action("SendToFolder", "ShareFolder")?itemId=' + itemId + '&originFolderId='+ currentFolderId)
+				.data('url', '@Url.Action("SendToFolder", "ShareFolder")?itemId=' + itemId + '&originFolderId=' + currentFolderId)
 				.trigger('click');
 		}
 
@@ -319,7 +325,7 @@
 					'check_callback': true,
 				},
 				'plugins': ['types', 'search', 'contextmenu'],
-				'contextmenu':{
+				'contextmenu': {
 					'items': {
 						'addFile': {
 							'label': '新增文件',
@@ -357,6 +363,16 @@
 								editFolder(obj.id);
 							}
 						},
+						'permission': {
+							'label': '设置权限',
+							'action': function (data) {
+								var inst = jQuery.jstree.reference(data.reference);
+								var obj = inst.get_node(data.reference);
+								fileId = '@Guid.Empty';
+								editPermission(obj.id,fileId)
+							}
+						}
+						,
 						'sendTo': {
 							'label': '发送到',
 							'action': function (data) {
@@ -405,7 +421,7 @@
 					bindPopup();
 					bindPreview();
 					setExplorePath("搜索结果");
-				}, { phrase: $('.search').val(), parentId:currentFolderId });
+				}, { phrase: $('.search').val(), parentId: currentFolderId });
 			});
 			$('.btn_up').click(function () {
 				if (!currentFolderId) return;
@@ -434,7 +450,7 @@
 			});
 		}
 
-		function searchData(callback,para) {
+		function searchData(callback, para) {
 			$.post('@Url.Action("Search", "ShareFolder")', para, function (data) {
 				searchFolders = [];
 				searchFiles = [];
