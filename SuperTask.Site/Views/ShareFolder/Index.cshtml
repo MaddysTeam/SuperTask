@@ -124,7 +124,7 @@
 			  { text: '删除', onclick: function (e) { delFolder(e.data['folderId'], currentFolderId); } },
 			  { text: '重命名', onclick: function (e) { editFolder(e.data['folderId']); } },
 			  { divider: true },
-			  { text: '设置权限', onclick: function (e) { editPermission(e.data['folderId']) } }
+			  { text: '设置权限', onclick: function (e) { editFolderPermission(e.data['folderId']) } }
 			]
 		};
 		var fileOptions = {
@@ -135,6 +135,7 @@
 			  { text: '删除', onclick: function (e) { delFile(e.data['fileId']); } },
 			  { divider: true },
 			  { text: '发送到', onclick: function (e) { sendToFolder(e.data['fileId']); } },
+			    { text: '设置权限', onclick: function (e) { } }
 			]
 		};
 
@@ -198,9 +199,9 @@
 				.trigger('click');
 		}
 
-		function editPermission(folderId, fileId) {
+		function editFolderPermission(folderId, fileId) {
 			$('#modelProxy')
-			.data('url', '@Url.Action("SetPermission", "ShareFolder")?id=' + folderId)
+			.data('url', '@Url.Action("SetFolderPermission", "ShareFolder")?id=' + folderId)
 			.trigger('click');
 		}
 
@@ -369,7 +370,7 @@
 								var inst = jQuery.jstree.reference(data.reference);
 								var obj = inst.get_node(data.reference);
 								fileId = '@Guid.Empty';
-								editPermission(obj.id,fileId)
+								editFolderPermission(obj.id, fileId)
 							}
 						}
 						,

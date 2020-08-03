@@ -266,6 +266,7 @@ namespace Business.Helper
 		public class Folder
 		{
 			public const string EDIT_SUCCESS = "文件夹编辑成功！";
+
 			public const string CONFIRM_DELETE = "确定要删除文件夹及其内部所有文件？";
 		}
 
@@ -289,6 +290,11 @@ namespace Business.Helper
 		{
 			public const string EDITSUCCESS = "编辑成功";
 		}
+
+      public class Bug
+      {
+         public const string EDITSUCCESS = "编辑成功";
+      }
 
 	}
 

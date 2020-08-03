@@ -45,6 +45,9 @@ namespace TheSite.Models
 	  [Display(Name ="文件夹")]
       public string FolderName { get; set; }
 
+      public bool IsFolder => FileId.IsEmpty() && !FolderId.IsEmpty();
+      public bool IsFile => !FileId.IsEmpty();
+
       public Guid[] UserGuids => UserIds?.Split(',')?.ConvertToGuidArray();
       public Guid[] PermissionGuids => PermissionIds?.Split(',')?.ConvertToGuidArray();
 
