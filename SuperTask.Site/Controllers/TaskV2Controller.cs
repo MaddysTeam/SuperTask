@@ -288,15 +288,15 @@ namespace TheSite.Controllers
       [ValidateInput(false)]
       public ActionResult Edit(WorkTask task, FormCollection collection)
       {
+         var subTasks = TaskHelper.GetAllChildren(task.TaskId).FindAll(t => !t.IsDelteStatus);
+         var subTaskEsTimes = collection["EstimateWorkHours"] ?? string.Empty;
+         var subTaskExecutors = collection["ExecutorId"] ?? string.Empty;
+         var subTaskIds = collection["SubTaskId"] ?? string.Empty;
+
          db.BeginTrans();
 
          try
          {
-            var subTasks = TaskHelper.GetAllChildren(task.TaskId).FindAll(t => !t.IsDelteStatus);
-            var subTaskEsTimes = collection["EstimateWorkHours"] ?? string.Empty;
-            var subTaskExecutors = collection["ExecutorId"] ?? string.Empty;
-            var subTaskIds = collection["SubTaskId"] ?? string.Empty;
-
             if (task.IsParent && !string.IsNullOrEmpty(subTaskIds))
             {
                // due to in transaction so we need set sort no for new tasks in memory
@@ -375,7 +375,13 @@ namespace TheSite.Controllers
             ResourceHelper.AddUserToResourceIfNotExist(task.Projectid, task.TaskId, task.ManagerId, ResourceKeys.OtherType, db);
 
             //upload attachments
-            AttachmentHelper.UploadTaskAttachment(task, db);
+            if (task.CurrentAttachment != null)
+            {
+               var attachment = AttachmentHelper.UploadTaskAttachment(task, db);
+
+               // taskType=dic[]
+               //ProjectrHelper.UploadFileToProjectFolder(ShareFolderKeys.DevelopType, attachment.AttachmentId, db);
+            }
 
             //add relative items TODO:  sub task do not need bind any relative items now
             var requires = task.RelativeRequireIds?.Split(',');
@@ -423,7 +429,7 @@ namespace TheSite.Controllers
          ViewBag.Users = UserHelper.GetAvailableUser(db);
          ViewBag.SubTasks = TaskHelper.GetAllChildren(id, db, t.CreateDate.Desc).FindAll(x => !x.IsDelteStatus);
          ViewBag.Attahcments = AttachmentHelper.GetAttachments(task.Projectid, task.TaskId, db);
-         ViewBag.Bugs = RTPBRelationHelper.GetTaskRelativeBugs(id,db);
+         ViewBag.Bugs = RTPBRelationHelper.GetTaskRelativeBugs(id, db);
          ViewBag.Requires = RTPBRelationHelper.GetTaskRelativeRequires(id, db);
          ViewBag.Publishs = RTPBRelationHelper.GetTaskRelativePublishs(id, db);
 
@@ -544,7 +550,6 @@ namespace TheSite.Controllers
          return PartialView("_multipleComplete", new OperationViewModel { Id = ids, ProjectId = projectId });
       }
 
-
       [HttpPost]
       [ValidateInput(false)]
       public ActionResult Complete(OperationViewModel model)
@@ -607,7 +612,6 @@ namespace TheSite.Controllers
 
          return PartialView("_close", viewModel);
       }
-
 
       public ActionResult MultipleClose(string ids, Guid projectId)
       {

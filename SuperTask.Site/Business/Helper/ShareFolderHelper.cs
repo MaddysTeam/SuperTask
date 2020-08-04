@@ -21,6 +21,13 @@ namespace Business.Helper
          return mileStonFolder;
       }
 
+
+      public static void UploadFolderFile(Guid folderId,Guid fileId, APDBDef db)
+      {
+         db.FolderFileDal.Insert(new FolderFile(Guid.NewGuid(), folderId, fileId));
+      }
+
+
    }
 
 }

@@ -203,10 +203,13 @@ namespace TheSite.Controllers
 
 
 				// add attachment
-				AttachmentHelper.UploadRequireAttachment(require, user.UserId, db);
+				var attachment=AttachmentHelper.UploadRequireAttachment(require, user.UserId, db);
 
-				//add user to project resurce if not exits
-				ResourceHelper.AddUserToResourceIfNotExist(require.Projectid, Guid.Empty, require.ManagerId, ResourceKeys.OtherType, db);
+            // upload file to project folder
+            ProjectrHelper.UploadFileToProjectFolder(ShareFolderKeys.RequiredType, attachment.AttachmentId, db);
+
+            //add user to project resurce if not exits
+            ResourceHelper.AddUserToResourceIfNotExist(require.Projectid, Guid.Empty, require.ManagerId, ResourceKeys.OtherType, db);
 
 
 				db.Commit();

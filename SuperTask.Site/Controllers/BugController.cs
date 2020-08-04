@@ -201,7 +201,10 @@ namespace TheSite.Controllers
 
 
             // add attachment
-            AttachmentHelper.UploadBugsAttachment(bug, user.UserId, db);
+            Attachment attachment = AttachmentHelper.UploadBugsAttachment(bug, user.UserId, db);
+
+            // upload file to project folder
+            ProjectrHelper.UploadFileToProjectFolder(ShareFolderKeys.TestType, attachment.AttachmentId, db);
 
             //add user to project resurce if not exits
             ResourceHelper.AddUserToResourceIfNotExist(bug.Projectid, Guid.Empty, bug.ManagerId, ResourceKeys.OtherType, db);
@@ -482,7 +485,7 @@ namespace TheSite.Controllers
             return Json(new
             {
                result = AjaxResults.Error,
-               msg=e.Message
+               msg = e.Message
             });
          }
 

@@ -11,7 +11,7 @@ namespace Business.Helper
 	public static class AttachmentHelper
 	{
 
-		public static void UploadTaskAttachment(WorkTask task, APDBDef db)
+		public static Attachment UploadTaskAttachment(WorkTask task, APDBDef db)
 		{
 			var attachment = task.CurrentAttachment;
 			if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
@@ -24,10 +24,12 @@ namespace Business.Helper
 
 				db.AttachmentDal.Insert(attachment);
 			}
+
+         return attachment;
 		}
 
 
-		public static void UploadBugsAttachment(Bug bug,Guid publishUserId, APDBDef db)
+		public static Attachment UploadBugsAttachment(Bug bug,Guid publishUserId, APDBDef db)
 		{
 			var attachment = bug.CurrentAttachment;
 			if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
@@ -41,10 +43,12 @@ namespace Business.Helper
 
 				db.AttachmentDal.Insert(attachment);
 			}
-		}
+
+         return attachment;
+      }
 
 
-		public static void UploadRequireAttachment(Require require, Guid publishUserId, APDBDef db)
+		public static Attachment UploadRequireAttachment(Require require, Guid publishUserId, APDBDef db)
 		{
 			var attachment = require.CurrentAttachment;
 			if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
@@ -58,6 +62,8 @@ namespace Business.Helper
 
 				db.AttachmentDal.Insert(attachment);
 			}
+
+         return attachment;
 		}
 
 

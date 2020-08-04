@@ -109,13 +109,14 @@ namespace Business
          TaskHelper.CreateAndSaveRootTaskInDB(user, project, db);
 
          //创建项目文件夹
-         var folder=ShareFolderHelper.CreateFolder(project.FolderId, project.ProjectName, ShareFolderKeys.RootProjectFolderId, user.UserId, db);
+         ProjectrHelper.CreateProjectFolders(user.UserId, db);
 
          //创建默认里程碑节点和节点任务
          MilestoneHelper.AddDefaultMileStones(project, db);
 
          //创建默认款项管理
           PaymentsHelper.AddDefaultPayments(project, db);
+
 
          //创建项目记录
          //ProjectRecordHelper.CreateRecord(project, user.UserId, db);

@@ -75,47 +75,23 @@ namespace Business.Helper
 		}
 
 
-	}
+      public static void CreateProjectFolders(Guid operatorId, APDBDef db)
+      {
+         //project.FolderId, project.ProjectName, ShareFolderKeys.RootProjectFolderId,
+         // add folders with its type 
+      }
 
+      /// <summary>
+      ///  upload file to folder for specially type . for example: bug files shold be upload to test type folder
+      /// </summary>
+      /// <param name="folderTypeId"></param>
+      /// <param name="fileId"></param>
+      /// <param name="db"></param>
+      public static void UploadFileToProjectFolder(Guid folderTypeId,Guid fileId, APDBDef db)
+      {
+         //ShareFolderHelper.UploadFolderFile()
+      }
 
-	//public class ProjectRecordHelper
-	//{
-
-	//   static APDBDef.ProjectRecordTableDef prt = APDBDef.ProjectRecord;
-
-	//   public static void CreateRecord(Project proj, Guid operatorId, APDBDef db)
-	//   {
-	//      db.ProjectRecordDal.Insert(new ProjectRecord
-	//      {
-	//         RecordId = Guid.NewGuid(),
-	//         RecordDate = DateTime.Now,
-	//         StartDate = proj.StartDate,
-	//         EndDate = proj.EndDate,
-	//         Progress = proj.RateOfProgress,
-	//         ProjectStatus = proj.ProjectStatus,
-	//         ProjectType = proj.ProjectType,
-	//         ProjectId = proj.ProjectId,
-	//         RateOfProgress = proj.RateOfProgress,
-	//         PMId = proj.PMId,
-	//         ManagerId = proj.ManagerId,
-	//         ReviewerId = proj.ReviewerId,
-	//         OperatorId = operatorId,
-	//         ProjectExecutor = proj.ProjectExecutor,
-	//         ProjectOwner = proj.ProjectOwner,
-	//         RealCode = proj.RealCode,
-	//         Code = proj.Code,
-	//         ProjectName = proj.ProjectName,
-	//         ProcessName = proj.ProcessName
-	//      });
-	//   }
-
-	//   public static void CreateRecord(Project proj, Project orignal, Guid operatorId, APDBDef db)
-	//   {
-	//      if (!proj.Equals(orignal))
-	//         CreateRecord(proj, operatorId, db);
-	//   }
-
-	//}
-
+   }
 
 }
