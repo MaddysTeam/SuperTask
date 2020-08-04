@@ -1,0 +1,62 @@
+﻿@model string
+@{
+
+}
+<div class="modal-dialog modal-lg">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-header">
+			<h3><i class="fa fa-edit"></i>确定要删除该文件夹？</h3>
+			<div class="btn-group widget-header-toolbar">
+				<a href="#" title="关闭" class="btn-borderless" data-dismiss="modal"><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="widget-content">
+
+			@*<form class="form-horizontal" action="@Html.Action("Delete","ShareFolder")" method="post" role="form" data-after-success="afterDialogSuccess()">
+				@Html.Hidden("id", Model)
+				<div class="row">
+					<div class="form-group">
+						<div class="col-sm-9 col-lg-offset-3">
+							<button type="submit" id="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 确定删除</button>
+							<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+						</div>
+					</div>
+				</div>
+			</form>*@
+
+			<div class="row">
+				<div class="form-group">
+					<div class="col-sm-9 col-lg-offset-3">
+						<button type="submit" id="submit" class="btn btn-primary btn-block-half"><i class="fa fa-check-circle"></i> 确定删除</button>
+						<button type="button" class="btn btn-default btn-block-half" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<!-- end widget -->
+</div>
+<script>
+	$(function () {
+
+		$('#submit').on('click', function () {
+			delFolder('@Model', currentFolderId);
+		});
+
+	});
+
+	function delFolder(folderId, currentFolderId) {
+		$.post('@Url.Action("Delete", "ShareFolder")', { id: folderId }, function (data) {
+			loadData(function () {
+				bindLeftNav();
+				showFolderFiles(currentFolderId);
+				bindUpClick();
+				$('#firstModal').modal('hide');
+			}, { parentId: '@ThisApp.DefaultId', phrase: '' });
+		});
+	}
+
+</script>

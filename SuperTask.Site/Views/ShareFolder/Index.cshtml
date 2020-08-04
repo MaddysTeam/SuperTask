@@ -2,6 +2,8 @@
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	//var projectId = string.IsNullOrEmpty(Request["projectId"])? Guid.Empty: Request["projectId"].ToGuid(Guid.Empty);
+	var hasSearchPermission = ViewBag.HasPermission ?? true;
+
 }
 @section Css{
 	<link href="~/assets/plugins/jstree-3.2.1/themes/default/style.min.css" rel="stylesheet" />
@@ -76,10 +78,20 @@
 							</ul>
 						</div>
 					</div>
+
 					<div class="widget-content row  explore-body">
+						@if (hasSearchPermission)
+						{
 						<div class="col-xs-12 ">
 							<div class="center-block"><i class="fa fa-folder-open"></i></div>
 						</div>
+						}
+						else
+						{
+							<div class="alert-danger">
+							   @Errors.FolderPermission.NOT_ALLOWED_SEARCH
+							</div>
+						}
 					</div>
 
 				</div>
@@ -121,7 +133,7 @@
 		var folderOptions = {
 			items: [
 			  { text: '打开', onclick: function (e) { openFolder(e.data['folderId']); } },
-			  { text: '删除', onclick: function (e) { delFolder(e.data['folderId'], currentFolderId); } },
+			  { text: '删除', onclick: function (e) { delFolderPop(e.data['folderId']); } },
 			  { text: '重命名', onclick: function (e) { editFolder(e.data['folderId']); } },
 			  { divider: true },
 			  { text: '设置权限', onclick: function (e) { editFolderPermission(e.data['folderId']) } }
@@ -132,10 +144,10 @@
 			  { text: '预览', onclick: function (e) { preview(e.data['fileId']); } },
 			  { text: '重命名', onclick: function (e) { editFile(e.data['fileId']); } },
 			  { text: '下载', onclick: function (e) { download(e.data['filePath']); } },
-			  { text: '删除', onclick: function (e) { delFile(e.data['fileId']); } },
+			  { text: '删除', onclick: function (e) { delFilePop(e.data['fileId']); } },
 			  { divider: true },
 			  { text: '发送到', onclick: function (e) { sendToFolder(e.data['fileId']); } },
-			    { text: '设置权限', onclick: function (e) { } }
+			  { text: '设置权限', onclick: function (e) { editFilePermission(e.data['fileId']) } }
 			]
 		};
 
@@ -181,16 +193,16 @@
 			showFolderFiles(folderId);
 		}
 
-		function delFolder(folderId, currentFolderId) {
-			if (confirm("@Success.Folder.CONFIRM_DELETE")) {
-				$.post('@Url.Action("Delete", "ShareFolder")', { id: folderId }, function () {
-					loadData(function () {
-						bindLeftNav();
-						showFolderFiles(currentFolderId);
-						bindUpClick();
-					}, { parentId: '@ThisApp.DefaultId', phrase: '' });
-				});
-			}
+		function delFolderPop(folderId) {
+			$('#modelProxy')
+				.data('url', '@Url.Action("Delete","ShareFolder")?id=' + folderId)
+				.trigger('click');
+		}
+
+		function delFilePop(folderId) {
+			$('#modelProxy')
+				.data('url', '@Url.Action("Delete","ShareFolder")?id=' + folderId)
+				.trigger('click');
 		}
 
 		function editFolder(folderId) {
@@ -199,9 +211,16 @@
 				.trigger('click');
 		}
 
-		function editFolderPermission(folderId, fileId) {
+		function editFolderPermission(folderId) {
 			$('#modelProxy')
 			.data('url', '@Url.Action("SetFolderPermission", "ShareFolder")?id=' + folderId)
+			.trigger('click');
+		}
+
+		function editFilePermission(fileId)
+		{
+			$('#modelProxy')
+			.data('url', '@Url.Action("SetFilePermission", "ShareFolder")?id='+ fileId)
 			.trigger('click');
 		}
 
@@ -231,14 +250,6 @@
 			return parent;
 		}
 
-		//files operation
-		function delFile(fileId) {
-			if (confirm("@Success.File.CONFIRM_DELETE")) {
-				$.post('@Url.Action("DelFile", "ShareFolder")', { id: fileId, folderId: currentFolderId }, function (data) {
-					$('#' + fileId).remove();
-				});
-			}
-		}
 
 		function showFolderFiles(folderId) {
 			var itemStr = '';
@@ -353,7 +364,7 @@
 							'action': function (data) {
 								var inst = jQuery.jstree.reference(data.reference);
 								var obj = inst.get_node(data.reference);
-								delFolder(obj.id, root.id);
+								delFolderPop(obj.id);
 							}
 						},
 						'rename': {
@@ -370,7 +381,7 @@
 								var inst = jQuery.jstree.reference(data.reference);
 								var obj = inst.get_node(data.reference);
 								fileId = '@Guid.Empty';
-								editFolderPermission(obj.id, fileId)
+								editFolderPermission(obj.id)
 							}
 						}
 						,

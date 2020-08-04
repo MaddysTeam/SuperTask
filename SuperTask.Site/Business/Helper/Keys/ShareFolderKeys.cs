@@ -22,7 +22,8 @@ namespace Business.Helper
       public static Guid DownloadPermission = Guid.Parse("b8f89e4e-c846-493e-976c-d8e0e0e77082");
       public static Guid EditPermission = Guid.Parse("8b249852-3683-4a71-94aa-b3def9c0c8d9");
       public static Guid UploadPermission = Guid.Parse("436e99a9-0ba0-49d0-97cc-6fb56a163d6d");
+	  public static Guid DeletePermission = Guid.Parse("f20369d4-c645-4afa-9dcc-3ca32c5a4e6b");
 
-   }
+	}
 
 }

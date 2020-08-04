@@ -2056,6 +2056,9 @@
     <Content Include="Views\Bug\_multipleRelative.cshtml" />
     <Content Include="Views\Require\_hurryup.cshtml" />
     <Content Include="Views\ShareFolder\_permission.cshtml" />
+    <Content Include="Views\ShareFolder\_noPermission.cshtml" />
+    <Content Include="Views\ShareFolder\_deleteFolder.cshtml" />
+    <Content Include="Views\ShareFolder\_deleteFile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

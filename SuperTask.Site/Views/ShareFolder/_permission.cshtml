@@ -1,6 +1,6 @@
 ﻿@model FolderPemissionViewModel
 @{
-
+	var submitUrl = Model.FileId.IsEmpty() ? @Url.Action("SetFolderPermission", "ShareFolder") : @Url.Action("SetFilePermission", "ShareFolder");
 }
 <link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
 <div class="modal-dialog modal-lg">
@@ -15,23 +15,33 @@
 		</div>
 		<div class="widget-content">
 
-			<form class="form-horizontal" action="@Url.Action("SetPermission", "ShareFolder")" role="form" data-after-success="afterDialogSuccess()">
+			<form class="form-horizontal" action="@submitUrl" role="form" data-after-success="afterDialogSuccess()">
 				<div class="row">
 					<fieldset class="col-sm-9">
 						@Html.HiddenFor(f => f.FolderId)
 						@Html.HiddenFor(f => f.PermissionIds)
 						@Html.HiddenFor(f => f.UserIds)
+						@Html.HiddenFor(f => f.FileId)
 
-						<div class="form-group">
-							@Html.LabelFor(f => f.FolderName, new { @class = "control-label col-md-3" })
-							<div class="col-md-9">
-								@Html.Label(Model.FolderName, new { @class = "form-control" })
-							</div>
-						</div>
 
-						@if (!Model.FolderId.IsEmpty())
+						@if (!Model.FileId.IsEmpty())
 						{
+							<div class="form-group">
+								@Html.LabelFor(f => f.FileName, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.Label(Model.FileName, new { @class = "form-control" })
+								</div>
+							</div>
 
+						}
+						else
+						{
+							<div class="form-group">
+								@Html.LabelFor(f => f.FolderName, new { @class = "control-label col-md-3" })
+								<div class="col-md-9">
+									@Html.Label(Model.FolderName, new { @class = "form-control" })
+								</div>
+							</div>
 						}
 
 						<div class="form-group">
@@ -92,8 +102,6 @@
 		ajaxSubmitForm($('.modal-dialog form'));
 
 		$('#submit').click(function () {
-			alert($('#permissions').val());
-			alert($('#users').val());
 			$('#PermissionIds').val($('#permissions').val());
 			$('#UserIds').val($('#users').val());
 		});

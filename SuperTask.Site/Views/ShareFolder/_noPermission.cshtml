@@ -1,0 +1,19 @@
+﻿@model string
+
+<link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
+<div class="modal-dialog modal-lg">
+
+	<!-- widget -->
+	<div class="widget">
+		<div class="widget-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4>错误</h4>
+			</div>
+			<div class="alert alert-danger">
+				@Model
+			</div>
+		</div>
+	</div>
+	<!-- end widget -->
+</div>

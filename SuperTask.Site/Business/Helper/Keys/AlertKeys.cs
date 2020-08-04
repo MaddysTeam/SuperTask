@@ -173,25 +173,41 @@ namespace Business.Helper
 			public const string TASKS_OUT_OF_PROJECT_RANGE = "任务时间范围不能超过项目时间范围";
 		}
 
-      public class Files
-      {
-         public const string DUPLICATE_FILE_NAME = "已有重复的文件名称！";
-      }
+		public class Files
+		{
+			public const string DUPLICATE_FILE_NAME = "已有重复的文件名称！";
+			public const string FILE_ID_IS_REQUIRED = "文件ID不能为空！";
+		}
 
-      public class Bug
-      {
-         public const string MUST_SELECT_PROJECT = "必须选择项目";
-      }
+		public class Bug
+		{
+			public const string MUST_SELECT_PROJECT = "必须选择项目";
+		}
 
-      public class Require
-      {
+		public class Require
+		{
 
-      }
+		}
 
-      public class Publish
-      {
+		public class Publish
+		{
 
-      }
+		}
+
+		public class FolderPermission
+		{
+			public const string NOT_ALLOWED_SEARCH= "抱歉，没有搜索该文件夹权限";
+			public const string NOT_ALLOWED_EDIT = "抱歉，没有编辑该文件夹权限";
+			public const string NOT_ALLOWED_DELETE = "抱歉，没有删除该文件夹权限";
+			public const string NOT_ALLOWED_UPLOAD = "抱歉，没有上传文件权限";
+		}
+
+		public class FilePermission
+		{
+			public const string NOT_ALLOWED_EDIT = "抱歉，没有编辑该文件权限";
+			public const string NOT_ALLOWED_DELETE = "抱歉，没有删除该文件权限";
+			public const string NOT_ALLOWED_PREVIEW = "抱歉，没有该文件的预览权限";
+		}
 
 	}
 
@@ -259,8 +275,8 @@ namespace Business.Helper
 		{
 			public const string CONFIRM_DELETE = "确定要删除该文件？";
 			public const string DELETE_SUCCESS = "文件删除成功！";
-         public const string EDIT_SUCCESS = "操作成功！";
-      }
+			public const string EDIT_SUCCESS = "操作成功！";
+		}
 
 
 		public class Folder
@@ -291,10 +307,10 @@ namespace Business.Helper
 			public const string EDITSUCCESS = "编辑成功";
 		}
 
-      public class Bug
-      {
-         public const string EDITSUCCESS = "编辑成功";
-      }
+		public class Bug
+		{
+			public const string EDITSUCCESS = "编辑成功";
+		}
 
 	}
 

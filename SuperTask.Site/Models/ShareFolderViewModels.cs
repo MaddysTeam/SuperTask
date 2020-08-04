@@ -44,6 +44,8 @@ namespace TheSite.Models
       public bool IsRecusive { get; set; }
 	  [Display(Name ="文件夹")]
       public string FolderName { get; set; }
+	  [Display(Name ="文件名")]
+	  public string FileName { get; set; }
 
       public bool IsFolder => FileId.IsEmpty() && !FolderId.IsEmpty();
       public bool IsFile => !FileId.IsEmpty();
