@@ -158,21 +158,10 @@ namespace TheSite.Controllers
       public ActionResult Edit(Bug bug, FormCollection collection)
       {
          if (!ModelState.IsValid)
-         {
-            return Json(new
-            {
-               result = AjaxResults.Error
-            });
-         }
+            return Json(new { result = AjaxResults.Error, msg = ModelState.ShowErrorMessages() });
 
          if (bug.Projectid == BugKeys.SelectAll)
-         {
-            return Json(new
-            {
-               msg = Errors.Bug.MUST_SELECT_PROJECT,
-               result = AjaxResults.Error
-            });
-         }
+            return Json(new { msg = Errors.Bug.MUST_SELECT_PROJECT, result = AjaxResults.Error });
 
          var user = GetUserInfo();
 
@@ -199,12 +188,11 @@ namespace TheSite.Controllers
                db.BugDal.Update(bug);
             }
 
-
             // add attachment
             Attachment attachment = AttachmentHelper.UploadBugsAttachment(bug, user.UserId, db);
 
             // upload file to project folder
-            ProjectHelper.UploadFileToProjectFolder(bug.Projectid,ShareFolderKeys.TestType, attachment.AttachmentId, user.UserId, db);
+            ProjectHelper.UploadFileToProjectFolder(bug.Projectid, ShareFolderKeys.TestType, attachment.AttachmentId, user.UserId, db);
 
             //add user to project resurce if not exits
             ResourceHelper.AddUserToResourceIfNotExist(bug.Projectid, Guid.Empty, bug.ManagerId, ResourceKeys.OtherType, db);
@@ -221,11 +209,7 @@ namespace TheSite.Controllers
          {
             db.Rollback();
 
-            return Json(new
-            {
-               result = AjaxResults.Error,
-               msg = e.Message
-            });
+            return Json(new { result = AjaxResults.Error, msg = e.Message });
          }
 
          return Json(new
@@ -297,8 +281,7 @@ namespace TheSite.Controllers
       public ActionResult Resolve(BugResolveViewModel model)
       {
          if (!ModelState.IsValid)
-            return Json(new { result = AjaxResults.Error });
-
+            return Json(new { result = AjaxResults.Error, msg = ModelState.ShowErrorMessages() });
 
          if (model != null && !model.Id.IsEmptyOrNull())
          {
@@ -374,13 +357,7 @@ namespace TheSite.Controllers
       public ActionResult Confirm(BugConfrimViewModel model)
       {
          if (!ModelState.IsValid)
-         {
-            return Json(new
-            {
-               result = AjaxResults.Error
-            });
-         }
-
+            return Json(new { result = AjaxResults.Error, msg = ModelState.ShowErrorMessages() });
 
          if (model != null && !model.Id.IsEmptyOrNull())
          {
@@ -450,12 +427,7 @@ namespace TheSite.Controllers
       public ActionResult Relative(OperationViewModel model)
       {
          if (!ModelState.IsValid || !model.IsValid())
-         {
-            return Json(new
-            {
-               result = AjaxResults.Error
-            });
-         }
+            return Json(new { result = AjaxResults.Error, msg = ModelState.ShowErrorMessages() });
 
          Guid assignId = GetUserInfo().UserId;
 

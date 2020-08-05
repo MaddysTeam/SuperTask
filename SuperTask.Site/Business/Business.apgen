@@ -909,10 +909,10 @@
 			<table name="FolderPermission">
 				<columns>
 					
-					<add name="FolderId"  columnName="FolderId" type="Guid" primaryKey="true" display="文件夹ID" />
-					<add name="FileId" columnName="FileId" type="Guid" primaryKey="true"></add>
-					<add name="UserId"  columnName="UserId" type="Guid" primaryKey="true" display="文件夹ID" />
-					<add name="PermissionId"  columnName="PermissionId" type="Guid" primaryKey="true" display="文件夹ID" />
+					<add name="FolderId"  columnName="FolderId" type="Guid" display="文件夹ID" />
+					<add name="FileId" columnName="FileId" type="Guid" ></add>
+					<add name="UserId"  columnName="UserId" type="Guid" display="文件夹ID" />
+					<add name="PermissionId"  columnName="PermissionId" type="Guid"  display="文件夹ID" />
 					
 				</columns>
 			</table>

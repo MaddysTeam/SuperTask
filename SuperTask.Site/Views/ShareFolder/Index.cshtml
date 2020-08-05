@@ -1,8 +1,6 @@
 ﻿@model Guid
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	//var projectId = string.IsNullOrEmpty(Request["projectId"])? Guid.Empty: Request["projectId"].ToGuid(Guid.Empty);
-	//var hasSearchPermission = ViewBag.HasPermission ?? true;
 
 }
 @section Css{
@@ -110,7 +108,7 @@
 
 			bindExplorButtons();
 
-			var para = { parentId: '@Model', phrase: '' };
+			var para = { parentId: '@Model',  projectId:'@Request["projectId"]', phrase: '' };
 
 			loadData(function () {
 				bindLeftNav();
@@ -208,10 +206,9 @@
 			.trigger('click');
 		}
 
-		function editFilePermission(fileId)
-		{
+		function editFilePermission(fileId) {
 			$('#modelProxy')
-			.data('url', '@Url.Action("SetFilePermission", "ShareFolder")?id='+ fileId)
+			.data('url', '@Url.Action("SetFilePermission", "ShareFolder")?id=' + fileId)
 			.trigger('click');
 		}
 

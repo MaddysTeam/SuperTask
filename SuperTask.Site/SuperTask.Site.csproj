@@ -301,6 +301,7 @@
     <Compile Include="Business\Extensions\ListExtensions.cs" />
     <Compile Include="Business\Extensions\HtmlExtensions.cs" />
     <Compile Include="Business\Extensions\HttpContextBaseExtensions.cs" />
+    <Compile Include="Business\Extensions\ModelStateExtensions.cs" />
     <Compile Include="Business\Extensions\PicklistAPRptColumnExtensions.cs" />
     <Compile Include="Business\Extensions\DictionaryExtension.cs" />
     <Compile Include="Business\Extensions\StreamExtension.cs" />

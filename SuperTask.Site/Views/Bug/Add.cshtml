@@ -55,8 +55,8 @@
 							<div class="form-group">
 								@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2" })
 								<div class="col-md-2">
-									@Html.DropDownList("ManagerId",
-									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == Model.ManagerId.ToString(), SelectListHelper.Default),
+									@Html.DropDownListFor(x=>x.ManagerId,
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
 									new { @class = "form-control" })
 								</div>
 								@Html.ValidationMessageFor(t => t.ManagerId)
