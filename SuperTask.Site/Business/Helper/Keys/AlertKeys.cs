@@ -200,6 +200,7 @@ namespace Business.Helper
 			public const string NOT_ALLOWED_EDIT = "抱歉，没有编辑该文件夹权限";
 			public const string NOT_ALLOWED_DELETE = "抱歉，没有删除该文件夹权限";
 			public const string NOT_ALLOWED_UPLOAD = "抱歉，没有上传文件权限";
+			public const string NOT_ALLOWED_SET_PERMISSION = "抱歉，无法设置该文件夹的权限";
 		}
 
 		public class FilePermission
@@ -207,6 +208,7 @@ namespace Business.Helper
 			public const string NOT_ALLOWED_EDIT = "抱歉，没有编辑该文件权限";
 			public const string NOT_ALLOWED_DELETE = "抱歉，没有删除该文件权限";
 			public const string NOT_ALLOWED_PREVIEW = "抱歉，没有该文件的预览权限";
+			public const string NOT_ALLOWED_SET_PERMISSION = "抱歉，无法设置该文件的权限";
 		}
 
 	}

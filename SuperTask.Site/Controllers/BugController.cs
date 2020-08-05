@@ -204,7 +204,7 @@ namespace TheSite.Controllers
             Attachment attachment = AttachmentHelper.UploadBugsAttachment(bug, user.UserId, db);
 
             // upload file to project folder
-            ProjectrHelper.UploadFileToProjectFolder(ShareFolderKeys.TestType, attachment.AttachmentId, db);
+            ProjectHelper.UploadFileToProjectFolder(bug.Projectid,ShareFolderKeys.TestType, attachment.AttachmentId, user.UserId, db);
 
             //add user to project resurce if not exits
             ResourceHelper.AddUserToResourceIfNotExist(bug.Projectid, Guid.Empty, bug.ManagerId, ResourceKeys.OtherType, db);
@@ -517,7 +517,7 @@ namespace TheSite.Controllers
 
       }
 
-      private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedProjects(GetUserInfo().UserId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus & p.ProjectStatus != ProjectKeys.DeleteStatus);
+      private List<Project> MyJoinedProjects() => ProjectHelper.UserJoinedProjects(GetUserInfo().UserId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus & p.ProjectStatus != ProjectKeys.DeleteStatus);
 
       private OperationViewModel MappingOperationViewModel(Bug bug, Guid operationTypeId)
       {

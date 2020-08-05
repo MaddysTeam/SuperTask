@@ -132,7 +132,7 @@ namespace TheSite.Controllers
       public ActionResult Start(Guid id)
       {
          var task = db.ProjectStoneTaskDal.PrimaryGet(id);
-         var pj = ProjectrHelper.GetCurrentProject(task.ProjectId);
+         var pj = ProjectHelper.GetCurrentProject(task.ProjectId);
          Result re = new Result { IsSuccess = true, Msg = Success.StoneTask.EDITSUCCESS };
 
          if (pj.IsPlanStatus || pj.IsEditStatus)
@@ -179,7 +179,7 @@ namespace TheSite.Controllers
       {
          var f = APDBDef.Folder;
 
-         var project = ProjectrHelper.GetCurrentProject(projectId);
+         var project = ProjectHelper.GetCurrentProject(projectId);
          var attachment = new Attachment();
          attachment.ItemId = taskId;
          attachment.Projectid = projectId;

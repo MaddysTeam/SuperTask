@@ -5067,6 +5067,8 @@ namespace Business {
             
             private GuidAPColumnDef _v2Level;
             
+            private GuidAPColumnDef _v2Type;
+            
             private GuidAPColumnDef _taskFileType;
             
             private Int32APColumnDef _serviceCount;
@@ -5399,6 +5401,19 @@ namespace Business {
             }
             
             /// <summary>
+            /// V2Type ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef V2Type {
+                get {
+                    if (Object.ReferenceEquals(_v2Type, null)) {
+                        _v2Type = new GuidAPColumnDef(this, "V2Type", true);
+                        _v2Type.Display = "V2Type";
+                    }
+                    return _v2Type;
+                }
+            }
+            
+            /// <summary>
             /// TaskFileType ColumnDef
             /// </summary>
             public virtual GuidAPColumnDef TaskFileType {
@@ -5507,6 +5522,7 @@ namespace Business {
                 data.SortId = SortId.GetValue<int>(reader, throwIfValidColumnName);
                 data.IsParent = IsParent.GetValue<bool>(reader, throwIfValidColumnName);
                 data.V2Level = V2Level.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.V2Type = V2Type.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.TaskFileType = TaskFileType.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.ServiceCount = ServiceCount.GetValue<int>(reader, throwIfValidColumnName);
                 data.StandardItemId = StandardItemId.GetValue<System.Guid>(reader, throwIfValidColumnName);
@@ -15017,7 +15033,7 @@ namespace Business {
             /// 添加数据。
             /// </summary>
             public virtual void Insert(WorkTask data) {
-                var query = APQuery.insert(APDBDef.WorkTask).values(APDBDef.WorkTask.TaskId.SetValue(data.TaskId), APDBDef.WorkTask.Projectid.SetValue(data.Projectid), APDBDef.WorkTask.TaskName.SetValue(data.TaskName), APDBDef.WorkTask.Description.SetValue(data.Description), APDBDef.WorkTask.TaskType.SetValue(data.TaskType), APDBDef.WorkTask.TaskLevel.SetValue(data.TaskLevel), APDBDef.WorkTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.WorkTask.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.WorkTask.ParentId.SetValue(data.ParentId), APDBDef.WorkTask.WorkHours.SetValue(data.WorkHours), APDBDef.WorkTask.EstimateWorkHours.SetValue(data.EstimateWorkHours), APDBDef.WorkTask.ManagerId.SetValue(data.ManagerId), APDBDef.WorkTask.CreatorId.SetValue(data.CreatorId), APDBDef.WorkTask.ReviewerID.SetValue(data.ReviewerID), APDBDef.WorkTask.StartDate.SetValue(data.StartDate), APDBDef.WorkTask.EndDate.SetValue(data.EndDate), APDBDef.WorkTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.WorkTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.WorkTask.CreateDate.SetValue(data.CreateDate), APDBDef.WorkTask.CloseDate.SetValue(data.CloseDate), APDBDef.WorkTask.ModifyDate.SetValue(data.ModifyDate), APDBDef.WorkTask.SortId.SetValue(data.SortId), APDBDef.WorkTask.IsParent.SetValue(data.IsParent), APDBDef.WorkTask.V2Level.SetValue(data.V2Level), APDBDef.WorkTask.TaskFileType.SetValue(data.TaskFileType), APDBDef.WorkTask.ServiceCount.SetValue(data.ServiceCount), APDBDef.WorkTask.StandardItemId.SetValue(data.StandardItemId), APDBDef.WorkTask.SubTypeId.SetValue(data.SubTypeId), APDBDef.WorkTask.SubTypeValue.SetValue(data.SubTypeValue));
+                var query = APQuery.insert(APDBDef.WorkTask).values(APDBDef.WorkTask.TaskId.SetValue(data.TaskId), APDBDef.WorkTask.Projectid.SetValue(data.Projectid), APDBDef.WorkTask.TaskName.SetValue(data.TaskName), APDBDef.WorkTask.Description.SetValue(data.Description), APDBDef.WorkTask.TaskType.SetValue(data.TaskType), APDBDef.WorkTask.TaskLevel.SetValue(data.TaskLevel), APDBDef.WorkTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.WorkTask.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.WorkTask.ParentId.SetValue(data.ParentId), APDBDef.WorkTask.WorkHours.SetValue(data.WorkHours), APDBDef.WorkTask.EstimateWorkHours.SetValue(data.EstimateWorkHours), APDBDef.WorkTask.ManagerId.SetValue(data.ManagerId), APDBDef.WorkTask.CreatorId.SetValue(data.CreatorId), APDBDef.WorkTask.ReviewerID.SetValue(data.ReviewerID), APDBDef.WorkTask.StartDate.SetValue(data.StartDate), APDBDef.WorkTask.EndDate.SetValue(data.EndDate), APDBDef.WorkTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.WorkTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.WorkTask.CreateDate.SetValue(data.CreateDate), APDBDef.WorkTask.CloseDate.SetValue(data.CloseDate), APDBDef.WorkTask.ModifyDate.SetValue(data.ModifyDate), APDBDef.WorkTask.SortId.SetValue(data.SortId), APDBDef.WorkTask.IsParent.SetValue(data.IsParent), APDBDef.WorkTask.V2Level.SetValue(data.V2Level), APDBDef.WorkTask.V2Type.SetValue(data.V2Type), APDBDef.WorkTask.TaskFileType.SetValue(data.TaskFileType), APDBDef.WorkTask.ServiceCount.SetValue(data.ServiceCount), APDBDef.WorkTask.StandardItemId.SetValue(data.StandardItemId), APDBDef.WorkTask.SubTypeId.SetValue(data.SubTypeId), APDBDef.WorkTask.SubTypeValue.SetValue(data.SubTypeValue));
                 ExecuteNonQuery(query);
             }
             
@@ -15025,7 +15041,7 @@ namespace Business {
             /// 更新数据。
             /// </summary>
             public virtual void Update(WorkTask data) {
-                var query = APQuery.update(APDBDef.WorkTask).values(APDBDef.WorkTask.Projectid.SetValue(data.Projectid), APDBDef.WorkTask.TaskName.SetValue(data.TaskName), APDBDef.WorkTask.Description.SetValue(data.Description), APDBDef.WorkTask.TaskType.SetValue(data.TaskType), APDBDef.WorkTask.TaskLevel.SetValue(data.TaskLevel), APDBDef.WorkTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.WorkTask.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.WorkTask.ParentId.SetValue(data.ParentId), APDBDef.WorkTask.WorkHours.SetValue(data.WorkHours), APDBDef.WorkTask.EstimateWorkHours.SetValue(data.EstimateWorkHours), APDBDef.WorkTask.ManagerId.SetValue(data.ManagerId), APDBDef.WorkTask.CreatorId.SetValue(data.CreatorId), APDBDef.WorkTask.ReviewerID.SetValue(data.ReviewerID), APDBDef.WorkTask.StartDate.SetValue(data.StartDate), APDBDef.WorkTask.EndDate.SetValue(data.EndDate), APDBDef.WorkTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.WorkTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.WorkTask.CreateDate.SetValue(data.CreateDate), APDBDef.WorkTask.CloseDate.SetValue(data.CloseDate), APDBDef.WorkTask.ModifyDate.SetValue(data.ModifyDate), APDBDef.WorkTask.SortId.SetValue(data.SortId), APDBDef.WorkTask.IsParent.SetValue(data.IsParent), APDBDef.WorkTask.V2Level.SetValue(data.V2Level), APDBDef.WorkTask.TaskFileType.SetValue(data.TaskFileType), APDBDef.WorkTask.ServiceCount.SetValue(data.ServiceCount), APDBDef.WorkTask.StandardItemId.SetValue(data.StandardItemId), APDBDef.WorkTask.SubTypeId.SetValue(data.SubTypeId), APDBDef.WorkTask.SubTypeValue.SetValue(data.SubTypeValue)).where((APDBDef.WorkTask.TaskId == data.TaskId));
+                var query = APQuery.update(APDBDef.WorkTask).values(APDBDef.WorkTask.Projectid.SetValue(data.Projectid), APDBDef.WorkTask.TaskName.SetValue(data.TaskName), APDBDef.WorkTask.Description.SetValue(data.Description), APDBDef.WorkTask.TaskType.SetValue(data.TaskType), APDBDef.WorkTask.TaskLevel.SetValue(data.TaskLevel), APDBDef.WorkTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.WorkTask.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.WorkTask.ParentId.SetValue(data.ParentId), APDBDef.WorkTask.WorkHours.SetValue(data.WorkHours), APDBDef.WorkTask.EstimateWorkHours.SetValue(data.EstimateWorkHours), APDBDef.WorkTask.ManagerId.SetValue(data.ManagerId), APDBDef.WorkTask.CreatorId.SetValue(data.CreatorId), APDBDef.WorkTask.ReviewerID.SetValue(data.ReviewerID), APDBDef.WorkTask.StartDate.SetValue(data.StartDate), APDBDef.WorkTask.EndDate.SetValue(data.EndDate), APDBDef.WorkTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.WorkTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.WorkTask.CreateDate.SetValue(data.CreateDate), APDBDef.WorkTask.CloseDate.SetValue(data.CloseDate), APDBDef.WorkTask.ModifyDate.SetValue(data.ModifyDate), APDBDef.WorkTask.SortId.SetValue(data.SortId), APDBDef.WorkTask.IsParent.SetValue(data.IsParent), APDBDef.WorkTask.V2Level.SetValue(data.V2Level), APDBDef.WorkTask.V2Type.SetValue(data.V2Type), APDBDef.WorkTask.TaskFileType.SetValue(data.TaskFileType), APDBDef.WorkTask.ServiceCount.SetValue(data.ServiceCount), APDBDef.WorkTask.StandardItemId.SetValue(data.StandardItemId), APDBDef.WorkTask.SubTypeId.SetValue(data.SubTypeId), APDBDef.WorkTask.SubTypeValue.SetValue(data.SubTypeValue)).where((APDBDef.WorkTask.TaskId == data.TaskId));
                 ExecuteNonQuery(query);
             }
             
@@ -33953,9 +33969,14 @@ namespace Business {
         private bool _isParent;
         
         /// <summary>
-        /// 排序Id
+        /// 任务级别V2
         /// </summary>
         private System.Guid _v2Level;
+        
+        /// <summary>
+        /// 任务类型V2
+        /// </summary>
+        private System.Guid _v2Type;
         
         /// <summary>
         /// TaskFileType
@@ -34016,6 +34037,7 @@ namespace Business {
                     int sortId, 
                     bool isParent, 
                     System.Guid v2Level, 
+                    System.Guid v2Type, 
                     System.Guid taskFileType, 
                     int serviceCount, 
                     System.Guid standardItemId, 
@@ -34045,6 +34067,7 @@ namespace Business {
             _sortId = sortId;
             _isParent = isParent;
             _v2Level = v2Level;
+            _v2Type = v2Type;
             _taskFileType = taskFileType;
             _serviceCount = serviceCount;
             _standardItemId = standardItemId;
@@ -34560,7 +34583,7 @@ namespace Business {
         }
         
         /// <summary>
-        /// 排序Id
+        /// 任务级别V2
         /// </summary>
         public virtual System.Guid V2Level {
             get {
@@ -34572,11 +34595,32 @@ namespace Business {
         }
         
         /// <summary>
-        /// 排序Id APColumnDef
+        /// 任务级别V2 APColumnDef
         /// </summary>
         public static GuidAPColumnDef V2LevelDef {
             get {
                 return APDBDef.WorkTask.V2Level;
+            }
+        }
+        
+        /// <summary>
+        /// 任务类型V2
+        /// </summary>
+        public virtual System.Guid V2Type {
+            get {
+                return _v2Type;
+            }
+            set {
+                _v2Type = value;
+            }
+        }
+        
+        /// <summary>
+        /// 任务类型V2 APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef V2TypeDef {
+            get {
+                return APDBDef.WorkTask.V2Type;
             }
         }
         
@@ -34736,6 +34780,7 @@ namespace Business {
             SortId = data.SortId;
             IsParent = data.IsParent;
             V2Level = data.V2Level;
+            V2Type = data.V2Type;
             TaskFileType = data.TaskFileType;
             ServiceCount = data.ServiceCount;
             StandardItemId = data.StandardItemId;
@@ -34817,6 +34862,9 @@ namespace Business {
                 return false;
             }
             if ((V2Level != data.V2Level)) {
+                return false;
+            }
+            if ((V2Type != data.V2Type)) {
                 return false;
             }
             if ((TaskFileType != data.TaskFileType)) {
@@ -34955,12 +35003,13 @@ namespace Business {
                     int sortId, 
                     bool isParent, 
                     System.Guid v2Level, 
+                    System.Guid v2Type, 
                     System.Guid taskFileType, 
                     int serviceCount, 
                     System.Guid standardItemId, 
                     System.Guid subTypeId, 
                     double subTypeValue) : 
-                base(taskId, projectid, taskName, description, taskType, taskLevel, taskStatus, rateOfProgress, parentId, workHours, estimateWorkHours, managerId, creatorId, reviewerID, startDate, endDate, realStartDate, realEndDate, createDate, closeDate, modifyDate, sortId, isParent, v2Level, taskFileType, serviceCount, standardItemId, subTypeId, subTypeValue) {
+                base(taskId, projectid, taskName, description, taskType, taskLevel, taskStatus, rateOfProgress, parentId, workHours, estimateWorkHours, managerId, creatorId, reviewerID, startDate, endDate, realStartDate, realEndDate, createDate, closeDate, modifyDate, sortId, isParent, v2Level, v2Type, taskFileType, serviceCount, standardItemId, subTypeId, subTypeValue) {
         }
     }
     

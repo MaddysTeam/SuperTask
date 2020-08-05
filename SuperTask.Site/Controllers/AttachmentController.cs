@@ -131,11 +131,12 @@ namespace TheSite.Controllers
                url = savepath + "/" + fileName,
             });
          }
-         catch (Exception ex)
+         catch (Exception e)
          {
             return Json(new
             {
-               uploaded = 0
+               uploaded = 0,
+			   msg=e.Message
             });
          }
       }

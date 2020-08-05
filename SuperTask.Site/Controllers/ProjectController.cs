@@ -148,7 +148,7 @@ namespace TheSite.Controllers
 		[HttpPost]
 		public ActionResult Edit(Project project)
 		{
-			var orignal = ProjectrHelper.GetCurrentProject(project.ProjectId, db, true);
+			var orignal = ProjectHelper.GetCurrentProject(project.ProjectId, db, true);
 			var option = new ProjectEditOption { CurrentUser = GetUserInfo(), db = db, Status = project.ProjectStatus, Orignal = orignal };
 			HandleManager.ProjectEditHandlers[ProjectKeys.DefaultProjectType].Handle(project, option);
 
@@ -250,7 +250,7 @@ namespace TheSite.Controllers
 
 		public ActionResult ReviewRequest(Guid id)
 		{
-			var project = ProjectrHelper.GetCurrentProject(id);
+			var project = ProjectHelper.GetCurrentProject(id);
 			var review = new Review
 			{
 				ProjectId = project.ProjectId,

@@ -25,7 +25,7 @@ namespace TheSite.Controllers
 
       public ActionResult Search()
       {
-         ViewBag.Projects = ProjectrHelper.UserJoinedProjects(GetUserInfo().UserId, db);
+         ViewBag.Projects = ProjectHelper.UserJoinedProjects(GetUserInfo().UserId, db);
 
          return View();
       }

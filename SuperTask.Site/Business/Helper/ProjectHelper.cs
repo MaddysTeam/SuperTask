@@ -7,7 +7,7 @@ using System.Linq;
 namespace Business.Helper
 {
 
-	public static class ProjectrHelper
+	public static class ProjectHelper
 	{
 		/// <summary>
 		/// 某用户参与的所有项目
@@ -20,7 +20,7 @@ namespace Business.Helper
 			var p = APDBDef.Project;
 			var re = APDBDef.Resource;
 
-			var projects = APQuery.select(p.ProjectId, p.ProjectName,p.CreateDate)
+			var projects = APQuery.select(p.ProjectId, p.ProjectName, p.CreateDate)
 				   .from(p,
 						 re.JoinInner(re.Projectid == p.ProjectId & re.UserId == userId))
 						 .order_by(p.CreateDate.Desc)
@@ -41,9 +41,9 @@ namespace Business.Helper
 		/// <param name="userId">用户id</param>
 		/// <param name="db"></param>
 		/// <returns></returns>
-		public static List<Project> UserJoinedAvailableProject(Guid userId,APDBDef db) =>
+		public static List<Project> UserJoinedAvailableProject(Guid userId, APDBDef db) =>
 			UserJoinedProjects(userId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus & p.ProjectStatus != ProjectKeys.DeleteStatus);
-	
+
 
 		/// <summary>
 		/// 通过项目id获取当前的项目数据
@@ -75,23 +75,50 @@ namespace Business.Helper
 		}
 
 
-      public static void CreateProjectFolders(Guid operatorId, APDBDef db)
-      {
-         //project.FolderId, project.ProjectName, ShareFolderKeys.RootProjectFolderId,
-         // add folders with its type 
-      }
+		public static List<Folder> CreateProjectFolders(Guid projectId, Guid operatorId, APDBDef db)
+		{
+			List<Folder> folders = new List<Folder>();
+			Project project = GetCurrentProject(projectId);
+			if (project == null || operatorId.IsEmpty())
+				throw new ArgumentException("project cannot be null");
 
-      /// <summary>
-      ///  upload file to folder for specially type . for example: bug files shold be upload to test type folder
-      /// </summary>
-      /// <param name="folderTypeId"></param>
-      /// <param name="fileId"></param>
-      /// <param name="db"></param>
-      public static void UploadFileToProjectFolder(Guid folderTypeId,Guid fileId, APDBDef db)
-      {
-         //ShareFolderHelper.UploadFolderFile()
-      }
+			var projectRootFolder = Folder.PrimaryGet(project.FolderId);
+			if(projectRootFolder==null)
+				folders.Add(
+				ShareFolderHelper.CreateFolder(Guid.NewGuid(), project.ProjectName, projectRootFolder.FolderId, ShareFolderKeys.ProjectType, operatorId, db)
+				);
+		
+			var projectFolderTypes = DictionaryHelper.GetSubTypeDics(ShareFolderKeys.ProjectType);
+			foreach (var item in projectFolderTypes)
+			{
+				folders.Add(
+				ShareFolderHelper.CreateFolder(Guid.NewGuid(), item.Title, projectRootFolder.FolderId, item.ID, operatorId, db)
+				);
+			}
 
-   }
+			return folders;
+		}
+
+		/// <summary>
+		///  upload file to folder for specially type . for example: bug files shold be upload to test type folder
+		/// </summary>
+		/// <param name="folderTypeId"></param>
+		/// <param name="fileId"></param>
+		/// <param name="db"></param>
+		public static void UploadFileToProjectFolder(Guid projectId, Guid folderTypeId, Guid fileId, Guid operatorId, APDBDef db)
+		{
+			if (projectId.IsEmpty() || folderTypeId.IsEmpty() || fileId.IsEmpty())
+				return;
+
+			var project = GetCurrentProject(projectId,db);
+			var subFolders = ShareFolderHelper.GetSubFolders(project.FolderId, db);
+			if (subFolders == null || subFolders.Count <= 0)
+				subFolders = CreateProjectFolders(projectId, operatorId, db);
+
+			var folder = subFolders.Find(x => x.FolderType == folderTypeId);
+			ShareFolderHelper.UploadFolderFile(folder.FolderId, fileId, db);
+		}
+
+	}
 
 }

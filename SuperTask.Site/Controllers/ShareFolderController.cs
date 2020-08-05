@@ -33,7 +33,7 @@ namespace TheSite.Controllers
 				return View(Guid.Empty);
 			}
 
-			var project = ProjectrHelper.GetCurrentProject(projectId.Value);
+			var project = ProjectHelper.GetCurrentProject(projectId.Value);
 
 			return View(project.FolderId);
 		}
@@ -51,19 +51,21 @@ namespace TheSite.Controllers
 			{
 				folders.AddRange(parents.Concat(children));
 			}
-			else //如果没有子文件夹则向上搜索
+			if (!parentId.IsEmpty()) //如果不是root再找其祖先节点
 			{
 				var currentFolder = allFolders.Find(x => x.id == parentId);
 				while (true)
 				{
-					folders.Add(currentFolder);
+					if (!folders.Exists(x => x.id == currentFolder.id))
+						folders.Add(currentFolder);
 
-					if (currentFolder.parentId.IsEmpty())
+					if (currentFolder == null || currentFolder.parentId.IsEmpty())
 						break;
 
 					currentFolder = allFolders.Find(x => x.id == currentFolder.parentId);
 				}
 			}
+
 
 			return Json(new
 			{
@@ -196,7 +198,7 @@ namespace TheSite.Controllers
 			if (!HasFolderPermission(GetUserInfo().UserId, folderId, ShareFolderKeys.DeletePermission))
 				return PartialView("_noPermission", Errors.FolderPermission.NOT_ALLOWED_DELETE);
 
-			return PartialView("_deleteFolder",folderId.ToString());
+			return PartialView("_deleteFolder", folderId.ToString());
 		}
 
 		[HttpPost]
@@ -336,6 +338,9 @@ namespace TheSite.Controllers
 
 		public ActionResult SetFolderPermission(Guid id)
 		{
+			if (!HasFolderPermission(GetUserInfo().UserId, id, ShareFolderKeys.SetPermission))
+				return PartialView("_noPermission", Errors.FolderPermission.NOT_ALLOWED_SET_PERMISSION);
+
 			// all users
 			ViewBag.Users = UserHelper.GetAvailableUser(db);
 			// all permission from dictionary
@@ -360,6 +365,9 @@ namespace TheSite.Controllers
 
 		public ActionResult SetFilePermission(Guid id)
 		{
+			if (!HasFilePermission(GetUserInfo().UserId, id, ShareFolderKeys.SetPermission))
+				return PartialView("_noPermission", Errors.FilePermission.NOT_ALLOWED_SET_PERMISSION);
+
 			// all users
 			ViewBag.Users = UserHelper.GetAvailableUser(db);
 			// all permission from dictionary
@@ -476,6 +484,9 @@ namespace TheSite.Controllers
 			});
 		}
 
+
+		#region [ private ]
+
 		private List<FolderViewModel> FindChildFolders(Guid parentId, List<FolderViewModel> folders, List<FolderViewModel> result, List<FileViewModel> allFiles)
 		{
 			FolderViewModel folder = null;
@@ -542,7 +553,10 @@ namespace TheSite.Controllers
 
 			var result = query.query(db, r =>
 					  {
+						  var path = at.Url.GetValue(r);
 						  var ext = at.FileExtName.GetValue(r);
+						  if (string.IsNullOrEmpty(ext))
+							  ext = System.IO.Path.GetExtension(path);
 						  var cover = !string.IsNullOrEmpty(ext) && AttahmentKeys.FileIcos.ContainsKey(ext) ?
 						  AttahmentKeys.FileIcos[ext] : AttahmentKeys.DefaultFileIcoPath;
 						  return new FileViewModel
@@ -550,7 +564,7 @@ namespace TheSite.Controllers
 							  id = ff.FolderFileId.GetValue(r, "folderFileId"),
 							  attachmentId = at.AttachmentId.GetValue(r),
 							  name = at.RealName.GetValue(r),
-							  path = at.Url.GetValue(r),
+							  path = path,
 							  coverPath = cover,
 							  folderId = ff.FolderId.GetValue(r),
 							  isMyFile = at.PublishUserId.GetValue(r) == GetUserInfo().UserId
@@ -562,15 +576,21 @@ namespace TheSite.Controllers
 
 		private bool HasFolderPermission(Guid Userid, Guid folderId, Guid permissionId)
 		{
-			var per = db.FolderPermissionDal.ConditionQueryCount(fp.UserId == Userid & fp.FolderId == folderId & fp.PermissionId == permissionId) > 0;
-
-			return per;
+			var folder = Folder.PrimaryGet(folderId);
+		    return (folder!=null && folder.OperatorId == Userid) ||
+				   db.FolderPermissionDal.ConditionQueryCount(fp.UserId == Userid & fp.FolderId == folderId & fp.PermissionId == permissionId) > 0;
 		}
 
 		private bool HasFilePermission(Guid Userid, Guid fileId, Guid permissionId)
 		{
-			return db.FolderPermissionDal.ConditionQueryCount(fp.UserId == Userid & fp.FileId == fileId & fp.PermissionId == permissionId) > 0;
+			var subQuery = APQuery.select(ff.AttachmentId).from(ff).where(ff.FolderFileId == fileId);
+			var attachment = Attachment.ConditionQuery(at.AttachmentId.In(subQuery),null).FirstOrDefault();
+
+			return (attachment!=null && attachment.PublishUserId == Userid ) ||
+			       db.FolderPermissionDal.ConditionQueryCount(fp.UserId == Userid & fp.FileId == fileId & fp.PermissionId == permissionId) > 0;
 		}
+
+		#endregion
 
 	}
 

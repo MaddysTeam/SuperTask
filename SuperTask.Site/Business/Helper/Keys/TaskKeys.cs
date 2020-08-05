@@ -139,19 +139,35 @@ namespace Business.Helper
 
 		public static Guid CloseActionGuid => Guid.Parse("cfc4d21e-8997-4a83-87a0-25c8a9bcc9a5");
 
-		//public static Dictionary<Guid, Guid> HandleMapping => new Dictionary<Guid, Guid>
-		//{
-		//  // {HandleReady,Ready }, {HandleSuccess,Success }, {HandleFail,Fail}
-		//};
+		// 2020-08-05 by huachao
+
+		/// <summary>
+		/// 任务类型V2
+		/// </summary>
+		public static Guid TypeV2Guid = Guid.Parse("b962ea4f-bd37-4f4a-8674-9e29c08467b5");
+
+		public static Guid MeetingType = Guid.Parse("d0456dc4-427d-4f54-9bea-5cb6958194c6");
+		public static Guid DocumentType = Guid.Parse("31cc299d-b499-4f3c-aeaf-951a8afea61b");
+		public static Guid DesignType = Guid.Parse("6cf723ba-461c-409b-8693-a114fe561111");
+		public static Guid Frontend = Guid.Parse("6984f239-85e4-4bad-afda-42650b767920");
+		public static Guid ServerSide = Guid.Parse("4a7c77fd-ebc6-46b3-8ce4-c10050ecbd3c");
+		public static Guid Test = Guid.Parse("64088f74-f437-442b-8800-3f730ab408b0");
+		public static Guid Maintain = Guid.Parse("6da4b291-bbdf-4785-b704-f2c45709b512");
+		public static Guid Business = Guid.Parse("4d598e03-b903-47e6-9f48-9ebbea9fecb2");
+		public static Guid Inter = Guid.Parse("45acdc5f-9aae-4b1e-aa69-1236a9e08717");
+		public static Guid Management = Guid.Parse("c1aa7c1c-10d9-4283-ad38-30bf8dd89e78");
+		public static Guid Others = Guid.Parse("c3ab2686-a424-41d8-968d-8d1c21b515c9");
+
+		public static string GetTypeV2KeyByValue(Guid val) => DictionaryHelper.GetDicById(TypeV2Guid, val).Title;
 
 		public static Dictionary<Guid, string> OperationResultDic = new Dictionary<Guid, string>
-	  {
+	   {
 		 { StartActionGuid,"启动了任务" },
 		 { CompleteActionGuid,"完成了任务及其子任务" },
-         { CloseActionGuid, "关闭了任务" },
+		 { CloseActionGuid, "关闭了任务" },
          //{ Close, "关闭发布" },
          //{RelativeGuid,"变更了发布关联" }
-      };
+       };
 
 
 	}

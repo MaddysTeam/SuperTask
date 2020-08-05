@@ -39,7 +39,8 @@ namespace Business.Helper
 				attachment.PublishUserId = publishUserId;
 				attachment.UploadDate = DateTime.Now;
 				attachment.AttachmentId = Guid.NewGuid();
-				attachment.RealName = bug.CurrentAttachment?.RealName;
+				attachment.RealName ="【Bug】 " + bug.CurrentAttachment?.RealName;
+				attachment.FileExtName = System.IO.Path.GetExtension(attachment.Url);
 
 				db.AttachmentDal.Insert(attachment);
 			}
@@ -58,7 +59,8 @@ namespace Business.Helper
 				attachment.PublishUserId = publishUserId;
 				attachment.UploadDate = DateTime.Now;
 				attachment.AttachmentId = Guid.NewGuid();
-				attachment.RealName = require.CurrentAttachment?.RealName;
+				attachment.RealName = "【需求】 "+ require.CurrentAttachment?.RealName;
+				attachment.FileExtName = System.IO.Path.GetExtension(attachment.Url);
 
 				db.AttachmentDal.Insert(attachment);
 			}
@@ -67,7 +69,7 @@ namespace Business.Helper
 		}
 
 
-		public static void UploadPublishAttachment(Publish publish, Guid publishUserId, APDBDef db)
+		public static Attachment UploadPublishAttachment(Publish publish, Guid publishUserId, APDBDef db)
 		{
 			var attachment = publish.CurrentAttachment;
 			if (attachment != null && !string.IsNullOrEmpty(attachment.Url))
@@ -77,10 +79,13 @@ namespace Business.Helper
 				attachment.PublishUserId = publishUserId;
 				attachment.UploadDate = DateTime.Now;
 				attachment.AttachmentId = Guid.NewGuid();
-				attachment.RealName = publish.CurrentAttachment?.RealName;
+				attachment.RealName = "【发布】 "+ publish.CurrentAttachment?.RealName;
+				attachment.FileExtName = System.IO.Path.GetExtension(attachment.Url);
 
 				db.AttachmentDal.Insert(attachment);
 			}
+
+			return attachment;
 		}
 
 

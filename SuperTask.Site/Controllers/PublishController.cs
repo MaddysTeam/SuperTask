@@ -184,7 +184,9 @@ namespace TheSite.Controllers
 
 
 				// add attachment
-				AttachmentHelper.UploadPublishAttachment(publish, user.UserId, db);
+				var attachments = AttachmentHelper.UploadPublishAttachment(publish, user.UserId, db);
+
+				ProjectHelper.UploadFileToProjectFolder(publish.Projectid, ShareFolderKeys.MaintainType, attachments.AttachmentId, user.UserId, db);
 
 				// add user to project resurce if not exits
 				ResourceHelper.AddUserToResourceIfNotExist(publish.Projectid, Guid.Empty, publish.ManagerId, ResourceKeys.OtherType, db);
@@ -205,7 +207,8 @@ namespace TheSite.Controllers
 
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = e.Message
 				});
 			}
 
@@ -223,17 +226,17 @@ namespace TheSite.Controllers
 		{
 			var publish = db.PublishDal.PrimaryGet(id);
 			var users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
-         publish.Manager = users.Find(x => x.UserId == publish.ManagerId)?.RealName;
-         publish.Creator = users.Find(x => x.UserId == publish.CreatorId)?.RealName;
-         publish.OperationHistory = GetOperationHistoryViewModels(id);
+			publish.Manager = users.Find(x => x.UserId == publish.ManagerId)?.RealName;
+			publish.Creator = users.Find(x => x.UserId == publish.CreatorId)?.RealName;
+			publish.OperationHistory = GetOperationHistoryViewModels(id);
 
-         publish.RelativeTasks = RTPBRelationHelper.GetPublishRelativeTasks(id, db);
-         publish.RelativeRequires = RTPBRelationHelper.GetPublishRelativeRequires(id, db);
+			publish.RelativeTasks = RTPBRelationHelper.GetPublishRelativeTasks(id, db);
+			publish.RelativeRequires = RTPBRelationHelper.GetPublishRelativeRequires(id, db);
 
-         ViewBag.Attahcments = AttachmentHelper.GetAttachments(publish.Projectid, publish.PublishId, db);
-         ViewBag.Users = users;
+			ViewBag.Attahcments = AttachmentHelper.GetAttachments(publish.Projectid, publish.PublishId, db);
+			ViewBag.Users = users;
 
-         return View(publish);
+			return View(publish);
 		}
 
 
@@ -292,7 +295,8 @@ namespace TheSite.Controllers
 
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = e.Message
 				});
 			}
 
@@ -360,7 +364,8 @@ namespace TheSite.Controllers
 
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg=e.Message
 				});
 			}
 
@@ -424,7 +429,8 @@ namespace TheSite.Controllers
 
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg=e.Message
 				});
 			}
 
@@ -456,7 +462,7 @@ namespace TheSite.Controllers
 		}
 
 
-		private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedAvailableProject(GetUserInfo().UserId, db);
+		private List<Project> MyJoinedProjects() => ProjectHelper.UserJoinedAvailableProject(GetUserInfo().UserId, db);
 
 		private OperationViewModel MappingOperationViewModel(Publish Publish, Guid operationTypeId)
 		{

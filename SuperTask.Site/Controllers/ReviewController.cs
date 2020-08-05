@@ -350,7 +350,7 @@ namespace TheSite.Controllers
 
          db.ProjectStoneTaskDal.Update(pst);
 
-         var projectProcess = ProjectrHelper.GetProcessByNodeTasks(pst.ProjectId, db);
+         var projectProcess = ProjectHelper.GetProcessByNodeTasks(pst.ProjectId, db);
 
          db.ProjectDal.UpdatePartial(pst.ProjectId, new {
              RateOfProgress = projectProcess,

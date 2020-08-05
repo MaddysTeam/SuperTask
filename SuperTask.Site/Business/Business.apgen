@@ -317,7 +317,8 @@
 					<add name="IsParent"  columnName="IsParent" type="bool" comment="是否是父任务" ></add>
 
 					<!--用于2020新版本-->
-					<add name="V2Level" columnName="V2Level" type="Guid" isNullable="true" comment="排序Id" />
+					<add name="V2Level" columnName="V2Level" type="Guid" isNullable="true" comment="任务级别V2" />
+					<add name="V2Type" columnName="V2Type" type="Guid" isNullable="true" comment="任务类型V2" />
 
 					<!--该字段用于文档归类，体现在每个项目管理中的文件管理板块-->
 					<add name="TaskFileType"  columnName="FileType" type="Guid"  isNullable="true"  display="文档类型" />

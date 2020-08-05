@@ -102,7 +102,7 @@ namespace TheSite.Controllers
 
          ViewBag.myTasks = TaskHelper.GetProjectUserTasks(projectId, GetUserInfo().UserId, db);
 
-         ViewBag.project = ProjectrHelper.GetCurrentProject(projectId, null, true);
+         ViewBag.project = ProjectHelper.GetCurrentProject(projectId, null, true);
 
          return View();
       }

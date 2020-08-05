@@ -40,7 +40,7 @@ namespace TheSite.Controllers
 			var user = GetUserInfo();
 			var u2 = APDBDef.UserInfo.As("creator");
 
-			var query = APQuery.select(re.RequireId, re.RequireName, re.RequireType, re.ReviewerId,re.IsHurry,
+			var query = APQuery.select(re.RequireId, re.RequireName, re.RequireType, re.ReviewerId, re.IsHurry,
 				  re.RequireLevel, re.SortId, re.RequireStatus, re.EstimateEndDate,
 				  re.ManagerId, u.UserName, re.CreateDate, u2.UserName.As("creator"))
 			   .from(re,
@@ -66,7 +66,7 @@ namespace TheSite.Controllers
 				   RequireStatus = re.RequireStatus.GetValue(r),
 				   EstimateEndDate = re.EstimateEndDate.GetValue(r),
 				   ReviewerId = re.ReviewerId.GetValue(r),
-				   IsHurry=re.IsHurry.GetValue(r)
+				   IsHurry = re.IsHurry.GetValue(r)
 			   }).ToList();
 
 
@@ -126,8 +126,8 @@ namespace TheSite.Controllers
 
 		public ActionResult Edit(Guid? id)
 		{
-         // 所有人员
-         ViewBag.Users = UserHelper.GetAvailableUser(db);
+			// 所有人员
+			ViewBag.Users = UserHelper.GetAvailableUser(db);
 
 			// 我参与的项目
 			ViewBag.Projects = MyJoinedProjects();
@@ -203,13 +203,13 @@ namespace TheSite.Controllers
 
 
 				// add attachment
-				var attachment=AttachmentHelper.UploadRequireAttachment(require, user.UserId, db);
+				var attachment = AttachmentHelper.UploadRequireAttachment(require, user.UserId, db);
 
-            // upload file to project folder
-            ProjectrHelper.UploadFileToProjectFolder(ShareFolderKeys.RequiredType, attachment.AttachmentId, db);
+				// upload file to project folder
+				ProjectHelper.UploadFileToProjectFolder(require.Projectid, ShareFolderKeys.RequiredType, attachment.AttachmentId, user.UserId, db);
 
-            //add user to project resurce if not exits
-            ResourceHelper.AddUserToResourceIfNotExist(require.Projectid, Guid.Empty, require.ManagerId, ResourceKeys.OtherType, db);
+				//add user to project resurce if not exits
+				ResourceHelper.AddUserToResourceIfNotExist(require.Projectid, Guid.Empty, require.ManagerId, ResourceKeys.OtherType, db);
 
 
 				db.Commit();
@@ -220,7 +220,8 @@ namespace TheSite.Controllers
 
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = e.Message
 				});
 			}
 
@@ -314,7 +315,8 @@ namespace TheSite.Controllers
 
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = e.Message
 				});
 			}
 
@@ -383,7 +385,8 @@ namespace TheSite.Controllers
 
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = e.Message
 				});
 			}
 
@@ -448,7 +451,8 @@ namespace TheSite.Controllers
 
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = e.Message
 				});
 			}
 
@@ -494,7 +498,7 @@ namespace TheSite.Controllers
 				{
 					var id = require.RequireId;
 					db.OperationDal.Insert(new Operation(require.Projectid, id, RequireKeys.StatusGuid, RequireKeys.Hurryup.ToString(), null, DateTime.Now, assignId, model.Remark));
-					db.RequireDal.UpdatePartial(id, new { RequireStatus = RequireKeys.readyToReview, IsHurry = true  });
+					db.RequireDal.UpdatePartial(id, new { RequireStatus = RequireKeys.readyToReview, IsHurry = true });
 				}
 
 				db.Commit();
@@ -505,7 +509,8 @@ namespace TheSite.Controllers
 
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = e.Message
 				});
 			}
 
@@ -537,7 +542,7 @@ namespace TheSite.Controllers
 		}
 
 
-		private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedAvailableProject(GetUserInfo().UserId, db);
+		private List<Project> MyJoinedProjects() => ProjectHelper.UserJoinedAvailableProject(GetUserInfo().UserId, db);
 
 		private OperationViewModel MappingOperationViewModel(Require require, Guid operationTypeId)
 		{

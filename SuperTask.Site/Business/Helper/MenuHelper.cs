@@ -19,7 +19,7 @@ namespace Business.Helper
 
       public static List<MenuItem> GetProjectMenuItems(Guid projectId,Guid userId,Guid checkedId)
       {
-         var currentProject = ProjectrHelper.GetCurrentProject(projectId, new APDBDef());
+         var currentProject = ProjectHelper.GetCurrentProject(projectId, new APDBDef());
 
          if (currentProject == null) return null;
 

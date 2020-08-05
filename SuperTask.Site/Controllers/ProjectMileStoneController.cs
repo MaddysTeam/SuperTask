@@ -99,7 +99,7 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult List(Guid projectId)
       {
-         ViewData["Project"] = ProjectrHelper.GetCurrentProject(projectId, db);
+         ViewData["Project"] = ProjectHelper.GetCurrentProject(projectId, db);
 
          return PartialView(
             MilestoneHelper.GetProjectMileStones(projectId, db)

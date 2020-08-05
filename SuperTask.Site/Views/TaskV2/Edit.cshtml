@@ -43,6 +43,8 @@
 						@Html.HiddenFor(t => t.RelativeRequireIds)
 						@Html.HiddenFor(t => t.RelativeBugIds)
 						@Html.HiddenFor(t => t.RelativePublishIds)
+						@Html.HiddenFor(x => x.TaskType)
+						@Html.HiddenFor(x => x.CreatorId)
 
 						<div class="form-group">
 							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-2" })
@@ -72,8 +74,8 @@
 						<div class="form-group">
 							@Html.LabelFor(t => t.TaskType, new { @class = "control-label col-md-2" })
 							<div class="col-md-2">
-								@Html.DropDownListFor(t => t.TaskType,
-									DictionaryCache.Cached(TaskKeys.TypeGuid)
+								@Html.DropDownListFor(t => t.V2Type,
+									DictionaryCache.Cached(TaskKeys.TypeV2Guid)
 														.GetSelectListById(Guid.Empty),
 									new { @class = "form-control dropdown-taskType" })
 							</div>

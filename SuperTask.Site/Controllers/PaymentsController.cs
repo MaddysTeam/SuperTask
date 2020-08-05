@@ -193,7 +193,7 @@ namespace TheSite.Controllers
 
          db.PaymentsDal.Insert(payment);
 
-         ViewData["project"] = ProjectrHelper.GetCurrentProject(projectId);
+         ViewData["project"] = ProjectHelper.GetCurrentProject(projectId);
 
          return PartialView("_venderPayments", payment);
       }
@@ -204,7 +204,7 @@ namespace TheSite.Controllers
       [HttpPost]
       public ActionResult Details(Guid projectId, string tabId)
       {
-         ViewData["project"] = ProjectrHelper.GetCurrentProject(projectId);
+         ViewData["project"] = ProjectHelper.GetCurrentProject(projectId);
          ViewBag.TabId = string.IsNullOrEmpty(tabId) ? "moneyTab" : tabId;
 
          return PartialView("Details", PaymentsHelper.GetProjectPayments(projectId, db));

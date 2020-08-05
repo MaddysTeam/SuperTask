@@ -6,7 +6,7 @@
 	var requestTaskStatus = Request["TaskStatus"] ?? string.Empty;
 	var requestTaskRange = Request["TaskRange"] ?? string.Empty;
 	var statusList = DictionaryCache.Cached(TaskKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "任务状态", Value = TaskKeys.SelectAll.ToString() }).ToList();
-	var typeList = DictionaryCache.Cached(TaskKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "任务类型", Value = TaskKeys.SelectAll.ToString() }).ToList();
+	var typeList = DictionaryCache.Cached(TaskKeys.TypeV2Guid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "任务类型", Value = TaskKeys.SelectAll.ToString() }).ToList();
 	var levelList = DictionaryCache.Cached(TaskKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "优先级", Value = TaskKeys.SelectAll.ToString() }).ToList();
 	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId");
 }
@@ -114,7 +114,7 @@
 								<th data-column-id="V2LevelTitle">优先级</th>
 								<th data-column-id="TaskName" data-formatter="TaskName">任务名称</th>
 								<th data-column-id="Status">状态</th>
-								<th data-column-id="Type">类型</th>
+								<th data-column-id="TypeV2">类型</th>
 								<th data-column-id="Manager">指派给</th>
 								<th data-column-id="WorkHours">已消耗(累计)</th>
 								<th data-column-id="EstimateWorkHours">预计消耗</th>

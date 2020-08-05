@@ -36,8 +36,11 @@ namespace Business
 
 
 		public string V2LevelTitle => TaskKeys.GetV2LevelByValue(V2Level);
-
+		
 		public string Type => TaskKeys.GetTypeKeyByValue(TaskType);
+
+		//TODO: changed by huachao 2020/08/05
+		public string TypeV2 => TaskKeys.GetTypeV2KeyByValue(V2Type);
 
 		public bool IsPlanStatus => TaskStatus == TaskKeys.PlanStatus;
 
@@ -262,6 +265,11 @@ namespace Business
 		public override bool Equals(object obj)
 		{
 			return IsEquals(obj as WorkTask);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
 		}
 
 		protected virtual bool IsEquals(WorkTask task)

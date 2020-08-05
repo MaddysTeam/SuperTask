@@ -343,7 +343,7 @@ namespace TheSite.Controllers
                                                              & t.TaskStatus != TaskKeys.DeleteStatus, t.SortId.Asc, null, null);
          if (list.Count() <= 0)
          {
-            var project = ProjectrHelper.GetCurrentProject(option.ProjectId);
+            var project = ProjectHelper.GetCurrentProject(option.ProjectId);
             rootTask = TaskHelper.CreateAndSaveRootTaskInDB(user, project, db);
             return Json(new
             {
@@ -517,7 +517,7 @@ namespace TheSite.Controllers
             Session.Remove("previewTasks");
 
          var projectId = tasks[0].projectId.ToGuid(Guid.Empty);
-         var project = ProjectrHelper.GetCurrentProject(projectId, db, true);
+         var project = ProjectHelper.GetCurrentProject(projectId, db, true);
 
 
          db.BeginTrans();
@@ -878,7 +878,7 @@ namespace TheSite.Controllers
       };
 
 
-      private List<Project> MyJoinedProjects() => ProjectrHelper.UserJoinedProjects(GetUserInfo().UserId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus & p.ProjectStatus!=ProjectKeys.DeleteStatus);
+      private List<Project> MyJoinedProjects() => ProjectHelper.UserJoinedProjects(GetUserInfo().UserId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus & p.ProjectStatus!=ProjectKeys.DeleteStatus);
 
 
       private void BindParentId(List<ArrangeTaskViewModel> tasks)
@@ -923,7 +923,7 @@ namespace TheSite.Controllers
       private TaskEditOption GetEditOption(WorkTask task, Result rs)
       {
          var tasks = db.WorkTaskDal.ConditionQuery(t.Projectid == task.Projectid & t.TaskStatus != TaskKeys.DeleteStatus, t.SortId.Asc, null, null);
-         var project = ProjectrHelper.GetCurrentProject(task.Projectid, db, true);
+         var project = ProjectHelper.GetCurrentProject(task.Projectid, db, true);
          var originalTask = db.WorkTaskDal.PrimaryGet(task.TaskId);
 
          return new TaskEditOption { db = db, Result = rs, OperatorId = GetUserInfo().UserId, Tasks = tasks, Project = project, Original = originalTask };
