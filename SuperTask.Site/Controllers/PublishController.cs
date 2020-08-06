@@ -144,7 +144,8 @@ namespace TheSite.Controllers
 			{
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = ModelState.ShowErrorMessages()
 				});
 			}
 
@@ -152,7 +153,8 @@ namespace TheSite.Controllers
 			{
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = Errors.Publish.MUST_SELECT_PROJECT
 				});
 			}
 
@@ -214,7 +216,8 @@ namespace TheSite.Controllers
 
 			return Json(new
 			{
-				result = AjaxResults.Success
+				result = AjaxResults.Success,
+				msg = Success.Publish.EDITSUCCESS,
 			});
 
 		}
@@ -265,7 +268,8 @@ namespace TheSite.Controllers
 			{
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = ModelState.ShowErrorMessages()
 				});
 			}
 
@@ -303,7 +307,8 @@ namespace TheSite.Controllers
 
 			return Json(new
 			{
-				result = AjaxResults.Success
+				result = AjaxResults.Success,
+				msg = Success.Publish.EDITSUCCESS,
 			});
 		}
 
@@ -336,7 +341,8 @@ namespace TheSite.Controllers
 			{
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = ModelState.ShowErrorMessages()
 				});
 			}
 
@@ -365,14 +371,14 @@ namespace TheSite.Controllers
 				return Json(new
 				{
 					result = AjaxResults.Error,
-					msg=e.Message
+					msg = e.Message
 				});
 			}
 
-
 			return Json(new
 			{
-				result = AjaxResults.Success
+				result = AjaxResults.Success,
+				msg=Success.Publish.EDITSUCCESS
 			});
 		}
 
@@ -399,7 +405,8 @@ namespace TheSite.Controllers
 			{
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg=ModelState.ShowErrorMessages()
 				});
 			}
 
@@ -418,7 +425,6 @@ namespace TheSite.Controllers
 					string[] relativeRequireIds = model.Result2.Split(',');
 					RTPBRelationHelper.BindRelationBetweenTasksAndPublish(relativeTaskIds.ConvertToGuidArray(), id, db);
 					RTPBRelationHelper.BindRelationBetweenRequiresAndPublish(relativeRequireIds.ConvertToGuidArray(), id, db);
-
 				}
 
 				db.Commit();
@@ -430,14 +436,15 @@ namespace TheSite.Controllers
 				return Json(new
 				{
 					result = AjaxResults.Error,
-					msg=e.Message
+					msg = e.Message
 				});
 			}
 
 
 			return Json(new
 			{
-				result = AjaxResults.Success
+				result = AjaxResults.Success,
+				msg = Success.Publish.EDITSUCCESS
 			});
 		}
 
@@ -449,7 +456,10 @@ namespace TheSite.Controllers
 		{
 			if (projectId.IsEmptyGuid())
 			{
-				return Json(new { });
+				return Json(new {
+					result = AjaxResults.Error,
+					msg = Errors.Publish.MUST_SELECT_PROJECT
+				});
 			}
 
 			var results = db.PublishDal.ConditionQuery(p.Projectid == projectId, null, null, null);

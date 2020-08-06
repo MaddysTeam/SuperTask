@@ -155,7 +155,8 @@ namespace TheSite.Controllers
 			{
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = ModelState.ShowErrorMessages()
 				});
 			}
 
@@ -163,7 +164,8 @@ namespace TheSite.Controllers
 			{
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg= Errors.Require.MUST_SELECT_PROJECT
 				});
 			}
 
@@ -171,7 +173,8 @@ namespace TheSite.Controllers
 			{
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = Errors.Require.MUST_SELECT_REVIEWER
 				});
 			}
 
@@ -201,7 +204,6 @@ namespace TheSite.Controllers
 					db.RequireDal.Update(require);
 				}
 
-
 				// add attachment
 				var attachment = AttachmentHelper.UploadRequireAttachment(require, user.UserId, db);
 
@@ -227,7 +229,8 @@ namespace TheSite.Controllers
 
 			return Json(new
 			{
-				result = AjaxResults.Success
+				result = AjaxResults.Success,
+				msg= Success.Require.EDITSUCCESS
 			});
 
 		}
@@ -285,10 +288,7 @@ namespace TheSite.Controllers
 		{
 			if (!ModelState.IsValid || !model.IsValid())
 			{
-				return Json(new
-				{
-					result = AjaxResults.Error
-				});
+				return Json(new{result = AjaxResults.Error,msg= ModelState.ShowErrorMessages()});
 			}
 
 			db.BeginTrans();
@@ -323,7 +323,8 @@ namespace TheSite.Controllers
 
 			return Json(new
 			{
-				result = AjaxResults.Success
+				result = AjaxResults.Success,
+				msg=Success.Require.EDITSUCCESS
 			});
 		}
 
@@ -393,7 +394,8 @@ namespace TheSite.Controllers
 
 			return Json(new
 			{
-				result = AjaxResults.Success
+				result = AjaxResults.Success,
+				msg = Success.Require.EDITSUCCESS
 			});
 		}
 
@@ -424,7 +426,8 @@ namespace TheSite.Controllers
 			{
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg=ModelState.ShowErrorMessages()
 				});
 			}
 
@@ -459,7 +462,8 @@ namespace TheSite.Controllers
 
 			return Json(new
 			{
-				result = AjaxResults.Success
+				result = AjaxResults.Success,
+				msg=Success.Require.EDITSUCCESS
 			});
 		}
 
@@ -482,7 +486,8 @@ namespace TheSite.Controllers
 			{
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = ModelState.ShowErrorMessages()
 				});
 			}
 
@@ -517,7 +522,8 @@ namespace TheSite.Controllers
 
 			return Json(new
 			{
-				result = AjaxResults.Success
+				result = AjaxResults.Success,
+				msg = Success.Require.EDITSUCCESS
 			});
 		}
 
@@ -540,7 +546,6 @@ namespace TheSite.Controllers
 			});
 
 		}
-
 
 		private List<Project> MyJoinedProjects() => ProjectHelper.UserJoinedAvailableProject(GetUserInfo().UserId, db);
 

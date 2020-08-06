@@ -186,12 +186,13 @@ namespace Business.Helper
 
 		public class Require
 		{
-
+			public const string MUST_SELECT_PROJECT = "必须选择项目";
+			public const string MUST_SELECT_REVIEWER = "必须选择审核人";
 		}
 
 		public class Publish
 		{
-
+			public const string MUST_SELECT_PROJECT = "必须选择项目";
 		}
 
 		public class FolderPermission
@@ -310,6 +311,16 @@ namespace Business.Helper
 		}
 
 		public class Bug
+		{
+			public const string EDITSUCCESS = "编辑成功";
+		}
+
+		public class Require
+		{
+			public const string EDITSUCCESS = "编辑成功";
+		}
+
+		public class Publish
 		{
 			public const string EDITSUCCESS = "编辑成功";
 		}

@@ -18,6 +18,7 @@ namespace TheSite.Models
 		public string coverPath { get; set; }
 		public bool isMyFolder { get; set; }
 		public double fileCount { get; set; }
+		public List<FileViewModel> files { get; set; } = new List<FileViewModel>();
 	}
 
 	public class FileViewModel

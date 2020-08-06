@@ -72,7 +72,6 @@ namespace Business.Helper
          public const string EDIT_SUCCESS = "指标编辑成功！";
       }
 
-
       public class EvalGroup
       {
          public const string EDIT_SUCCESS = "考核组编辑成功";

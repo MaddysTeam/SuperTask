@@ -250,23 +250,17 @@ namespace TheSite.Controllers
 			{
 				return Json(new
 				{
-					result = AjaxResults.Error
+					result = AjaxResults.Error,
+					msg = ModelState.ShowErrorMessages()
 				});
 			}
 
 			return Json(new
 			{
-				result = AjaxResults.Success
+				result = AjaxResults.Success,
+				msg = Success.Task.EDIT_SUCCESS
 			});
 		}
-
-		[HttpPost]
-		public ActionResult AddExecutor()
-		{
-			ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
-			return PartialView("_subTaskExecutor", new SubTaskExecutorViewModel { ExecutorId = GetUserInfo().UserId });
-		}
-
 
 		//GET  TaskV2/Edit
 
@@ -418,7 +412,8 @@ namespace TheSite.Controllers
 
 			return Json(new
 			{
-				result = AjaxResults.Success
+				result = AjaxResults.Success,
+				msg = Success.Task.EDIT_SUCCESS
 			});
 		}
 

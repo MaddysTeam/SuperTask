@@ -1,14 +1,15 @@
 ﻿	@{
-	var pageTitle = ViewBag.Title = "我的任务";
-	Layout = "~/Views/Shared/_Layout.cshtml";
+		var pageTitle = ViewBag.Title = "我的任务";
+		Layout = "~/Views/Shared/_Layout.cshtml";
 
-	var requestTaskType = Request["TaskType"] ?? string.Empty;
-	var requestTaskStatus = Request["TaskStatus"] ?? string.Empty;
-	var requestTaskRange = Request["TaskRange"] ?? string.Empty;
-	var statusList = DictionaryCache.Cached(TaskKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "任务状态", Value = TaskKeys.SelectAll.ToString() }).ToList();
-	var typeList = DictionaryCache.Cached(TaskKeys.TypeV2Guid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "任务类型", Value = TaskKeys.SelectAll.ToString() }).ToList();
-	var levelList = DictionaryCache.Cached(TaskKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "优先级", Value = TaskKeys.SelectAll.ToString() }).ToList();
-	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId");
+		var projectId = Request["projectId"] ?? string.Empty;
+		var requestTaskType = Request["TaskType"] ?? string.Empty;
+		var requestTaskStatus = Request["TaskStatus"] ?? string.Empty;
+		var requestTaskRange = Request["TaskRange"] ?? string.Empty;
+		var statusList = DictionaryCache.Cached(TaskKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "任务状态", Value = TaskKeys.SelectAll.ToString() }).ToList();
+		var typeList = DictionaryCache.Cached(TaskKeys.TypeV2Guid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "任务类型", Value = TaskKeys.SelectAll.ToString() }).ToList();
+		var levelList = DictionaryCache.Cached(TaskKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "优先级", Value = TaskKeys.SelectAll.ToString() }).ToList();
+		var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId", v => v.ToString() == projectId);
 }
 @section Css{
 	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />

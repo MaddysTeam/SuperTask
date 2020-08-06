@@ -214,7 +214,8 @@ namespace TheSite.Controllers
 
          return Json(new
          {
-            result = AjaxResults.Success
+            result = AjaxResults.Success,
+			msg= Success.Bug.EDITSUCCESS
          });
 
       }
@@ -307,13 +308,14 @@ namespace TheSite.Controllers
 
                db.Commit();
             }
-            catch
+            catch(Exception e)
             {
                db.Rollback();
 
                return Json(new
                {
-                  result = AjaxResults.Error
+                  result = AjaxResults.Error,
+				  msg= e.Message
                });
             }
          }
@@ -379,20 +381,22 @@ namespace TheSite.Controllers
 
                db.Commit();
             }
-            catch
+            catch(Exception e)
             {
                db.Rollback();
 
                return Json(new
                {
-                  result = AjaxResults.Error
+                  result = AjaxResults.Error,
+				  msg= e.Message
                });
             }
          }
 
          return Json(new
          {
-            result = AjaxResults.Success
+            result = AjaxResults.Success,
+			msg= Success.Bug.EDITSUCCESS
          });
       }
 
