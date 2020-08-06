@@ -82,7 +82,6 @@ namespace TheSite.Controllers
 			return null;
 		}
 
-
 		public ActionResult MyBugs()
 		{
 			return null;

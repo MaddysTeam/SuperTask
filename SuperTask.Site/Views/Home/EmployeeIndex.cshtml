@@ -3,9 +3,27 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Css{
- <style>
-	 .taskArea{font-size:16px;}
-	 .a{text-decoration:none;}
+	<style>
+		.taskArea {
+			font-size: 16px;
+		}
+
+		.a {
+			text-decoration: none;
+		}
+
+		.widget .widget-header {
+			height: 40px;
+		}
+
+		.first .widget-content {
+			height: 200px;
+		}
+
+		.table th, .table td {
+			text-align: center;
+			width: 25%;
+		}
 	</style>
 }
 <div class="content-wrapper">
@@ -14,33 +32,12 @@
 
 		<div class="main-content">
 
-			<!-- WIDGET TABBED CONTENT -->
-			<div class="widget">
-				<div class="widget-header">
-					<h3><i class="fa fa-paperclip"></i>通知</h3>
-					<div class="btn-group widget-header-toolbar">
-						<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
-					</div>
-				</div>
-				<div class="widget-content">
-					<div class="alert alert-danger alert-dismissable">
-						<img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1497518856881&di=ecdd4f1ea36a35cd25db034a1fa4c2f1&imgtype=0&src=http%3A%2F%2Fcdn.lizhi.fm%2Fradio_cover%2F2014%2F02%2F15%2F9524232787310084.jpg" width="50" height="50" />
-						  友情提醒：<h3><i class="fa fa-pencil"></i> 请大家认真填写每日工时和进度</h3> 
-						<a href="@Url.Action("Search","Advice")" class="btn btn-md btn-help btn-success"><i class="fa fa-pencil"></i>建议收集区</a>
-						<a href="@Url.Action("Index","ShareFolder")" class="btn btn-md btn-info"><i class="fa fa-share-alt"></i> 进入共享文件夹</a>
-						
-					</div>
-
-				</div>
-			</div>
-			<!-- END WIDGET TABBED CONTENT -->
-
-			@*<div class="row">
-				<div class="col-md-6">
+			<div class="row first">
+				<div class="col-md-3">
 					<!-- WIDGET TABBED CONTENT -->
 					<div class="widget">
 						<div class="widget-header">
-							<h3><i class="fa fa-paperclip"></i>日志</h3>
+							<h3><i class="fa fa-paperclip"></i>通知</h3>
 							<div class="btn-group widget-header-toolbar">
 								<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
 							</div>
@@ -48,21 +45,12 @@
 
 						<div class="widget-content">
 
-							<div class="alert alert-info alert-dismissable journalAlter">
-								截至您在 <strong>@ThisApp.StartDayPerMonth.ToString("yyyy日MM月dd日") - @ThisApp.EndDayPerMonth.ToString("yyyy日MM月dd日")</strong>期间填写的日志总工时为 <strong class="totalHour"></strong>，累计填写了 <strong class="recordDays"></strong> 天
-								总体表现为：
-								<img class="journalFace" />
-							</div>
-							<div class="journalChart"></div>
-							<div>
-								<a href="@Url.Action("Search","WorkJournal")" class="btn  btn-danger">填写日志</a>
-							</div>
-
 						</div>
 					</div>
 					<!-- END WIDGET TABBED CONTENT -->
 				</div>
-				<div class="col-md-6">
+
+				<div class="col-md-5">
 					<!-- WIDGET TABBED CONTENT -->
 					<div class="widget">
 						<div class="widget-header">
@@ -74,16 +62,96 @@
 
 						<div class="widget-content">
 
-							<div class="alert alert-info alert-warning taskArea">
-
-							</div>
-							@*<button class="btn-details btn btn-info">查看明细</button>*@
 						</div>
 					</div>
 					<!-- END WIDGET TABBED CONTENT -->
 				</div>
-			</div>*@
-		
+
+				<div class="col-md-4">
+					<!-- WIDGET TABBED CONTENT -->
+					<div class="widget">
+						<div class="widget-header">
+							<h3><i class="fa fa-tasks"></i>任务</h3>
+							<div class="btn-group widget-header-toolbar">
+								<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+							</div>
+						</div>
+
+						<div class="widget-content">
+
+						</div>
+					</div>
+					<!-- END WIDGET TABBED CONTENT -->
+				</div>
+
+			</div>
+
+			<div class="row second">
+
+				<div class="col-md-12">
+
+					<div class="widget">
+						<div class="widget-header">
+							<h3><i class="fa fa-paperclip"></i>任务看板</h3>
+							<div class="btn-group widget-header-toolbar">
+								<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+							</div>
+						</div>
+						<div class="widget-content">
+
+							<table class="table table-striped table-hover table-dark-header">
+								<thead>
+									<tr>
+										<th>执行中</th>
+										<th>未开始</th>
+										<th>已完成</th>
+										<th>已经关闭</th>
+									</tr>
+								</thead>
+								<tr>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+
+							<table class="table table-striped table-hover table-dark-header">
+								<thead>
+									<tr>
+										<th>计划今天完成</th>
+										<th>本周完成</th>
+										<th>本月完成</th>
+										<th>30天内完成</th>
+									</tr>
+								</thead>
+								<tr>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
 		</div>
 		<!-- /main-content -->
 	</div>
@@ -91,34 +159,11 @@
 </div>
 
 @section Scripts{
-<script>
+	<script>
 
 	$(function () {
 
-		$.post('@Url.Action("PersonalJournal", "Home")', function (data) {
-			$('.totalHour').html(data.recordHours);
-			$('.recordDays').html(data.recordDayCount);
-			$('.journalFace').attr('src',
-				data.journalQuilty == '@((int)JournalQuality.Good)' ? '../../assets/img/smile.png' :
-				data.journalQuilty == '@((int)JournalQuality.Normal)' ? '../../assets/img/normal.png' :
-				'../../assets/img/cry.png'
-				);
-		});
-
-		$.post('@Url.Action("TaskEndDateAlert", "Home")', function (data) {
-			var $area = $('.taskArea');
-			$area.append('<p>任务总数:  ' + data.allcount + '</p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskType=TaskKeys.ProjectTaskType })">项目任务数量:  ' + data.projectTaskCount + '</a></p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskType=TaskKeys.TempTaskType })">临时任务数量:  ' + data.tempTaskCount + '</a></p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskType=TaskKeys.MaintainedTaskType })">维护任务数量:  ' + data.maintainceTaskCount + '</a></p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskStatus=TaskKeys.PlanStatus })">计划期任务数量:  ' + data.planStatusTaskCount + '</a></p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskStatus=TaskKeys.ProcessStatus })">执行期任务数量:  ' + data.processStatusTaskCount + '</p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskStatus=TaskKeys.CompleteStatus })">已完成任务数量:  ' + data.completeStatusTaskCount + '</p>');
-			$area.append('<p><i class="fa fa-star"></i>  快到期的任务数量:  ' + data.alterTaskCount + '</p>');
-		});
-
-
 	});
 
-</script>	
+	</script>
 }
