@@ -14,7 +14,7 @@ namespace TheSite.Controllers
 
 		public ActionResult Index()
 		{
-			return View();
+			return View("EmployeeIndex");
 		}
 
 
@@ -77,20 +77,20 @@ namespace TheSite.Controllers
 		}
 
 
-		public ActionResult MyTasks()
-		{
-			return null;
-		}
+		//public ActionResult MyTasks()
+		//{
+		//	return null;
+		//}
 
-		public ActionResult MyBugs()
-		{
-			return null;
-		}
+		//public ActionResult MyBugs()
+		//{
+		//	return null;
+		//}
 
-		public ActionResult MyRequires()
-		{
-			return null;
-		}
+		//public ActionResult MyRequires()
+		//{
+		//	return null;
+		//}
 
 	}
 

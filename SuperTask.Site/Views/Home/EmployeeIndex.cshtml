@@ -13,7 +13,7 @@
 		}
 
 		.widget .widget-header {
-			height: 40px;
+			height: 38px;
 		}
 
 		.first .widget-content {
@@ -23,6 +23,9 @@
 		.table th, .table td {
 			text-align: center;
 			width: 25%;
+		}
+		.font18{
+		   font-size:18px;
 		}
 	</style>
 }
@@ -54,14 +57,21 @@
 					<!-- WIDGET TABBED CONTENT -->
 					<div class="widget">
 						<div class="widget-header">
-							<h3><i class="fa fa-tasks"></i>任务</h3>
+							<h3><i class="fa fa-tasks"></i>剩余工作</h3>
 							<div class="btn-group widget-header-toolbar">
 								<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
 							</div>
 						</div>
 
 						<div class="widget-content">
+							<div class="row" >
 
+								<div class="col-md-3 text-center"><h4><strong class="font18">我的任务</strong></h4><div class="font18"><strong>12</strong></div></div>
+								<div class="col-md-3 text-center"><h4><strong  class="font18">我的需求</strong></h4><div class="font18"><strong>12</strong></div></div>
+								<div class="col-md-3 text-center"><h4><strong class="font18">我的Bug</strong></h4><div class="font18"><strong>12</strong></div></div>
+								<div class="col-md-3 text-center"><h4><strong class="font18">进行中的项目</strong></h4><div class="font18"><strong>12</strong></div></div>
+
+							</div>
 						</div>
 					</div>
 					<!-- END WIDGET TABBED CONTENT -->
@@ -71,14 +81,36 @@
 					<!-- WIDGET TABBED CONTENT -->
 					<div class="widget">
 						<div class="widget-header">
-							<h3><i class="fa fa-tasks"></i>任务</h3>
+							<h3><i class="fa fa-tasks"></i>需求</h3>
 							<div class="btn-group widget-header-toolbar">
 								<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
 							</div>
 						</div>
 
-						<div class="widget-content">
+						<div class="widget-content widget-scrolling">
+							<div class="table-responsive">
 
+								<table class="table table-striped table-hover table-dark-header">
+									<thead>
+										<tr>
+											<th>项目</th>
+											<th>需求</th>
+											<th>发起人</th>
+										</tr>
+									</thead>
+
+									@for (var i = 0; i < 4; i++)
+									{
+										<tr>
+											<td class="processing">&nbsp;</td>
+											<td class="ready">&nbsp;</td>
+											<td class="complete">&nbsp;</td>
+										</tr>
+									}
+
+								</table>
+
+							</div>
 						</div>
 					</div>
 					<!-- END WIDGET TABBED CONTENT -->
@@ -108,18 +140,18 @@
 										<th>已经关闭</th>
 									</tr>
 								</thead>
-								<tr>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-								</tr>
-								<tr>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-								</tr>
+
+
+								@for (var i = 0; i < 7; i++)
+								{
+									<tr>
+										<td class="today">&nbsp;</td>
+										<td class="week">&nbsp;</td>
+										<td class="month">&nbsp;</td>
+										<td class="30day">&nbsp;</td>
+									</tr>
+								}
+
 							</table>
 
 							<table class="table table-striped table-hover table-dark-header">
@@ -131,18 +163,15 @@
 										<th>30天内完成</th>
 									</tr>
 								</thead>
-								<tr>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-								</tr>
-								<tr>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-								</tr>
+								@for (var i = 0; i < 7; i++)
+								{
+									<tr>
+										<td class="today">&nbsp;</td>
+										<td class="week">&nbsp;</td>
+										<td class="month">&nbsp;</td>
+										<td class="30day">&nbsp;</td>
+									</tr>
+								}
 							</table>
 
 						</div>
@@ -161,9 +190,9 @@
 @section Scripts{
 	<script>
 
-	$(function () {
+		$(function () {
 
-	});
+		});
 
 	</script>
 }

@@ -2060,6 +2060,8 @@
     <Content Include="Views\ShareFolder\_noPermission.cshtml" />
     <Content Include="Views\ShareFolder\_deleteFolder.cshtml" />
     <Content Include="Views\ShareFolder\_deleteFile.cshtml" />
+    <Content Include="Views\Home\EmployeeIndex.cshtml" />
+    <Content Include="Views\Home\ManagerIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
