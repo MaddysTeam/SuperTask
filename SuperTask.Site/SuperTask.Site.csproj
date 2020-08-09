@@ -315,6 +315,7 @@
     <Compile Include="Business\Handler\WorkJournalHandler.cs" />
     <Compile Include="Business\Helper\AttachmentHelper.cs" />
     <Compile Include="Business\Helper\AppConfigHelper.cs" />
+    <Compile Include="Business\Helper\RequireHelper.cs" />
     <Compile Include="Business\Helper\BugHelper.cs" />
     <Compile Include="Business\Helper\UserHelper.cs" />
     <Compile Include="Business\Helper\Keys\PublishKeys.cs" />
@@ -443,6 +444,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AjaxResults.cs" />
+    <Compile Include="Models\HomeViewModels.cs" />
     <Compile Include="Models\RequireViewModels.cs" />
     <Compile Include="Models\OperationHistoryViewModel.cs" />
     <Compile Include="Models\BugViewModels.cs" />

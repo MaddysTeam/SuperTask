@@ -9,7 +9,7 @@
 		var statusList = DictionaryCache.Cached(TaskKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "任务状态", Value = TaskKeys.SelectAll.ToString() }).ToList();
 		var typeList = DictionaryCache.Cached(TaskKeys.TypeV2Guid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "任务类型", Value = TaskKeys.SelectAll.ToString() }).ToList();
 		var levelList = DictionaryCache.Cached(TaskKeys.LevelGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "优先级", Value = TaskKeys.SelectAll.ToString() }).ToList();
-		var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId", v => v.ToString() == projectId);
+		var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId", v => v.ToString() == projectId, new SelectListItem { Text = "所有项目", Value = TaskKeys.SelectAll.ToString() });
 }
 @section Css{
 	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
@@ -30,7 +30,7 @@
 			<div class="col-md-2">
 				<div class="form-horizontal">
 					<div class="FormGroup">
-						@Html.DropDownList("dpProjects", projectsSelectList, new { @class = "form-control dropdown-myProjects" })
+						@Html.DropDownList("dpProjects", projectsSelectList, new { @class = "form-control dropdown-myProjects" } )
 					</div>
 				</div>
 			</div>
@@ -84,7 +84,7 @@
 					<div class="form-horizontal">
 						<div class="FormGroup" style="line-height: 35px;">
 							<a href="#" id="assign" class="btn">指派给我</a>
-							<input type="hidden" id="hidAssgin" />
+							<input type="hidden" id="hidAssgin"  value="true"/>
 						</div>
 					</div>
 				</div>
@@ -223,6 +223,7 @@
 		$(function () {
 
 			isLoaded = false;
+
 
 			$('#showAll').click(function () {
 				$('#dpLevels,#dpStatus,#dpTypes').val('@TaskKeys.SelectAll');

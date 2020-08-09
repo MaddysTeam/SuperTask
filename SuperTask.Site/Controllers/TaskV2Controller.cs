@@ -33,15 +33,21 @@ namespace TheSite.Controllers
 
 			var user = GetUserInfo();
 
-			var query = APQuery.select(t.TaskId, t.TaskName, t.V2Type, t.ParentId, t.IsParent,
-				  t.V2Level, t.SortId, t.TaskStatus, t.EstimateWorkHours,
-				  t.TaskStatus, t.ManagerId, t.WorkHours, t.EndDate, u.UserName)
-			   .from(t,
-			   u.JoinLeft(u.UserId == t.ManagerId)
-			   )
-			   .where(t.Projectid == projectId);
+         var query = APQuery.select(t.TaskId, t.TaskName, t.V2Type, t.ParentId, t.IsParent,
+              t.V2Level, t.SortId, t.TaskStatus, t.EstimateWorkHours,
+              t.TaskStatus, t.ManagerId, t.WorkHours, t.EndDate, u.UserName)
+            .from(t,
+            u.JoinLeft(u.UserId == t.ManagerId)
+            )
+            .where(t.TaskStatus != TaskKeys.DeleteStatus);
 
-			var tasks = query.order_by(t.SortId.Asc)
+         if(projectId!=TaskKeys.SelectAll)
+			   query=query.where_and(t.Projectid == projectId);
+
+         if (isAssign)
+            query = query.where_and(t.ManagerId == user.UserId);
+
+         var tasks = query.order_by(t.SortId.Asc)
 			   .query(db, r => new WorkTask
 			   {
 				   TaskId = t.TaskId.GetValue(r),
@@ -62,10 +68,8 @@ namespace TheSite.Controllers
 			var results = new List<WorkTask>();
 			var parents = tasks.FindAll(x => x.IsParent);
 
-
-			if (parents.Count > 0)
+			if (parents!=null && parents.Count > 0)
 			{
-
 				//排序条件表达式
 
 				if (sort != null)
@@ -85,7 +89,9 @@ namespace TheSite.Controllers
 				}
 			}
 
-			if (levelId != TaskKeys.SelectAll)
+         results.AddRange(tasks.Except(results));
+
+         if (levelId != TaskKeys.SelectAll)
 			{
 				results = results.FindAll(t => t.V2Level == levelId);
 			}
@@ -105,10 +111,7 @@ namespace TheSite.Controllers
 			{
 				results = results.FindAll(t => t.TaskName.IndexOf(taskName) >= 0);
 			}
-			if (isAssign)
-			{
-				results = results.FindAll(t => t.ManagerId == user.UserId);
-			}
+			
 
 			var total = results.Count;
 			if (total > 0)
@@ -178,7 +181,7 @@ namespace TheSite.Controllers
 							{
 								TaskId = Guid.NewGuid(),
 								Projectid = task.Projectid,
-								TaskName = task.TaskName,
+								TaskName = "【子】"+task.TaskName,
 								TaskType = task.TaskType,
 								ParentId = task.TaskId,
 								StartDate = task.StartDate,
@@ -319,7 +322,7 @@ namespace TheSite.Controllers
 							{
 								TaskId = Guid.NewGuid(),
 								Projectid = task.Projectid,
-								TaskName = task.TaskName,
+								TaskName = "【子】"+task.TaskName,
 								TaskType = task.TaskType,
 								ParentId = task.TaskId,
 								StartDate = task.StartDate,

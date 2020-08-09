@@ -31,6 +31,12 @@ namespace Business.Helper
 				  .ToList();
 		}
 
+      public static List<WorkTask> GetUserTasks( Guid userId, APDBDef db)
+      {
+         return db.WorkTaskDal.ConditionQuery(t.ManagerId == userId & t.TaskStatus != TaskKeys.DeleteStatus, null, null, null);
+      }
+
+
 
       /// <summary>
       /// write by huachao 2020.07.17.

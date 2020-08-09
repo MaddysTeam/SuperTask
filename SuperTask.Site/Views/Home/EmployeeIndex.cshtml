@@ -1,6 +1,30 @@
-﻿@{
+﻿@model EmployeeHomeViewModel
+@{
 	var pageTitle = ViewBag.Title = "";
 	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var processingTasks = Model.Tasks.FindAll(x => x.IsProcessStatus);
+	var planTasks = Model.Tasks.FindAll(x => x.IsPlanStatus);
+	var completeTasks = Model.Tasks.FindAll(x => x.IsCompleteStatus);
+	var closeTasks = Model.Tasks.FindAll(x => x.IsCloseStatus);
+	var todayTasks = Model.Tasks.FindAll(x => x.EndDate.IsToday());
+	var weekTasks = Model.Tasks.FindAll(x => x.EndDate.IsBetween(DateTime.Now.WeekStart(), DateTime.Now.WeekEnd()));
+	var monthTasks = Model.Tasks.FindAll(x => x.EndDate.IsBetween(DateTime.Now.MonthStart(), DateTime.Now.MonthEnd()));
+	var tasksIn30days = Model.Tasks.FindAll(x => x.EndDate.IsBetween(DateTime.Now, DateTime.Now.AddDays(30)));
+
+	var projects = Model.Porjects;
+	var processingProjects = Model.Porjects.FindAll(x => x.IsProcessStatus);
+	var requires = Model.Requires.FindAll(x => x.IsWaitingForReview);
+	var reviewRequires = Model.ReviewRequires;
+	var users = Model.Users;
+
+	var projectListUrl = Url.Action("Search","project");
+	var taskListUrl = Url.Action("List", "TaskV2");
+	var taskDetailsUrl = Url.Action("Detail", "TaskV2");
+	var requireListUrl = Url.Action("List", "Require");
+	var requireDetaulUrl = Url.Action("Detail", "Require");
+	var bugListUrl = Url.Action("List", "Bug");
+
 }
 @section Css{
 	<style>
@@ -8,8 +32,8 @@
 			font-size: 16px;
 		}
 
-		.a {
-			text-decoration: none;
+		a{
+			text-decoration-line:none;
 		}
 
 		.widget .widget-header {
@@ -24,9 +48,11 @@
 			text-align: center;
 			width: 25%;
 		}
-		.font18{
-		   font-size:18px;
+
+		.font18 {
+			font-size: 22px;
 		}
+
 	</style>
 }
 <div class="content-wrapper">
@@ -64,12 +90,12 @@
 						</div>
 
 						<div class="widget-content">
-							<div class="row" >
+							<div class="row">
 
-								<div class="col-md-3 text-center"><h4><strong class="font18">我的任务</strong></h4><div class="font18"><strong>12</strong></div></div>
-								<div class="col-md-3 text-center"><h4><strong  class="font18">我的需求</strong></h4><div class="font18"><strong>12</strong></div></div>
-								<div class="col-md-3 text-center"><h4><strong class="font18">我的Bug</strong></h4><div class="font18"><strong>12</strong></div></div>
-								<div class="col-md-3 text-center"><h4><strong class="font18">进行中的项目</strong></h4><div class="font18"><strong>12</strong></div></div>
+								<div class="col-md-3 text-center"><h4><strong class="font18">我的任务</strong></h4><div class="font18"><strong><a href="@taskListUrl" target="_blank">@Model.Tasks.Count</a></strong></div></div>
+								<div class="col-md-3 text-center"><h4><strong class="font18">我的需求</strong></h4><div class="font18"><strong><a href="@requireListUrl"  target="_blank">@Model.Requires.Count</a></strong></div></div>
+								<div class="col-md-3 text-center"><h4><strong class="font18">我的Bug</strong></h4><div class="font18"><strong><a href="@bugListUrl"  target="_blank">@Model.Bugs.Count</a></strong></div></div>
+								<div class="col-md-3 text-center"><h4><strong class="font18">进行中的项目</strong></h4><div class="font18"><strong><a href="@projectListUrl"  target="_blank">@processingProjects.Count</a></strong></div></div>
 
 							</div>
 						</div>
@@ -81,7 +107,7 @@
 					<!-- WIDGET TABBED CONTENT -->
 					<div class="widget">
 						<div class="widget-header">
-							<h3><i class="fa fa-tasks"></i>需求</h3>
+							<h3><i class="fa fa-tasks"></i>待审批需求</h3>
 							<div class="btn-group widget-header-toolbar">
 								<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
 							</div>
@@ -101,11 +127,25 @@
 
 									@for (var i = 0; i < 4; i++)
 									{
-										<tr>
-											<td class="processing">&nbsp;</td>
-											<td class="ready">&nbsp;</td>
-											<td class="complete">&nbsp;</td>
-										</tr>
+										if (i < reviewRequires.Count)
+										{
+											var rq = requires[i];
+											var prjectName = projects.Find(x => x.ProjectId == rq.Projectid).ProjectName;
+											var requireManager = users.Find(x => x.UserId == rq.ManagerId).UserName;
+											<tr>
+												<td>@prjectName</td>
+												<td>@rq.RequireName</td>
+												<td>@requireManager</td>
+											</tr>
+										}
+										else
+										{
+											<tr>
+												<td>&nbsp;</td>
+												<td>&nbsp;</td>
+												<td>&nbsp;</td>
+											</tr>
+										}
 									}
 
 								</table>
@@ -144,11 +184,62 @@
 
 								@for (var i = 0; i < 7; i++)
 								{
+									if (i == 0)
+									{
+										<tr>
+											<td class=""><strong>项目名称-优先级-任务名称-截止时间-已耗时</strong></td>
+											<td class=""><strong>项目名称-优先级-任务名称-开始时间</strong></td>
+											<td class=""><strong>项目名称-优先级-任务名称-完成时间</strong></td>
+											<td class=""><strong>项目名称-优先级-任务名称</strong></td>
+										</tr>
+									}
+
 									<tr>
-										<td class="today">&nbsp;</td>
-										<td class="week">&nbsp;</td>
-										<td class="month">&nbsp;</td>
-										<td class="30day">&nbsp;</td>
+									   @if (i < processingTasks.Count)
+										{
+											var pt = processingTasks[i];
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											<td class="today">
+										     <a target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)" @string.Format("{0}-{1}-{2}-{3}-{4}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.EndDate.ToyyMMddWithoutLine(), pt.WorkHours) />
+											</td>
+										}
+										else
+										{
+											<td>&nbsp;</td>
+										}
+
+									   @if (i < planTasks.Count)
+										{
+											var pt = planTasks[i];
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.StartDate.ToyyMMddWithoutLine())</a></td>
+										}
+										else
+										{
+											<td>&nbsp;</td>
+										}
+
+										@if (i < completeTasks.Count)
+										{
+											var pt = completeTasks[i];
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.RealEndDate.ToyyMMddWithoutLine())</a></td>
+										}
+										else
+										{
+											<td>&nbsp;</td>
+										}
+
+										@if (i < closeTasks.Count)
+										{
+											var pt = closeTasks[i];
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.CloseDate.ToyyMMddWithoutLine())</a></td>
+										}
+										else
+										{
+											<td>&nbsp;</td>
+										}							
 									</tr>
 								}
 
@@ -165,11 +256,57 @@
 								</thead>
 								@for (var i = 0; i < 7; i++)
 								{
+									if (i == 0)
+									{
+										<tr>
+											<td class=""><strong>项目名称-优先级-任务名称-截止时间-已耗时</strong></td>
+											<td class=""><strong>项目名称-优先级-任务名称-截至时间</strong></td>
+											<td class=""><strong>项目名称-优先级-任务名称-截至时间</strong></td>
+											<td class=""><strong>项目名称-优先级-任务名称</strong></td>
+										</tr>
+									}
 									<tr>
-										<td class="today">&nbsp;</td>
-										<td class="week">&nbsp;</td>
-										<td class="month">&nbsp;</td>
-										<td class="30day">&nbsp;</td>
+										@if (i < todayTasks.Count)
+										{
+											var pt = todayTasks[i];
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.EndDate.ToyyMMddWithoutLine(), pt.WorkHours)</a></td>
+										}
+										else
+										{
+											<td>&nbsp;</td>
+										}		
+										@if (i < weekTasks.Count)
+										{
+											var pt = weekTasks[i];
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.EndDate.ToyyMMddWithoutLine())</a></td>
+										}
+										else
+										{
+											<td>&nbsp;</td>
+										}	
+										@if (i < monthTasks.Count)
+										{
+											var pt = monthTasks[i];
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.EndDate.ToyyMMddWithoutLine())</a></td>
+										}
+										else
+										{
+											<td>&nbsp;</td>
+										}	
+										@if (i < tasksIn30days.Count)
+										{
+											var pt = tasksIn30days[i];
+											var prjectName = projects.Find(x => x.ProjectId == pt.Projectid).ProjectName;
+											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}", prjectName, pt.V2LevelTitle, pt.TaskName)</a></td>
+}
+										else
+										{
+											<td>&nbsp;</td>
+}
+										
 									</tr>
 								}
 							</table>
