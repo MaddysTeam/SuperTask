@@ -201,7 +201,7 @@
 						var isParent = row.IsParent;
 						var status = row.TaskStatus;
 						var projectId = $('#dpProjects').val();
-						var subTaskButtonStr = isParent ? '<button data-url="@Url.Action("AddSubTask", "TaskV2")?projectId=' + projectId + '&parentId=' + id + '" class="btn btn-lg btn-info btn-subTasks">子任务</button> ' : '<button class="btn" disable="disable">子任务</button>';
+						var subTaskButtonStr = isParent && isNotComplete(status) && isNotClose(status) ? '<button data-url="@Url.Action("AddSubTask", "TaskV2")?projectId=' + projectId + '&parentId=' + id + '" class="btn btn-lg btn-info btn-subTasks">子任务</button> ' : '<button class="btn" disable="disable">子任务</button>';
 						var statusButtonStr = isPlan(status) ? '<a data-url="@Url.Action("Start", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-start">开始</a> ' : '<button class="btn" disable="disable">已开始</button>';
 						var completeButtonStr = isNotComplete(status) ? '<a data-url="@Url.Action("Complete", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-complete">完成</a> ' : '<button class="btn" disable="disable">已完成</button>';
 						var journalButtonStr = isNotComplete(status) ? '<a  data-url="@Url.Action("JournalEdit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-journal">工时</a> ' : '<button class="btn" disable="disable">工时</button>';

@@ -88,20 +88,6 @@ namespace Business
          {ReviewKeys.ReviewTypeForTkSubmit, new TaskSubmitRequestHandler()  },
       };
 
-      public static Dictionary<Guid, WorkJournalEditHandler> JournalEditHandlers = new Dictionary<Guid, WorkJournalEditHandler>
-      {
-         {TaskKeys.ProjectTaskType, new WorkJournalEditHandler()  },
-         {TaskKeys.PlanTaskTaskType, new WorkJournalEditHandler()  },
-         {TaskKeys.TempTaskType, new WorkJournalEditHandler()  },
-         {TaskKeys.DocumentTaskType, new WorkJournalEditHandler()  },
-         {TaskKeys.DesignTaskType, new WorkJournalEditHandler()  },
-         {TaskKeys.DevelopTaskType, new WorkJournalEditHandler()  },
-         {TaskKeys.TestTaskType, new WorkJournalEditHandler()  },
-         {TaskKeys.DeployTaskType, new WorkJournalEditHandler()  },
-         {TaskKeys.MaintainedTaskType, new WorkJournalEditHandler()  },
-         {TaskKeys.ManageTaskType, new WorkJournalEditHandler()  },
-         {TaskKeys.OfficeTaskType, new WorkJournalEditHandler()  },
-      };
 
       public static Dictionary<string, PDFHandler> PDFHandlers = new Dictionary<string, PDFHandler>
       {

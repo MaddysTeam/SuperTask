@@ -129,7 +129,7 @@
 									{
 										if (i < reviewRequires.Count)
 										{
-											var rq = requires[i];
+											var rq = reviewRequires[i];
 											var prjectName = projects.Find(x => x.ProjectId == rq.Projectid).ProjectName;
 											var requireManager = users.Find(x => x.UserId == rq.ManagerId).UserName;
 											<tr>
@@ -269,7 +269,7 @@
 										@if (i < todayTasks.Count)
 										{
 											var pt = todayTasks[i];
-											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
 											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.EndDate.ToyyMMddWithoutLine(), pt.WorkHours)</a></td>
 										}
 										else
@@ -279,7 +279,7 @@
 										@if (i < weekTasks.Count)
 										{
 											var pt = weekTasks[i];
-											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
 											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.EndDate.ToyyMMddWithoutLine())</a></td>
 										}
 										else
@@ -289,7 +289,7 @@
 										@if (i < monthTasks.Count)
 										{
 											var pt = monthTasks[i];
-											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
 											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.EndDate.ToyyMMddWithoutLine())</a></td>
 										}
 										else
@@ -299,7 +299,7 @@
 										@if (i < tasksIn30days.Count)
 										{
 											var pt = tasksIn30days[i];
-											var prjectName = projects.Find(x => x.ProjectId == pt.Projectid).ProjectName;
+											var prjectName = projects.Find(x => x.ProjectId == pt.Projectid)?.ProjectName;
 											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}", prjectName, pt.V2LevelTitle, pt.TaskName)</a></td>
 }
 										else

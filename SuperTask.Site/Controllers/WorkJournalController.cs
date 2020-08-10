@@ -160,7 +160,7 @@ namespace TheSite.Controllers
          var currentUser = GetUserInfo();
 
          var workJournal = APQuery.select(wj.WorkHours, wj.Progress, wj.Comment, wj.Projectid, wj.TaskId, wj.UserId, wj.RecordDate, wj.RecordType, wj.ServiceCount,
-                                          wj.CreateDate, wj.TaskSubTypeValue, t.WorkHours.As("TaskWorkedHours"), t.TaskType, t.SubTypeValue,
+                                          wj.CreateDate, wj.TaskSubTypeValue, t.WorkHours.As("TaskWorkedHours"), t.TaskType, t.SubTypeValue, t.V2Type,
                                           p.ProjectName.As("ProjectName"), t.TaskName.As("TaskName"), t.EstimateWorkHours,
                                           at.AttachmentId.As("AttachmentId"), at.Url, at.RealName.As("RealName"),
                                           d.ID.As("SubTypeID"), d.Title, d.Other, d.Note, d.Code)
@@ -173,12 +173,7 @@ namespace TheSite.Controllers
                         .where(wj.UserId == currentUser.UserId & wj.JournalId == id)
                         .query(db, r =>
                         {
-                           var taskTypeId = t.TaskType.GetValue(r);
-                           var subTypeTitle = taskTypeId == TaskKeys.ProjectTaskType || taskTypeId == TaskKeys.TempTaskType ?
-                                                          "无" :
-                                                           $"{d.Title.GetValue(r)} (单位:{d.Other.GetValue(r)})";
-         
-                           var subTaskScore = t.SubTypeValue.GetValue(r) * Convert.ToDouble(d.Code.GetValue(r));
+                           var taskTypeId = t.V2Type.GetValue(r);
 
                            return new WorkJournal
                            {
@@ -204,23 +199,14 @@ namespace TheSite.Controllers
                               },
                               TaskWorkHours = t.WorkHours.GetValue(r, "TaskWorkedHours"),
                               TaskType = taskTypeId,
-                              ServiceCount = t.ServiceCount.GetValue(r),//当日运维数量 ,停用，已被子类型取代
+                              ServiceCount = t.ServiceCount.GetValue(r),//当日运维数量 ,停用，已被子类型取代  // 子类型被停用 2020
                               TaskSubType = t.SubTypeId.GetValue(r),
-                              TaskSubTypeValue = wj.TaskSubTypeValue.GetValue(r),
-                              SubTypeTitle = subTypeTitle,
-                              SubTaskScore = subTaskScore
+                              TaskSubTypeValue = wj.TaskSubTypeValue.GetValue(r)
                            };
                         }).FirstOrDefault();
 
-
-         //var yesterdayJournal = db.WorkJournalDal.ConditionQuery(
-         //   wj.UserId == currentUser.UserId &
-         //   wj.TaskId == workJournal.TaskId
-         //   & wj.RecordDate > workJournal.RecordDate.AddDays(-1).TodayStart()
-         //   & wj.RecordDate < workJournal.RecordDate.AddDays(-1).TodayEnd()
-         //   , null, null, null).FirstOrDefault();
-
-         //ViewBag.YesterdayProgress = yesterdayJournal == null ? 0 : yesterdayJournal.Progress;
+         if (workJournal == null)
+            throw new ApplicationException("请联系管理员");
 
          return PartialView(workJournal);
       }
@@ -235,7 +221,7 @@ namespace TheSite.Controllers
          var originalTasks = tks.DeepClone();
          var editOption = new WorkJournalEditOption { db = db, Journals = journals, Tasks = tks, Result = Result.Initial(), OriginalTasks = originalTasks };
 
-         HandleManager.JournalEditHandlers[journal.TaskType].Handle(journal, editOption);
+         new WorkJournalEditHandler().Handle(journal, editOption);
 
          return Json(new
          {

@@ -210,7 +210,7 @@ namespace TheSite.Controllers
 							WorkJournalHelper.CreateByTask(subTask, db);
 
 							//add user to project resurce if not exits
-							ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.ManagerId, ResourceKeys.OtherType, db);
+							//ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.ManagerId, ResourceKeys.OtherType, db);
 
 							index++;
 						}
@@ -322,6 +322,7 @@ namespace TheSite.Controllers
 					var newSortNo = GetTaskSortNo(task.Projectid, db);
 
 					// delete all subtasks
+
 					if (subTasks.Count > 0)
 						db.WorkTaskDal.ConditionDelete(t.TaskId.In(subTasks.Select(x => x.TaskId).ToArray()));
 
@@ -362,9 +363,6 @@ namespace TheSite.Controllers
 						subTask.EstimateWorkHours = double.Parse(subTaskEsTimes.Split(',')[index + 1]);
 
 						db.WorkTaskDal.Insert(subTask);
-
-						//add user to project resurce if not exits
-						ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.ManagerId, ResourceKeys.OtherType, db);
 
 						index++;
 					}
@@ -414,7 +412,6 @@ namespace TheSite.Controllers
 
 				var publishs = task.RelativePublishIds.Split(',');
 				RTPBRelationHelper.BindRelationBetweenPublishsAndTask(publishs.ConvertToGuidArray(), task.TaskId, db);
-
 
 				db.Commit();
 			}
