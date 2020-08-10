@@ -20,7 +20,7 @@ namespace Business.Helper
 			var p = APDBDef.Project;
 			var re = APDBDef.Resource;
 
-			var projects = APQuery.select(p.ProjectId, p.ProjectName, p.CreateDate)
+			var projects = APQuery.select(p.ProjectId, p.ProjectName, p.CreateDate,p.ProjectStatus)
 				   .from(p,
 						 re.JoinInner(re.Projectid == p.ProjectId & re.UserId == userId))
 						 .order_by(p.CreateDate.Desc)
@@ -28,7 +28,8 @@ namespace Business.Helper
 				   .query(db, r => new Project
 				   {
 					   ProjectId = p.ProjectId.GetValue(r),
-					   ProjectName = p.ProjectName.GetValue(r)
+					   ProjectName = p.ProjectName.GetValue(r),
+					   ProjectStatus=p.ProjectStatus.GetValue(r)
 				   }).ToList();
 
 			return projects;

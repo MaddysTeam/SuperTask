@@ -33,42 +33,48 @@ namespace TheSite.Controllers
 
 			var user = GetUserInfo();
 
-         var query = APQuery.select(t.TaskId, t.TaskName, t.V2Type, t.ParentId, t.IsParent,
-              t.V2Level, t.SortId, t.TaskStatus, t.EstimateWorkHours,
-              t.TaskStatus, t.ManagerId, t.WorkHours, t.EndDate, u.UserName)
-            .from(t,
-            u.JoinLeft(u.UserId == t.ManagerId)
-            )
-            .where(t.TaskStatus != TaskKeys.DeleteStatus);
+			var query = APQuery.select(t.TaskId, t.TaskName, t.V2Type, t.ParentId, t.IsParent,
+				 t.V2Level, t.SortId, t.TaskStatus, t.EstimateWorkHours,
+				 t.TaskStatus, t.ManagerId, t.WorkHours, t.EndDate, u.UserName)
+			   .from(t,
+			   u.JoinLeft(u.UserId == t.ManagerId)
+			   )
+			   .where(t.TaskStatus != TaskKeys.DeleteStatus);
 
-         if(projectId!=TaskKeys.SelectAll)
-			   query=query.where_and(t.Projectid == projectId);
+			if (projectId != TaskKeys.SelectAll)
+			{
+				query = query.where_and(t.Projectid == projectId);
+				query.order_by(t.SortId.Desc);
+			}
+			else
+				query.order_by(t.CreateDate.Desc);
 
-         if (isAssign)
-            query = query.where_and(t.ManagerId == user.UserId);
+			if (isAssign)
+				query = query.where_and(t.ManagerId == user.UserId);
 
-         var tasks = query.order_by(t.SortId.Asc)
-			   .query(db, r => new WorkTask
-			   {
-				   TaskId = t.TaskId.GetValue(r),
-				   TaskName = t.TaskName.GetValue(r),
-				   ParentId = t.ParentId.GetValue(r),
-				   IsParent = t.IsParent.GetValue(r),
-				   ManagerId = t.ManagerId.GetValue(r),
-				   Manager = u.UserName.GetValue(r),
-				   V2Level = t.V2Level.GetValue(r),
-				   SortId = t.SortId.GetValue(r),
-				   V2Type = t.V2Type.GetValue(r),
-				   TaskStatus = t.TaskStatus.GetValue(r),
-				   WorkHours = t.WorkHours.GetValue(r),
-				   EstimateWorkHours = t.EstimateWorkHours.GetValue(r)
-			   }).ToList();
+
+			var tasks = query
+				.query(db, r => new WorkTask
+				{
+					TaskId = t.TaskId.GetValue(r),
+					TaskName = t.TaskName.GetValue(r),
+					ParentId = t.ParentId.GetValue(r),
+					IsParent = t.IsParent.GetValue(r),
+					ManagerId = t.ManagerId.GetValue(r),
+					Manager = u.UserName.GetValue(r),
+					V2Level = t.V2Level.GetValue(r),
+					SortId = t.SortId.GetValue(r),
+					V2Type = t.V2Type.GetValue(r),
+					TaskStatus = t.TaskStatus.GetValue(r),
+					WorkHours = t.WorkHours.GetValue(r),
+					EstimateWorkHours = t.EstimateWorkHours.GetValue(r)
+				}).ToList();
 
 
 			var results = new List<WorkTask>();
 			var parents = tasks.FindAll(x => x.IsParent);
 
-			if (parents!=null && parents.Count > 0)
+			if (parents != null && parents.Count > 0)
 			{
 				//排序条件表达式
 
@@ -89,9 +95,9 @@ namespace TheSite.Controllers
 				}
 			}
 
-         results.AddRange(tasks.Except(results));
+			results.AddRange(tasks.Except(results));
 
-         if (levelId != TaskKeys.SelectAll)
+			if (levelId != TaskKeys.SelectAll)
 			{
 				results = results.FindAll(t => t.V2Level == levelId);
 			}
@@ -111,7 +117,7 @@ namespace TheSite.Controllers
 			{
 				results = results.FindAll(t => t.TaskName.IndexOf(taskName) >= 0);
 			}
-			
+
 
 			var total = results.Count;
 			if (total > 0)
@@ -131,6 +137,7 @@ namespace TheSite.Controllers
 
 
 		//GET  TaskV2/Add
+		//GET  TaskV2/AddSubTask
 		//POST-Ajax  /TaskV2/Add
 		//POST-Ajax  /TaskV2/AddExecutor
 
@@ -181,7 +188,7 @@ namespace TheSite.Controllers
 							{
 								TaskId = Guid.NewGuid(),
 								Projectid = task.Projectid,
-								TaskName = "【子】"+task.TaskName,
+								TaskName = "【子】" + task.TaskName,
 								TaskType = task.TaskType,
 								ParentId = task.TaskId,
 								StartDate = task.StartDate,
@@ -208,6 +215,8 @@ namespace TheSite.Controllers
 							index++;
 						}
 					}
+					else
+						task.TaskName = "【子】" + task.TaskName;
 
 					task.IsParent = isParent;
 					task.TaskStatus = TaskKeys.PlanStatus;
@@ -263,6 +272,13 @@ namespace TheSite.Controllers
 				result = AjaxResults.Success,
 				msg = Success.Task.EDIT_SUCCESS
 			});
+		}
+
+		[HttpPost]
+		public ActionResult AddExecutor()
+		{
+			ViewBag.Users = db.UserInfoDal.ConditionQuery(u.IsDelete == false, null, null, null);
+			return PartialView("_subTaskExecutor", new SubTaskExecutorViewModel { ExecutorId = GetUserInfo().UserId });
 		}
 
 		//GET  TaskV2/Edit
@@ -322,7 +338,7 @@ namespace TheSite.Controllers
 							{
 								TaskId = Guid.NewGuid(),
 								Projectid = task.Projectid,
-								TaskName = "【子】"+task.TaskName,
+								TaskName = "【子】" + task.TaskName,
 								TaskType = task.TaskType,
 								ParentId = task.TaskId,
 								StartDate = task.StartDate,

@@ -198,7 +198,7 @@
 									   @if (i < processingTasks.Count)
 										{
 											var pt = processingTasks[i];
-											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
 											<td class="today">
 										     <a target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)" @string.Format("{0}-{1}-{2}-{3}-{4}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.EndDate.ToyyMMddWithoutLine(), pt.WorkHours) />
 											</td>
@@ -211,7 +211,7 @@
 									   @if (i < planTasks.Count)
 										{
 											var pt = planTasks[i];
-											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
 											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.StartDate.ToyyMMddWithoutLine())</a></td>
 										}
 										else
@@ -222,7 +222,7 @@
 										@if (i < completeTasks.Count)
 										{
 											var pt = completeTasks[i];
-											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
 											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.RealEndDate.ToyyMMddWithoutLine())</a></td>
 										}
 										else
@@ -233,7 +233,7 @@
 										@if (i < closeTasks.Count)
 										{
 											var pt = closeTasks[i];
-											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid).ProjectName;
+											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
 											<td><a  target="_blank" href="@(taskDetailsUrl+"?id="+pt.TaskId)">@string.Format("{0}-{1}-{2}-{3}", prjectName, pt.V2LevelTitle, pt.TaskName, pt.CloseDate.ToyyMMddWithoutLine())</a></td>
 										}
 										else

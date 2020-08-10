@@ -12,21 +12,21 @@
 	}
 </style>
 
-<div class="modal-dialog" style="width:95%;">
+<div class="modal-dialog" style="width:60%">
 
 	<!-- widget -->
-	<div class="widget details">
+	<div class="widget details" >
 
 		<form action="@Url.Action("UploadFile", "Attachment")" class="dropzone file"></form>
 		<form class="form-horizontal" action="@Url.Action("Add","TaskV2")" role="form" data-after-success="afterDialogSuccess()" style="border:1px solid red;margin:auto">
 
-			<div class="widget-content">
+			<div class="widget-content" >
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<h4>创建任务</h4>
 				</div>
 				<div class="modal-body row editTaskInfo">
-					<fieldset class="col-sm-12">
+					<fieldset >
 						@Html.HiddenFor(x => x.ParentId)
 						@Html.HiddenFor(x => x.RelativeRequireIds)
 						@Html.HiddenFor(x => x.RelativeBugIds)
@@ -35,24 +35,24 @@
 
 						<div class="form-group projectsDropdown">
 							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
-							<div class="col-md-2">
+							<div class="col-md-3">
 								@Html.DropDownListFor(t => t.Projectid,
 									SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId"),
 									new { @class = "form-control dropdown-project" })
 							</div>
 
-							<div class="col-md-1 text-right">
+							<div class="col-md-2 text-right">
 								@Html.CheckBox("hasParnetTask", !Model.ParentId.IsEmpty(), new { @class = "" })
 								@Html.LabelFor(t => t.ParentTaskName, new { @class = "control-label" })
 							</div>
-							<div class="col-md-2 parentTasks">
+							<div class="col-md-3 parentTasks">
 								<select id="parentTasks" name="parentTasks" class="form-control dropdown-parnetTasks hidden"></select>
 							</div>
 						</div>
 
 						<div class="form-group">
 							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-2" })
-							<div class="col-md-6">
+							<div class="col-md-9">
 								@Html.TextBoxFor(t => t.TaskName, new { @class = "form-control" })
 								@Html.ValidationMessageFor(t => t.TaskName)
 							</div>
@@ -60,15 +60,15 @@
 
 						<div class="form-group projectsDropdown">
 							@Html.LabelFor(t => t.TaskType, new { @class = "control-label col-md-2" })
-							<div class="col-md-2">
+							<div class="col-md-3">
 								@Html.DropDownListFor(t => t.V2Type,
 									DictionaryCache.Cached(TaskKeys.TypeV2Guid)
 														.GetSelectListById(Guid.Empty),
 									new { @class = "form-control dropdown-taskType" })
 							</div>
 
-							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-2 text-align:left" })
-							<div class="col-md-2">
+							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-3 text-align:left" })
+							<div class="col-md-3">
 								@Html.DropDownListFor(t => t.V2Level,
 									DictionaryCache.Cached(TaskKeys.LevelGuid)
 														.GetSelectListById(Guid.Empty),
@@ -77,14 +77,14 @@
 						</div>
 						<div class="form-group">
 							@Html.LabelFor(t => t.StartDate, new { @class = "control-label col-md-2" })
-							<div class="col-md-2">
+							<div class="col-md-3">
 								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
 									@Html.TextBoxFor(t => t.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control startDate" })
 									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
 								</div>
 							</div>
-							@Html.LabelFor(t => t.EndDate, new { @class = "control-label col-md-2" })
-							<div class="col-md-2">
+							@Html.LabelFor(t => t.EndDate, new { @class = "control-label col-md-3" })
+							<div class="col-md-3">
 								<div class="input-group date" data-provide="datepicker" data-date-language="zh-CN" data-date-format="yyyy-mm-dd" data-date-autoclose="true">
 									@Html.TextBoxFor(t => t.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control endDate" })
 									<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
@@ -94,28 +94,28 @@
 
 						<div class="form-group">
 							@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2 text-align:left" })
-							<div class="col-md-2">
+							<div class="col-md-3">
 								@Html.DropDownListFor(t => t.ManagerId,
 									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
 									new { @class = "form-control dropdown-project2" })
 							</div>
 
-							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-2 text-align:left" })
-							<div class="col-md-2">
+							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-3 text-align:left" })
+							<div class="col-md-3">
 								@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
 							</div>
 						</div>
 
 						<div class="form-group subTaskExecutor">
 							@Html.Label("执行人", new { @class = "control-label col-md-2 text-align:left" })
-							<div class="col-md-2">
+							<div class="col-md-3">
 								@Html.DropDownList("executorId",
 									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == Html.GetUserProfile().UserId.ToString()),
 									new { @class = "form-control" })
 							</div>
 
-							@Html.Label("预计消耗", new { @class = "control-label col-md-2 text-align:left" })
-							<div class="col-md-2">
+							@Html.Label("预计消耗", new { @class = "control-label col-md-3 text-align:left" })
+							<div class="col-md-3">
 								@Html.TextBox("estimateWorkHours", "0", new { @class = "form-control" })
 							</div>
 							<div>
@@ -125,7 +125,7 @@
 
 						<div class="form-group">
 							@Html.LabelFor(t => t.Description, new { @class = "control-label col-md-2" })
-							<div class="col-md-6">
+							<div class="col-md-9">
 								@Html.TextAreaFor(t => t.Description, 12, 2, new { @class = "form-control" })
 								@Html.ValidationMessageFor(t => t.Description)
 							</div>
@@ -133,17 +133,17 @@
 
 						<div class="form-group">
 							@Html.Label("关联需求", new { @class = "control-label  col-md-2" })
-							<div class="col-md-1">
+							<div class="col-md-2">
 								<select id="requires" class="form-control new-select" multiple="multiple"></select>
 							</div>
 
-							@Html.Label("关联bug", new { @class = "control-label col-md-1" })
-							<div class="col-md-1">
+							@Html.Label("关联bug", new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
 								<select id="bugs" class="form-control new-select" multiple="multiple"></select>
 							</div>
 
-							@Html.Label("关联发布", new { @class = "control-label col-md-1" })
-							<div class="col-md-1">
+							@Html.Label("关联发布", new { @class = "control-label col-md-2" })
+							<div class="col-md-2">
 								<select id="publishs" class="form-control new-select" multiple="multiple"></select>
 							</div>
 						</div>
@@ -164,7 +164,7 @@
 						</div>
 
 						<div class="input-group center-block">
-							<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
+							<button id="submit" class="btn btn-info col-md-3 col-md-offset-3 btn-custom-primary">保存</button>
 							<a class="btn btn-info col-md-3" data-dismiss="modal">取消</a>
 						</div>
 
