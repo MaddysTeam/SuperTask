@@ -8,6 +8,7 @@
 	.dropzonePop {
 		display: none;
 	}
+	.modal-header{margin-bottom:15px;}
 </style>
 
 <div class="row" style="margin-top:20px;margin-bottom:20px;">
@@ -26,8 +27,9 @@
 			<form id="RequireForm" class="form-horizontal" action="@Url.Action("Edit","Require")" role="form" data-after-success="afterDialogSuccess()" style="">
 
 				<div class="widget-content">
-					<div>
-						<hr />
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4>编辑需求</h4>
 					</div>
 					<div class="row editTaskInfo">
 						<fieldset class="col-sm-12">
@@ -215,8 +217,8 @@
 			ajaxSubmitForm($('#RequireForm'), true);
 
 			//initial ckeditor
-			var myEditor = initCKEditor('Description');
-			var myEditor2 = initCKEditor('StandardContent');
+			var myEditor = initCKEditor('Description', { height: 200 });
+			var myEditor2 = initCKEditor('StandardContent', { height: 200 });
 
 			$('#submit').click(function () {
 				$('#CC').val($('#ccUsers').val());

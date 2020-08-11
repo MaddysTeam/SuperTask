@@ -62,7 +62,7 @@
 				<div class="col-sm-2">
 					<div class="form-horizontal">
 						<div class="FormGroup" style="float:left">
-							<input type="text" placeholder="发布id/名称" class="form-control txt-taskName " id="txtName" />
+							<input type="text" placeholder="发布id/名称" class="form-control txt-taskName " id="searchPhrase" />
 						</div>
 					</div>
 				</div>
@@ -143,6 +143,7 @@
 				statusId: $('#dpStatus').val(),
 				isAssign: $('#hidAssgin').val() != '',
 				isJoin: $('#hidJoin').val() != '',
+				searchPhrase: $('#searchPhrase').val()
 			};
 		}
 
@@ -192,7 +193,7 @@
 
 			$('#showAll').click(function () {
 				$('#dpLevels,#dpStatus,#dpTypes').val('@TaskKeys.SelectAll');
-				$('#hidAssgin,#txtName').val('');
+				$('#hidAssgin,#txtName,#searchPhrase').val('');
 				$('#bootgrid').bootgrid('reload');
 			});
 

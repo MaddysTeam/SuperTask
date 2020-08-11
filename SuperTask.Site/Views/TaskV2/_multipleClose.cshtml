@@ -5,6 +5,7 @@
 	.dropzonePop {
 		display: none;
 	}
+		.modal-header{margin-bottom:15px;}
 </style>
 
 
@@ -20,10 +21,9 @@
 				@Html.HiddenFor(t => t.ProjectId)
 
 				<div class="widget-content">
-
-					<div class="row">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 						<h4>任务关闭</h4>
-						<hr />
 					</div>
 
 					<div class="row editTaskInfo">

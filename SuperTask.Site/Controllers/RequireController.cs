@@ -51,7 +51,7 @@ namespace TheSite.Controllers
 			if (projectId != AppKeys.SelectAll)
 				query = query.where(re.Projectid == projectId);
 
-			var results = query.order_by(re.SortId.Asc)
+			var results = query.order_by(re.ModifyDate.Desc)
 			   .query(db, r => new Require
 			   {
 				   RequireId = re.RequireId.GetValue(r),
@@ -192,6 +192,8 @@ namespace TheSite.Controllers
 					require.RequireId = Guid.NewGuid();
 					require.CreateDate = DateTime.Now;
 					require.CreatorId = user.UserId;
+               require.ModifiedBy = user.UserId;
+               require.ModifyDate = DateTime.Now;
 					require.RequireStatus = RequireKeys.readyToReview;
 
 					db.RequireDal.Insert(require);

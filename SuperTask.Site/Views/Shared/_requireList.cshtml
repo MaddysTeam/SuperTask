@@ -18,7 +18,7 @@
 			{
 				<tr>
 					<td>@item.SortId</td>
-					<td>@item.RequireName</td>
+					<td><a target="_blank" href="@Url.Action("Detail","Require",new {id=item.RequireId })">@item.RequireName</a></td>
 					<td>@(string.IsNullOrEmpty(item.Manager) ? users?.First(x => x.UserId == item.ManagerId)?.RealName : item.Manager)</td>
 					<td>@item.Status</td>
 				</tr>
