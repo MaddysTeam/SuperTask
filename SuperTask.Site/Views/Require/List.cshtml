@@ -61,7 +61,7 @@
 				<div class="col-sm-2">
 					<div class="form-horizontal">
 						<div class="FormGroup" style="float:left">
-							<input type="text" placeholder="需求ID/名称" class="form-control txt-taskName " id="txtName" />
+							<input type="text" placeholder="需求ID/名称" class="form-control txt-taskName" id="searchPhrase" />
 						</div>
 					</div>
 				</div>
@@ -143,6 +143,7 @@
 				statusId: $('#dpStatus').val(),
 				isAssign: $('#hidAssgin').val() != '',
 				isJoin: $('#hidJoin').val() != '',
+				searchPhrase: $('#searchPhrase').val()
 			};
 		}
 

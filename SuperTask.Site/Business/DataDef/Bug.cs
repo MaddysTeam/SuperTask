@@ -62,13 +62,19 @@ namespace Business
 			}
 		}
 
-		public string FixDateStr => this.FixDate.ToyyMMdd();
+		public string FixDateStr => FixDate.ToyyMMdd();
 
-		public string CreateDateStr => this.CreateDate.ToyyMMdd();
+		public string CreateDateStr => CreateDate.ToyyMMdd();
 
-		public bool ReadyToConfirm => this.BugStatus == BugKeys.readyToConfirm;
+		public bool ReadyToConfirm => BugStatus == BugKeys.readyToConfirm;
 
-		public bool HasDone => this.BugStatus == BugKeys.hasResolve || this.BugStatus == BugKeys.hasClose;
+		public bool ReadyToResolve => BugStatus == BugKeys.readyToResolve;
+
+		public bool HasResolve => BugStatus == BugKeys.hasResolve;
+
+		public bool IsClosed => BugStatus == BugKeys.hasClose;
+
+		public bool HasDone => BugStatus == BugKeys.hasResolve || BugStatus == BugKeys.hasClose;
 
 	}
 

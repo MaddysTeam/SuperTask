@@ -69,7 +69,7 @@
 				<div class="col-sm-2">
 					<div class="form-horizontal">
 						<div class="FormGroup" style="float:left">
-							<input type="text" placeholder="BugID/名称" class="form-control txt-taskName " id="txtName" />
+							<input type="text" placeholder="BugID/名称" class="form-control txt-taskName " id="searchPhrase" />
 						</div>
 					</div>
 				</div>
@@ -153,6 +153,7 @@
 				statusId: $('#dpStatus').val(),
 				isAssign: $('#hidAssgin').val() != '',
 				isJoin: $('#hidJoin').val() != '',
+				searchPhrase: $('#searchPhrase').val()
 			};
 		}
 
@@ -180,10 +181,11 @@
 						var id = row.BugId;
 						var status = row.bugStatus;
 						var projectId = $('#dpProjects').val();
-						var isReadyToConfrim = row.ReadyToConfirm;
+						var isReadyToResolve = row.ReadyToResolve;
+						var hasResolve = row.HasResolve;
 
-						var confirmButtonStr = '<a data-url="@Url.Action("Confirm", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-confirm">确认</a> ';
-						var fixButtonStr = isReadyToConfrim ? '<button class="btn" disable="disable">解决</button>' : '<a data-url="@Url.Action("Resolve", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-resolve">解决</a> ';
+						var confirmButtonStr = isReadyToResolve || hasResolve ? '<button class="btn" disable="disable">已确认</button>' : '<a data-url="@Url.Action("Confirm", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-confirm">确认</a> ';
+						var fixButtonStr = !isReadyToResolve ? '<button class="btn" disable="disable">解决</button>' : '<a data-url="@Url.Action("Resolve", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-resolve">解决</a> ';
 						var EditButtonStr = '<a target="_blank"  href="@Url.Action("Edit", "Bug")?id=' + id + '" class="btn btn-lg btn-info btn-edit">编辑</a> ' ;
 						var closeButtonStr ='<a data-url="@Url.Action("Relative", "Bug")?id=' + id + '" class="btn btn-lg btn-success btn-relative">关联</a> ';
 

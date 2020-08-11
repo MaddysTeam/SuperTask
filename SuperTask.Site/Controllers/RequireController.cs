@@ -291,6 +291,8 @@ namespace TheSite.Controllers
 				return Json(new{result = AjaxResults.Error,msg= ModelState.ShowErrorMessages()});
 			}
 
+			var user = GetUserInfo();
+
 			db.BeginTrans();
 
 			try
@@ -301,10 +303,16 @@ namespace TheSite.Controllers
 
 				foreach (var require in requires)
 				{
-					var id = require.RequireId;
-					db.OperationDal.Insert(new Operation(require.Projectid, id, RequireKeys.ReviewResultGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
-
-					db.RequireDal.UpdatePartial(id, new { ReviewDate = DateTime.Now, RequireStatus = reviewStats });
+					if (require.ReviewerId == user.UserId)
+					{
+						var id = require.RequireId;
+						db.OperationDal.Insert(new Operation(require.Projectid, id, RequireKeys.ReviewResultGuid, model.Result, null, DateTime.Now, assignId, model.Remark));
+						db.RequireDal.UpdatePartial(id, new { ReviewDate = DateTime.Now, RequireStatus = reviewStats });
+					}
+					else
+					{
+						throw new ApplicationException(string.Format("您没有审核{0}的权限",require.RequireName));
+					}
 				}
 
 				db.Commit();
@@ -568,7 +576,6 @@ namespace TheSite.Controllers
 			   };
 		}
 
-
 		private int GetMaxSortNo(Guid projectId, APDBDef db)
 		{
 			var result = APQuery.select(re.SortId.Max().As("SortId"))
@@ -580,7 +587,6 @@ namespace TheSite.Controllers
 
 			return result.sortId;
 		}
-
 
 		private List<Require> GetRequireListByIds(string id)
 		{
