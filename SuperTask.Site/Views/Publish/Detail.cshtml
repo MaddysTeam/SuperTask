@@ -68,11 +68,11 @@
 					<div class="form-group">
 						@Html.LabelFor(t => t.PublishType, new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
-							@Html.Label(Model.Type, new { @class = "form-control" })
+							@Html.Label( string.IsNullOrEmpty(Model.Type)? string.Empty:Model.Type, new { @class = "form-control" })
 						</div>
 						@Html.LabelFor(t => t.PublishStatus, new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
-							@Html.Label(Model.Status, new { @class = "form-control" })
+							@Html.Label(string.IsNullOrEmpty(Model.Status) ?string.Empty:Model.Status, new { @class = "form-control" })
 						</div>
 					</div>
 

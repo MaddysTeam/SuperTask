@@ -30,11 +30,11 @@ namespace Business
 
 		public List<Require> RelativeRequires = new List<Require>();
 
-      public string RelativeTaskIds { get; set; }
+		public string RelativeTaskIds { get; set; }
 
-      public string RelativeRequireIds { get; set; }
+		public string RelativeRequireIds { get; set; }
 
-      [Required]
+		[Required]
 		public override string PublishName
 		{
 			get
@@ -48,16 +48,16 @@ namespace Business
 			}
 		}
 
-      [Display(Name = "完成日期")]
-      public string EndDateStr => this.EndDate.ToyyMMdd();
+		[Display(Name = "完成日期")]
+		public string EndDateStr => this.EndDate.ToyyMMdd();
 
-      [Display(Name ="关闭日期")]
+		[Display(Name = "关闭日期")]
 		public string CloseDateStr => this.CloseDate.ToyyMMdd();
 
-      [Display(Name = "创建日期")]
-      public string CreateDateStr => this.CreateDate.ToyyMMdd();
+		[Display(Name = "创建日期")]
+		public string CreateDateStr => this.CreateDate.ToyyMMdd();
 
 
-   }
+	}
 
 }

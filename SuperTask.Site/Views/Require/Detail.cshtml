@@ -114,7 +114,7 @@
 							@Html.Label(Model.EndDateStr, new { @class = "form-control" })
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group @(Model.IsWaitingForReview|| Model.IsHurry? "hidden":"")">
 						@Html.LabelFor(x => x.WorkHours, new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
 							<a id="handle" href="#" data-url="@Url.Action("Handle", "Require",new { id=Model.RequireId})"><i class="fa fa-clock-o" style="font-size:22px"></i></a>

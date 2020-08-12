@@ -76,9 +76,14 @@ namespace TheSite.Controllers
 			{
 				switch (sort.ID)
 				{
-					case "SortId":
-						results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.SortId).ToList() :
-																  results.OrderByDescending(x => x.SortId).ToList(); break;
+					case "SortId": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.SortId).ToList() : results.OrderByDescending(x => x.SortId).ToList(); break;
+					case "Level": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.RequireLevel).ToList() : results.OrderByDescending(x => x.RequireLevel).ToList(); break;
+					case "RequireName": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.RequireName).ToList() : results.OrderByDescending(x => x.RequireName).ToList(); break;
+					case "Status": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.RequireStatus).ToList() : results.OrderByDescending(x => x.RequireStatus).ToList(); break;
+					case "Manager": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.Manager).ToList() : results.OrderByDescending(x => x.Manager).ToList(); break;
+					case "CreateDate": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.CreateDate).ToList() : results.OrderByDescending(x => x.CreateDate).ToList(); break;
+					case "Creator": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.Creator).ToList() : results.OrderByDescending(x => x.Creator).ToList(); break;
+					case "EstimateEndDate": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.EstimateEndDate).ToList() : results.OrderByDescending(x => x.EstimateEndDate).ToList(); break;
 				}
 			}
 
@@ -165,7 +170,7 @@ namespace TheSite.Controllers
 				return Json(new
 				{
 					result = AjaxResults.Error,
-					msg= Errors.Require.MUST_SELECT_PROJECT
+					msg = Errors.Require.MUST_SELECT_PROJECT
 				});
 			}
 
@@ -184,6 +189,9 @@ namespace TheSite.Controllers
 
 			try
 			{
+				require.ModifiedBy = user.UserId;
+				require.ModifyDate = DateTime.Now;
+
 				if (require.RequireId.IsEmptyGuid())
 				{
 					var sortId = GetMaxSortNo(require.Projectid, db);
@@ -192,18 +200,17 @@ namespace TheSite.Controllers
 					require.RequireId = Guid.NewGuid();
 					require.CreateDate = DateTime.Now;
 					require.CreatorId = user.UserId;
-               require.ModifiedBy = user.UserId;
-               require.ModifyDate = DateTime.Now;
 					require.RequireStatus = RequireKeys.readyToReview;
 
 					db.RequireDal.Insert(require);
+
+					// operation record
+					db.OperationDal.Insert(new Operation(require.Projectid, require.RequireId, RequireKeys.CreateGuid, RequireKeys.CreateGuid.ToString(), null, DateTime.Now, user.UserId, string.Empty));
 				}
 				else
 				{
-					require.ModifyDate = DateTime.Now;
-					require.ModifiedBy = user.UserId;
-
 					db.RequireDal.Update(require);
+					db.OperationDal.Insert(new Operation(require.Projectid, require.RequireId, RequireKeys.EditGuid, RequireKeys.EditGuid.ToString(), null, DateTime.Now, user.UserId, string.Empty));
 				}
 
 				// add attachment
@@ -232,7 +239,7 @@ namespace TheSite.Controllers
 			return Json(new
 			{
 				result = AjaxResults.Success,
-				msg= Success.Require.EDITSUCCESS
+				msg = Success.Require.EDITSUCCESS
 			});
 
 		}
@@ -290,7 +297,7 @@ namespace TheSite.Controllers
 		{
 			if (!ModelState.IsValid || !model.IsValid())
 			{
-				return Json(new{result = AjaxResults.Error,msg= ModelState.ShowErrorMessages()});
+				return Json(new { result = AjaxResults.Error, msg = ModelState.ShowErrorMessages() });
 			}
 
 			var user = GetUserInfo();
@@ -313,7 +320,7 @@ namespace TheSite.Controllers
 					}
 					else
 					{
-						throw new ApplicationException(string.Format("您没有审核{0}的权限",require.RequireName));
+						throw new ApplicationException(string.Format("您没有审核{0}的权限", require.RequireName));
 					}
 				}
 
@@ -334,7 +341,7 @@ namespace TheSite.Controllers
 			return Json(new
 			{
 				result = AjaxResults.Success,
-				msg=Success.Require.EDITSUCCESS
+				msg = Success.Require.EDITSUCCESS
 			});
 		}
 
@@ -437,7 +444,7 @@ namespace TheSite.Controllers
 				return Json(new
 				{
 					result = AjaxResults.Error,
-					msg=ModelState.ShowErrorMessages()
+					msg = ModelState.ShowErrorMessages()
 				});
 			}
 
@@ -473,7 +480,7 @@ namespace TheSite.Controllers
 			return Json(new
 			{
 				result = AjaxResults.Success,
-				msg=Success.Require.EDITSUCCESS
+				msg = Success.Require.EDITSUCCESS
 			});
 		}
 

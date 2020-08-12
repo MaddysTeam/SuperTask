@@ -133,6 +133,10 @@ namespace Business.Helper
 
 		// 2020-07-27 by huachao
 
+		public static Guid CreateActionGuid => Guid.Parse("f9df9307-edcd-464e-8584-1e7b4d49258d");
+
+		public static Guid EditActionGuid => Guid.Parse("e9297cde-d0ef-4445-b00d-347c695c87af");
+
 		public static Guid StartActionGuid => Guid.Parse("407dc6e0-8a81-4ab9-b405-3b5e98da749a");
 
 		public static Guid CompleteActionGuid => Guid.Parse("ccc99cd2-9495-4d82-9f89-da50d71123c4");
@@ -162,11 +166,11 @@ namespace Business.Helper
 
 		public static Dictionary<Guid, string> OperationResultDic = new Dictionary<Guid, string>
 	   {
+	     { CreateActionGuid,"新建了任务" },
+		 { EditActionGuid,"编辑了任务" },
 		 { StartActionGuid,"启动了任务" },
 		 { CompleteActionGuid,"完成了任务及其子任务" },
 		 { CloseActionGuid, "关闭了任务" },
-         //{ Close, "关闭发布" },
-         //{RelativeGuid,"变更了发布关联" }
        };
 
 

@@ -155,9 +155,6 @@
 				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
 
 				formatters: {
-					'checkbox': function (column, row) {
-							return '<input type="checkbox" class="checkbox" data-row-id="'+row.PublishId+'" />'
-					},
 					'link': function (column, row) {
 						var url = '@Url.Action("Detail", "Publish")?id=' + row.PublishId;
 						var link = '<a href="' + url + '">' + row.PublishName + '</a>'
@@ -176,7 +173,7 @@
 						var EditButtonStr = '<a target="_blank"  href="@Url.Action("Edit", "Publish")?id=' + id + '" class="btn btn-lg btn-info btn-edit">编辑</a> ' ;
 						var relativeButtonStr ='<a data-url="@Url.Action("Relative", "Publish")?id=' + id + '" class="btn btn-lg btn-success btn-relative">关联</a> ';
 
-						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.Name + '" data-row-id="' + id +  '">' +
+						return '<div class="btn-group btn-group-xs pull-right rowId" data-name="' + row.Name + '" data-row-id="' + id + '">' +
 							handleButtonStr +
 							closeButtonStr +
 							EditButtonStr+
@@ -241,17 +238,16 @@
 					});
 
 					//bind checkbox column
-					$('th:first').html('<input type="checkbox" class="checkAll" />').find('.checkAll').click(function () {
-						grid.find('.checkbox').click();
-					});
+					initTableCheckbox('bootgrid');
 
 					// multiple start,complete and close tasks
 					$('#handle,#close,#relative').off('click').on('click', function () {
 						result = [];
-						grid.find('.checkbox').each(function (i) {
+						grid.find('.checkItem').each(function (i) {
 							$this = $(this);
 							if ($this.is(':checked')) {
-								result.push($this.data('rowId'));
+								var rowId = $this.parent().parent().find('.rowId').data('rowId');
+								result.push(rowId);
 							}
 						});
 

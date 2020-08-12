@@ -91,7 +91,7 @@
 			<div class="row col-md-9" style="margin-left:1%;">
 				<div class="btn-group" style="position:relative">
 					<div style="position:absolute;top:20px; width:200px; z-index:99">
-						<a class="btn btn-info" id="review" data-url="@Url.Action("MultipleReview", "Require")">审核</a>
+						<a class="btn btn-info" id="review" data-url="@Url.Action("MultipleReview", "Require")">评审</a>
 						<a class="btn btn-success" id="close" data-url="@Url.Action("MultipleClose","Require")">关闭</a>
 					</div>
 				</div>
@@ -107,7 +107,7 @@
 								<th data-column-id="Manager">指派给</th>
 								<th data-column-id="CreateDate" data-formatter="DateOnly">开始时间</th>
 								<th data-column-id="Creator">创建人</th>
-								<th data-column-id="CreateDate" data-formatter="DateOnly">期望交付时间</th>
+								<th data-column-id="EstimateEndDate" data-formatter="DateOnly">期望交付时间</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" class="width160" data-header-Css-Class="width130">操作</th>
 							</tr>
 						</thead>
@@ -155,9 +155,6 @@
 				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
 
 				formatters: {
-					'checkbox': function (column, row) {
-						return '<input type="checkbox" class="checkbox" data-row-id="' + row.RequireId + '" />'
-					},
 					'link': function (column, row) {
 						var isHurry = row.IsHurry;
 						var url = '@Url.Action("Detail", "Require")?id=' + row.RequireId;
@@ -179,7 +176,7 @@
 						var closeButtonStr = '<a data-url="@Url.Action("Close", "Require")?id=' + id + '" class="btn btn-lg btn-success btn-close">关闭</a> ';
 						var taskButtonStr = !canHandle ? '<button class="btn" disable="disable">创建任务</button>' : '<a data-url="@Url.Action("Add", "TaskV2")?requireId=' + id + '&projectId=' + projectId + '" class="btn btn-lg btn-success btn-task">创建任务</a> ';
 
-						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.RequireName + '" data-row-id="' + id + '">' +
+						return '<div class="btn-group btn-group-xs pull-right rowId" data-name="' + row.RequireName + '" data-row-id="' + id + '">' +
 							reviewButtonStr +
 							handleButtonStr +
 							EditButtonStr +
@@ -245,17 +242,16 @@
 					});
 
 					//bind checkbox column
-					$('th:first').html('<input type="checkbox" class="checkAll" />').find('.checkAll').click(function () {
-						grid.find('.checkbox').click();
-					});
+					initTableCheckbox('bootgrid')
 
 					// multiple start,complete and close tasks
 					$('#review,#close').off('click').on('click', function () {
 						result = [];
-						grid.find('.checkbox').each(function (i) {
+						grid.find('.checkItem').each(function (i) {
 							$this = $(this);
 							if ($this.is(':checked')) {
-								result.push($this.data('rowId'));
+								var rowId = $this.parent().parent().find('.rowId').data('rowId');
+								result.push(rowId);
 							}
 						});
 

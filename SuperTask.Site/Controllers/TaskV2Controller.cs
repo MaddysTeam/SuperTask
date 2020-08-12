@@ -82,9 +82,14 @@ namespace TheSite.Controllers
 				{
 					switch (sort.ID)
 					{
-						case "SortId":
-							parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.SortId).ToList() :
-															parents.OrderByDescending(x => x.SortId).ToList(); break;
+						case "SortId": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.SortId).ToList() : parents.OrderByDescending(x => x.SortId).ToList(); break;
+						case "TaskName": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.TaskName).ToList() : parents.OrderByDescending(x => x.TaskName).ToList(); break;
+						case "V2LevelTitle": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.V2Level).ToList() : parents.OrderByDescending(x => x.V2Level).ToList(); break;
+						case "TypeV2": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.V2Type).ToList() : parents.OrderByDescending(x => x.V2Type).ToList(); break;
+						case "Status": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.TaskStatus).ToList() : parents.OrderByDescending(x => x.TaskStatus).ToList(); break;
+						case "WorkHours": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.WorkHours).ToList() : parents.OrderByDescending(x => x.WorkHours).ToList(); break;
+						case "EstimateWorkHours": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.EstimateWorkHours).ToList() : parents.OrderByDescending(x => x.EstimateWorkHours).ToList(); break;
+						case "EndDate": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.EndDate).ToList() : parents.OrderByDescending(x => x.EndDate).ToList(); break;
 					}
 				}
 
@@ -243,6 +248,9 @@ namespace TheSite.Controllers
 
 					var bugs = task.RelativeBugIds?.Split(',');
 					RTPBRelationHelper.BindRelationBetweenBugsAndTask(bugs.ConvertToGuidArray(), task.TaskId, db);
+
+					// operation record
+					db.OperationDal.Insert(new Operation(task.Projectid, task.TaskId, TaskKeys.CreateActionGuid, null, null, DateTime.Now, user.UserId, string.Empty));
 
 
 					db.Commit();
@@ -412,6 +420,9 @@ namespace TheSite.Controllers
 
 				var publishs = task.RelativePublishIds.Split(',');
 				RTPBRelationHelper.BindRelationBetweenPublishsAndTask(publishs.ConvertToGuidArray(), task.TaskId, db);
+
+				// operation record
+				db.OperationDal.Insert(new Operation(task.Projectid, task.TaskId, TaskKeys.EditActionGuid, null, null, DateTime.Now, user.UserId, string.Empty));
 
 				db.Commit();
 			}

@@ -110,7 +110,7 @@
 					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
 						<thead>
 							<tr>
-								<th data-formatter="checkbox"></th>
+								@*<th data-formatter="checkbox"></th>*@
 								<th data-column-id="SortId">ID</th>
 								<th data-column-id="V2LevelTitle">优先级</th>
 								<th data-column-id="TaskName" data-formatter="TaskName">任务名称</th>
@@ -179,11 +179,11 @@
 				requestHandler: function (request) { return $.extend(true, request, getGlobalRequest()); },
 
 				formatters: {
-					'checkbox': function (column, row) {
+					@*'checkbox': function (column, row) {
 						var currentUserId = '@Html.GetUserProfile().UserId';
 						if (currentUserId == row.ManagerId)
 							return '<input type="checkbox" class="checkbox" data-row-id="'+row.TaskId+'" />'
-					},
+					},*@
 					'TaskName': function (column, row) {
 						var url = '@Url.Action("Detail", "TaskV2")?id=' + row.TaskId;
 
@@ -207,7 +207,7 @@
 						var journalButtonStr = isNotComplete(status) ? '<a  data-url="@Url.Action("JournalEdit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-journal">工时</a> ' : '<button class="btn" disable="disable">工时</button>';
 						var closeButtonStr = isNotClose(status) ? '<a data-url="@Url.Action("Close", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-complete">关闭</a> ' : '<button class="btn" disable="disable">已关闭</button>';
 
-						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.taskName + '" data-row-id="' + id + '" data-row-active="' + row.actived + '">' +
+						return '<div class="btn-group btn-group-xs pull-right rowId" data-name="' + row.taskName + '" data-row-id="' + id + '" data-row-active="' + row.actived + '">' +
 							statusButtonStr +
 							completeButtonStr +
 							closeButtonStr +
@@ -226,17 +226,20 @@
 
 
 			$('#showAll').click(function () {
+				$('#checkAll').attr("checked", false);
 				$('#dpLevels,#dpStatus,#dpTypes').val('@TaskKeys.SelectAll');
 				$('#hidAssgin,#txtName,#searchPhrase').val('');
 				$('#bootgrid').bootgrid('reload');
 			});
 
 			$('#assign').click(function () {
+				$('#checkAll').attr("checked", false);
 				$('#hidAssgin').val('true');
 				$('#bootgrid').bootgrid('reload');
 			});
 
 			$('#btnSearch').click(function () {
+				$('#checkAll').attr("checked", false);
 				$('#bootgrid').bootgrid('reload');
 			});
 
@@ -304,18 +307,17 @@
 						}
 					});
 						
-					//bind checkbox column
-					$('th:first').html('<input type="checkbox" class="checkAll" />').find('.checkAll').click(function () {
-						grid.find('.checkbox').click();
-					});
+	
+					initTableCheckbox('bootgrid')
 
 					// multiple start,complete and close tasks 
 					$('#start,#complete,#close').off('click').on('click', function () {
 						result = [];
-						grid.find('.checkbox').each(function (i) {
+						grid.find('.checkItem').each(function (i) {
 							$this = $(this);
 							if ($this.is(':checked')) {
-								result.push($this.data('rowId'));
+								var rowId = $this.parent().parent().find('.rowId').data('rowId');
+								result.push(rowId);
 							}
 						});
 

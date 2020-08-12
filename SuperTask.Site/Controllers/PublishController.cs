@@ -29,7 +29,7 @@ namespace TheSite.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult List(Guid projectId, Guid statusId, bool isAssign, bool isJoin,
+		public ActionResult List(Guid projectId, Guid? statusId, Guid? typeId, bool isAssign, bool isJoin,
 				  int current, int rowCount, AjaxOrder sort, string searchPhrase)
 		{
 			ThrowNotAjax();
@@ -69,13 +69,18 @@ namespace TheSite.Controllers
 			{
 				switch (sort.ID)
 				{
-					case "SortId":
-						results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.SortId).ToList() :
-														results.OrderByDescending(x => x.SortId).ToList(); break;
+					case "SortId": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.SortId).ToList() : results.OrderByDescending(x => x.SortId).ToList(); break;
+					case "PublishName": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.PublishName).ToList() : results.OrderByDescending(x => x.PublishName).ToList(); break;
+					case "Type": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.PublishType).ToList() : results.OrderByDescending(x => x.PublishType).ToList(); break;
+					case "Status": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.PublishStatus).ToList() : results.OrderByDescending(x => x.PublishStatus).ToList(); break;
+					case "Manager": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.Manager).ToList() : results.OrderByDescending(x => x.Manager).ToList(); break;
+					case "FixDate": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.EndDate).ToList() : results.OrderByDescending(x => x.EndDate).ToList(); break;
+					case "Creator": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.Creator).ToList() : results.OrderByDescending(x => x.Creator).ToList(); break;
+					case "CreateDate": results = sort.According == APSqlOrderAccording.Asc ? results.OrderBy(x => x.CreateDate).ToList() : results.OrderByDescending(x => x.CreateDate).ToList(); break;
 				}
 			}
 
-			if (statusId != AppKeys.SelectAll)
+			if (statusId != null && statusId != AppKeys.SelectAll)
 			{
 				results = results.FindAll(t => t.PublishStatus == statusId);
 			}
@@ -164,6 +169,9 @@ namespace TheSite.Controllers
 
 			try
 			{
+				publish.ModifyDate = DateTime.Now;
+				publish.ModifiedBy = user.UserId;
+
 				if (publish.PublishId.IsEmptyGuid())
 				{
 					var sortId = GetMaxSortNo(publish.Projectid, db);
@@ -175,13 +183,12 @@ namespace TheSite.Controllers
 					publish.PublishStatus = PublishKeys.StatusGuid;
 
 					db.PublishDal.Insert(publish);
+					db.OperationDal.Insert(new Operation(publish.Projectid, publish.PublishId, PublishKeys.CreateGuid, PublishKeys.CreateGuid.ToString(), null, DateTime.Now, user.UserId, string.Empty));
 				}
 				else
 				{
-					publish.ModifyDate = DateTime.Now;
-					publish.ModifiedBy = user.UserId;
-
 					db.PublishDal.Update(publish);
+					db.OperationDal.Insert(new Operation(publish.Projectid, publish.PublishId, PublishKeys.EditGuid, PublishKeys.EditGuid.ToString(), null, DateTime.Now, user.UserId, string.Empty));
 				}
 
 
@@ -378,7 +385,7 @@ namespace TheSite.Controllers
 			return Json(new
 			{
 				result = AjaxResults.Success,
-				msg=Success.Publish.EDITSUCCESS
+				msg = Success.Publish.EDITSUCCESS
 			});
 		}
 
@@ -406,7 +413,7 @@ namespace TheSite.Controllers
 				return Json(new
 				{
 					result = AjaxResults.Error,
-					msg=ModelState.ShowErrorMessages()
+					msg = ModelState.ShowErrorMessages()
 				});
 			}
 
@@ -456,7 +463,8 @@ namespace TheSite.Controllers
 		{
 			if (projectId.IsEmptyGuid())
 			{
-				return Json(new {
+				return Json(new
+				{
 					result = AjaxResults.Error,
 					msg = Errors.Publish.MUST_SELECT_PROJECT
 				});
@@ -512,7 +520,6 @@ namespace TheSite.Controllers
 			return operationHistory;
 		}
 
-
 		private int GetMaxSortNo(Guid projectId, APDBDef db)
 		{
 			var result = APQuery.select(p.SortId.Max().As("SortId"))
@@ -524,7 +531,6 @@ namespace TheSite.Controllers
 
 			return result.sortId;
 		}
-
 
 		private List<Publish> GetPublishListByIds(string id)
 		{

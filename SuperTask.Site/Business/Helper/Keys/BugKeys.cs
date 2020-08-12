@@ -71,6 +71,11 @@ namespace Business.Helper
 		/// </summary>
 		public static Guid BugRelativeGuid = Guid.Parse("f01577e8-1856-4401-a61c-5e43341d4a26");
 
+		/// <summary>
+		/// bug 新建、编辑
+		/// </summary>
+		public static Guid CreateGuid = Guid.Parse("a7fb2be2-598f-4240-a79c-4627f0608491");
+		public static Guid EditGuid = Guid.Parse("5ea513f7-989d-4872-aa02-a28b6e9ffb8c");
 
 		public static string GetTypeKeyByValue(Guid val) => DictionaryHelper.GetDicById(TypeGuid, val).Title;
 
@@ -90,6 +95,8 @@ namespace Business.Helper
 
 		public static Dictionary<Guid, string> OperationResultDic = new Dictionary<Guid, string>
 		{
+		  { BugKeys.CreateGuid,"新增了该bug" },
+		  { BugKeys.EditGuid, "编辑了该bug" },
 		  { BugKeys.ConfrimYes,"确定了这个bug" },
 		  { BugKeys.ConfirmNo, "否定了这个bug" },
 		  { BugKeys.Resolved, "已经处理了这个bug" },

@@ -62,6 +62,11 @@ namespace Business.Helper
 		/// </summary>
 		public static Guid Hurryup = Guid.Parse("51ccd649-016c-402e-87cd-f1df8f3aa293");
 
+		/// <summary>
+		/// 新增和编辑
+		/// </summary>
+		public static Guid CreateGuid = Guid.Parse("0c83ac97-68ae-44fc-920f-1c7a18231a35");
+		public static Guid EditGuid = Guid.Parse("0bc252ca-e4e2-4980-a69c-e28e4fe0fc59");
 
 		public static string GetTypeKeyByValue(Guid val) => DictionaryHelper.GetDicById(TypeGuid, val).Title;
 
@@ -79,6 +84,8 @@ namespace Business.Helper
 
 		public static Dictionary<Guid, string> OperationResultDic = new Dictionary<Guid, string>
 	  {
+		{ CreateGuid,"新增了需求" },
+		{ EditGuid,"编辑了需求" },
 		{ ReviewWaiting,"将状态改为了【待评审】" },
 		{ ReviewSuccess,"评审通过" },
 		{ ReviewFail, "评审不通过" },
