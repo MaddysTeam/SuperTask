@@ -1,4 +1,5 @@
 ﻿using Business;
+using Business.Config;
 using Business.Helper;
 using Symber.Web.Data;
 using System;
@@ -22,11 +23,11 @@ namespace TheSite.Controllers
 
 		public ActionResult Index(Guid? projectId)
 		{
-			if (null != projectId &&
-			   !ResourceHelper.HasPermission(GetUserInfo().UserId, projectId.Value, "P_10006", new APDBDef()))
-			{
-				throw new ApplicationException(Errors.Project.NOT_ALLOWED_VISIT_FOLDER);
-			}
+			//if (null != projectId &&
+			//   !ResourceHelper.HasPermission(GetUserInfo().UserId, projectId.Value, "P_10006", new APDBDef()))
+			//{
+			//	throw new ApplicationException(Errors.Project.NOT_ALLOWED_VISIT_FOLDER);
+			//}
 
 			if (projectId == null)
 			{
@@ -593,7 +594,7 @@ namespace TheSite.Controllers
 		private bool HasFolderPermission(Guid Userid, Guid folderId, Guid permissionId)
 		{
 			var folder = Folder.PrimaryGet(folderId);
-			return (folder != null && folder.OperatorId == Userid) ||
+			return folderId== ThisApp.RootFolderId ||  (folder != null && folder.OperatorId == Userid) ||
 				 db.FolderPermissionDal.ConditionQueryCount(fp.UserId == Userid & fp.FolderId == folderId & fp.PermissionId == permissionId) > 0;
 		}
 

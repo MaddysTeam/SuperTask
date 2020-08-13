@@ -10,7 +10,8 @@ namespace Business
 
 	public partial class Bug
 	{
-
+		
+		[Display(Name = "负责人员")]
 		public string Manager { get; set; }
 
 		public string Creator { get; set; }

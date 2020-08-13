@@ -78,7 +78,7 @@ namespace TheSite.Controllers
                DataUrl = Url.Action("Details", "Task", new { taskId = t.TaskId.GetValue(r) }),
                TaskStatus = t.TaskStatus.GetValue(r),
                RateOfProgress = t.RateOfProgress.GetValue(r),
-               ProjectName = p.ProjectName.GetValue(r, "projectName"),
+               //ProjectName = p.ProjectName.GetValue(r, "projectName"),
                TaskType = t.TaskType.GetValue(r),
                WorkHours = workhours
             };
@@ -277,7 +277,7 @@ namespace TheSite.Controllers
                t.Fullup(r, ta, false);
                ta.Creator = cr.UserName.GetValue(r, "Creator");
                ta.Manager = ma.UserName.GetValue(r);
-               ta.ProjectName = p.ProjectName.GetValue(r, "ProejectName").Ellipsis(TaskKeys.TaskNameDisplayLength);
+               //ta.ProjectName = p.ProjectName.GetValue(r, "ProejectName").Ellipsis(TaskKeys.TaskNameDisplayLength);
                ta.Reviewer = rr.UserName.GetValue(r, "Reviewer");
                ta.SubTaskTypeUnitName = subTaskTypeUnitName;
                ta.SubTaskTypeName = subTaskTypeName;

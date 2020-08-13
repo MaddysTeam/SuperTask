@@ -76,24 +76,23 @@ namespace Business.Helper
 		}
 
 
-		public static List<Folder> CreateProjectFolders(Guid projectId, Guid operatorId, APDBDef db)
+		public static List<Folder> CreateProjectFolders(Project project, Guid operatorId, APDBDef db)
 		{
 			List<Folder> folders = new List<Folder>();
-			Project project = GetCurrentProject(projectId);
 			if (project == null || operatorId.IsEmpty())
 				throw new ArgumentException("project cannot be null");
 
-			var projectRootFolder = Folder.PrimaryGet(project.FolderId);
-			if(projectRootFolder==null)
+			var projectFolder = Folder.PrimaryGet(project.FolderId);
+			if(projectFolder == null)
 				folders.Add(
-				ShareFolderHelper.CreateFolder(Guid.NewGuid(), project.ProjectName, projectRootFolder.FolderId, ShareFolderKeys.ProjectType, operatorId, db)
+				projectFolder=ShareFolderHelper.CreateFolder(project.FolderId, project.ProjectName, ShareFolderKeys.RootProjectFolderId, ShareFolderKeys.ProjectType, operatorId, db)
 				);
 		
 			var projectFolderTypes = DictionaryHelper.GetSubTypeDics(ShareFolderKeys.ProjectType);
 			foreach (var item in projectFolderTypes)
 			{
 				folders.Add(
-				ShareFolderHelper.CreateFolder(Guid.NewGuid(), item.Title, projectRootFolder.FolderId, item.ID, operatorId, db)
+				ShareFolderHelper.CreateFolder(Guid.NewGuid(), item.Title, projectFolder.FolderId, item.ID, operatorId, db)
 				);
 			}
 
@@ -114,7 +113,7 @@ namespace Business.Helper
 			var project = GetCurrentProject(projectId,db);
 			var subFolders = ShareFolderHelper.GetSubFolders(project.FolderId, db);
 			if (subFolders == null || subFolders.Count <= 0)
-				subFolders = CreateProjectFolders(projectId, operatorId, db);
+				subFolders = CreateProjectFolders(project, operatorId, db);
 
 			var folder = subFolders.Find(x => x.FolderType == folderTypeId);
 			ShareFolderHelper.UploadFolderFile(folder.FolderId, fileId, db);

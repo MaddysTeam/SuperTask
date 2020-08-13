@@ -294,7 +294,7 @@ namespace TheSite.Controllers
 		public ActionResult Edit(Guid id)
 		{
 			var task = WorkTask.PrimaryGet(id);
-			task.ProjectName = MyJoinedProjects().Find(x => x.ProjectId == task.Projectid)?.ProjectName;
+			//task.ProjectName = MyJoinedProjects().Find(x => x.ProjectId == task.Projectid)?.ProjectName;
 
 			ViewBag.Users = UserHelper.GetAvailableUser(db);
 			ViewBag.SubTasks = TaskHelper.GetAllChildren(id, db, t.CreateDate.Desc).FindAll(x => !x.IsDelteStatus);
@@ -458,6 +458,7 @@ namespace TheSite.Controllers
 			   db
 			   );
 
+			//ViewBag.CurrentProject = ProjectHelper.GetCurrentProject(task.Projectid,db);
 			ViewBag.Users = UserHelper.GetAvailableUser(db);
 			ViewBag.SubTasks = TaskHelper.GetAllChildren(id, db, t.CreateDate.Desc).FindAll(x => !x.IsDelteStatus);
 			ViewBag.Attahcments = AttachmentHelper.GetAttachments(task.Projectid, task.TaskId, db);

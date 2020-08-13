@@ -39,6 +39,10 @@ namespace Business.Helper
 		/// 需求来源
 		/// </summary>
 		public static Guid SourceGuid = Guid.Parse("53be8f58-8bbe-4f8a-a367-daa48de728cc");
+		//public static Guid CorpGuid = Guid.Parse("");
+		//public static Guid DepartGuid = Guid.Parse("");
+		//public static Guid TeamGuid = Guid.Parse("");
+		//public static Guid ThiredPartyGuid = Guid.Parse("");
 
 		/// <summary>
 		/// 评审结果

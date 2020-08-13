@@ -29,7 +29,10 @@
 
 		@if (Html.GetUserProfile().UserId == Model.ManagerId)
 		{
-			<button class="btn btn-info " data-toggle="ajax-modal" data-url="@Url.Action("JournalEdit", "TaskV2", new { id = Model.TaskId})" data-target="#firstModal"><i class="fa fa-pencil"></i>记录工时</button>
+			if (Model.IsProcessStatus)
+			{
+			  <button class="btn btn-info " data-toggle="ajax-modal" data-url="@Url.Action("JournalEdit", "TaskV2", new { id = Model.TaskId })" data-target="#firstModal"><i class="fa fa-pencil"></i>记录工时</button>
+			}
 			<button class="btn btn-danger  @(!Model.IsParent? "hidden":"")" data-toggle="ajax-modal" data-url="@Url.Action("AddSubTask", "TaskV2", new { projectId = Model.Projectid,parentId = Model.TaskId })" data-target="#firstModal"><i class="fa fa-plus-square"></i>分解任务</button>
 			<a class="btn btn-warning " href="@Url.Action("Edit", "TaskV2", new { id = Model.TaskId })">修改</a>
 		}
@@ -55,6 +58,13 @@
 						@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-2" })
 						<div class="col-md-9">
 							@Html.Label(Model.TaskName, new { @class = "form-control" })
+						</div>
+					</div>
+
+					<div class="form-group">
+						@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
+						<div class="col-md-9">
+							@Html.Label(Model.ProjectName, new { @class = "form-control" })
 						</div>
 					</div>
 

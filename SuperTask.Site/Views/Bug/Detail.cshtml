@@ -22,10 +22,7 @@
 	</div>
 
 	<div class="buttons col-md-4">
-
-	
 		<a class="btn btn-warning " href="@Url.Action("Edit", "Bug", new { id = Model.BugId })">修改</a>
-
 	</div>
 </div>
 <div class="row">
@@ -48,6 +45,12 @@
 						@Html.LabelFor(t => t.BugName, new { @class = "control-label col-md-2" })
 						<div class="col-md-9">
 							@Html.Label(Model.BugName, new { @class = "form-control" })
+						</div>
+					</div>
+					<div class="form-group">
+						@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
+						<div class="col-md-9">
+							@Html.Label(Model.ProjectName, new { @class = "form-control" })
 						</div>
 					</div>
 

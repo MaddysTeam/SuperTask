@@ -41,7 +41,7 @@ namespace TheSite.Controllers
 			var u2 = APDBDef.UserInfo.As("creator");
 
 			var query = APQuery.select(re.RequireId, re.RequireName, re.RequireType, re.ReviewerId, re.IsHurry,
-				  re.RequireLevel, re.SortId, re.RequireStatus, re.EstimateEndDate,
+				  re.RequireLevel, re.SortId, re.RequireStatus, re.EstimateEndDate,re.Projectid,
 				  re.ManagerId, u.UserName, re.CreateDate, u2.UserName.As("creator"))
 			   .from(re,
 			   u.JoinLeft(u.UserId == re.ManagerId),
@@ -56,6 +56,7 @@ namespace TheSite.Controllers
 			   {
 				   RequireId = re.RequireId.GetValue(r),
 				   RequireName = re.RequireName.GetValue(r),
+				   Projectid = re.Projectid.GetValue(r),
 				   ManagerId = re.ManagerId.GetValue(r),
 				   Manager = u.UserName.GetValue(r),
 				   Creator = u2.UserName.GetValue(r, "creator"),

@@ -109,7 +109,7 @@ namespace Business
          TaskHelper.CreateAndSaveRootTaskInDB(user, project, db);
 
          //创建项目文件夹
-         ProjectHelper.CreateProjectFolders(project.ProjectId,user.UserId, db);
+         ProjectHelper.CreateProjectFolders(project,user.UserId, db);
 
          //创建默认里程碑节点和节点任务
          MilestoneHelper.AddDefaultMileStones(project, db);

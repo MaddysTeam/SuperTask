@@ -166,7 +166,7 @@
 						var currentUserId = '@Html.GetUserProfile().UserId';
 						var id = row.RequireId;
 						var status = row.RequireStatus;
-						var projectId = $('#dpProjects').val();
+						var projectId = row.Projectid;
 						var isReviewer = row.ReviewerId == currentUserId;
 						var canHandle = row.CanHandle;
 

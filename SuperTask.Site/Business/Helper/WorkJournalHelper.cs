@@ -17,7 +17,7 @@ namespace Business.Helper
 		/// <param name="db">APDBDef</param>
 		public static void CreateOrUpdateJournalByTask(WorkTask tk, APDBDef db)
 		{
-			if (tk == null || db == null || !tk.IsProcessStatus) return;
+			if (tk == null || db == null) return;
 
 			var jounal = db.WorkJournalDal
 			   .ConditionQuery(wj.TaskId == tk.TaskId

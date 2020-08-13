@@ -26,7 +26,7 @@ namespace Business
 		public string Status => TaskKeys.GetStatusKeyByValue(TaskStatus);
 
 		[Display(Name = "所属项目")]
-		public string ProjectName { get; set; }
+		public string ProjectName => Project.PrimaryGet(Projectid)?.ProjectName;
 
 		[Display(Name = "父任务")]
 		public string ParentTaskName { get; set; }

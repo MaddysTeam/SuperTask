@@ -114,7 +114,8 @@
 						var id = row.id;
 						return '<div class="btn-group btn-group-xs pull-right" data-name="' + row.projectName + '" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
 							'<a target="_blank" href="@Url.Action("Details", "Project")?id='+row.id+'" class="btn btn-lg btn-success btn-details">明细</a> ' +
-							@*'<a target="_blank" href="@Url.Action("TaskArrangement", "ProjectManage")?projectId=' + row.id + '" class="btn btn-lg btn-info btn-tasks disabled">任务分配</a> ' +*@
+							'<a target="_blank" href="@Url.Action("List", "TaskV2")?projectId=' + row.id + '" class="btn btn-lg btn-info btn-tasks">任务管理</a>'+
+						    '<a target="_blank" href="@Url.Action("Index", "ShareFolder")?projectId=' + row.id + '" class="btn btn-lg btn-warning btn-folder">项目文件夹</a>'
                                      '</div>';
 					},
 				},
