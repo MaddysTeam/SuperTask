@@ -2,10 +2,10 @@
 	var pageTitle = ViewBag.Title = "发布请求列表";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 
-	var requestTaskType = Request["PublishType"] ?? string.Empty;
-	var requestTaskStatus = Request["PublishStatus"] ?? string.Empty;
-	var statusList = DictionaryCache.Cached(PublishKeys.StatusGuid).GetSelectListById(requestTaskStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "发布状态", Value = PublishKeys.SelectAll.ToString() }).ToList();
-	var typeList = DictionaryCache.Cached(PublishKeys.TypeGuid).GetSelectListById(requestTaskType.ToGuid(Guid.Empty), new SelectListItem { Text = "发布类型", Value = PublishKeys.SelectAll.ToString() }).ToList();
+	var publishType = Request["PublishType"] ?? string.Empty;
+	var publishStatus = Request["PublishStatus"] ?? string.Empty;
+	var statusList = DictionaryCache.Cached(PublishKeys.StatusGuid).GetSelectListById(publishStatus.ToGuid(Guid.Empty), new SelectListItem { Text = "发布状态", Value = PublishKeys.SelectAll.ToString() }).ToList();
+	var typeList = DictionaryCache.Cached(PublishKeys.TypeGuid).GetSelectListById(publishType.ToGuid(Guid.Empty), new SelectListItem { Text = "发布类型", Value = PublishKeys.SelectAll.ToString() }).ToList();
 	var projectsSelectList = SelectListHelper.GetSelectItems(ViewBag.Projects as List<Project>, "ProjectName", "ProjectId",null, new SelectListItem { Text = "选择项目", Value = PublishKeys.SelectAll.ToString() });
 }
 @section Css{
