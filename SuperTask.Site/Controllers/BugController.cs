@@ -17,6 +17,7 @@ namespace TheSite.Controllers
 		static APDBDef.RTPBRelationTableDef tb = APDBDef.RTPBRelation;
 		static APDBDef.WorkTaskTableDef t = APDBDef.WorkTask;
 		static APDBDef.OperationTableDef o = APDBDef.Operation;
+		APDBDef.ResourceTableDef rs = APDBDef.Resource;
 
 		//GET  /Bug/List
 		//POST-AJAX /Bug/List
@@ -48,6 +49,9 @@ namespace TheSite.Controllers
 
 			if (projectId != AppKeys.SelectAll)
 				query = query.where(b.Projectid == projectId);
+
+			else
+				query = query.where_and(b.Projectid.In(APQuery.select(rs.Projectid).from(rs).where(rs.UserId == user.UserId)));
 
 			var results = query.order_by(b.ModifyDate.Desc)
 			   .query(db, r => new Bug

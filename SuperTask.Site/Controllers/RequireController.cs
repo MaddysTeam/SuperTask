@@ -20,6 +20,7 @@ namespace TheSite.Controllers
 		static APDBDef.UserInfoTableDef u = APDBDef.UserInfo;
 		static APDBDef.WorkTaskTableDef t = APDBDef.WorkTask;
 		static APDBDef.OperationTableDef o = APDBDef.Operation;
+		static APDBDef.ResourceTableDef rs = APDBDef.Resource;
 
 		//GET  Require/List
 		//POST-AJAX Require/List
@@ -50,6 +51,8 @@ namespace TheSite.Controllers
 
 			if (projectId != AppKeys.SelectAll)
 				query = query.where(re.Projectid == projectId);
+			else
+				query = query.where_and(re.Projectid.In(APQuery.select(rs.Projectid).from(rs).where(rs.UserId == user.UserId)));
 
 			var results = query.order_by(re.ModifyDate.Desc)
 			   .query(db, r => new Require

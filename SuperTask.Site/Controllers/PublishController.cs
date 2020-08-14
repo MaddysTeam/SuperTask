@@ -17,6 +17,7 @@ namespace TheSite.Controllers
 		static APDBDef.UserInfoTableDef u = APDBDef.UserInfo;
 		static APDBDef.WorkTaskTableDef t = APDBDef.WorkTask;
 		static APDBDef.OperationTableDef o = APDBDef.Operation;
+		static APDBDef.ResourceTableDef rs = APDBDef.Resource;
 
 		//GET  Publish/List
 		//POST-AJAX Publish/List
@@ -47,8 +48,10 @@ namespace TheSite.Controllers
 
 			if (projectId != AppKeys.SelectAll)
 				query = query.where(p.Projectid == projectId);
+			else
+				query = query.where_and(p.Projectid.In(APQuery.select(rs.Projectid).from(rs).where(rs.UserId == user.UserId)));
 
-			var results = query.order_by(p.SortId.Asc)
+			var results = query.order_by(p.ModifyDate.Desc)
 			   .query(db, r => new Publish
 			   {
 				   PublishId = p.PublishId.GetValue(r),

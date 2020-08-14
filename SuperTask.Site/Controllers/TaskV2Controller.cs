@@ -16,6 +16,7 @@ namespace TheSite.Controllers
 
 		APDBDef.WorkTaskTableDef t = APDBDef.WorkTask;
 		APDBDef.UserInfoTableDef u = APDBDef.UserInfo;
+		APDBDef.ResourceTableDef rs = APDBDef.Resource;
 
 		public ActionResult List()
 		{
@@ -42,18 +43,15 @@ namespace TheSite.Controllers
 			   .where(t.TaskStatus != TaskKeys.DeleteStatus);
 
 			if (projectId != TaskKeys.SelectAll)
-			{
 				query = query.where_and(t.Projectid == projectId);
-				query.order_by(t.SortId.Desc);
-			}
 			else
-				query.order_by(t.CreateDate.Desc);
+				query = query.where_and(t.Projectid.In(APQuery.select(rs.Projectid).from(rs).where(rs.UserId == user.UserId)));
 
 			if (isAssign)
 				query = query.where_and(t.ManagerId == user.UserId);
 
 
-			var tasks = query
+			var tasks = query.order_by(t.ModifyDate.Desc)
 				.query(db, r => new WorkTask
 				{
 					TaskId = t.TaskId.GetValue(r),
@@ -205,7 +203,8 @@ namespace TheSite.Controllers
 								SortId = ++sortId,
 								CreatorId = user.UserId,
 								CreateDate = DateTime.Now,
-								TaskStatus = TaskKeys.PlanStatus
+								TaskStatus = TaskKeys.PlanStatus,
+								ModifyDate = DateTime.Now
 							};
 
 							//create subtask
@@ -224,6 +223,7 @@ namespace TheSite.Controllers
 						task.TaskName = "【子】" + task.TaskName;
 
 					task.IsParent = isParent;
+					task.ModifyDate = DateTime.Now;
 					task.TaskStatus = TaskKeys.PlanStatus;
 					task.CreatorId = user.UserId;
 					task.CreateDate = DateTime.Now;
