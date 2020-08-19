@@ -106,7 +106,10 @@ namespace Business
          ResourceHelper.AddDefaultResoureRoles(project, db);
 
          //创建项目下的第一个默认任务   
-         TaskHelper.CreateAndSaveRootTaskInDB(user, project, db);
+         var rootTask=TaskHelper.CreateAndSaveRootTaskInDB(user, project, db);
+
+         // add journal if not exits
+         WorkJournalHelper.CreateOrUpdateJournalByTask(rootTask, db);
 
          //创建项目文件夹
          ProjectHelper.CreateProjectFolders(project,user.UserId, db);

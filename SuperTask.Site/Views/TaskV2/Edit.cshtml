@@ -20,6 +20,15 @@
 	<div class="col-md-6">
 		<h4>@Model.SortId - @Model.V2LevelTitle - @Model.ProjectName - @Model.TaskName</h4>
 	</div>
+	<div class="col-md-3">
+		@if (Html.GetUserProfile().UserId == Model.ManagerId)
+		{
+			if (Model.IsProcessStatus)
+			{
+				<button class="btn btn-warning" data-toggle="ajax-modal" data-url="@Url.Action("Close", "TaskV2", new { id = Model.TaskId })" data-target="#firstModal"><i class="fa fa-pencil"></i>关闭任务</button>
+			}
+		}
+	</div>
 </div>
 <div class="row">
 
@@ -214,7 +223,7 @@
 
 						<div class="input-group center-block">
 							<button id="submit" class="btn btn-info col-md-3 col-md-offset-2 btn-custom-primary">保存</button>
-							<a class="btn btn-info col-md-3" href="@Url.Action("List","TaskV2")">取消</a>
+							<a class="btn btn-info col-md-3" href="@Url.Action("List","TaskV2",new { projectId=Model.Projectid})">取消</a>
 						</div>
 
 					</fieldset>

@@ -2066,6 +2066,7 @@
     <Content Include="Views\ShareFolder\_deleteFile.cshtml" />
     <Content Include="Views\Home\EmployeeIndex.cshtml" />
     <Content Include="Views\Home\ManagerIndex.cshtml" />
+    <Content Include="Views\Shared\_projectList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

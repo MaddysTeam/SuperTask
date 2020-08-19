@@ -212,21 +212,22 @@ namespace Business.Helper
 		/// <returns>WorkTask</returns>
 		public static WorkTask CreateAndSaveRootTaskInDB(UserInfo user, Project project, APDBDef db)
 		{
-			var task = new WorkTask
-			{
-				TaskId = Guid.NewGuid(),
-				TaskName = project.ProjectName,
-				Projectid = project.ProjectId,
-				ManagerId = user.UserId,
-				CreatorId = user.UserId,
-				ReviewerID = user.UserId,
-				TaskType = TaskKeys.ProjectTaskType,
-				TaskStatus = TaskKeys.PlanStatus,
-				//Creator = userName,
-				//Manager = userName,
-				CreateDate = DateTime.Now,
-				EndDate = project.EndDate,
+         var task = new WorkTask
+         {
+            TaskId = Guid.NewGuid(),
+            TaskName = project.ProjectName,
+            Projectid = project.ProjectId,
+            ManagerId = user.UserId,
+            CreatorId = user.UserId,
+            ReviewerID = user.UserId,
+            TaskType = TaskKeys.ProjectTaskType,
+            TaskStatus = TaskKeys.ProcessStatus,
+            IsParent = true,
+            CreateDate = DateTime.Now,
+            EndDate = project.EndDate,
+            ModifyDate = DateTime.Now,
 				SortId = 1 //表示根任务
+            
 			};
 			db.WorkTaskDal.Insert(task);
 

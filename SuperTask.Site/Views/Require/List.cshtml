@@ -14,6 +14,9 @@
 		.searchable-select {
 			min-width: 100px;
 		}
+		.left_side{
+			border:1px solid #ddd; overflow-y:auto; height:800px;
+		}
 	</style>
 }
 
@@ -85,8 +88,10 @@
 		</div>
 
 		<div class="row">
-			<div class="col-md-2">
-				
+			<div class="col-md-2 left_side">
+				<h3>参与的项目</h3>
+				<hr />
+				@Html.Partial("_projectList", ViewBag.Projects as List<Project>)
 			</div>
 			<div class="row col-md-9" style="margin-left:1%;">
 				<div class="btn-group" style="position:relative">

@@ -203,7 +203,7 @@ namespace TheSite.Controllers
 								SortId = ++sortId,
 								CreatorId = user.UserId,
 								CreateDate = DateTime.Now,
-								TaskStatus = TaskKeys.PlanStatus,
+								TaskStatus = TaskKeys.ProcessStatus,
 								ModifyDate = DateTime.Now
 							};
 
@@ -224,7 +224,7 @@ namespace TheSite.Controllers
 
 					task.IsParent = isParent;
 					task.ModifyDate = DateTime.Now;
-					task.TaskStatus = TaskKeys.PlanStatus;
+					task.TaskStatus = TaskKeys.ProcessStatus;
 					task.CreatorId = user.UserId;
 					task.CreateDate = DateTime.Now;
 
@@ -372,7 +372,10 @@ namespace TheSite.Controllers
 
 						db.WorkTaskDal.Insert(subTask);
 
-						index++;
+                  // add journal if not exits
+                  WorkJournalHelper.CreateOrUpdateJournalByTask(subTask, db);
+
+                  index++;
 					}
 
 				}
@@ -421,8 +424,11 @@ namespace TheSite.Controllers
 				var publishs = task.RelativePublishIds.Split(',');
 				RTPBRelationHelper.BindRelationBetweenPublishsAndTask(publishs.ConvertToGuidArray(), task.TaskId, db);
 
-				// operation record
-				db.OperationDal.Insert(new Operation(task.Projectid, task.TaskId, TaskKeys.EditActionGuid, null, null, DateTime.Now, user.UserId, string.Empty));
+            // add journal if not exits
+            WorkJournalHelper.CreateOrUpdateJournalByTask(task, db);
+
+            // operation record
+            db.OperationDal.Insert(new Operation(task.Projectid, task.TaskId, TaskKeys.EditActionGuid, null, null, DateTime.Now, user.UserId, string.Empty));
 
 				db.Commit();
 			}

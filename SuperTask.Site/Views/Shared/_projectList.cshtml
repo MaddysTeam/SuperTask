@@ -1,0 +1,29 @@
+﻿@model List<Project>
+
+<style>
+	ul.activity-list > li:hover {
+		background: #eee;
+		cursor:pointer;
+	}
+
+	ul.activity-list > li .activity-icon {
+		background: #FF6633;
+		color: white;
+		font-size: 10px;
+		font-weight: bold;
+		font-family: Arial;
+	}
+</style>
+<ul class="list-unstyled activity-list">
+	@{
+		foreach (var item in Model)
+		{
+			<li class="task" data-id="@item.ProjectId" data-url="">
+				<p>【项目】@item.ProjectName</p>
+			</li>
+
+		}
+	}
+</ul>
+
+

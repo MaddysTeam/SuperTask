@@ -95,7 +95,7 @@
 								<div class="col-md-3 text-center"><h4><strong class="font18">我的任务</strong></h4><div class="font18"><strong><a href="@taskListUrl" target="_blank">@Model.Tasks.Count</a></strong></div></div>
 								<div class="col-md-3 text-center"><h4><strong class="font18">我的需求</strong></h4><div class="font18"><strong><a href="@requireListUrl"  target="_blank">@Model.Requires.Count</a></strong></div></div>
 								<div class="col-md-3 text-center"><h4><strong class="font18">我的Bug</strong></h4><div class="font18"><strong><a href="@bugListUrl"  target="_blank">@Model.Bugs.Count</a></strong></div></div>
-								<div class="col-md-3 text-center"><h4><strong class="font18">进行中的项目</strong></h4><div class="font18"><strong><a href="@projectListUrl"  target="_blank">@processingProjects.Count</a></strong></div></div>
+								<div class="col-md-3 text-center"><h4><strong class="font18">进行中的项目</strong></h4><div class="font18"><strong><a href="@projectListUrl"  target="_blank">@(processingProjects.Count)</a></strong></div></div>
 
 							</div>
 						</div>
@@ -127,7 +127,7 @@
 
 									@for (var i = 0; i < 4; i++)
 									{
-										if (i < reviewRequires.Count)
+										if (i < reviewRequires.Count && reviewRequires.Count>0)
 										{
 											var rq = reviewRequires[i];
 											var prjectName = projects.Find(x => x.ProjectId == rq.Projectid).ProjectName;
@@ -195,7 +195,7 @@
 									}
 
 									<tr>
-									   @if (i < processingTasks.Count)
+									   @if (i < processingTasks.Count && processingTasks.Count>0)
 										{
 											var pt = processingTasks[i];
 											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
@@ -208,7 +208,7 @@
 											<td>&nbsp;</td>
 										}
 
-									   @if (i < planTasks.Count)
+									   @if (i < planTasks.Count && planTasks.Count > 0)
 										{
 											var pt = planTasks[i];
 											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
@@ -219,7 +219,7 @@
 											<td>&nbsp;</td>
 										}
 
-										@if (i < completeTasks.Count)
+										@if (i < completeTasks.Count && completeTasks.Count>0)
 										{
 											var pt = completeTasks[i];
 											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
@@ -230,7 +230,7 @@
 											<td>&nbsp;</td>
 										}
 
-										@if (i < closeTasks.Count)
+										@if (i < closeTasks.Count && closeTasks.Count>0)
 										{
 											var pt = closeTasks[i];
 											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
@@ -266,7 +266,7 @@
 										</tr>
 									}
 									<tr>
-										@if (i < todayTasks.Count)
+										@if (i < todayTasks.Count && todayTasks.Count>0)
 										{
 											var pt = todayTasks[i];
 											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
@@ -276,7 +276,7 @@
 										{
 											<td>&nbsp;</td>
 										}		
-										@if (i < weekTasks.Count)
+										@if (i < weekTasks.Count && weekTasks.Count > 0)
 										{
 											var pt = weekTasks[i];
 											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
@@ -286,7 +286,7 @@
 										{
 											<td>&nbsp;</td>
 										}	
-										@if (i < monthTasks.Count)
+										@if (i < monthTasks.Count && monthTasks.Count > 0)
 										{
 											var pt = monthTasks[i];
 											var prjectName = projects.Find(x => x.ProjectId==pt.Projectid)?.ProjectName;
@@ -296,7 +296,7 @@
 										{
 											<td>&nbsp;</td>
 										}	
-										@if (i < tasksIn30days.Count)
+										@if (i < tasksIn30days.Count && tasksIn30days.Count > 0)
 										{
 											var pt = tasksIn30days[i];
 											var prjectName = projects.Find(x => x.ProjectId == pt.Projectid)?.ProjectName;
