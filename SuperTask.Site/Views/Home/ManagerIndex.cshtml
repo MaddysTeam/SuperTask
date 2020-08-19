@@ -1,124 +1,180 @@
-﻿@{
+﻿@model ManagerHomeViewModel
+@{
 	var pageTitle = ViewBag.Title = "";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Css{
- <style>
-	 .taskArea{font-size:16px;}
-	 .a{text-decoration:none;}
+	<style>
+		.taskArea {
+			font-size: 16px;
+		}
+
+		.a {
+			text-decoration: none;
+		}
+
+		ul.activity-list > li:hover {
+			background: #eee;
+		}
+
+		ul.activity-list > li .activity-icon {
+			background: #FF6633;
+			color: white;
+			font-size: 10px;
+			font-weight: bold;
+			font-family: Arial;
+		}
 	</style>
 }
 <div class="content-wrapper">
 	<!-- main -->
 	<div class="content">
-
-		<div class="main-content">
-
-			<!-- WIDGET TABBED CONTENT -->
-			<div class="widget">
+		<div class="main-content row">
+			<!-- LEFT WIDGET TABBED CONTENT -->
+			<div class="widget col-sm-3" style="margin:20px;">
 				<div class="widget-header">
-					<h3><i class="fa fa-paperclip"></i>通知</h3>
-					<div class="btn-group widget-header-toolbar">
-						<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
-					</div>
+					<h3>项目名称</h3>
 				</div>
-				<div class="widget-content">
-					<div class="alert alert-danger alert-dismissable">
-						<img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1497518856881&di=ecdd4f1ea36a35cd25db034a1fa4c2f1&imgtype=0&src=http%3A%2F%2Fcdn.lizhi.fm%2Fradio_cover%2F2014%2F02%2F15%2F9524232787310084.jpg" width="50" height="50" />
-						  友情提醒：<h3><i class="fa fa-pencil"></i> 请大家认真填写每日工时和进度</h3> 
-						<a href="@Url.Action("Search","Advice")" class="btn btn-md btn-help btn-success"><i class="fa fa-pencil"></i>建议收集区</a>
-						<a href="@Url.Action("Index","ShareFolder")" class="btn btn-md btn-info"><i class="fa fa-share-alt"></i> 进入共享文件夹</a>
-						
-					</div>
 
+				<div class="widget-content">
+					<ul class="list-unstyled activity-list">
+						@foreach (var item in Model.Porjects)
+						{
+							<li data-id="@item.ProjectId"  >
+								@item.ProjectName
+							</li>
+						}
+					</ul>
+				</div>
+
+			</div>
+			<!-- END LEFT WIDGET TABBED CONTENT -->
+			<!-- LEFT WIDGET TABBED CONTENT -->
+			<div class="widget col-md-8" style="margin:20px;">
+				<div class="widget-header">
+					<h2>xxxxx项目  (执行中)</h2>
+				</div>
+				<div class="widget-content" style="padding:20px;">
+					<div class="rows">
+						<div class="col-md-3 text-center"><h3><strong class="font18">人员数量</strong></h3><div class="font18"><strong><a href="#" target="_blank">20</a></strong></div></div>
+						<div class="col-md-3 text-center"><h3><strong class="font18">需求数量</strong></h3><div class="font18"><strong><a href="#" target="_blank">20</a></strong></div></div>
+						<div class="col-md-3 text-center"><h3><strong class="font18">任务数量</strong></h3><div class="font18"><strong><a href="#" target="_blank">20</a></strong></div></div>
+						<div class="col-md-3 text-center"><h3><strong class="font18">Bug数量</strong></h3><div class="font18"><strong><a href="#" target="_blank">20</a></strong></div></div>
+					</div>
+					<hr />
+					<div class="rows">
+						<div class="col-md-3 text-center"><h3><strong class="font18">项目经理</strong></h3><div class="font18"><strong><a href="#" target="_blank">某某</a></strong></div></div>
+						<div class="col-md-3 text-center"><h3><strong class="font18">开始时间</strong></h3><div class="font18"><strong><a href="#" target="_blank">2020-08-01</a></strong></div></div>
+						<div class="col-md-3 text-center"><h3><strong class="font18">结束时间</strong></h3><div class="font18"><strong><a href="#" target="_blank">2020-08-03</a></strong></div></div>
+						<div class="col-md-3 text-center"><h3><strong class="font18">项目进度</strong></h3><div class="font18"><strong><a href="#" target="_blank">80%</a></strong></div></div>
+					</div>
+					
 				</div>
 			</div>
-			<!-- END WIDGET TABBED CONTENT -->
-
-			@*<div class="row">
-				<div class="col-md-6">
-					<!-- WIDGET TABBED CONTENT -->
-					<div class="widget">
-						<div class="widget-header">
-							<h3><i class="fa fa-paperclip"></i>日志</h3>
-							<div class="btn-group widget-header-toolbar">
-								<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
-							</div>
-						</div>
-
-						<div class="widget-content">
-
-							<div class="alert alert-info alert-dismissable journalAlter">
-								截至您在 <strong>@ThisApp.StartDayPerMonth.ToString("yyyy日MM月dd日") - @ThisApp.EndDayPerMonth.ToString("yyyy日MM月dd日")</strong>期间填写的日志总工时为 <strong class="totalHour"></strong>，累计填写了 <strong class="recordDays"></strong> 天
-								总体表现为：
-								<img class="journalFace" />
-							</div>
-							<div class="journalChart"></div>
-							<div>
-								<a href="@Url.Action("Search","WorkJournal")" class="btn  btn-danger">填写日志</a>
-							</div>
-
-						</div>
-					</div>
-					<!-- END WIDGET TABBED CONTENT -->
+			<div class="widget col-md-8" style="margin:20px; height:500px">
+				<div class="widget-header">
+					<h2>图表</h2>
 				</div>
-				<div class="col-md-6">
-					<!-- WIDGET TABBED CONTENT -->
-					<div class="widget">
-						<div class="widget-header">
-							<h3><i class="fa fa-tasks"></i>任务</h3>
-							<div class="btn-group widget-header-toolbar">
-								<a href="javascript:;" title="焦点" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
-							</div>
-						</div>
-
-						<div class="widget-content">
-
-							<div class="alert alert-info alert-warning taskArea">
-
-							</div>
-							@*<button class="btn-details btn btn-info">查看明细</button>*@
-						</div>
-					</div>
-					<!-- END WIDGET TABBED CONTENT -->
+				<div class="rows">
+					<div class="col-md-6" id="taskChart" style="height:500px"></div>
+					<div class="col-md-6" id="taskChart2" style="height:500px"></div>
 				</div>
-			</div>*@
-		
+			</div>
+			<!-- END LEFT WIDGET TABBED CONTENT -->
+
 		</div>
 		<!-- /main-content -->
 	</div>
 	<!-- /main -->
 </div>
-
 @section Scripts{
-<script>
+    <script src="~/assets/js/echarts.min.js"></script>
+	<script>
+		
+		$(function () {
 
-	$(function () {
+			var data = genData(50);
 
-		$.post('@Url.Action("PersonalJournal", "Home")', function (data) {
-			$('.totalHour').html(data.recordHours);
-			$('.recordDays').html(data.recordDayCount);
-			$('.journalFace').attr('src',
-				data.journalQuilty == '@((int)JournalQuality.Good)' ? '../../assets/img/smile.png' :
-				data.journalQuilty == '@((int)JournalQuality.Normal)' ? '../../assets/img/normal.png' :
-				'../../assets/img/cry.png'
-				);
+			var myChart = echarts.init(document.getElementById('taskChart'));
+			var myChart2 = echarts.init(document.getElementById('taskChart2'));
+
+			option = {
+				title: {
+					text: '人员任务量',
+					subtext: '纯属虚构',
+					left: 'center'
+				},
+				tooltip: {
+					trigger: 'item',
+					formatter: '{a} <br/>{b} : {c} ({d}%)'
+				},
+				legend: {
+					type: 'scroll',
+					orient: 'vertical',
+					right: 10,
+					top: 20,
+					bottom: 20,
+					data: data.legendData,
+
+					selected: data.selected
+				},
+				series: [
+					{
+						name: '姓名',
+						type: 'pie',
+						radius: '55%',
+						center: ['40%', '50%'],
+						data: data.seriesData,
+						emphasis: {
+							itemStyle: {
+								shadowBlur: 10,
+								shadowOffsetX: 0,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						}
+					}
+				]
+			};
+
+			myChart.setOption(option);
+			myChart2.setOption(option);
 		});
 
-		$.post('@Url.Action("TaskEndDateAlert", "Home")', function (data) {
-			var $area = $('.taskArea');
-			$area.append('<p>任务总数:  ' + data.allcount + '</p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskType=TaskKeys.ProjectTaskType })">项目任务数量:  ' + data.projectTaskCount + '</a></p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskType=TaskKeys.TempTaskType })">临时任务数量:  ' + data.tempTaskCount + '</a></p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskType=TaskKeys.MaintainedTaskType })">维护任务数量:  ' + data.maintainceTaskCount + '</a></p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskStatus=TaskKeys.PlanStatus })">计划期任务数量:  ' + data.planStatusTaskCount + '</a></p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskStatus=TaskKeys.ProcessStatus })">执行期任务数量:  ' + data.processStatusTaskCount + '</p>');
-			$area.append('<p><a href="@Url.Action("Index","Task",new { @TaskStatus=TaskKeys.CompleteStatus })">已完成任务数量:  ' + data.completeStatusTaskCount + '</p>');
-			$area.append('<p><i class="fa fa-star"></i>  快到期的任务数量:  ' + data.alterTaskCount + '</p>');
-		});
+		function genData(count) {
+			var nameList = [
+				'赵', '钱', '孙', '李', '周', '吴', '郑', '王', '冯', '陈', '褚', '卫', '蒋', '沈', '韩', '杨', '朱', '秦', '尤', '许', '何', '吕', '施', '张', '孔', '曹', '严', '华', '金', '魏', '陶', '姜', '戚', '谢', '邹', '喻', '柏', '水', '窦', '章', '云', '苏', '潘', '葛', '奚', '范', '彭', '郎', '鲁', '韦', '昌', '马', '苗', '凤', '花', '方', '俞', '任', '袁', '柳', '酆', '鲍', '史', '唐', '费', '廉', '岑', '薛', '雷', '贺', '倪', '汤', '滕', '殷', '罗', '毕', '郝', '邬', '安', '常', '乐', '于', '时', '傅', '皮', '卞', '齐', '康', '伍', '余', '元', '卜', '顾', '孟', '平', '黄', '和', '穆', '萧', '尹', '姚', '邵', '湛', '汪', '祁', '毛', '禹', '狄', '米', '贝', '明', '臧', '计', '伏', '成', '戴', '谈', '宋', '茅', '庞', '熊', '纪', '舒', '屈', '项', '祝', '董', '梁', '杜', '阮', '蓝', '闵', '席', '季', '麻', '强', '贾', '路', '娄', '危'
+			];
+			var legendData = [];
+			var seriesData = [];
+			var selected = {};
+			for (var i = 0; i < count; i++) {
+				name = Math.random() > 0.65
+					? makeWord(4, 1) + '·' + makeWord(3, 0)
+					: makeWord(2, 1);
+				legendData.push(name);
+				seriesData.push({
+					name: name,
+					value: Math.round(Math.random() * 100000)
+				});
+				selected[name] = i < 6;
+			}
+
+			return {
+				legendData: legendData,
+				seriesData: seriesData,
+				selected: selected
+			};
+
+			function makeWord(max, min) {
+				var nameLen = Math.ceil(Math.random() * max + min);
+				var name = [];
+				for (var i = 0; i < nameLen; i++) {
+					name.push(nameList[Math.round(Math.random() * nameList.length - 1)]);
+				}
+				return name.join('');
+			}
+		}
 
 
-	});
-
-</script>	
+	</script>
 }

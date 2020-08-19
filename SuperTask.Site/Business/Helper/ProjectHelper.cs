@@ -9,6 +9,13 @@ namespace Business.Helper
 
 	public static class ProjectHelper
 	{
+
+		public static List<Project> All(APDBDef db)
+		{
+			var p = APDBDef.Project;
+			return db.ProjectDal.ConditionQuery(p.ProjectStatus != ProjectKeys.DeleteStatus, null, null, null);
+		}
+
 		/// <summary>
 		/// 某用户参与的所有项目
 		/// </summary>

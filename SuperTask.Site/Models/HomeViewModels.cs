@@ -14,4 +14,9 @@ namespace TheSite.Models
       public List<UserInfo> Users { get; set; } = new List<UserInfo>();
 	}
 
+	public class ManagerHomeViewModel
+	{
+		public List<Project> Porjects { get; set; } = new List<Project>();
+	}
+
 }

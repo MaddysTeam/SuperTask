@@ -344,6 +344,7 @@
     <Compile Include="Business\Helper\PaymentsHelper.cs" />
     <Compile Include="Business\Helper\ProjcetStoneTaskHelper.cs" />
     <Compile Include="Business\Helper\ShareFolderHelper.cs" />
+    <Compile Include="Business\Helper\Utilities\MailHelper.cs" />
     <Compile Include="Business\Helper\Utilities\ExportHelper.cs" />
     <Compile Include="Business\Helper\Utilities\PDFHelper.cs" />
     <Compile Include="Business\Helper\MenuHelper.cs" />
@@ -553,6 +554,7 @@
     <Content Include="assets\js\app.min.js" />
     <Content Include="assets\js\bootstrap.min.js" />
     <Content Include="assets\js\deliswitch.js" />
+    <Content Include="assets\js\echarts.min.js" />
     <Content Include="assets\js\html5shiv.min.js" />
     <Content Include="assets\js\jquery-1.11.1.min.js" />
     <Content Include="assets\js\jquery-2.1.4.min.js" />

@@ -31,7 +31,7 @@ namespace Business.Helper
 					}
 				}
 
-				 _client.SendAsync(mail, null);
+				await _client.SendMailAsync(mail);
 
 				return true;
 				
