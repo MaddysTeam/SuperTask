@@ -101,7 +101,7 @@
 									SelectListHelper.GetSelectItems(userList, "UserName", "UserId"),
 									new { @class = "form-control " })
 							</div>
-							<div class="col-md-3 label-manager"><label class="form-control">@manager</label> </div>
+							@*<div class="col-md-3 label-manager"><label class="form-control">@manager</label> </div>*@
 
 							@Html.Label("预计消耗", new { @class = "control-label col-md-3 text-align:left" })
 							<div class="col-md-3">
@@ -202,26 +202,25 @@
 		bindProjectDropdown();
 
 		if ($('#hasParnetTask').is(':checked')) {
-			$('.parentTasks,.label-manager').show();
-			$('.subTaskExecutor,.dropdown-manager').hide();
+			$('.parentTasks').show();
+			$('.subTaskExecutor').hide();
 		}
 		else {
-			$('.parentTasks,.label-manager').hide();
-			$('.subTaskExecutor,.dropdown-manager').show();
+			$('.parentTasks').hide();
+			$('.subTaskExecutor').show();
 		}
 
 		isShow = false;
 		$('#hasParnetTask').click(function () {
 			if ($(this).is(':checked') && !isShow) {
 				isShow = true;
-				$('.parentTasks,.label-manager').show();
-				$('.subTaskExecutor,.dropdown-manager').hide();
+				$('.parentTasks').show();
+				$('.subTaskExecutor').hide();
 			}
 			else {
 				isShow = false;
-				$('.parentTasks,.label-manager').hide();
-				$('.subTaskExecutor,.dropdown-manager').show();
-				$('#ParentId').val('')
+				$('.parentTasks').hide();
+				$('.subTaskExecutor').show();
 			}
 		});
 

@@ -26,12 +26,16 @@
 		{
 			<a class="btn btn-danger" id="emergencyReview" data-url="@Url.Action("Hurryup", "Require", new { id = Model.RequireId })">加急审批</a>
 		}
-		 @if (Model.CanReview(Html.GetUserProfile().UserId))
+		@if (Model.CanReview(Html.GetUserProfile().UserId))
 		{
-		<a class="btn btn-info" id="review" data-url="@Url.Action("Review", "Require", new { id = Model.RequireId })">评审</a>
+			<a class="btn btn-info" id="review" data-url="@Url.Action("Review", "Require", new { id = Model.RequireId })">评审</a>
+			<a class="btn btn-warning " href="@Url.Action("Edit", "Require", new { id = Model.RequireId })">修改</a>
 		}
-		<a class="btn btn-success" id="task" data-url="@Url.Action("Add", "TaskV2",new { requireId = Model.RequireId , projectId=Model.Projectid})">创建任务</a>
-		<a class="btn btn-warning " href="@Url.Action("Edit", "Require", new { id = Model.RequireId })">修改</a>
+
+		@if (Model.CanHandle)
+		{
+			<a class="btn btn-success" id="task" data-url="@Url.Action("Add", "TaskV2",new { requireId = Model.RequireId , projectId=Model.Projectid})">创建任务</a>
+		}
 
 	</div>
 </div>

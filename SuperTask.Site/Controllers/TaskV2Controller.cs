@@ -35,14 +35,14 @@ namespace TheSite.Controllers
 			var user = GetUserInfo();
 
 			var u2 = APDBDef.UserInfo.As("executor");
-			var query = APQuery.select(t.TaskId, t.TaskName, t.V2Type, t.ParentId, t.IsParent,
+			var query = APQuery.select(t.TaskId, t.TaskName, t.V2Type, t.ParentId, t.IsParent, t.Projectid,
 				 t.V2Level, t.SortId, t.TaskStatus, t.EstimateWorkHours, t.DefaultExecutorId,
-				 t.TaskStatus, t.ManagerId, t.WorkHours, t.EndDate, u.UserName,u2.UserName.As("executor"))
+				 t.TaskStatus, t.ManagerId, t.WorkHours, t.EndDate, u.UserName, u2.UserName.As("executor"))
 			   .from(t,
 			   u.JoinLeft(u.UserId == t.ManagerId),
-			   u2.JoinLeft(u2.UserId==t.DefaultExecutorId)
+			   u2.JoinLeft(u2.UserId == t.DefaultExecutorId)
 			   )
-			   .where(t.TaskStatus != TaskKeys.DeleteStatus & (t.ManagerId==user.UserId | t.DefaultExecutorId==user.UserId));
+			   .where(t.TaskStatus != TaskKeys.DeleteStatus & (t.ManagerId == user.UserId | t.DefaultExecutorId == user.UserId));
 
 			if (projectId != TaskKeys.SelectAll)
 				query = query.where_and(t.Projectid == projectId);
@@ -77,49 +77,44 @@ namespace TheSite.Controllers
 					ManagerId = t.ManagerId.GetValue(r),
 					Manager = u.UserName.GetValue(r),
 					DefaultExecutorId = t.DefaultExecutorId.GetValue(r),
-					Executor=u2.UserName.GetValue(r, "executor"),
+					Executor = u2.UserName.GetValue(r, "executor"),
 					V2Level = t.V2Level.GetValue(r),
 					SortId = t.SortId.GetValue(r),
 					V2Type = t.V2Type.GetValue(r),
 					TaskStatus = t.TaskStatus.GetValue(r),
 					WorkHours = t.WorkHours.GetValue(r),
-					EstimateWorkHours = t.EstimateWorkHours.GetValue(r)
+					EstimateWorkHours = t.EstimateWorkHours.GetValue(r),
+					Projectid = t.Projectid.GetValue(r)
 				}).ToList();
 
-			var results = new List<WorkTask>();
 			var parents = tasks.FindAll(x => x.IsParent);
-			if (parents != null && parents.Count > 0)
+			if (parents.Count == 0) parents.AddRange(tasks); //没有父节点则全部作为父节点处理
+
+			// 将叶子任务和父任务一起排序
+			var results = AddParentAndTheirChildren(tasks, parents);
+			var leafChildren = tasks.Except(results); // 得到没有父节点的叶子任务
+			parents.AddRange(leafChildren);
+
+			//排序条件表达式，用于任务排序
+			if (sort != null)
 			{
-				//排序条件表达式
-
-				if (sort != null)
+				switch (sort.ID)
 				{
-					switch (sort.ID)
-					{
-						case "SortId": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.SortId).ToList() : parents.OrderByDescending(x => x.SortId).ToList(); break;
-						case "TaskName": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.TaskName).ToList() : parents.OrderByDescending(x => x.TaskName).ToList(); break;
-						case "V2LevelTitle": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.V2Level).ToList() : parents.OrderByDescending(x => x.V2Level).ToList(); break;
-						case "TypeV2": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.V2Type).ToList() : parents.OrderByDescending(x => x.V2Type).ToList(); break;
-						case "Status": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.TaskStatus).ToList() : parents.OrderByDescending(x => x.TaskStatus).ToList(); break;
-						case "WorkHours": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.WorkHours).ToList() : parents.OrderByDescending(x => x.WorkHours).ToList(); break;
-						case "EstimateWorkHours": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.EstimateWorkHours).ToList() : parents.OrderByDescending(x => x.EstimateWorkHours).ToList(); break;
-						case "EndDate": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.EndDate).ToList() : parents.OrderByDescending(x => x.EndDate).ToList(); break;
-					}
-				}
-
-				foreach (var item in parents)
-				{
-					results.Add(item);
-					results.AddRange(tasks.FindAll(x => x.ParentId == item.TaskId));
+					case "SortId": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.SortId).ToList() : parents.OrderByDescending(x => x.SortId).ToList(); break;
+					case "TaskName": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.TaskName).ToList() : parents.OrderByDescending(x => x.TaskName).ToList(); break;
+					case "V2LevelTitle": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.V2Level).ToList() : parents.OrderByDescending(x => x.V2Level).ToList(); break;
+					case "TypeV2": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.V2Type).ToList() : parents.OrderByDescending(x => x.V2Type).ToList(); break;
+					case "Status": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.TaskStatus).ToList() : parents.OrderByDescending(x => x.TaskStatus).ToList(); break;
+					case "WorkHours": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.WorkHours).ToList() : parents.OrderByDescending(x => x.WorkHours).ToList(); break;
+					case "EstimateWorkHours": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.EstimateWorkHours).ToList() : parents.OrderByDescending(x => x.EstimateWorkHours).ToList(); break;
+					case "EndDate": parents = sort.According == APSqlOrderAccording.Asc ? parents.OrderBy(x => x.EndDate).ToList() : parents.OrderByDescending(x => x.EndDate).ToList(); break;
 				}
 			}
 
-			results.AddRange(tasks.Except(results));
+			results = AddParentAndTheirChildren(tasks, parents);
 			var total = results.Count;
 			if (total > 0)
-			{
 				results = results.Skip(rowCount * (current - 1)).Take(rowCount).ToList();
-			}
 
 			return Json(new
 			{
@@ -143,7 +138,7 @@ namespace TheSite.Controllers
 			ViewBag.Projects = MyJoinedProjects();
 
 			var currentProjectID = Request["projectId"];
-			return View(new WorkTask { ManagerId = GetUserInfo().UserId, Projectid = currentProjectID.ToGuid(Guid.Empty) });
+			return View(new WorkTask { ManagerId = GetUserInfo().UserId, Projectid = currentProjectID.ToGuid(Guid.Empty), ParentId = Guid.Empty });
 		}
 
 		public ActionResult AddSubTask(Guid projectId, Guid parentId)
@@ -174,8 +169,8 @@ namespace TheSite.Controllers
 
 					var subTaskEsTimes = collection["estimateWorkHours"];
 					var subTaskExecutors = collection["executorId"];
-					var isParent = task.ParentId.IsEmpty();
-					if (isParent && !string.IsNullOrEmpty(subTaskExecutors) && !string.IsNullOrEmpty(subTaskEsTimes))
+					//var isParent = task.ParentId.IsEmpty();
+					if (task.IsParent && !string.IsNullOrEmpty(subTaskExecutors) && !string.IsNullOrEmpty(subTaskEsTimes))
 					{
 						var index = 0;
 						foreach (var item in subTaskExecutors?.Split(','))
@@ -198,7 +193,7 @@ namespace TheSite.Controllers
 								CreateDate = DateTime.Now,
 								TaskStatus = TaskKeys.ProcessStatus,
 								ModifyDate = DateTime.Now,
-								DefaultExecutorId= item.ToGuid(Guid.Empty),
+								DefaultExecutorId = item.ToGuid(Guid.Empty),
 							};
 
 							//create subtask
@@ -209,14 +204,20 @@ namespace TheSite.Controllers
 
 							//add user to project resurce if not exits
 							ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.ManagerId, ResourceKeys.OtherType, db);
+							ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.DefaultExecutorId, ResourceKeys.OtherType, db);
 
 							index++;
 						}
 					}
-					else if(!isParent)
+
+					if (!task.IsParent)
+					{
 						task.TaskName = "【子】" + task.TaskName;
 
-					task.IsParent = isParent;
+						// this is only fix bug for child task sort issue 
+						db.WorkTaskDal.UpdatePartial(task.ParentId, new { ModifyDate = DateTime.Now });
+					}
+
 					task.ModifyDate = DateTime.Now;
 					task.TaskStatus = TaskKeys.ProcessStatus;
 					task.CreatorId = user.UserId;
@@ -352,7 +353,7 @@ namespace TheSite.Controllers
 								V2Level = task.V2Level,
 								SortId = ++newSortNo,
 								TaskStatus = TaskKeys.PlanStatus,
-								DefaultExecutorId=task.DefaultExecutorId,
+								DefaultExecutorId = task.DefaultExecutorId,
 								ManagerId = task.ManagerId,
 								CreatorId = user.UserId,
 								CreateDate = DateTime.Now,
@@ -378,7 +379,7 @@ namespace TheSite.Controllers
 
 						//add user to project resurce if not exits
 						ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.ManagerId, ResourceKeys.OtherType, db);
-
+						ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.DefaultExecutorId, ResourceKeys.OtherType, db);
 						index++;
 					}
 
@@ -815,7 +816,7 @@ namespace TheSite.Controllers
 		#region [private]
 
 
-		private List<Project> MyJoinedProjects() => ProjectHelper.UserJoinedProjects(GetUserInfo().UserId, db).FindAll(p => p.ProjectStatus != ProjectKeys.CompleteStatus & p.ProjectStatus != ProjectKeys.DeleteStatus);
+		private List<Project> MyJoinedProjects() => ProjectHelper.UserJoinedProjects(GetUserInfo().UserId, db).FindAll(p => p.ProjectStatus != ProjectKeys.DeleteStatus);
 
 
 		private int GetTaskSortNo(Guid projectId, APDBDef db)
@@ -844,6 +845,20 @@ namespace TheSite.Controllers
 				   Result = existReviewResult?.OperationResult,
 				   Result2 = existReviewResult?.OperationResult2
 			   };
+		}
+
+		private List<WorkTask> AddParentAndTheirChildren(List<WorkTask> source, List<WorkTask> parents)
+		{
+			if (parents == null || parents.Count <= 0)
+				parents = source.FindAll(x => x.IsParent);
+			List<WorkTask> results = new List<WorkTask>();
+			foreach (var item in parents)
+			{
+				results.Add(item);
+				results.AddRange(source.FindAll(x => x.ParentId == item.TaskId));
+			}
+
+			return results;
 		}
 
 		#endregion

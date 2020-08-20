@@ -7,21 +7,23 @@
 	<table id="childTaskgrid" class="table table-striped table-hover table-dark-header">
 		<thead>
 			<tr>
-				<th data-column-id="SortId">ID</th>
-				<th data-column-id="TaskName">任务名称</th>
-				<th data-column-id="Manager" data-formatter="commands">指派给</th>
-				<th data-column-id="Status">状态</th>
+				<th data-column-id="">ID</th>
+				<th data-column-id="">任务名称</th>
+				<th data-column-id="">负责人</th>
+				<th data-column-id="">指派给</th>
+				<th data-column-id="">状态</th>
 			</tr>
 		</thead>
 		<tbody>
 			@foreach (WorkTask item in Model ?? new List<WorkTask>())
 			{
-				<tr>
-					<td>@item.SortId</td>
-					<td><a target="_blank" href="@Url.Action("Detail","TaskV2",new {id=item.TaskId })">@item.TaskName</a></td>
-					<td>@(string.IsNullOrEmpty(item.Manager) ? users?.First(x => x.UserId == item.DefaultExecutorId)?.RealName : item.Manager)</td>
-					<td>@item.Status</td>
-				</tr>
+			<tr>
+				<td>@item.SortId</td>
+				<td><a target="_blank" href="@Url.Action("Detail","TaskV2",new {id=item.TaskId })">@item.TaskName</a></td>
+				<td>@(string.IsNullOrEmpty(item.Executor) ? users?.First(x => x.UserId == item.ManagerId)?.RealName : item.Manager)</td>
+				<td>@(string.IsNullOrEmpty(item.Manager) ? users?.First(x => x.UserId == item.DefaultExecutorId)?.RealName : item.Executor)</td>
+				<td>@item.Status</td>
+			</tr>
 			}
 		</tbody>
 	</table>

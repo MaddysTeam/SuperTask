@@ -71,7 +71,9 @@ namespace Business
 
 		public bool IsRoot => ParentId.IsEmpty();
 
-		public Attachment CurrentAttachment { get; set; }
+      public override bool IsParent => ParentId.IsEmpty();
+
+      public Attachment CurrentAttachment { get; set; }
 
 		public override Guid TaskType
 		{

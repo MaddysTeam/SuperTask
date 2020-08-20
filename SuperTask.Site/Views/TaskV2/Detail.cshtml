@@ -6,6 +6,7 @@
 	var publishs = ViewBag.Publishs as List<Publish>;
 	var subTasks = ViewBag.SubTasks as List<WorkTask>;
 	var manager = users.Find(x => x.UserId == Model.ManagerId);
+	var executor = users.Find(x => x.UserId == Model.DefaultExecutorId);
 	var attahcments = ViewBag.Attahcments as List<Attachment>;
 }
 
@@ -148,6 +149,11 @@
 							@Html.Label(manager?.UserName, new { @class = "form-control" })
 						</div>
 
+						@Html.LabelFor(t => t.Executor, new { @class = "control-label col-md-2 text-align:left" })
+						<div class="col-md-2">
+							@Html.Label(executor?.UserName, new { @class = "form-control" })
+						</div>
+
 						@Html.Label("预估消耗", new { @class = "control-label col-md-2" })
 						<div class="col-md-2">
 							@Html.Label(Model.EstimateWorkHours.ToString(), new { @class = "form-control" })
@@ -179,6 +185,8 @@
 					<hr />
 
 					<div class="col-md-12">
+						@Html.Label("任务说明", new { @class = "control-label" })
+						<p></p>
 						<div class="alert alert-success">@Html.Raw(Model.Description)</div>
 					</div>
 

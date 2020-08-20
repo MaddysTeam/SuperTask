@@ -21,17 +21,18 @@
 			border:1px solid #ddd; overflow-y:auto; height:800px;
 		}
 		.right-side{
-			margin-left:1%;
+		  margin-left:10px;
 		}
 		.right-side>.btn-group{
 			position:absolute;top:20px; width:200px; z-index:99
 		}
 		.top-side{
-		  margin-bottom:20px; margin-top:10px;
+		  margin-bottom:20px; margin-top:5px;
 		}
 		.top-side .search-area{
 		  margin-left:2%; padding:5px;
 		}
+		.bottom-side{margin-top:-20px}
 
 	</style>
 }
@@ -61,7 +62,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-1">
+				<div class="col-sm-2">
 					<div class="form-horizontal">
 						<div class="FormGroup">
 							@Html.DropDownList("dpLevels", levelList, new { @class = "form-control dropdown-taskLevels", })
@@ -96,9 +97,9 @@
 					<a class="btn btn-info" id="btnSearch">搜索</a>
 				</div>
 
-				<div class="col-sm-3 text-center line-height: 70px;">
+				<div class="text-left">
 					<div class="form-horizontal">
-						<div class="FormGroup" style="line-height: 35px;">
+						<div class="FormGroup">
 							<a href="#" id="manage" class="btn">我负责的</a>
 							<a href="#" id="assign" class="btn">指派给我</a>
 							<input type="hidden" id="hidAssgin"  value="false"/>
@@ -112,7 +113,7 @@
 
 		</div>
 
-		<div class="row">
+		<div class="row bottom-side">
 			<div class="col-md-2 left-side">
 				<h3>参与的项目</h3>
 				<hr />
@@ -216,7 +217,7 @@
 						var parentId = row.ParentId;
 						var isParent = row.IsParent;
 						var status = row.TaskStatus;
-						var projectId = $('#dpProjects').val();
+						var projectId = row.Projectid;
 						var subTaskButtonStr = isParent && isNotComplete(status) && isNotClose(status) ? '<button data-url="@Url.Action("AddSubTask", "TaskV2")?projectId=' + projectId + '&parentId=' + id + '" class="btn btn-lg btn-info btn-subTasks">子任务</button> ' : '<button class="btn" disable="disable">子任务</button>';
 						var editTaskButtonStr = isManager ? '<a target="_blank" href="@Url.Action("Edit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-close">编辑</a>' : '';
 						var completeButtonStr = isNotComplete(status) ? '<a data-url="@Url.Action("Complete", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-complete">完成</a> ' : '<button class="btn" disable="disable">已完成</button>';
@@ -284,7 +285,6 @@
 				var $this = $(this);
 				var id = $this.data('id');
 				$('#dpProjects').val(id);
-				$('#bootgrid').bootgrid('reload');
 
 				// remove origin select plugin
 				$('.searchable-select').remove();

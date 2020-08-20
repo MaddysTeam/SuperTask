@@ -220,6 +220,20 @@
 				$('#bootgrid').bootgrid('reload');
 			});
 
+			$('.project').click(function () {
+				var $this = $(this);
+				var id = $this.data('id');
+				$('#dpProjects').val(id);
+				// remove origin select plugin
+				$('.searchable-select').remove();
+				// rebuild searchable select plugin
+				$('#dpProjects').searchableSelect({
+					afterSelectItem: function (v) {
+						$('#bootgrid').bootgrid('reload');
+					}
+				});
+			});
+
 			var grid = $('#bootgrid');
 			grid.bootgrid(getGridOptions())
 				.on('loaded.rs.jquery.bootgrid', function () {
