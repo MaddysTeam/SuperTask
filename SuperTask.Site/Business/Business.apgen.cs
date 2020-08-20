@@ -5045,6 +5045,8 @@ namespace Business {
             
             private GuidAPColumnDef _creatorId;
             
+            private GuidAPColumnDef _defaultExecutorId;
+            
             private GuidAPColumnDef _reviewerID;
             
             private DateTimeAPColumnDef _startDate;
@@ -5238,7 +5240,7 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_managerId, null)) {
                         _managerId = new GuidAPColumnDef(this, "ManagerId", true);
-                        _managerId.Display = "任务负责人ID";
+                        _managerId.Display = "负责人";
                     }
                     return _managerId;
                 }
@@ -5251,9 +5253,22 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_creatorId, null)) {
                         _creatorId = new GuidAPColumnDef(this, "CreatorId", true);
-                        _creatorId.Display = "任务创建者ID";
+                        _creatorId.Display = "创建人";
                     }
                     return _creatorId;
+                }
+            }
+            
+            /// <summary>
+            /// DefaultExecutorId ColumnDef
+            /// </summary>
+            public virtual GuidAPColumnDef DefaultExecutorId {
+                get {
+                    if (Object.ReferenceEquals(_defaultExecutorId, null)) {
+                        _defaultExecutorId = new GuidAPColumnDef(this, "ExecutorId", true);
+                        _defaultExecutorId.Display = "执行人";
+                    }
+                    return _defaultExecutorId;
                 }
             }
             
@@ -5264,7 +5279,7 @@ namespace Business {
                 get {
                     if (Object.ReferenceEquals(_reviewerID, null)) {
                         _reviewerID = new GuidAPColumnDef(this, "ReviewerId", true);
-                        _reviewerID.Display = "任务审核者ID";
+                        _reviewerID.Display = "审核人";
                     }
                     return _reviewerID;
                 }
@@ -5511,6 +5526,7 @@ namespace Business {
                 data.EstimateWorkHours = EstimateWorkHours.GetValue<double>(reader, throwIfValidColumnName);
                 data.ManagerId = ManagerId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.CreatorId = CreatorId.GetValue<System.Guid>(reader, throwIfValidColumnName);
+                data.DefaultExecutorId = DefaultExecutorId.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.ReviewerID = ReviewerID.GetValue<System.Guid>(reader, throwIfValidColumnName);
                 data.StartDate = StartDate.GetValue<System.DateTime>(reader, throwIfValidColumnName, DateTime.Now);
                 data.EndDate = EndDate.GetValue<System.DateTime>(reader, throwIfValidColumnName, DateTime.Now);
@@ -15032,7 +15048,7 @@ namespace Business {
             /// 添加数据。
             /// </summary>
             public virtual void Insert(WorkTask data) {
-                var query = APQuery.insert(APDBDef.WorkTask).values(APDBDef.WorkTask.TaskId.SetValue(data.TaskId), APDBDef.WorkTask.Projectid.SetValue(data.Projectid), APDBDef.WorkTask.TaskName.SetValue(data.TaskName), APDBDef.WorkTask.Description.SetValue(data.Description), APDBDef.WorkTask.TaskType.SetValue(data.TaskType), APDBDef.WorkTask.TaskLevel.SetValue(data.TaskLevel), APDBDef.WorkTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.WorkTask.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.WorkTask.ParentId.SetValue(data.ParentId), APDBDef.WorkTask.WorkHours.SetValue(data.WorkHours), APDBDef.WorkTask.EstimateWorkHours.SetValue(data.EstimateWorkHours), APDBDef.WorkTask.ManagerId.SetValue(data.ManagerId), APDBDef.WorkTask.CreatorId.SetValue(data.CreatorId), APDBDef.WorkTask.ReviewerID.SetValue(data.ReviewerID), APDBDef.WorkTask.StartDate.SetValue(data.StartDate), APDBDef.WorkTask.EndDate.SetValue(data.EndDate), APDBDef.WorkTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.WorkTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.WorkTask.CreateDate.SetValue(data.CreateDate), APDBDef.WorkTask.CloseDate.SetValue(data.CloseDate), APDBDef.WorkTask.ModifyDate.SetValue(data.ModifyDate), APDBDef.WorkTask.SortId.SetValue(data.SortId), APDBDef.WorkTask.IsParent.SetValue(data.IsParent), APDBDef.WorkTask.V2Level.SetValue(data.V2Level), APDBDef.WorkTask.V2Type.SetValue(data.V2Type), APDBDef.WorkTask.TaskFileType.SetValue(data.TaskFileType), APDBDef.WorkTask.ServiceCount.SetValue(data.ServiceCount), APDBDef.WorkTask.StandardItemId.SetValue(data.StandardItemId), APDBDef.WorkTask.SubTypeId.SetValue(data.SubTypeId), APDBDef.WorkTask.SubTypeValue.SetValue(data.SubTypeValue));
+                var query = APQuery.insert(APDBDef.WorkTask).values(APDBDef.WorkTask.TaskId.SetValue(data.TaskId), APDBDef.WorkTask.Projectid.SetValue(data.Projectid), APDBDef.WorkTask.TaskName.SetValue(data.TaskName), APDBDef.WorkTask.Description.SetValue(data.Description), APDBDef.WorkTask.TaskType.SetValue(data.TaskType), APDBDef.WorkTask.TaskLevel.SetValue(data.TaskLevel), APDBDef.WorkTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.WorkTask.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.WorkTask.ParentId.SetValue(data.ParentId), APDBDef.WorkTask.WorkHours.SetValue(data.WorkHours), APDBDef.WorkTask.EstimateWorkHours.SetValue(data.EstimateWorkHours), APDBDef.WorkTask.ManagerId.SetValue(data.ManagerId), APDBDef.WorkTask.CreatorId.SetValue(data.CreatorId), APDBDef.WorkTask.DefaultExecutorId.SetValue(data.DefaultExecutorId), APDBDef.WorkTask.ReviewerID.SetValue(data.ReviewerID), APDBDef.WorkTask.StartDate.SetValue(data.StartDate), APDBDef.WorkTask.EndDate.SetValue(data.EndDate), APDBDef.WorkTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.WorkTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.WorkTask.CreateDate.SetValue(data.CreateDate), APDBDef.WorkTask.CloseDate.SetValue(data.CloseDate), APDBDef.WorkTask.ModifyDate.SetValue(data.ModifyDate), APDBDef.WorkTask.SortId.SetValue(data.SortId), APDBDef.WorkTask.IsParent.SetValue(data.IsParent), APDBDef.WorkTask.V2Level.SetValue(data.V2Level), APDBDef.WorkTask.V2Type.SetValue(data.V2Type), APDBDef.WorkTask.TaskFileType.SetValue(data.TaskFileType), APDBDef.WorkTask.ServiceCount.SetValue(data.ServiceCount), APDBDef.WorkTask.StandardItemId.SetValue(data.StandardItemId), APDBDef.WorkTask.SubTypeId.SetValue(data.SubTypeId), APDBDef.WorkTask.SubTypeValue.SetValue(data.SubTypeValue));
                 ExecuteNonQuery(query);
             }
             
@@ -15040,7 +15056,7 @@ namespace Business {
             /// 更新数据。
             /// </summary>
             public virtual void Update(WorkTask data) {
-                var query = APQuery.update(APDBDef.WorkTask).values(APDBDef.WorkTask.Projectid.SetValue(data.Projectid), APDBDef.WorkTask.TaskName.SetValue(data.TaskName), APDBDef.WorkTask.Description.SetValue(data.Description), APDBDef.WorkTask.TaskType.SetValue(data.TaskType), APDBDef.WorkTask.TaskLevel.SetValue(data.TaskLevel), APDBDef.WorkTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.WorkTask.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.WorkTask.ParentId.SetValue(data.ParentId), APDBDef.WorkTask.WorkHours.SetValue(data.WorkHours), APDBDef.WorkTask.EstimateWorkHours.SetValue(data.EstimateWorkHours), APDBDef.WorkTask.ManagerId.SetValue(data.ManagerId), APDBDef.WorkTask.CreatorId.SetValue(data.CreatorId), APDBDef.WorkTask.ReviewerID.SetValue(data.ReviewerID), APDBDef.WorkTask.StartDate.SetValue(data.StartDate), APDBDef.WorkTask.EndDate.SetValue(data.EndDate), APDBDef.WorkTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.WorkTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.WorkTask.CreateDate.SetValue(data.CreateDate), APDBDef.WorkTask.CloseDate.SetValue(data.CloseDate), APDBDef.WorkTask.ModifyDate.SetValue(data.ModifyDate), APDBDef.WorkTask.SortId.SetValue(data.SortId), APDBDef.WorkTask.IsParent.SetValue(data.IsParent), APDBDef.WorkTask.V2Level.SetValue(data.V2Level), APDBDef.WorkTask.V2Type.SetValue(data.V2Type), APDBDef.WorkTask.TaskFileType.SetValue(data.TaskFileType), APDBDef.WorkTask.ServiceCount.SetValue(data.ServiceCount), APDBDef.WorkTask.StandardItemId.SetValue(data.StandardItemId), APDBDef.WorkTask.SubTypeId.SetValue(data.SubTypeId), APDBDef.WorkTask.SubTypeValue.SetValue(data.SubTypeValue)).where((APDBDef.WorkTask.TaskId == data.TaskId));
+                var query = APQuery.update(APDBDef.WorkTask).values(APDBDef.WorkTask.Projectid.SetValue(data.Projectid), APDBDef.WorkTask.TaskName.SetValue(data.TaskName), APDBDef.WorkTask.Description.SetValue(data.Description), APDBDef.WorkTask.TaskType.SetValue(data.TaskType), APDBDef.WorkTask.TaskLevel.SetValue(data.TaskLevel), APDBDef.WorkTask.TaskStatus.SetValue(data.TaskStatus), APDBDef.WorkTask.RateOfProgress.SetValue(data.RateOfProgress), APDBDef.WorkTask.ParentId.SetValue(data.ParentId), APDBDef.WorkTask.WorkHours.SetValue(data.WorkHours), APDBDef.WorkTask.EstimateWorkHours.SetValue(data.EstimateWorkHours), APDBDef.WorkTask.ManagerId.SetValue(data.ManagerId), APDBDef.WorkTask.CreatorId.SetValue(data.CreatorId), APDBDef.WorkTask.DefaultExecutorId.SetValue(data.DefaultExecutorId), APDBDef.WorkTask.ReviewerID.SetValue(data.ReviewerID), APDBDef.WorkTask.StartDate.SetValue(data.StartDate), APDBDef.WorkTask.EndDate.SetValue(data.EndDate), APDBDef.WorkTask.RealStartDate.SetValue(data.RealStartDate), APDBDef.WorkTask.RealEndDate.SetValue(data.RealEndDate), APDBDef.WorkTask.CreateDate.SetValue(data.CreateDate), APDBDef.WorkTask.CloseDate.SetValue(data.CloseDate), APDBDef.WorkTask.ModifyDate.SetValue(data.ModifyDate), APDBDef.WorkTask.SortId.SetValue(data.SortId), APDBDef.WorkTask.IsParent.SetValue(data.IsParent), APDBDef.WorkTask.V2Level.SetValue(data.V2Level), APDBDef.WorkTask.V2Type.SetValue(data.V2Type), APDBDef.WorkTask.TaskFileType.SetValue(data.TaskFileType), APDBDef.WorkTask.ServiceCount.SetValue(data.ServiceCount), APDBDef.WorkTask.StandardItemId.SetValue(data.StandardItemId), APDBDef.WorkTask.SubTypeId.SetValue(data.SubTypeId), APDBDef.WorkTask.SubTypeValue.SetValue(data.SubTypeValue)).where((APDBDef.WorkTask.TaskId == data.TaskId));
                 ExecuteNonQuery(query);
             }
             
@@ -33918,6 +33934,11 @@ namespace Business {
         private System.Guid _creatorId;
         
         /// <summary>
+        /// DefaultExecutorId
+        /// </summary>
+        private System.Guid _defaultExecutorId;
+        
+        /// <summary>
         /// ReviewerID
         /// </summary>
         private System.Guid _reviewerID;
@@ -34025,6 +34046,7 @@ namespace Business {
                     double estimateWorkHours, 
                     System.Guid managerId, 
                     System.Guid creatorId, 
+                    System.Guid defaultExecutorId, 
                     System.Guid reviewerID, 
                     System.DateTime startDate, 
                     System.DateTime endDate, 
@@ -34055,6 +34077,7 @@ namespace Business {
             _estimateWorkHours = estimateWorkHours;
             _managerId = managerId;
             _creatorId = creatorId;
+            _defaultExecutorId = defaultExecutorId;
             _reviewerID = reviewerID;
             _startDate = startDate;
             _endDate = endDate;
@@ -34322,7 +34345,7 @@ namespace Business {
         /// <summary>
         /// ManagerId
         /// </summary>
-        [Display(Name="任务负责人ID")]
+        [Display(Name="负责人")]
         public virtual System.Guid ManagerId {
             get {
                 return _managerId;
@@ -34344,7 +34367,7 @@ namespace Business {
         /// <summary>
         /// CreatorId
         /// </summary>
-        [Display(Name="任务创建者ID")]
+        [Display(Name="创建人")]
         public virtual System.Guid CreatorId {
             get {
                 return _creatorId;
@@ -34364,9 +34387,31 @@ namespace Business {
         }
         
         /// <summary>
+        /// DefaultExecutorId
+        /// </summary>
+        [Display(Name="执行人")]
+        public virtual System.Guid DefaultExecutorId {
+            get {
+                return _defaultExecutorId;
+            }
+            set {
+                _defaultExecutorId = value;
+            }
+        }
+        
+        /// <summary>
+        /// DefaultExecutorId APColumnDef
+        /// </summary>
+        public static GuidAPColumnDef DefaultExecutorIdDef {
+            get {
+                return APDBDef.WorkTask.DefaultExecutorId;
+            }
+        }
+        
+        /// <summary>
         /// ReviewerID
         /// </summary>
-        [Display(Name="任务审核者ID")]
+        [Display(Name="审核人")]
         public virtual System.Guid ReviewerID {
             get {
                 return _reviewerID;
@@ -34768,6 +34813,7 @@ namespace Business {
             EstimateWorkHours = data.EstimateWorkHours;
             ManagerId = data.ManagerId;
             CreatorId = data.CreatorId;
+            DefaultExecutorId = data.DefaultExecutorId;
             ReviewerID = data.ReviewerID;
             StartDate = data.StartDate;
             EndDate = data.EndDate;
@@ -34828,6 +34874,9 @@ namespace Business {
                 return false;
             }
             if ((CreatorId != data.CreatorId)) {
+                return false;
+            }
+            if ((DefaultExecutorId != data.DefaultExecutorId)) {
                 return false;
             }
             if ((ReviewerID != data.ReviewerID)) {
@@ -34991,6 +35040,7 @@ namespace Business {
                     double estimateWorkHours, 
                     System.Guid managerId, 
                     System.Guid creatorId, 
+                    System.Guid defaultExecutorId, 
                     System.Guid reviewerID, 
                     System.DateTime startDate, 
                     System.DateTime endDate, 
@@ -35008,7 +35058,7 @@ namespace Business {
                     System.Guid standardItemId, 
                     System.Guid subTypeId, 
                     double subTypeValue) : 
-                base(taskId, projectid, taskName, description, taskType, taskLevel, taskStatus, rateOfProgress, parentId, workHours, estimateWorkHours, managerId, creatorId, reviewerID, startDate, endDate, realStartDate, realEndDate, createDate, closeDate, modifyDate, sortId, isParent, v2Level, v2Type, taskFileType, serviceCount, standardItemId, subTypeId, subTypeValue) {
+                base(taskId, projectid, taskName, description, taskType, taskLevel, taskStatus, rateOfProgress, parentId, workHours, estimateWorkHours, managerId, creatorId, defaultExecutorId, reviewerID, startDate, endDate, realStartDate, realEndDate, createDate, closeDate, modifyDate, sortId, isParent, v2Level, v2Type, taskFileType, serviceCount, standardItemId, subTypeId, subTypeValue) {
         }
     }
     

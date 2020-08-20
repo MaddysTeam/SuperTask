@@ -3,20 +3,20 @@
 	var pageTitle = ViewBag.Title = "";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 
-	var processingTasks = Model.Tasks.FindAll(x => x.IsProcessStatus);
-	var planTasks = Model.Tasks.FindAll(x => x.IsPlanStatus);
-	var completeTasks = Model.Tasks.FindAll(x => x.IsCompleteStatus);
-	var closeTasks = Model.Tasks.FindAll(x => x.IsCloseStatus);
-	var todayTasks = Model.Tasks.FindAll(x => x.EndDate.IsToday());
-	var weekTasks = Model.Tasks.FindAll(x => x.EndDate.IsBetween(DateTime.Now.WeekStart(), DateTime.Now.WeekEnd()));
-	var monthTasks = Model.Tasks.FindAll(x => x.EndDate.IsBetween(DateTime.Now.MonthStart(), DateTime.Now.MonthEnd()));
-	var tasksIn30days = Model.Tasks.FindAll(x => x.EndDate.IsBetween(DateTime.Now, DateTime.Now.AddDays(30)));
+	var processingTasks = Model.Tasks.FindAll(x => x.IsProcessStatus)?? new List<WorkTask>();
+	var planTasks = Model.Tasks.FindAll(x => x.IsPlanStatus) ?? new List<WorkTask>();
+	var completeTasks = Model.Tasks.FindAll(x => x.IsCompleteStatus) ?? new List<WorkTask>();
+	var closeTasks = Model.Tasks.FindAll(x => x.IsCloseStatus) ?? new List<WorkTask>();
+	var todayTasks = Model.Tasks.FindAll(x => x.EndDate.IsToday()) ?? new List<WorkTask>();
+	var weekTasks = Model.Tasks.FindAll(x => x.EndDate.IsBetween(DateTime.Now.WeekStart(), DateTime.Now.WeekEnd())) ?? new List<WorkTask>();
+	var monthTasks = Model.Tasks.FindAll(x => x.EndDate.IsBetween(DateTime.Now.MonthStart(), DateTime.Now.MonthEnd())) ?? new List<WorkTask>();
+	var tasksIn30days = Model.Tasks.FindAll(x => x.EndDate.IsBetween(DateTime.Now, DateTime.Now.AddDays(30))) ?? new List<WorkTask>();
 
 	var projects = Model.Porjects;
-	var processingProjects = Model.Porjects.FindAll(x => x.IsProcessStatus);
-	var requires = Model.Requires.FindAll(x => x.IsWaitingForReview);
-	var reviewRequires = Model.ReviewRequires;
-	var users = Model.Users;
+	var processingProjects = Model.Porjects.FindAll(x => x.IsProcessStatus) ?? new List<Project>();
+	var requires = Model.Requires.FindAll(x => x.IsWaitingForReview) ?? new List<Require>();
+	var reviewRequires = Model.ReviewRequires ?? new List<Require>();
+	var users = Model.Users ?? new List<UserInfo>();
 
 	var projectListUrl = Url.Action("Search","project");
 	var taskListUrl = Url.Action("List", "TaskV2");
@@ -130,8 +130,8 @@
 										if (i < reviewRequires.Count && reviewRequires.Count>0)
 										{
 											var rq = reviewRequires[i];
-											var prjectName = projects.Find(x => x.ProjectId == rq.Projectid).ProjectName;
-											var requireManager = users.Find(x => x.UserId == rq.ManagerId).UserName;
+											var prjectName = projects.Find(x => x.ProjectId == rq.Projectid)?.ProjectName;
+											var requireManager = users.Find(x => x.UserId == rq.ManagerId)?.UserName;
 											<tr>
 												<td>@prjectName</td>
 												<td>@rq.RequireName</td>

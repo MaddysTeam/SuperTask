@@ -303,9 +303,10 @@
 					<add name="ParentId"  columnName="ParentId"  type="Guid"  isNullable="true" display="父任务ID" />
 					<add name="WorkHours"  columnName="WorkHours" type="double"  isNullable="true" display="已用工时" />
 					<add name="EstimateWorkHours"  columnName="EstimateWorkHours" type="double"  isNullable="true" display="预计工时" />
-					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true"  display="任务负责人ID" />
-					<add name="CreatorId" columnName="CreatorId" type="Guid"   isNullable="true" display="任务创建者ID" />
-					<add name="ReviewerID" columnName="ReviewerId" type="Guid"   isNullable="true" display="任务审核者ID" />
+					<add name="ManagerId" columnName="ManagerId" type="Guid"  isNullable="true"  display="负责人" />
+					<add name="CreatorId" columnName="CreatorId" type="Guid"   isNullable="true" display="创建人" />
+					<add name="DefaultExecutorId" columnName="ExecutorId" type="Guid"   isNullable="true" display="执行人" />
+					<add name="ReviewerID" columnName="ReviewerId" type="Guid"   isNullable="true" display="审核人" />
 					<add name="StartDate"  columnName="StartDate" type="DateTime"  isNullable="true" defaultValue="DateTime.Now" display="开始时间" />
 					<add name="EndDate"  columnName="EndDate" type="DateTime"  isNullable="true" defaultValue="DateTime.Now"  display="结束时间" />
 					<add name="RealStartDate"  columnName="RealStartDate" type="DateTime"  isNullable="true" display="实际开始时间" />

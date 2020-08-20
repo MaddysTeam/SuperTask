@@ -27,20 +27,22 @@ namespace TheSite.Controllers
 
 
 		[HttpPost]
-		public ActionResult List(Guid projectId, Guid levelId, Guid typeId, Guid statusId, bool isAssign, bool isJoin, string taskName,
+		public ActionResult List(Guid projectId, Guid levelId, Guid typeId, Guid statusId, bool isAssign, bool isManage, string taskName,
 				   int current, int rowCount, AjaxOrder sort, string searchPhrase)
 		{
 			ThrowNotAjax();
 
 			var user = GetUserInfo();
 
+			var u2 = APDBDef.UserInfo.As("executor");
 			var query = APQuery.select(t.TaskId, t.TaskName, t.V2Type, t.ParentId, t.IsParent,
-				 t.V2Level, t.SortId, t.TaskStatus, t.EstimateWorkHours,
-				 t.TaskStatus, t.ManagerId, t.WorkHours, t.EndDate, u.UserName)
+				 t.V2Level, t.SortId, t.TaskStatus, t.EstimateWorkHours, t.DefaultExecutorId,
+				 t.TaskStatus, t.ManagerId, t.WorkHours, t.EndDate, u.UserName,u2.UserName.As("executor"))
 			   .from(t,
-			   u.JoinLeft(u.UserId == t.ManagerId)
+			   u.JoinLeft(u.UserId == t.ManagerId),
+			   u2.JoinLeft(u2.UserId==t.DefaultExecutorId)
 			   )
-			   .where(t.TaskStatus != TaskKeys.DeleteStatus);
+			   .where(t.TaskStatus != TaskKeys.DeleteStatus & (t.ManagerId==user.UserId | t.DefaultExecutorId==user.UserId));
 
 			if (projectId != TaskKeys.SelectAll)
 				query = query.where_and(t.Projectid == projectId);
@@ -48,8 +50,22 @@ namespace TheSite.Controllers
 				query = query.where_and(t.Projectid.In(APQuery.select(rs.Projectid).from(rs).where(rs.UserId == user.UserId)));
 
 			if (isAssign)
+				query = query.where_and(t.DefaultExecutorId == user.UserId);
+
+			if (isManage)
 				query = query.where_and(t.ManagerId == user.UserId);
 
+			if (levelId != TaskKeys.SelectAll)
+				query = query.where_and(t.V2Level == levelId);
+
+			if (typeId != TaskKeys.SelectAll)
+				query = query.where_and(t.V2Type == typeId);
+
+			if (statusId != TaskKeys.SelectAll)
+				query = query.where_and(t.TaskStatus == statusId);
+
+			if (!string.IsNullOrEmpty(taskName))
+				query = query.where_and(t.TaskName.Match(taskName));
 
 			var tasks = query.order_by(t.ModifyDate.Desc)
 				.query(db, r => new WorkTask
@@ -60,6 +76,8 @@ namespace TheSite.Controllers
 					IsParent = t.IsParent.GetValue(r),
 					ManagerId = t.ManagerId.GetValue(r),
 					Manager = u.UserName.GetValue(r),
+					DefaultExecutorId = t.DefaultExecutorId.GetValue(r),
+					Executor=u2.UserName.GetValue(r, "executor"),
 					V2Level = t.V2Level.GetValue(r),
 					SortId = t.SortId.GetValue(r),
 					V2Type = t.V2Type.GetValue(r),
@@ -68,10 +86,8 @@ namespace TheSite.Controllers
 					EstimateWorkHours = t.EstimateWorkHours.GetValue(r)
 				}).ToList();
 
-
 			var results = new List<WorkTask>();
 			var parents = tasks.FindAll(x => x.IsParent);
-
 			if (parents != null && parents.Count > 0)
 			{
 				//排序条件表达式
@@ -99,29 +115,6 @@ namespace TheSite.Controllers
 			}
 
 			results.AddRange(tasks.Except(results));
-
-			if (levelId != TaskKeys.SelectAll)
-			{
-				results = results.FindAll(t => t.V2Level == levelId);
-			}
-			if (typeId != TaskKeys.SelectAll)
-			{
-				results = results.FindAll(t => t.TaskType == typeId);
-			}
-			if (statusId != TaskKeys.SelectAll)
-			{
-				results = results.FindAll(t => t.TaskStatus == statusId);
-			}
-			else
-			{
-				results = results.FindAll(t => t.TaskStatus != TaskKeys.DeleteStatus);
-			}
-			if (!string.IsNullOrEmpty(taskName))
-			{
-				results = results.FindAll(t => t.TaskName.IndexOf(taskName) >= 0);
-			}
-
-
 			var total = results.Count;
 			if (total > 0)
 			{
@@ -179,13 +172,13 @@ namespace TheSite.Controllers
 					if (task.TaskId.IsEmpty())
 						task.TaskId = Guid.NewGuid();
 
+					var subTaskEsTimes = collection["estimateWorkHours"];
+					var subTaskExecutors = collection["executorId"];
 					var isParent = task.ParentId.IsEmpty();
-					if (isParent)
+					if (isParent && !string.IsNullOrEmpty(subTaskExecutors) && !string.IsNullOrEmpty(subTaskEsTimes))
 					{
-						var subTaskEsTimes = collection["estimateWorkHours"];
-						var subTaskExecutors = collection["executorId"];
 						var index = 0;
-						foreach (var item in subTaskExecutors.Split(','))
+						foreach (var item in subTaskExecutors?.Split(','))
 						{
 							WorkTask subTask = new WorkTask
 							{
@@ -204,7 +197,8 @@ namespace TheSite.Controllers
 								CreatorId = user.UserId,
 								CreateDate = DateTime.Now,
 								TaskStatus = TaskKeys.ProcessStatus,
-								ModifyDate = DateTime.Now
+								ModifyDate = DateTime.Now,
+								DefaultExecutorId= item.ToGuid(Guid.Empty),
 							};
 
 							//create subtask
@@ -214,12 +208,12 @@ namespace TheSite.Controllers
 							WorkJournalHelper.CreateByTask(subTask, db);
 
 							//add user to project resurce if not exits
-							//ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.ManagerId, ResourceKeys.OtherType, db);
+							ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.ManagerId, ResourceKeys.OtherType, db);
 
 							index++;
 						}
 					}
-					else
+					else if(!isParent)
 						task.TaskName = "【子】" + task.TaskName;
 
 					task.IsParent = isParent;
@@ -241,6 +235,7 @@ namespace TheSite.Controllers
 
 					//add user to project resurce if not exits
 					ResourceHelper.AddUserToResourceIfNotExist(task.Projectid, task.TaskId, task.ManagerId, ResourceKeys.OtherType, db);
+					ResourceHelper.AddUserToResourceIfNotExist(task.Projectid, task.TaskId, task.DefaultExecutorId, ResourceKeys.OtherType, db);
 
 					//add relative items TODO:  sub task do not need bind any relative items now
 					var requires = task.RelativeRequireIds?.Split(',');
@@ -341,6 +336,7 @@ namespace TheSite.Controllers
 					foreach (var id in subTaskIds.Split(','))
 					{
 						var subTask = subTasks.Find(x => x.TaskId == id.ToGuid(Guid.Empty));
+						// if subtask is not exist before
 						if (null == subTask)
 						{
 							subTask = new WorkTask
@@ -356,26 +352,34 @@ namespace TheSite.Controllers
 								V2Level = task.V2Level,
 								SortId = ++newSortNo,
 								TaskStatus = TaskKeys.PlanStatus,
+								DefaultExecutorId=task.DefaultExecutorId,
 								ManagerId = task.ManagerId,
 								CreatorId = user.UserId,
-								CreateDate = DateTime.Now
+								CreateDate = DateTime.Now,
+								ModifyDate = DateTime.Now
 							};
 
 							//create subtask journal
 							WorkJournalHelper.CreateByTask(subTask, db);
 						}
 
-						subTask.ManagerId = subTaskExecutors.Split(',')[index].ToGuid(Guid.Empty);
+						// following logic for subtask is exist or not
+
+						subTask.ManagerId = task.ManagerId;
+						subTask.DefaultExecutorId = subTaskExecutors.Split(',')[index].ToGuid(Guid.Empty);
 
 						// EstimateWorkHours 也用在了父任务负责人的【预估工时】填写字段，所以需要index+1,
 						subTask.EstimateWorkHours = double.Parse(subTaskEsTimes.Split(',')[index + 1]);
 
 						db.WorkTaskDal.Insert(subTask);
 
-                  // add journal if not exits
-                  WorkJournalHelper.CreateOrUpdateJournalByTask(subTask, db);
+						// add journal if not exits
+						WorkJournalHelper.CreateOrUpdateJournalByTask(subTask, db);
 
-                  index++;
+						//add user to project resurce if not exits
+						ResourceHelper.AddUserToResourceIfNotExist(subTask.Projectid, subTask.TaskId, subTask.ManagerId, ResourceKeys.OtherType, db);
+
+						index++;
 					}
 
 				}
@@ -398,10 +402,12 @@ namespace TheSite.Controllers
 					WorkJournalHelper.CreateOrUpdateJournalByTask(task, db);
 				}
 
+				task.ModifyDate = DateTime.Now;
 				db.WorkTaskDal.Update(task);
 
 				//add user to project resurce if not exits
 				ResourceHelper.AddUserToResourceIfNotExist(task.Projectid, task.TaskId, task.ManagerId, ResourceKeys.OtherType, db);
+				ResourceHelper.AddUserToResourceIfNotExist(task.Projectid, task.TaskId, task.DefaultExecutorId, ResourceKeys.OtherType, db);
 
 				//upload attachments
 				var attachment = AttachmentHelper.UploadTaskAttachment(task, db);
@@ -424,11 +430,11 @@ namespace TheSite.Controllers
 				var publishs = task.RelativePublishIds.Split(',');
 				RTPBRelationHelper.BindRelationBetweenPublishsAndTask(publishs.ConvertToGuidArray(), task.TaskId, db);
 
-            // add journal if not exits
-            WorkJournalHelper.CreateOrUpdateJournalByTask(task, db);
+				// add journal if not exits
+				WorkJournalHelper.CreateOrUpdateJournalByTask(task, db);
 
-            // operation record
-            db.OperationDal.Insert(new Operation(task.Projectid, task.TaskId, TaskKeys.EditActionGuid, null, null, DateTime.Now, user.UserId, string.Empty));
+				// operation record
+				db.OperationDal.Insert(new Operation(task.Projectid, task.TaskId, TaskKeys.EditActionGuid, null, null, DateTime.Now, user.UserId, string.Empty));
 
 				db.Commit();
 			}

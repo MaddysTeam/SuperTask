@@ -17,15 +17,22 @@
 		.searchable-select {
 			min-width: 100px;
 		}
-		.left_side{
+		.left-side{
 			border:1px solid #ddd; overflow-y:auto; height:800px;
 		}
-		.right_side{
+		.right-side{
 			margin-left:1%;
 		}
-		.right_side>.btn-group{
+		.right-side>.btn-group{
 			position:absolute;top:20px; width:200px; z-index:99
 		}
+		.top-side{
+		  margin-bottom:20px; margin-top:10px;
+		}
+		.top-side .search-area{
+		  margin-left:2%; padding:5px;
+		}
+
 	</style>
 }
 
@@ -33,7 +40,7 @@
 
 	<!-- main -->
 	<div class="content">
-		<div class="row" style="margin-bottom:20px; margin-top:10px;">
+		<div class="row top-side">
 
 			<!-- 项目筛选下拉框 -->
 			<div class="col-md-2">
@@ -45,7 +52,7 @@
 			</div>
 			<!-- /任务搜索框 -->
 
-			<div class="col-md-9 row" style=" margin-left:2%; padding:5px;">
+			<div class="col-md-9 row search-area">
 
 				<div class="col-md-1">
 					<div class="form-horizontal">
@@ -54,7 +61,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-2">
+				<div class="col-sm-1">
 					<div class="form-horizontal">
 						<div class="FormGroup">
 							@Html.DropDownList("dpLevels", levelList, new { @class = "form-control dropdown-taskLevels", })
@@ -89,11 +96,13 @@
 					<a class="btn btn-info" id="btnSearch">搜索</a>
 				</div>
 
-				<div class="col-sm-2 text-center line-height: 70px;">
+				<div class="col-sm-3 text-center line-height: 70px;">
 					<div class="form-horizontal">
 						<div class="FormGroup" style="line-height: 35px;">
+							<a href="#" id="manage" class="btn">我负责的</a>
 							<a href="#" id="assign" class="btn">指派给我</a>
-							<input type="hidden" id="hidAssgin"  value="true"/>
+							<input type="hidden" id="hidAssgin"  value="false"/>
+							<input type="hidden" id="hidManage" value="false" />
 						</div>
 					</div>
 				</div>
@@ -104,12 +113,12 @@
 		</div>
 
 		<div class="row">
-			<div class="col-md-2 left_side">
+			<div class="col-md-2 left-side">
 				<h3>参与的项目</h3>
 				<hr />
 				@Html.Partial("_projectList", ViewBag.Projects as List<Project>)
 			</div>
-			<div class="row col-md-9 right_side">
+			<div class="row col-md-10 right-side">
 					<div class="btn-group">
 						<a class="btn btn-success" id="start" data-url="@Url.Action("MultipleComplete","TaskV2")">完成</a>
 						<a class="btn btn-success" id="close" data-url="@Url.Action("MultipleClose","TaskV2")">关闭</a>
@@ -123,7 +132,8 @@
 								<th data-column-id="TaskName" data-formatter="TaskName">任务名称</th>
 								<th data-column-id="Status">状态</th>
 								<th data-column-id="TypeV2">类型</th>
-								<th data-column-id="Manager">指派给</th>
+								<th data-column-id="Manager">负责人</th>
+								<th data-column-id="Executor">指派给</th>
 								<th data-column-id="WorkHours">已消耗(累计)</th>
 								<th data-column-id="EstimateWorkHours">预计消耗</th>
 								<th data-column-id="EndDate" data-formatter="DateOnly">预计完成</th>
@@ -160,8 +170,8 @@
 				levelId: $('#dpLevels').val(),
 				typeId: $('#dpTypes').val(),
 				statusId: $('#dpStatus').val(),
-				isAssign: $('#hidAssgin').val() != '',
-				isJoin: $('#hidJoin').val() != '',
+				isAssign: $('#hidAssgin').val(),
+				isManage: $('#hidManage').val(),
 				taskName: $('#txtName').val(),
 			};
 		}
@@ -195,21 +205,28 @@
 						return link;
 					},
 					'commands': function (column, row) {
+
 						var currentUserId = '@Html.GetUserProfile().UserId';
-						if (currentUserId != row.ManagerId)
+						var isManager = currentUserId === row.ManagerId;
+						var isExecutor = currentUserId === row.DefaultExecutorId;
+						if (!isManager && !isExecutor)
 							return '';
 
 						var id = row.TaskId;
+						var parentId = row.ParentId;
 						var isParent = row.IsParent;
 						var status = row.TaskStatus;
 						var projectId = $('#dpProjects').val();
 						var subTaskButtonStr = isParent && isNotComplete(status) && isNotClose(status) ? '<button data-url="@Url.Action("AddSubTask", "TaskV2")?projectId=' + projectId + '&parentId=' + id + '" class="btn btn-lg btn-info btn-subTasks">子任务</button> ' : '<button class="btn" disable="disable">子任务</button>';
+						var editTaskButtonStr = isManager ? '<a target="_blank" href="@Url.Action("Edit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-close">编辑</a>' : '';
 						var completeButtonStr = isNotComplete(status) ? '<a data-url="@Url.Action("Complete", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-complete">完成</a> ' : '<button class="btn" disable="disable">已完成</button>';
-						var journalButtonStr = isNotComplete(status) && !isPlan(status) ? '<a  data-url="@Url.Action("JournalEdit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-journal">工时</a> ' : '<button class="btn" disable="disable">工时</button>';
-						
-						return '<div class="btn-group btn-group-xs pull-right rowId" data-name="' + row.taskName + '" data-row-id="' + id + '" data-row-active="' + row.actived + '">' +
+						var journalButtonStr = isExecutor && isNotComplete(status) ? '<a  data-url="@Url.Action("JournalEdit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-journal">工时</a> ' : '';
+						var restartButtonStr = isManager && !isNotComplete(status) ? '<a data-url="@Url.Action("Start", "TaskV2")?id=' + id + '" class="btn btn-lg btn-warning btn-start">重启</a> ' : '';
+
+						return '<div class="btn-group btn-group-xs pull-right rowId" data-name="' + row.taskName + '" data-row-id="' + id + '" data-pid="' + parentId + '" data-row-active="' + row.actived + '">' +
+							restartButtonStr +
 							completeButtonStr +
-							'<a target="_blank" href="@Url.Action("Edit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-close">编辑</a> ' +
+							editTaskButtonStr +
 							journalButtonStr +
 							subTaskButtonStr +
 							'</div>';
@@ -226,13 +243,22 @@
 			$('#showAll').click(function () {
 				$('#checkAll').attr("checked", false);
 				$('#dpLevels,#dpStatus,#dpTypes').val('@TaskKeys.SelectAll');
-				$('#hidAssgin,#txtName,#searchPhrase').val('');
+				$('#txtName,#searchPhrase').val('');
+				$('#hidManage,#hidAssgin').val('false');
 				$('#bootgrid').bootgrid('reload');
 			});
 
 			$('#assign').click(function () {
 				$('#checkAll').attr("checked", false);
 				$('#hidAssgin').val('true');
+				$('#hidManage').val('false');
+				$('#bootgrid').bootgrid('reload');
+			});
+
+			$('#manage').click(function () {
+				$('#checkAll').attr("checked", false);
+				$('#hidManage').val('true');
+				$('#hidAssgin').val('false');
 				$('#bootgrid').bootgrid('reload');
 			});
 
@@ -253,13 +279,33 @@
 				$('#bootgrid').bootgrid('reload');
 			});
 
+			// click event for project list in left side
+			$('.project').click(function () {
+				var $this = $(this);
+				var id = $this.data('id');
+				$('#dpProjects').val(id);
+				$('#bootgrid').bootgrid('reload');
+
+				// remove origin select plugin
+				$('.searchable-select').remove();
+				// rebuild searchable select plugin
+				$('#dpProjects').searchableSelect({
+					afterSelectItem: function (v) {
+						$('#bootgrid').bootgrid('reload');
+					}
+				});
+			});
+
 			var grid = $('#bootgrid');
 			grid.bootgrid(getGridOptions())
 				.on('loaded.rs.jquery.bootgrid', function () {
 
+					$('.search').hide();  // hide search box
+					//$('.btn-hide-child').click(); // hide child task
+
 					isLoaded = true;
 
-					grid.find('.btn-subTasks,.btn-journal,.btn-complete').on('click', function (e) {
+					grid.find('.btn-subTasks,.btn-journal,.btn-complete,.btn-start').on('click', function (e) {
 						var url = $(this).data('url');
 						var $proxy = $('#modelProxy');
 						$proxy
@@ -267,20 +313,17 @@
 							.trigger('click');
 					});
 
-					//grid.find('.btn-complete').on('click', function () {
-					//	var url = $(this).data('url');
-					//	var $proxy = $('#modelProxy');
-					//	$proxy.data('url',url).trigger('click')
-					//});
 
 					grid.find('.btn-hide-child').click(function () {
 						let $this = $(this);
+						var parentId = $this.parents('tr').find('.rowId').data('rowId');
 						$(this).hide()
 							    .parent()
 							    .find('.btn-show-child').show();
 						let siblings = $this.parents('tr').next();
 						while (siblings.children().length > 0) {
-							if (siblings.find('.isParnet').length > 0)
+							var pid = siblings.find('.rowId').data('pid');
+							if (siblings.find('.isParnet').length > 0 || pid != parentId)
 								break;
 							else {
 								siblings.hide();
@@ -290,13 +333,15 @@
 					});
 
 					grid.find('.btn-show-child').hide().click(function () {
-						$this = $(this);
+						let $this = $(this);
+						var parentId = $this.parents('tr').find('.rowId').data('rowId');
 						$(this).hide()
 							    .parent()
 							    .find('.btn-hide-child').show();
 						var siblings = $this.parents('tr').next();
 						while (siblings.children().length > 0) {
-							if (siblings.find('.isParnet').length > 0)
+							var pid = siblings.find('.rowId').data('pid');
+							if (siblings.find('.isParnet').length > 0 || pid != parentId)
 								break;
 							else {
 								siblings.show();
@@ -304,11 +349,12 @@
 							siblings = siblings.next();
 						}
 					});
-						
-	
+
+					grid.find('.btn-hide-child').click();
+
 					initTableCheckbox('bootgrid')
 
-					// multiple start,complete and close tasks 
+					// multiple start,complete and close tasks
 					$('#start,#complete,#close').off('click').on('click', function () {
 						result = [];
 						grid.find('.checkItem').each(function (i) {
@@ -333,7 +379,7 @@
 
 				});
 
-			$('.search').hide();
+
 
 		});
 

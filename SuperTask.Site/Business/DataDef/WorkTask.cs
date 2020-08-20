@@ -19,6 +19,9 @@ namespace Business
 		[Display(Name = "负责人")]
 		public string Manager { get; set; }
 
+		[Display(Name= "执行人")]
+		public string Executor { get; set; }
+
 		[Display(Name = "审核人")]
 		public string Reviewer { get; set; }
 

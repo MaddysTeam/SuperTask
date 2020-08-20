@@ -225,7 +225,8 @@ namespace TheSite.Controllers
 
 				//add user to project resurce if not exits
 				ResourceHelper.AddUserToResourceIfNotExist(require.Projectid, Guid.Empty, require.ManagerId, ResourceKeys.OtherType, db);
-
+				if(!require.ReviewerId.IsEmpty())
+					ResourceHelper.AddUserToResourceIfNotExist(require.Projectid, Guid.Empty, require.ReviewerId, ResourceKeys.OtherType, db);
 
 				db.Commit();
 			}

@@ -3,6 +3,8 @@
 	Layout = null;
 	var requireId = Request["requireId"] ?? string.Empty;
 	var projectId = Request["projectId"] ?? string.Empty;
+	var userList= ViewBag.Users as List<UserInfo>;
+	var manager = userList.Find(x=>x.UserId==Model.ManagerId)?.RealName;
 }
 
 <link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
@@ -92,34 +94,32 @@
 							</div>
 						</div>
 
-						<div class="form-group">
+						<div class="form-group ">
 							@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2 text-align:left" })
-							<div class="col-md-3">
+							<div class="col-md-3 dropdown-manager">
 								@Html.DropDownListFor(t => t.ManagerId,
-									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
-									new { @class = "form-control dropdown-project2" })
+									SelectListHelper.GetSelectItems(userList, "UserName", "UserId"),
+									new { @class = "form-control " })
 							</div>
+							<div class="col-md-3 label-manager"><label class="form-control">@manager</label> </div>
 
-							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-3 text-align:left" })
+							@Html.Label("预计消耗", new { @class = "control-label col-md-3 text-align:left" })
 							<div class="col-md-3">
 								@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
 							</div>
 						</div>
-
-						<div class="form-group subTaskExecutor">
+						<div class="form-group">
 							@Html.Label("执行人", new { @class = "control-label col-md-2 text-align:left" })
 							<div class="col-md-3">
-								@Html.DropDownList("executorId",
-									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == Html.GetUserProfile().UserId.ToString()),
-									new { @class = "form-control" })
+								@Html.DropDownListFor(t => t.DefaultExecutorId,
+									SelectListHelper.GetSelectItems(userList, "UserName", "UserId", v => v.ToString() == Html.GetUserProfile().UserId.ToString()),
+									new { @class = "form-control", @name = "defaultExecutor" })
 							</div>
+						</div>
 
-							@Html.Label("预计消耗", new { @class = "control-label col-md-3 text-align:left" })
-							<div class="col-md-3">
-								@Html.TextBox("estimateWorkHours", "0", new { @class = "form-control" })
-							</div>
-							<div>
-								<a href="#" class="btn btn-info" onclick="addSubTaskExecutor()"><i class="fa fa-plus"> </i></a>
+						<div class="form-group subTaskExecutor">
+							<div class="col-md-3 col-md-offset-2">
+								<a href="#" class="btn btn-info" onclick="addSubTaskExecutor()"><i class="fa fa-plus"> </i>新增执行人</a>
 							</div>
 						</div>
 
@@ -201,27 +201,26 @@
 		// bind project dropdown event
 		bindProjectDropdown();
 
-
 		if ($('#hasParnetTask').is(':checked')) {
-			$('.parentTasks').show();
-			$('.subTaskExecutor').hide();
+			$('.parentTasks,.label-manager').show();
+			$('.subTaskExecutor,.dropdown-manager').hide();
 		}
 		else {
-			$('.parentTasks').hide();
-			$('.subTaskExecutor').show();
+			$('.parentTasks,.label-manager').hide();
+			$('.subTaskExecutor,.dropdown-manager').show();
 		}
 
 		isShow = false;
 		$('#hasParnetTask').click(function () {
 			if ($(this).is(':checked') && !isShow) {
 				isShow = true;
-				$('.parentTasks').show();
-				$('.subTaskExecutor').hide();
+				$('.parentTasks,.label-manager').show();
+				$('.subTaskExecutor,.dropdown-manager').hide();
 			}
 			else {
 				isShow = false;
-				$('.parentTasks').hide();
-				$('.subTaskExecutor').show();
+				$('.parentTasks,.label-manager').hide();
+				$('.subTaskExecutor,.dropdown-manager').show();
 				$('#ParentId').val('')
 			}
 		});

@@ -19,7 +19,7 @@
 				<tr>
 					<td>@item.SortId</td>
 					<td><a target="_blank" href="@Url.Action("Detail","TaskV2",new {id=item.TaskId })">@item.TaskName</a></td>
-					<td>@(string.IsNullOrEmpty(item.Manager) ? users?.First(x => x.UserId == item.ManagerId)?.RealName : item.Manager)</td>
+					<td>@(string.IsNullOrEmpty(item.Manager) ? users?.First(x => x.UserId == item.DefaultExecutorId)?.RealName : item.Manager)</td>
 					<td>@item.Status</td>
 				</tr>
 			}

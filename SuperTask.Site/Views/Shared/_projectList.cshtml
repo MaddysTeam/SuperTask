@@ -1,6 +1,11 @@
 ﻿@model List<Project>
 
 <style>
+
+	gray{
+		background: #eee;
+	}
+
 	ul.activity-list > li:hover {
 		background: #eee;
 		cursor:pointer;
@@ -18,12 +23,14 @@
 	@{
 		foreach (var item in Model)
 		{
-			<li class="task" data-id="@item.ProjectId" data-url="">
+			<li class="project" data-id="@item.ProjectId" data-url="">
 				<p>【项目】@item.ProjectName</p>
 			</li>
-
 		}
 	}
 </ul>
+<script>
+
+</script>
 
 

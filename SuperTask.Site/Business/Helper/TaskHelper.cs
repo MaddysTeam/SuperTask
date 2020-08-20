@@ -33,7 +33,7 @@ namespace Business.Helper
 
       public static List<WorkTask> GetUserTasks( Guid userId, APDBDef db)
       {
-         return db.WorkTaskDal.ConditionQuery(t.ManagerId == userId & t.TaskStatus != TaskKeys.DeleteStatus, null, null, null);
+         return db.WorkTaskDal.ConditionQuery((t.ManagerId == userId | t.DefaultExecutorId==userId)  & t.TaskStatus != TaskKeys.DeleteStatus, null, null, null);
       }
 
 

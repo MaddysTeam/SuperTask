@@ -104,7 +104,15 @@
 									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
 									new { @class = "form-control dropdown-project2" })
 							</div>
-
+							@Html.LabelFor(t => t.DefaultExecutorId, new { @class = "control-label col-md-2 text-align:left" })
+							<div class="col-md-2">
+								@Html.DropDownListFor(t => t.DefaultExecutorId,
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
+									new { @class = "form-control dropdown-project2" })
+							</div>
+						
+						</div>
+						<div class="form-group">
 							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-2 text-align:left" })
 							<div class="col-md-2">
 								@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
@@ -113,12 +121,6 @@
 							<div class="col-md-1">
 								@Html.Label("WorkHours", Model.WorkHours.ToString(), new { @class = "form-control " })
 							</div>
-							@if (!isCompeleteOrClose)
-							{
-								@*<div>
-										<a id="btnEditJournal" data-toggle="ajax-modal" data-url="@Url.Action("JournalEdit", "TaskV2", new { id = Model.TaskId })" data-target="#firstModal" class="btn btn-info"><i class="fa fa-clock-o"> </i></a>
-									</div>*@
-							}
 						</div>
 						@if (Model.IsParent)
 						{
@@ -134,7 +136,7 @@
 								@Html.Label("执行人", new { @class = "control-label col-md-2 text-align:left" })
 								<div class="col-md-2">
 									@Html.DropDownList("ExecutorId",
-									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == item.ManagerId.ToString()),
+									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId", v => v.ToString() == item.DefaultExecutorId.ToString()),
 									new { @class = "form-control" })
 								</div>
 
