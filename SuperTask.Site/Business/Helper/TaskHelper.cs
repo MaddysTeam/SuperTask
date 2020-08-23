@@ -20,8 +20,8 @@ namespace Business.Helper
 		public static List<WorkTask> GetProjectUserTasks(Guid projectId, Guid userId, APDBDef db)
 		{
 			return db.WorkTaskDal.ConditionQuery(t.Projectid == projectId
-														 & t.ManagerId == userId
-														 & t.TaskStatus != TaskKeys.DeleteStatus, t.SortId.Asc, null, null);
+														 & (t.ManagerId == userId | t.DefaultExecutorId==userId)
+														 & t.TaskStatus != TaskKeys.DeleteStatus, t.ModifyDate.Desc, null, null);
 		}
 
 		public static List<WorkTask> GetProjectLeafTasks(Guid projectId, Guid userId, APDBDef db)
@@ -31,9 +31,10 @@ namespace Business.Helper
 				  .ToList();
 		}
 
-      public static List<WorkTask> GetUserTasks( Guid userId, APDBDef db)
+      public static List<WorkTask> GetUserTasks( Guid userId, APDBDef db=null)
       {
-         return db.WorkTaskDal.ConditionQuery((t.ManagerId == userId | t.DefaultExecutorId==userId)  & t.TaskStatus != TaskKeys.DeleteStatus, null, null, null);
+         db = db ?? new APDBDef();
+         return db.WorkTaskDal.ConditionQuery((t.ManagerId == userId | t.DefaultExecutorId==userId)  & t.TaskStatus != TaskKeys.DeleteStatus, t.ModifyDate.Desc , null, null);
       }
 
 

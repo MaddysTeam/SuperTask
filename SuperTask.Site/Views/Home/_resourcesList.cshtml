@@ -1,0 +1,11 @@
+﻿@model List<Resource>
+
+<ul class="widget-content user-list">
+		@foreach (var item in Model)
+		{
+			if (!string.IsNullOrEmpty(item.UserName))
+			{
+			<li class="user-name text-center"><a href="@Url.Action("UserManage", "Home", new { id = item.UserId })">@item.UserName</a></li>
+			}
+		}
+</ul>

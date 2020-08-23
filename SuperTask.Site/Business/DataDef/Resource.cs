@@ -21,6 +21,8 @@ namespace Business
       [Display(Name = "资源类型")]
       public string TypeNames { get; set; }
 
+      public string UserName { get; set; }
+
       public bool IsReadonlyStatus => this.Status == ResourceKeys.ReadonlyStatus;
 
       public bool IsEditableStatus => this.Status == ResourceKeys.EditableStatus;

@@ -1,0 +1,24 @@
+﻿@model List<UserInfo>
+@{
+	var usersSelectList = SelectListHelper.GetSelectItems(Model, "UserName", "UserId");
+}
+<div class="dp-users"></div>
+@Html.DropDownList("dpUsers", usersSelectList, new { @class = "form-control dropdown-myUsers" })
+<p></p>
+<div class="widget-content user-list" style="height:600px; overflow:auto;">
+	<style>
+		gray{background:#eee}
+		ul.activity-list > li:hover{background:#eee;cursor:pointer}
+		ul.activity-list > li .activity-icon{background:#FF6633;color:white;font-size:10px;font-weight:bold;font-family:Arial}
+	</style>
+	<ul class="list-unstyled activity-list">
+		@{
+			foreach (var item in Model)
+			{
+				<li class="user" data-id="@item.UserId" data-url="">
+					<p>【员工】@item.RealName</p>
+				</li>
+			}
+		}
+	</ul>
+</div>

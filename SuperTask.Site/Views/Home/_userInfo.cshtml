@@ -1,0 +1,20 @@
+﻿@model UserInfo
+@{ 
+	var projectCount = Model.Projects?.Count();
+	var taskCount = Model.Tasks?.Count();
+}
+<div class="text-center project-name">
+	<h2>@(Model?.UserName)</h2>
+</div>
+<div class=""></div>
+
+<ul class="widget-content statistic-list">
+
+	<li class="statistic-item text-center"><h3><strong>负责或参与项目数</strong></h3><h3><strong>@projectCount</strong></h3></li>
+	<li class="statistic-item text-center"><h3><strong>负责或参与任务数量</strong></h3><h3><strong>@taskCount</strong></h3></li>
+	<li class="statistic-item text-center"><h3><strong>需求数量</strong></h3><h3><strong>0</strong></h3></li>
+	@*<li class="statistic-item text-center"><h3><strong>开始时间</strong></h3><h3><strong>@Model.StartDate.ToString("yyyy-MM-dd")</strong></h3></li>
+	<li class="statistic-item text-center"><h3><strong>结束时间</strong></h3><h3><strong>@Model.EndDate.ToString("yyyy-MM-dd")</strong></h3></li>
+	<li class="statistic-item text-center"><h3><strong>项目进度</strong></h3><h3><strong>@Model.ProjectProgress</strong></h3></li>*@
+
+</ul>

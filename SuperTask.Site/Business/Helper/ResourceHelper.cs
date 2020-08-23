@@ -8,36 +8,28 @@ namespace Business.Helper
 
    public static class ResourceHelper
    {
-      private static Dictionary<Guid, List<Resource>> _currentProjectResource;
+      static APDBDef.ResourceTableDef re = APDBDef.Resource;
 
-      public static List<Resource> GetCurrentProjectResources(Guid projectId, bool isForceClear, APDBDef db = null)
+      public static List<Resource> GetCurrentProjectResources(Guid projectId, APDBDef db = null)
       {
-         if (_currentProjectResource != null && _currentProjectResource.ContainsKey(projectId))
-            return _currentProjectResource[projectId];
-
          db = db ?? new APDBDef();
-         var re = APDBDef.Resource;
+
+         var users = UserHelper.GetAvailableUser(db);
          var resources = db.ResourceDal.ConditionQuery(re.Projectid == projectId, null, null, null);
          if (resources.Count <= 0) return new List<Resource>();
-         _currentProjectResource = _currentProjectResource ?? new Dictionary<Guid, List<Resource>>();
-         _currentProjectResource.Add(projectId, resources);
+
+         foreach(var item in resources)
+            item.UserName = users.Find(x => x.UserId == item.UserId)?.UserName;
 
          return resources;
       }
 
       public static Resource GetCurrentProjectResource(Guid projectId, Guid userId, bool isForceClear, APDBDef db = null)
       {
-         var resources = GetCurrentProjectResources(projectId, isForceClear, db);
+         var resources = GetCurrentProjectResources(projectId, db);
 
          return resources.Find(r => r.UserId == userId);
       }
-
-      public static void CleanResourceCache()
-      {
-         if (_currentProjectResource != null)
-            _currentProjectResource.Clear();
-      }
-
 
       public static void ReplaceLeader(Guid projectId, Guid managerId, Guid headerId, APDBDef db)
       {
@@ -49,8 +41,6 @@ namespace Business.Helper
 
       public static void ReplacePM(Guid projectId, Guid managerId, APDBDef db)
       {
-         var re = APDBDef.Resource;
-
          var resources = db.ResourceDal.ConditionQuery(re.Projectid == projectId, null, null, null);
          var orignalPMs = resources.FindAll(x => x.IsPM());
 
@@ -79,8 +69,6 @@ namespace Business.Helper
 
       public static void ReplaceHeader(Guid projectId, Guid headerId, APDBDef db)
       {
-         var re = APDBDef.Resource;
-
          var resources = db.ResourceDal.ConditionQuery(re.Projectid == projectId, null, null, null);
          var orignalHeaders = resources.FindAll(x => x.IsHeader());
          foreach (var header in orignalHeaders)
@@ -109,8 +97,6 @@ namespace Business.Helper
 
       public static void AddUserToResourceIfNotExist(Guid projectId, Guid TaskId, Guid userId, Guid type, APDBDef db)
       {
-         var re = APDBDef.Resource;
-
          var resource = db.ResourceDal.ConditionQuery(re.Projectid == projectId & re.UserId == userId, null, null, null).FirstOrDefault();
          if (resource == null)
          {

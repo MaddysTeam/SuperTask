@@ -460,6 +460,7 @@
     <Compile Include="Models\OrgUserViewModels.cs" />
     <Compile Include="Models\TaskViewModels.cs" />
     <Compile Include="Models\StatisticModels.cs" />
+    <Compile Include="Models\GanttViewModel.cs" />
     <Compile Include="Models\TreeModel.cs" />
     <Compile Include="Models\LoginViewModels.cs" />
     <Compile Include="Models\RegisterViewModels.cs" />
@@ -2103,6 +2104,13 @@
     <Content Include="Views\Shared\_projectList.cshtml" />
     <Content Include="Views\Shared\_HomeLayout.cshtml" />
     <Content Include="Views\Home\UserManageIndex.cshtml" />
+    <Content Include="Views\Home\_resourcesList.cshtml" />
+    <Content Include="Views\Home\_projectInfo.cshtml" />
+    <Content Include="Views\Home\_projectLeftList.cshtml" />
+    <Content Include="Views\Home\_joinedProjectList.cshtml" />
+    <Content Include="Views\Home\_userInfo.cshtml" />
+    <Content Include="Views\Home\_userLeftList.cshtml" />
+    <Content Include="Views\Shared\_projectDropdownList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

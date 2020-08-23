@@ -22,11 +22,12 @@ namespace Business.Helper
 		/// <param name="userId">用户id</param>
 		/// <param name="db"></param>
 		/// <returns></returns>
-		public static List<Project> UserJoinedProjects(Guid userId, APDBDef db)
+		public static List<Project> UserJoinedProjects(Guid userId, APDBDef db=null)
 		{
 			var p = APDBDef.Project;
 			var re = APDBDef.Resource;
 
+         db = db ?? new APDBDef();
 			var projects = APQuery.select(p.ProjectId, p.ProjectName, p.CreateDate,p.ProjectStatus)
 				   .from(p,
 						 re.JoinInner(re.Projectid == p.ProjectId & re.UserId == userId))

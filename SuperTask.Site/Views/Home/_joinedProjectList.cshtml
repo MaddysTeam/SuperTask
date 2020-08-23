@@ -1,0 +1,11 @@
+﻿@model List<Project>
+
+<ul class="widget-content project-list">
+		@foreach (var item in Model)
+		{
+			if (!string.IsNullOrEmpty(item.ProjectName))
+			{
+			<li class="project-name text-center"><a href="@Url.Action("ProjectManage", "Home", new { id = item.ProjectId })">@item.ProjectName</a></li>
+			}
+		}
+</ul>

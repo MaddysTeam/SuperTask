@@ -1,7 +1,8 @@
-﻿@model ManagerHomeViewModel
+﻿@model Guid
 @{
 	var pageTitle = ViewBag.Title = "";
 	Layout = "~/Views/Shared/_HomeLayout.cshtml";
+	var projectId = Model;
 }
 @section Css{
 	<style>
@@ -9,14 +10,16 @@
 		.a{text-decoration:none}
 		.left-side{}
 		.right-side{}
-		ul.statistic-list{display:flex;flex-direction:column;flex-wrap:wrap;justify-content:flex-start;list-style:none;height:300px; overflow-x:auto}
+		ul.statistic-list{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;list-style:none;}
 		ul.statistic-list > li.statistic-item{margin:10px;cursor:pointer}
 		ul.activity-list > li:hover{background:#eee}
 		ul.activity-list > li .activity-icon{background:#FF6633;color:white;font-size:10px;font-weight:bold;font-family:Arial}
-		ul.user-list{display:flex;flex-direction:column;flex-wrap:wrap;justify-content:flex-start;list-style:none;height:300px; overflow-x:auto}
+		ul.user-list{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;list-style:none;}
 		ul.user-list > li.user-name{border-radius:50%;width:80px;height:80px;border:1px solid #9999CE;line-height:80px;font-size:18px;margin:10px;cursor:pointer}
 		ul.user-list > li.user-name:hover{background:#9999CE;color:#fff}
+		.widget.resource{margin:20px;}
 	</style>
+	<link href="~/assets/plugins/jquery.searchableSelect/css/jquery.searchableSelect.css" rel="stylesheet" />
 
 }
 
@@ -27,86 +30,52 @@
 	<div class="content">
 		<div class="main-content row">
 
-			<!-- LEFT WIDGET TABBED CONTENT -->
-			<div class="widget col-sm-3 left-side" style="margin:20px; height:600px; overflow:auto;">
-				<div class="widget-header">
-					<h3>项目名称</h3>
-				</div>
 
-				<div class="widget-content">
-					<ul class="list-unstyled activity-list">
-						@foreach (var item in Model.Projects)
-						{
-							<li data-id="@item.ProjectId">
-								@item.ProjectName
-							</li>
-						}
-					</ul>
-				</div>
+			<!-- LEFT WIDGET TABBED CONTENT -->
+			<div class="widget col-sm-3 left-side" style="margin:20px;padding:20px">
 
 			</div>
 			<!-- END LEFT WIDGET TABBED CONTENT -->
-
 			<!-- RIGHT WIDGET TABBED CONTENT -->
 			<div class="right-side col-sm-8">
 
-				
-				<div class="widget col-sm-5" style="margin:20px;">
-					<div class="widget-header">
-						<h2>xxxxx项目  (执行中)</h2>
-					</div>
-					<ul class="widget-content statistic-list">
-
-						<li class="statistic-item text-center"><h3><strong>人员数量</strong></h3><div class="font18"><strong><a href="#" target="_blank">20</a></strong></div></li>
-						<li class="statistic-item text-center"><h3><strong>需求数量</strong></h3><div class="font18"><strong><a href="#" target="_blank">20</a></strong></div></li>
-						<li class="statistic-item text-center"><h3><strong>任务数量</strong></h3><div class="font18"><strong><a href="#" target="_blank">20</a></strong></div></li>
-						<li class="statistic-item text-center"><h3><strong>Bug数量</strong></h3><div class="font18"><strong><a href="#" target="_blank">20</a></strong></div></li>
-
-
-						<li class="statistic-item text-center"><h3><strong>项目经理</strong></h3><div class="font18"><strong><a href="#" target="_blank">某某</a></strong></div></li>
-						<li class="statistic-item text-center"><h3><strong>开始时间</strong></h3><div class="font18"><strong><a href="#" target="_blank">2020-08-01</a></strong></div></li>
-						<li class="statistic-item text-center"><h3><strong>结束时间</strong></h3><div class="font18"><strong><a href="#" target="_blank">2020-08-03</a></strong></div></li>
-						<li class="statistic-item text-center"><h3><strong>项目进度</strong></h3><div class="font18"><strong><a href="#" target="_blank">80%</a></strong></div></li>
-
-
-					</ul>
+				<div class="widget col-md-12 project-info" style="margin:20px;">
+					
 				</div>
-				<div class="widget col-sm-5" style="margin:20px; ">
-					<div class="widget-header">
-						<h2>参与人员</h2>
+				<div class="widget col-md-12  resource">
+					<div class="text-center">
+						<h2>项目人员</h2>
 					</div>
-					<ul class="widget-content user-list">
-						<li class="user-name text-center"><a href="@Url.Action("UserManage","Home")">华超</a></li>
-						<li class="user-name text-center">华超</li>
-						<li class="user-name text-center">华超</li>
-						<li class="user-name text-center">华超</li>
-						<li class="user-name text-center">华超</li>
-						<li class="user-name text-center">华超</li>
-						<li class="user-name text-center">华超</li>
-						<li class="user-name text-center">华超</li>
-						<li class="user-name text-center">华超</li>
-						<li class="user-name text-center">华超</li>
-						<li class="user-name text-center">华超</li>
-						<li class="user-name text-center">华超</li>
-					</ul>
-				</div>
-				<div class="widget col-md-12" style="margin:20px;">
-					<div class="widget-header">
-						<h2>图表</h2>
-					</div>
-					<div class="rows widget-content">
-						<div class="col-md-6" id="taskChart" style="height:300px;" ></div>
-						<div class="col-md-6" id="taskChart2" ></div>
+					<div class="resource-list">
 					</div>
 				</div>
 				<div class="widget col-md-12" style="margin:20px;">
-					<div class="widget-header">
-						<h2>任务进度总览</h2>
+					<div class="text-center">
+						<h2>项目节点任务总览</h2>
 					</div>
-
-					<div id="ganttChart" style="margin:20px;"></div>
+					<div id="ganttChart" ></div>
 				</div>
+				<div class="widget col-md-12" style="margin:20px;">
+					<div class="text-center">
+						<h2>项目实施任务总览(最新20个)</h2>
+					</div>
+					<div style="margin-bottom:30px">
+						<label>选择人员</label>
+						@Html.DropDownList("dpUsers2", new List<SelectListItem>(), new { @class = "form-control dropdown-users" })
+					</div>
+					<div id="ganttChart2" >
 
+					</div>
+				</div>
+				<div class="widget col-md-12" style="margin:20px;">
+					<div class="text-center">
+						<h2>人员项目工时统计</h2>
+					</div>
+					<div class="widget-content">
+						<div class="col-md-12" id="taskChart" style="height:300px;"></div>
+					</div>
+				</div>
+			
 			</div>
 			<!-- END RIGHT WIDGET TABBED CONTENT -->
 
@@ -115,141 +84,167 @@
 	</div>
 	<!-- /main -->
 </div>
-@section Scripts{
-	<script src="~/assets/plugins/jQuery.Gantt/test2/lib/jquery-1.4.2.js" charset="GB2312"></script>
+@section Plugins{
+	<script src="/assets/js/jquery-1.11.1.min.js"></script>
 	<script src="~/assets/plugins/jQuery.Gantt/test2/lib/date.js" charset="GB2312"></script>
 	<script src="~/assets/plugins/jQuery.Gantt/test2/lib/jquery-ui-1.8.4.js" charset="GB2312"></script>
 	<script src="~/assets/plugins/jQuery.Gantt/test2/jquery.ganttView.js" charset="GB2312"></script>
 	<script src="~/assets/plugins/jQuery.Gantt/test2/example/data.js" charset="GB2312"></script>
 	<script src="~/assets/js/echarts.min.js"></script>
-
+	<script src="~/assets/plugins/jquery.searchableSelect/js/jquery.searchableSelect.js"></script>
+}
+@section Scripts{
 	<script>
 
 		$(function () {
 
-			var data = genData(50);
-
-			var myChart = echarts.init(document.getElementById('taskChart'));
-			var myChart2 = echarts.init(document.getElementById('taskChart2'));
-
-			option = {
-				color: ['#3398DB'],
-				tooltip: {
-					trigger: 'axis',
-					axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-						type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-					}
-				},
-				grid: {
-					left: '3%',
-					right: '4%',
-					bottom: '3%',
-					containLabel: true
-				},
-				xAxis: [
-					{
-						type: 'category',
-						data: ['易佳', '季炜', '志忠', '华超', '华超', '华超', '华超'],
-						axisLabel: {
-							interval: 0,//横轴信息全部显示
-							rotate: -30,//-15度角倾斜显示
-							alignWithLabel: true
-						},
-					}
-				],
-				yAxis: [
-					{
-						type: 'value'
-					}
-				],
-				series: [
-					{
-						name: '直接访问',
-						type: 'bar',
-						barWidth: '60%',
-						data: [10, 52, 200, 334, 390, 330, 220],
-						itemStyle: {
-							normal: {
-								color: function (params) {
-									var colorList = ["#3398db", "#434348", "#90ed7d", "#f7a35c", "#61a0a8", "#61a0a8", "#91c7ae"];
-									return colorList[params.dataIndex]
-								}
-							}
+			bindProjectList(function () {
+				// binding project dropdown list
+				var loaded = false;
+				$('#dpProjects').searchableSelect({
+					afterSelectItem: function (v) {
+						if (loaded) {
+							bindData(v);
+						}
+						else {
+							loaded = true;
 						}
 					}
-				]
-			};
+				});
 
+				// click event for project list in left side
+				$('.project').click(function () {
+					var $this = $(this);
+					var id = $this.data('id');
+					$('#dpProjects').val(id);
 
-			myChart.setOption(option);
-			myChart2.setOption(option);
+					// remove origin select plugin
+					$('.searchable-select').remove();
+					// rebuild searchable select plugin
+					$('#dpProjects').searchableSelect({
+						afterSelectItem: function (v) {
+							bindData(v);
+						}
+					});
 
-
-			myChart.on('click', function (params) {
-				location.href = "@Url.Action("UserManage","Home")";
+				});
 			});
+
+			bindData('@projectId');
 
 		});
 
-		function genData(count) {
-			var nameList = [
-				'赵', '钱', '孙', '李', '周', '吴', '郑', '王', '冯', '陈', '褚', '卫', '蒋', '沈', '韩', '杨', '朱', '秦', '尤', '许', '何', '吕', '施', '张', '孔', '曹', '严', '华', '金', '魏', '陶', '姜', '戚', '谢', '邹', '喻', '柏', '水', '窦', '章', '云', '苏', '潘', '葛', '奚', '范', '彭', '郎', '鲁', '韦', '昌', '马', '苗', '凤', '花', '方', '俞', '任', '袁', '柳', '酆', '鲍', '史', '唐', '费', '廉', '岑', '薛', '雷', '贺', '倪', '汤', '滕', '殷', '罗', '毕', '郝', '邬', '安', '常', '乐', '于', '时', '傅', '皮', '卞', '齐', '康', '伍', '余', '元', '卜', '顾', '孟', '平', '黄', '和', '穆', '萧', '尹', '姚', '邵', '湛', '汪', '祁', '毛', '禹', '狄', '米', '贝', '明', '臧', '计', '伏', '成', '戴', '谈', '宋', '茅', '庞', '熊', '纪', '舒', '屈', '项', '祝', '董', '梁', '杜', '阮', '蓝', '闵', '席', '季', '麻', '强', '贾', '路', '娄', '危'
-			];
-			var legendData = [];
-			var seriesData = [];
-			var selected = {};
-			for (var i = 0; i < count; i++) {
-				name = Math.random() > 0.65
-					? makeWord(4, 1) + '·' + makeWord(3, 0)
-					: makeWord(2, 1);
-				legendData.push(name);
-				seriesData.push({
-					name: name,
-					value: Math.round(Math.random() * 100000)
-				});
-				selected[name] = i < 6;
-			}
+		function bindData(projectId) {
+			//bind project info
+			bindProjectInfo(projectId)
+			//bind resource list
+			bindResourceList(projectId);
+			//bind gantte
+			bindStoneTaskGantte(projectId);
 
-			return {
-				legendData: legendData,
-				seriesData: seriesData,
-				selected: selected
-			};
+			bindTaskGantte(projectId);
 
-			function makeWord(max, min) {
-				var nameLen = Math.ceil(Math.random() * max + min);
-				var name = [];
-				for (var i = 0; i < nameLen; i++) {
-					name.push(nameList[Math.round(Math.random() * nameList.length - 1)]);
+			bindChart(projectId)
+		}
+
+		function bindProjectList(callback) {
+			$.post('@Url.Action("ProjectList", "Home")', function (data) {
+				$('.left-side').html(data);
+
+				if (callback) {
+					callback();
 				}
-				return name.join('');
-			}
+			});
+		}
+
+		function bindResourceList(projectId) {
+			$.post('@Url.Action("ResourceList", "Home")', { projectId: projectId }, function (data) {
+				$('.resource-list').html(data);
+			});
+		}
+
+		function bindProjectInfo(projectId) {
+			$.post('@Url.Action("ProjectInfo", "Home")', { projectId: projectId }, function (data) {
+				$('.project-info').html(data);
+			});
+		}
+
+		function bindStoneTaskGantte(projectId) {
+			$.post('@Url.Action("BindStoneTaskGantte", "Home")', { projectId: projectId }, function (data) {
+				$("#ganttChart").html('').ganttView({
+					data: data.rows,
+					slideWidth: '100%',
+				});
+			});
+		}
+
+		function bindTaskGantte(projectId) {
+			$.post('@Url.Action("BindTaskGantte", "Home")', { projectId: projectId,current:1,rowCount:20 }, function (data) {
+				$("#ganttChart2").html('').ganttView({
+					data: data.rows,
+					slideWidth: '100%',
+				});
+			});
 		}
 
 
-	</script>
-	<script>
-		$(function () {
-			$("#ganttChart").ganttView({
-				data: ganttData,
-				slideWidth: '100%',
-				behavior: {
-					onClick: function (data) {
-						var msg = "You clicked on an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-						$("#eventMessage").text(msg);
+		function bindChart(projectId) {
+
+			$.post("@Url.Action("WorkHours", "Home")", { projectId: projectId }, function (data) {
+				var myChart = echarts.init(document.getElementById('taskChart'));
+				option = {
+					color: ['#3398DB'],
+					tooltip: {
+						trigger: 'axis',
+						axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+							type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+						}
 					},
-					onResize: function (data) {
-						var msg = "You resized an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-						$("#eventMessage").text(msg);
+					grid: {
+						left: '3%',
+						right: '4%',
+						bottom: '3%',
+						containLabel: true
 					},
-					onDrag: function (data) {
-						var msg = "You dragged an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-						$("#eventMessage").text(msg);
-					}
-				}
+					xAxis: [
+						{
+							type: 'category',
+							data: data.names,
+							axisLabel: {
+								interval: 0,//横轴信息全部显示
+								//rotate: -40,//-15度角倾斜显示
+							},
+						}
+					],
+					yAxis: [
+						{
+							type: 'value'
+						}
+					],
+					series: [
+						{
+							name: '直接访问',
+							type: 'bar',
+							barWidth: '60%',
+							data: data.values,
+							itemStyle: {
+								normal: {
+									color: function (params) {
+										var colorList = ["#3398db", "#434348", "#90ed7d", "#f7a35c", "#61a0a8", "#61a0a8", "#91c7ae"];
+										return colorList[params.dataIndex]
+									}
+								}
+							}
+						}
+					]
+				};
+				myChart.setOption(option);
+				myChart.on('click', function (params) {
+					location.href = "@Url.Action("UserManage","Home")";
+				});
 			});
 
-			// $("#ganttChart").ganttView("setSlideWidth", 600);
-		});
+		}
+
 	</script>
 }

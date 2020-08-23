@@ -61,7 +61,7 @@ namespace TheSite.Controllers
             {
                id = r.RoleId.GetValue(rd),
                roleName = r.RoleName.GetValue(rd),
-               roleType= RoleKeys.Types[r.RoleType.GetValue(rd)] 
+               roleType = RoleKeys.Types[r.RoleType.GetValue(rd)]
             };
          });
 
@@ -144,6 +144,7 @@ namespace TheSite.Controllers
          var result = APQuery.select(ur.ID.As("urid"), ur.RoleId, r.RoleName, r.RoleId.As("roleId"))
                            .from(r,
                                  ur.JoinLeft(ur.RoleId == r.RoleId & ur.UserId == userId))
+                            .where(r.RoleType == RoleKeys.SystemType)
                             .query(db, re =>
                             {
                                var urid = ur.RoleId.GetValue(re, "urid");

@@ -84,13 +84,14 @@ namespace TheSite.Controllers
 					TaskStatus = t.TaskStatus.GetValue(r),
 					WorkHours = t.WorkHours.GetValue(r),
 					EstimateWorkHours = t.EstimateWorkHours.GetValue(r),
+               EndDate=t.EndDate.GetValue(r),
 					Projectid = t.Projectid.GetValue(r)
 				}).ToList();
 
 			var parents = tasks.FindAll(x => x.IsParent);
 			if (parents.Count == 0) parents.AddRange(tasks); //没有父节点则全部作为父节点处理
 
-			// 将叶子任务和父任务一起排序
+			// 将叶子任务和父任务一起排序	
 			var results = AddParentAndTheirChildren(tasks, parents);
 			var leafChildren = tasks.Except(results); // 得到没有父节点的叶子任务
 			parents.AddRange(leafChildren);

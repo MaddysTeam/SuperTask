@@ -53,7 +53,9 @@ namespace Business
 
       public bool IsReviewStatus => ProjectStatus == ProjectKeys.ReviewStatus;
 
-      public List<Resource> Resources { get; set; }
+      public List<Resource> Resources => ResourceHelper.GetCurrentProjectResources(ProjectId);
+
+      public List<WorkTask> Tasks => TaskHelper.GetProjectTasks(ProjectId);
 
       public void SetStatus(Guid status)
       {

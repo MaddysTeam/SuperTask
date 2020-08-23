@@ -208,7 +208,7 @@ namespace TheSite.Controllers
 			   }).FirstOrDefault();
 
 			//项目资源
-			project.Resources = db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
+			//project.Resources = db.ResourceDal.ConditionQuery(re.Projectid == project.ProjectId, null, null, null);
 
 			return View(project);
 		}

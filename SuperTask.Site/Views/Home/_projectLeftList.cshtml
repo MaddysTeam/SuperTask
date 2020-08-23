@@ -1,0 +1,7 @@
+﻿@model List<Project>
+
+@Html.Partial("_projectDropdownList",Model)
+
+<div class="widget-content project-list" style="height:600px; overflow:auto;">
+	@Html.Partial("_projectList", Model)
+</div>

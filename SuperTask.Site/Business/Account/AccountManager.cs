@@ -162,6 +162,7 @@ namespace Business
             return false;
 
          _db.AccountDal.UpdatePartial(id, new { Status = 1 });
+         _db.UserInfoDal.UpdatePartial(id, new { IsDelete = 1 });
 
          return true;
       }

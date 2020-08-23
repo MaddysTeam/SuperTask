@@ -1,4 +1,5 @@
 ﻿using Business;
+using System;
 using System.Collections.Generic;
 
 namespace TheSite.Models
@@ -16,8 +17,9 @@ namespace TheSite.Models
 
 	public class ManagerHomeViewModel
 	{
-		public List<Project> Projects { get; set; } = new List<Project>();
-		public List<UserInfo> Users { get; set; } = new List<UserInfo>();
-	}
+      public Guid CurrentProjectId { get; set; }
+      public List<Project> Projects { get; set; } = new List<Project>();
+      public List<UserInfo> Users { get; set; } = new List<UserInfo>();
+   }
 
 }

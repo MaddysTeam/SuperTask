@@ -15,6 +15,10 @@ namespace Business
 
       public List<App> Permissions { get; set; }
 
+      public List<WorkTask> Tasks { get; set; }
+
+      public List<Project> Projects { get; set; }
+
 
       public void SetRoles(List<Role> roles)
       {
@@ -25,6 +29,12 @@ namespace Business
       public void SetPermissions(List<App> permissions)
       {
          Permissions = permissions;
+      }
+
+
+      public bool HasRole(Guid roleId)
+      {
+         return Roles.Exists(x => x.RoleId == roleId);
       }
 
 
@@ -44,9 +54,10 @@ namespace Business
          return user;
       }
 
-      public bool IsBoss => this.UserId == Guid.Parse("D1E6E02A-40FF-4F5A-80C3-24710996B9AE");
+      public bool IsBoss => UserId.ToString() == "D1E6E02A-40FF-4F5A-80C3-24710996B9AE"; // HasRole(RoleKeys.LEADER.ToGuid(Guid.Empty));
+      public bool IsManager => HasRole(RoleKeys.ProjectManagerId.ToGuid(Guid.Empty));
 
-
+    
       public Result Validate()
       {
          var result = Result.Initial();

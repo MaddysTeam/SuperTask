@@ -194,8 +194,6 @@ namespace TheSite.Controllers
          }
 
 
-         ResourceHelper.CleanResourceCache();
-
          return Json(new
          {
             result = AjaxResults.Success,
