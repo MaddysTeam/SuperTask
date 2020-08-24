@@ -2111,6 +2111,7 @@
     <Content Include="Views\Home\_userInfo.cshtml" />
     <Content Include="Views\Home\_userLeftList.cshtml" />
     <Content Include="Views\Shared\_projectDropdownList.cshtml" />
+    <Content Include="Views\Shared\_userDropdownList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

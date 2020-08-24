@@ -24,21 +24,21 @@
 
 	@if (Request.Url.AbsoluteUri.IndexOf("/TaskV2/List") >= 0)
 	{
-		<button class="btn btn-danger  col-lg-offset-4" data-toggle="ajax-modal" data-url="@Url.Action("Add", "TaskV2")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建任务</button>
+		<button class="btn btn-danger  col-lg-offset-4 hidden" data-toggle="ajax-modal" data-url="@Url.Action("Add", "TaskV2")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建任务</button>
 	}
 
 	@if (Request.Url.AbsoluteUri.IndexOf("/Bug/List") >= 0)
 	{
-		<button class="btn btn-danger  col-lg-offset-4" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Bug")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建bug</button>
+		<button class="btn btn-danger  col-lg-offset-4 hidden" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Bug")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建bug</button>
 	}
 
 	@if (Request.Url.AbsoluteUri.IndexOf("/Require/List") >= 0)
 	{
-		<button class="btn btn-danger  col-lg-offset-4" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Require")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建需求</button>
+		<button class="btn btn-danger  col-lg-offset-4 hidden" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Require")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建需求</button>
 	}
 
 	@if (Request.Url.AbsoluteUri.IndexOf("/Publish/List") >= 0)
 	{
-		<button class="btn btn-danger  col-lg-offset-4" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Publish")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建发布申请</button>
+		<button class="btn btn-danger  col-lg-offset-4 hidden" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Publish")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建发布申请</button>
 	}
 </div>

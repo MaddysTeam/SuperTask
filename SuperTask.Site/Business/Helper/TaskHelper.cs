@@ -1,4 +1,5 @@
 ﻿using Business;
+using Symber.Web.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +20,12 @@ namespace Business.Helper
 
 		public static List<WorkTask> GetProjectUserTasks(Guid projectId, Guid userId, APDBDef db)
 		{
+			var rs = APDBDef.Resource;
 			return db.WorkTaskDal.ConditionQuery(t.Projectid == projectId
-														 & (t.ManagerId == userId | t.DefaultExecutorId==userId)
-														 & t.TaskStatus != TaskKeys.DeleteStatus, t.ModifyDate.Desc, null, null);
+														 & (t.ManagerId == userId | t.DefaultExecutorId == userId | t.CreatorId == userId)
+														 & t.TaskStatus != TaskKeys.DeleteStatus
+														 & t.Projectid.In(APQuery.select(rs.Projectid).from(rs).where(rs.UserId == userId))
+														 , t.ModifyDate.Desc, null, null);
 		}
 
 		public static List<WorkTask> GetProjectLeafTasks(Guid projectId, Guid userId, APDBDef db)
@@ -31,36 +35,41 @@ namespace Business.Helper
 				  .ToList();
 		}
 
-      public static List<WorkTask> GetUserTasks( Guid userId, APDBDef db=null)
-      {
-         db = db ?? new APDBDef();
-         return db.WorkTaskDal.ConditionQuery((t.ManagerId == userId | t.DefaultExecutorId==userId)  & t.TaskStatus != TaskKeys.DeleteStatus, t.ModifyDate.Desc , null, null);
-      }
+		public static List<WorkTask> GetUserTasks(Guid userId, APDBDef db = null)
+		{
+			var rs = APDBDef.Resource;
+			db = db ?? new APDBDef();
+			return db.WorkTaskDal.ConditionQuery((
+				t.ManagerId == userId | t.DefaultExecutorId == userId | t.CreatorId == userId)
+				& t.TaskStatus != TaskKeys.DeleteStatus
+				& t.Projectid.In(APQuery.select(rs.Projectid).from(rs).where(rs.UserId == userId)),
+				t.ModifyDate.Desc, null, null);
+		}
 
 
 
-      /// <summary>
-      /// write by huachao 2020.07.17.
-      /// Get project task and its sub tasks
-      /// </summary>
-      /// <param name="projectId"></param>
-      /// <param name="db"></param>
-      /// <returns></returns>
-      public static List<WorkTask> GetProjectTaskAndItsSubTask(Guid projectId,APDBDef db)
-      {
-         if (projectId.IsEmptyGuid())
-            return new List<WorkTask>();
-         var all = GetProjectTasks(projectId, db);
-         var parents = all?.FindAll(x => x.IsParent);
-         var results = new List<WorkTask>();
-         foreach (var item in parents)
-         {
-            results.Add(item);
-            results.AddRange(parents.FindAll(x => x.ParentId == item.TaskId));
-         }
+		/// <summary>
+		/// write by huachao 2020.07.17.
+		/// Get project task and its sub tasks
+		/// </summary>
+		/// <param name="projectId"></param>
+		/// <param name="db"></param>
+		/// <returns></returns>
+		public static List<WorkTask> GetProjectTaskAndItsSubTask(Guid projectId, APDBDef db)
+		{
+			if (projectId.IsEmptyGuid())
+				return new List<WorkTask>();
+			var all = GetProjectTasks(projectId, db);
+			var parents = all?.FindAll(x => x.IsParent);
+			var results = new List<WorkTask>();
+			foreach (var item in parents)
+			{
+				results.Add(item);
+				results.AddRange(parents.FindAll(x => x.ParentId == item.TaskId));
+			}
 
-         return results;
-      }
+			return results;
+		}
 
 
 		/// <summary>
@@ -68,7 +77,7 @@ namespace Business.Helper
 		/// </summary>
 		/// <param name="parentId">父id</param>
 		/// <returns></returns>
-		public static List<WorkTask> GetAllChildren(Guid parentId, APDBDef db = null, Symber.Web.Data.APSqlOrderPhrase order=null)
+		public static List<WorkTask> GetAllChildren(Guid parentId, APDBDef db = null, Symber.Web.Data.APSqlOrderPhrase order = null)
 		{
 			db = db ?? new APDBDef();
 			return db.WorkTaskDal.ConditionQuery(t.ParentId == parentId, order, null, null);
@@ -213,22 +222,22 @@ namespace Business.Helper
 		/// <returns>WorkTask</returns>
 		public static WorkTask CreateAndSaveRootTaskInDB(UserInfo user, Project project, APDBDef db)
 		{
-         var task = new WorkTask
-         {
-            TaskId = Guid.NewGuid(),
-            TaskName = project.ProjectName,
-            Projectid = project.ProjectId,
-            ManagerId = user.UserId,
-            CreatorId = user.UserId,
-            ReviewerID = user.UserId,
-            TaskType = TaskKeys.ProjectTaskType,
-            TaskStatus = TaskKeys.ProcessStatus,
-            IsParent = true,
-            CreateDate = DateTime.Now,
-            EndDate = project.EndDate,
-            ModifyDate = DateTime.Now,
+			var task = new WorkTask
+			{
+				TaskId = Guid.NewGuid(),
+				TaskName = project.ProjectName,
+				Projectid = project.ProjectId,
+				ManagerId = user.UserId,
+				CreatorId = user.UserId,
+				ReviewerID = user.UserId,
+				TaskType = TaskKeys.ProjectTaskType,
+				TaskStatus = TaskKeys.ProcessStatus,
+				IsParent = true,
+				CreateDate = DateTime.Now,
+				EndDate = project.EndDate,
+				ModifyDate = DateTime.Now,
 				SortId = 1 //表示根任务
-            
+
 			};
 			db.WorkTaskDal.Insert(task);
 

@@ -13,11 +13,11 @@ namespace TheSite.Models
 
       public string name { get; set; }
 
-      public GanttViewModel(int id, string name, DateTime start, DateTime end)
+      public GanttViewModel(int id, string name, DateTime start, DateTime end,string color)
       {
          this.id = id;
          this.name = name;
-         series.Add(new GanttItemViewModel(name,start,end));
+         series.Add(new GanttItemViewModel(name,start,end, color));
       }
 
       public List<GanttItemViewModel> series = new List<GanttItemViewModel>();
@@ -28,12 +28,15 @@ namespace TheSite.Models
       public string name { get; set; }
       public string start { get; set; }
       public string end { get; set; }
+	  public string color { get; set; } = "#e0e0e0";
 
-      public GanttItemViewModel(string name, DateTime start, DateTime end)
+
+	  public GanttItemViewModel(string name, DateTime start, DateTime end,string color)
       {
          this.name = name;
          this.start = start.ToString("yyyy-MM-dd");
          this.end = end.ToString("yyyy-MM-dd");
+		 this.color = color;
       }
    }
 

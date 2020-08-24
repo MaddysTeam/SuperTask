@@ -24,6 +24,7 @@ namespace Business.Helper
       public const string EvalManagerId = "42E3876A-CE07-4704-89F6-B50DE951BB92";
       public const string WorkMateRoleId = "66374270-2B1D-49DF-87FB-0FD5912A38E5";
       public const string ProjectManagerId = "6BCDF064-EFDA-4C5B-B3BE-B822C2CBB748";
+	  public const string BossRoleId = "10266E63-2FB2-4663-98A2-3B9A63FFF3EC";
 
       public static int SystemType =>(int)RoleType.System;
 

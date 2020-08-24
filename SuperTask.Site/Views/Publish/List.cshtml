@@ -17,6 +17,15 @@
 		.left_side{
 			border:1px solid #ddd; overflow-y:auto; height:800px;
 		}
+		.right-side {
+			margin-left: 10px;
+		}
+
+			.right-side > .btn-group {
+				position: absolute;
+				top: 20px;
+				z-index: 99;
+			}
 	</style>
 }
 
@@ -94,9 +103,10 @@
 				<hr />
 				@Html.Partial("_projectList", ViewBag.Projects as List<Project>)
 			</div>
-			<div class="row col-md-9" style="margin-left:1%;">
-				<div class="btn-group" style="position:relative">
-					<div style="position:absolute;top:20px; width:200px; z-index:99">
+			<div class="row col-md-9 right-side">
+				<div class="btn-group" >
+					<div>
+						<button class="btn btn-danger" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Publish")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建发布申请</button>
 						<a class="btn btn-info" id="handle" data-url="@Url.Action("MultipleHandle","Publish")">处理</a>
 						<a class="btn btn-success" id="close" data-url="@Url.Action("MultipleClose","Publish")">关闭</a>
 					</div>

@@ -17,6 +17,14 @@
 		.left_side{
 			border:1px solid #ddd; overflow-y:auto; height:800px;
 		}
+		.right-side {
+			margin-left: 10px;
+		}
+		.right-side > .btn-group {
+				position: absolute;
+				top: 20px;
+				z-index: 99;
+			}
 	</style>
 }
 
@@ -73,11 +81,13 @@
 					<a class="btn btn-info" id="btnSearch">搜索</a>
 				</div>
 
-				<div class="col-sm-2 text-center line-height: 70px;">
+				<div class="col-sm-3 text-center">
 					<div class="form-horizontal">
 						<div class="FormGroup" style="line-height: 35px;">
 							<a href="#" id="assign" class="btn">指派给我</a>
-							<input type="hidden" id="hidAssgin" value="true"/>
+							<a href="#" id="create" class="btn">我创建的</a>
+							<input type="hidden" id="hidAssgin" value="false"/>
+							<input type="hidden" id="hidCreate" value="false" />
 						</div>
 					</div>
 				</div>
@@ -93,12 +103,11 @@
 				<hr />
 				@Html.Partial("_projectList", ViewBag.Projects as List<Project>)
 			</div>
-			<div class="row col-md-9" style="margin-left:1%;">
-				<div class="btn-group" style="position:relative">
-					<div style="position:absolute;top:20px; width:200px; z-index:99">
+			<div class="row col-md-10 right-side">
+				<div class="btn-group">
+						<button class="btn btn-danger" data-toggle="ajax-modal" data-url="@Url.Action("Edit", "Require")" data-target="#firstModal"><i class="fa fa-plus-square"></i>创建需求</button>
 						<a class="btn btn-info" id="review" data-url="@Url.Action("MultipleReview", "Require")">评审</a>
-						<a class="btn btn-success" id="close" data-url="@Url.Action("MultipleClose","Require")">关闭</a>
-					</div>
+						<a class="btn btn-warning" id="close" data-url="@Url.Action("MultipleClose","Require")">关闭</a>
 				</div>
 				<div class="table-responsive">
 					<table id="bootgrid" class="table table-striped table-hover table-dark-header">
@@ -144,10 +153,9 @@
 			return {
 				projectId: $('#dpProjects').val(),
 				levelId: $('#dpLevels').val(),
-				//	typeId: $('#dpTypes').val(),
 				statusId: $('#dpStatus').val(),
-				isAssign: $('#hidAssgin').val() != '',
-				isJoin: $('#hidJoin').val() != '',
+				isAssign: $('#hidAssgin').val(),
+				isCreate: $('#hidCreate').val(),
 				searchPhrase: $('#searchPhrase').val()
 			};
 		}
@@ -198,13 +206,23 @@
 			isLoaded = false;
 
 			$('#showAll').click(function () {
-				$('#dpLevels,#dpStatus,#dpTypes').val('@TaskKeys.SelectAll');
-				$('#hidAssgin,#txtName,#searchPhrase').val('');
+				$('#dpLevels,#dpStatus').val('@TaskKeys.SelectAll');
+				$('#txtName,#searchPhrase').val('');
+				$('#hidAssgin').val('false');
+				$('#hidCreate').val('false');
+				$('#bootgrid').bootgrid('reload');
+				
+			});
+
+			$('#create').click(function () {
+				$('#hidAssgin').val('false');
+				$('#hidCreate').val('true');
 				$('#bootgrid').bootgrid('reload');
 			});
 
 			$('#assign').click(function () {
 				$('#hidAssgin').val('true');
+				$('#hidCreate').val('false');
 				$('#bootgrid').bootgrid('reload');
 			});
 

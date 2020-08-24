@@ -8,7 +8,8 @@
 
 	<li class="statistic-item text-center"><h3><strong>人员数量</strong></h3><h3><strong>@Model.Resources.Count</strong></h3></li>
 	<li class="statistic-item text-center"><h3><strong>任务数量</strong></h3><h3><strong>@Model.Tasks.Count</strong></h3></li>
-	<li class="statistic-item text-center"><h3><strong>项目经理</strong></h3><h3><strong>某某</strong></h3></li>
+	<li class="statistic-item text-center"><h3><strong>项目负责人</strong></h3><h3><strong>@Model.Header</strong></h3></li>
+	<li class="statistic-item text-center"><h3><strong>项目经理</strong></h3><h3><strong>@Model.Manager</strong></h3></li>
 	<li class="statistic-item text-center"><h3><strong>开始时间</strong></h3><h3><strong>@Model.StartDate.ToString("yyyy-MM-dd")</strong></h3></li>
 	<li class="statistic-item text-center"><h3><strong>结束时间</strong></h3><h3><strong>@Model.EndDate.ToString("yyyy-MM-dd")</strong></h3></li>
 	<li class="statistic-item text-center"><h3><strong>项目进度</strong></h3><h3><strong>@Model.ProjectProgress</strong></h3></li>

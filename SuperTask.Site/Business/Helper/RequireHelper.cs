@@ -15,7 +15,7 @@ namespace Business.Helper
 
 
       public static List<Require> GetRequiresByManager(Guid managerid, APDBDef db)
-     => db.RequireDal.ConditionQuery(rq.ManagerId == managerid, null, null, null);
+     => db.RequireDal.ConditionQuery(rq.ManagerId == managerid | rq.CreatorId==managerid, null, null, null);
 
       public static List<Require> GetRequiresByReviewer(Guid reviewerId, APDBDef db)
     => db.RequireDal.ConditionQuery(rq.ReviewerId == reviewerId, null, null, null);

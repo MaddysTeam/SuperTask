@@ -19,7 +19,7 @@ namespace Business
 		[Display(Name = "负责人")]
 		public string Manager { get; set; }
 
-		[Display(Name= "执行人")]
+		[Display(Name = "执行人")]
 		public string Executor { get; set; }
 
 		[Display(Name = "审核人")]
@@ -39,7 +39,7 @@ namespace Business
 
 
 		public string V2LevelTitle => TaskKeys.GetV2LevelByValue(V2Level);
-		
+
 		public string Type => TaskKeys.GetTypeKeyByValue(TaskType);
 
 		//TODO: changed by huachao 2020/08/05
@@ -71,9 +71,9 @@ namespace Business
 
 		public bool IsRoot => ParentId.IsEmpty();
 
-      public override bool IsParent => ParentId.IsEmpty();
+		public override bool IsParent => ParentId.IsEmpty();
 
-      public Attachment CurrentAttachment { get; set; }
+		public Attachment CurrentAttachment { get; set; }
 
 		public override Guid TaskType
 		{
@@ -150,17 +150,17 @@ namespace Business
 		/// </summary>
 		public string RelativePublishIds { get; set; }
 
-      /// <summary>
-      /// 操作历史 TODO:20200727  
-      /// </summary>
-      public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
+		/// <summary>
+		/// 操作历史 TODO:20200727  
+		/// </summary>
+		public List<TheSite.Models.OperationHistoryViewModel> OperationHistory { get; set; }
 
 
-      public string RealStartDateStr => this.RealStartDate.ToyyMMdd();
+		public string RealStartDateStr => this.RealStartDate.ToyyMMdd();
 
-      public string RealEndDateStr => this.RealEndDate.ToyyMMdd();
+		public string RealEndDateStr => this.RealEndDate.ToyyMMdd();
 
-   }
+	}
 
 	public partial class WorkTask
 	{

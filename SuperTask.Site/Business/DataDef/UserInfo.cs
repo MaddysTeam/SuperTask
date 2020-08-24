@@ -54,7 +54,7 @@ namespace Business
          return user;
       }
 
-      public bool IsBoss => UserId.ToString() == "D1E6E02A-40FF-4F5A-80C3-24710996B9AE"; // HasRole(RoleKeys.LEADER.ToGuid(Guid.Empty));
+      public bool IsBoss =>  HasRole( RoleKeys.BossRoleId.ToGuid(Guid.Empty));
       public bool IsManager => HasRole(RoleKeys.ProjectManagerId.ToGuid(Guid.Empty));
 
     

@@ -31,7 +31,7 @@ namespace TheSite.Controllers
       {
          //ThrowNotAjax();
 
-         var query = APQuery.select(m.StoneId, m.StoneName, m.StoneStatus,m.StoneType)
+         var query = APQuery.select(m.StoneId, m.StoneName, m.Sort,m.StoneType)
             .from(m)
             .primary(m.StoneId)
             .skip((current - 1) * rowCount)
@@ -61,8 +61,8 @@ namespace TheSite.Controllers
                id = m.StoneId.GetValue(rd),
                name=m.StoneName.GetValue(rd),
                type= MilestoneKeys.GetTypeKeyById(m.StoneType.GetValue(rd)),
-               status= MilestoneKeys.GetStatusKeyById(m.StoneStatus.GetValue(rd))
-            };
+			   sort= m.Sort.GetValue(rd)
+			};
          }).ToList();
 
          return Json(new

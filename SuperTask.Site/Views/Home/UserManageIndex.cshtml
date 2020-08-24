@@ -130,11 +130,10 @@
 			bindUserInfo(userId)
 			//bind resource list
 			bindjoinedProjectList(userId);
+			//bind project dropdown list in gantte area
 			bindJoinedProjectDropdownList(userId);
-			//bind gantte
-			//bindGantte(userId)
-
-			bindChart(userId)
+			//bind bar chart of workhours
+			bindWorkhoursChart(userId)
 		}
 
 
@@ -173,7 +172,7 @@
 		}
 
 		function bindGantte(userId,projectId) {
-			$.post('@Url.Action("UserTasksGantte", "Home")', { userId: userId,projectId:projectId, current: 1, rowCount: 20 }, function (data) {
+			$.post('@Url.Action("UserTasksGantte", "Home")', { userId: userId,projectId:projectId, current: 0, rowCount: 20 }, function (data) {
 				if (!data.rows || data.rows.length <= 0) {
 					$("#ganttChart").html('');
 					return false;
@@ -200,14 +199,9 @@
 		}
 
 
-		function bindChart(userId) {
+		function bindWorkhoursChart(userId) {
 
 			$.post("@Url.Action("PersonalWorkHours", "Home")", { userId: userId }, function (data) {
-
-				//if (!data || data.names.length == 0) {
-				//	$('#taskChart').html('');
-				//	return false;
-				//}
 				var myChart = echarts.init(document.getElementById('taskChart'));
 				option = {
 					color: ['#3398DB'],

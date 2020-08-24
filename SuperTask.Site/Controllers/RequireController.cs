@@ -33,7 +33,7 @@ namespace TheSite.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult List(Guid projectId, Guid levelId, Guid statusId, bool isAssign, bool isJoin,
+		public ActionResult List(Guid projectId, Guid levelId, Guid statusId, bool isAssign, bool isCreate,
 					 int current, int rowCount, AjaxOrder sort, string searchPhrase)
 		{
 			ThrowNotAjax();
@@ -42,15 +42,15 @@ namespace TheSite.Controllers
 			var u2 = APDBDef.UserInfo.As("creator");
 
 			var query = APQuery.select(re.RequireId, re.RequireName, re.RequireType, re.ReviewerId, re.IsHurry,
-				  re.RequireLevel, re.SortId, re.RequireStatus, re.EstimateEndDate,re.Projectid,
+				  re.RequireLevel, re.SortId, re.RequireStatus, re.EstimateEndDate,re.Projectid,re.CreatorId,
 				  re.ManagerId, u.UserName, re.CreateDate, u2.UserName.As("creator"))
 			   .from(re,
 			   u.JoinLeft(u.UserId == re.ManagerId),
 			   u2.JoinLeft(u2.UserId == re.CreatorId)
-			   );
+			   ).where(re.CreatorId==user.UserId | re.ManagerId==user.UserId);
 
 			if (projectId != AppKeys.SelectAll)
-				query = query.where(re.Projectid == projectId);
+				query = query.where_and(re.Projectid == projectId);
 			else
 				query = query.where_and(re.Projectid.In(APQuery.select(rs.Projectid).from(rs).where(rs.UserId == user.UserId)));
 
@@ -63,6 +63,7 @@ namespace TheSite.Controllers
 				   ManagerId = re.ManagerId.GetValue(r),
 				   Manager = u.UserName.GetValue(r),
 				   Creator = u2.UserName.GetValue(r, "creator"),
+				   CreatorId= re.CreatorId.GetValue(r),
 				   CreateDate = re.CreateDate.GetValue(r),
 				   RequireLevel = re.RequireLevel.GetValue(r),
 				   SortId = re.SortId.GetValue(r),
@@ -102,7 +103,7 @@ namespace TheSite.Controllers
 			//}
 			if (statusId != AppKeys.SelectAll)
 			{
-				results = results.FindAll(t => t.RequireStatus == statusId);
+				results = results.FindAll(x => x.RequireStatus == statusId);
 			}
 			if (!string.IsNullOrEmpty(searchPhrase))
 			{
@@ -110,7 +111,11 @@ namespace TheSite.Controllers
 			}
 			if (isAssign)
 			{
-				results = results.FindAll(t => t.ManagerId == user.UserId);
+				results = results.FindAll(x => x.ManagerId == user.UserId);
+			}
+			if (isCreate)
+			{
+				results = results.FindAll(x => x.CreatorId == user.UserId);
 			}
 
 			var total = results.Count;

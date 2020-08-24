@@ -1,0 +1,8 @@
+﻿@model List<UserInfo>
+@{
+	var projectsSelectList = SelectListHelper.GetSelectItems(Model, "UserName", "UserId",null, new SelectListItem { Text="选择人员",Value=AppKeys.SelectAll.ToString() });
+}
+@Html.DropDownList("dpUsers", projectsSelectList, new { @class = "form-control dropdown-myProjects" })
+
+
+

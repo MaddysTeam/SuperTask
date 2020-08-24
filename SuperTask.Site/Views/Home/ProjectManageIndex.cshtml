@@ -3,6 +3,7 @@
 	var pageTitle = ViewBag.Title = "";
 	Layout = "~/Views/Shared/_HomeLayout.cshtml";
 	var projectId = Model;
+	var isManager = Html.GetUserProfile().IsManager;
 }
 @section Css{
 	<style>
@@ -61,7 +62,8 @@
 					</div>
 					<div style="margin-bottom:30px">
 						<label>选择人员</label>
-						@Html.DropDownList("dpUsers2", new List<SelectListItem>(), new { @class = "form-control dropdown-users" })
+						<div class="dp-users"></div>
+						@*@Html.DropDownList("dpUsers2", new List<SelectListItem>(), new { @class = "form-control dropdown-users" })*@
 					</div>
 					<div id="ganttChart2" >
 
@@ -141,10 +143,10 @@
 			bindResourceList(projectId);
 			//bind gantte
 			bindStoneTaskGantte(projectId);
-
-			bindTaskGantte(projectId);
-
-			bindChart(projectId)
+			//bind user dropdown list in gantte area
+			bindResourceDropdownList(projectId)
+			//bind workhours chart
+			bindWorkhoursChart(projectId)
 		}
 
 		function bindProjectList(callback) {
@@ -170,7 +172,11 @@
 		}
 
 		function bindStoneTaskGantte(projectId) {
-			$.post('@Url.Action("BindStoneTaskGantte", "Home")', { projectId: projectId }, function (data) {
+			$.post('@Url.Action("StoneTaskGantte", "Home")', { projectId: projectId }, function (data) {
+				if (!data.rows || data.rows.length <= 0) {
+					$("#ganttChart").html('');
+					return false;
+				}
 				$("#ganttChart").html('').ganttView({
 					data: data.rows,
 					slideWidth: '100%',
@@ -178,8 +184,12 @@
 			});
 		}
 
-		function bindTaskGantte(projectId) {
-			$.post('@Url.Action("BindTaskGantte", "Home")', { projectId: projectId,current:1,rowCount:20 }, function (data) {
+		function bindTaskGantte(userId,projectId) {
+			$.post('@Url.Action("UserTasksGantte", "Home")', { userId: userId, projectId: projectId, current: 0, rowCount: 20 }, function (data) {
+				if (!data.rows || data.rows.length <= 0) {
+					$("#ganttChart2").html('');
+					return false;
+				}
 				$("#ganttChart2").html('').ganttView({
 					data: data.rows,
 					slideWidth: '100%',
@@ -187,8 +197,21 @@
 			});
 		}
 
+		function bindResourceDropdownList(projectId) {
+			$.post('@Url.Action("ResourceDropdownList", "Home")', { projectId: projectId }, function (data) {
+				$('.dp-users')
+					.html('')
+					.append(data)
+					.find('#dpUsers').searchableSelect({
+						afterSelectItem: function (v) {
+							bindTaskGantte(v, projectId);
+						}
+					});
+			});
+		}
 
-		function bindChart(projectId) {
+
+		function bindWorkhoursChart(projectId) {
 
 			$.post("@Url.Action("WorkHours", "Home")", { projectId: projectId }, function (data) {
 				var myChart = echarts.init(document.getElementById('taskChart'));

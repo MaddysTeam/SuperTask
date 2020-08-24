@@ -27,8 +27,8 @@ namespace TheSite.Controllers
 
 
 		[HttpPost]
-		public ActionResult List(Guid projectId, Guid levelId, Guid typeId, Guid statusId, bool isAssign, bool isManage, string taskName,
-				   int current, int rowCount, AjaxOrder sort, string searchPhrase)
+		public ActionResult List(Guid projectId, Guid levelId, Guid typeId, Guid statusId, bool isAssign, bool isManage, bool isCreate,
+			string taskName,int current, int rowCount, AjaxOrder sort, string searchPhrase)
 		{
 			ThrowNotAjax();
 
@@ -36,14 +36,15 @@ namespace TheSite.Controllers
 
 			var u2 = APDBDef.UserInfo.As("executor");
 			var query = APQuery.select(t.TaskId, t.TaskName, t.V2Type, t.ParentId, t.IsParent, t.Projectid,
-				 t.V2Level, t.SortId, t.TaskStatus, t.EstimateWorkHours, t.DefaultExecutorId,
+				 t.V2Level, t.SortId, t.TaskStatus, t.EstimateWorkHours, t.DefaultExecutorId,t.CreatorId,
 				 t.TaskStatus, t.ManagerId, t.WorkHours, t.EndDate, u.UserName, u2.UserName.As("executor"))
 			   .from(t,
 			   u.JoinLeft(u.UserId == t.ManagerId),
 			   u2.JoinLeft(u2.UserId == t.DefaultExecutorId)
-			   )
-			   .where(t.TaskStatus != TaskKeys.DeleteStatus & (t.ManagerId == user.UserId | t.DefaultExecutorId == user.UserId));
-
+			   );
+			
+			if(!user.IsBoss)
+				query.where(t.TaskStatus != TaskKeys.DeleteStatus & (t.ManagerId == user.UserId | t.DefaultExecutorId == user.UserId | t.CreatorId==user.UserId));
 			if (projectId != TaskKeys.SelectAll)
 				query = query.where_and(t.Projectid == projectId);
 			else
@@ -51,6 +52,9 @@ namespace TheSite.Controllers
 
 			if (isAssign)
 				query = query.where_and(t.DefaultExecutorId == user.UserId);
+
+			if (isCreate)
+				query = query.where_and(t.CreatorId == user.UserId);
 
 			if (isManage)
 				query = query.where_and(t.ManagerId == user.UserId);
