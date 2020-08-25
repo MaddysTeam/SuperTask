@@ -60,7 +60,7 @@
 									<!-- /responsive menu bar icon -->
 
 									@Html.Partial("_notice")
-									@*@Html.Partial("_user")*@
+									@Html.Partial("_user")
 								</div>
 								<!-- /top-bar-right -->
 							</div>
@@ -81,8 +81,6 @@
 			<div class="container">
 				<div class="row">
 					@*@Html.Partial("_sidebar",ViewBag.SidebarModels as List<MenuModel>)*@
-
-
 					<!-- content-wrapper -->
 					@RenderBody()
 					<!-- /content-wrapper -->
@@ -105,8 +103,11 @@
 	@RenderSection("Modals", required: false)
 
 	<!-- javascript -->
+	<script src="/assets/js/jquery-1.11.1.min.js"></script>
+	<script src="/assets/js/bootstrap.min.js"></script>
 	@RenderSection("Plugins", required: false)
 	@RenderSection("Scripts", required: false)
+
 	<!-- /javascript -->
 </body>
 </html>

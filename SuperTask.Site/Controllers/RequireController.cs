@@ -27,7 +27,8 @@ namespace TheSite.Controllers
 
 		public ActionResult List()
 		{
-			ViewBag.Projects = MyJoinedProjects();
+			var user = GetUserInfo();
+			ViewBag.Projects = user.IsBoss? ProjectHelper.All(db): MyJoinedProjects();
 
 			return View();
 		}
@@ -47,11 +48,14 @@ namespace TheSite.Controllers
 			   .from(re,
 			   u.JoinLeft(u.UserId == re.ManagerId),
 			   u2.JoinLeft(u2.UserId == re.CreatorId)
-			   ).where(re.CreatorId==user.UserId | re.ManagerId==user.UserId);
+			   );
+
+			if (!user.IsBoss && !user.IsManager)
+				query.where(re.CreatorId == user.UserId | re.ManagerId == user.UserId);
 
 			if (projectId != AppKeys.SelectAll)
 				query = query.where_and(re.Projectid == projectId);
-			else
+			else if(!user.IsBoss)
 				query = query.where_and(re.Projectid.In(APQuery.select(rs.Projectid).from(rs).where(rs.UserId == user.UserId)));
 
 			var results = query.order_by(re.ModifyDate.Desc)

@@ -20,7 +20,8 @@ namespace TheSite.Controllers
 
 		public ActionResult List()
 		{
-			ViewBag.Projects = MyJoinedProjects();
+			var user = GetUserInfo();
+			ViewBag.Projects = user.IsBoss ? ProjectHelper.All(db) : MyJoinedProjects();
 
 			return View();
 		}

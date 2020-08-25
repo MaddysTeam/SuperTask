@@ -5,7 +5,14 @@
 		{
 			if (!string.IsNullOrEmpty(item.UserName))
 			{
-			<li class="user-name text-center"><a href="@Url.Action("UserManage", "Home", new { id = item.UserId })">@item.UserName</a></li>
+				if (Html.GetUserProfile().IsBoss)
+				{
+			      <li class="user-name text-center"><a style="text-decoration:none;" href="@Url.Action("UserManage", "Home", new { id = item.UserId })">@item.UserName</a></li>
+				}
+				else
+				{
+					<li class="user-name text-center"><a>@item.UserName</a></li>
+				}
 			}
 		}
 </ul>

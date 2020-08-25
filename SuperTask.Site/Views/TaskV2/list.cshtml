@@ -228,13 +228,14 @@
 						var isManager = currentUserId === row.ManagerId;
 						var isExecutor = currentUserId === row.DefaultExecutorId;
 						var parentId = row.ParentId;
-						if (!isManager && !isExecutor)
-							return '<div class="btn-group btn-group-xs pull-right rowId" data-name="' + row.taskName + '" data-row-id="' + id + '" data-pid="' + parentId + '" data-row-active="' + row.actived + '"></div>	'
-
 						var id = row.TaskId;
 						var isParent = row.IsParent;
 						var status = row.TaskStatus;
 						var projectId = row.Projectid;
+
+						if (!isManager && !isExecutor)
+							return '<div class="btn-group btn-group-xs pull-right rowId" data-name="' + row.taskName + '" data-row-id="' + id + '" data-pid="' + parentId + '" data-row-active="' + row.actived + '"></div>	'
+
 						var subTaskButtonStr = isParent && isNotComplete(status) && isNotClose(status) ? '<button data-url="@Url.Action("AddSubTask", "TaskV2")?projectId=' + projectId + '&parentId=' + id + '" class="btn btn-lg btn-info btn-subTasks">子任务</button> ' : '<button class="btn" disable="disable">子任务</button>';
 						var editTaskButtonStr = isManager ? '<a target="_blank" href="@Url.Action("Edit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-close">编辑</a>' : '';
 						var completeButtonStr = isNotComplete(status) ? '<a data-url="@Url.Action("Complete", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-complete">完成</a> ' : '<button class="btn" disable="disable">已完成</button>';

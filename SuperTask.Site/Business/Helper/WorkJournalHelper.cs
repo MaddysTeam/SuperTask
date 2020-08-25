@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace Business.Helper
 {
@@ -21,7 +20,7 @@ namespace Business.Helper
 
 			var jounal = db.WorkJournalDal
 			   .ConditionQuery(wj.TaskId == tk.TaskId
-							 & wj.UserId == tk.ManagerId
+							 & wj.UserId == tk.DefaultExecutorId
 							 & wj.RecordDate > DateTime.Now.TodayStart()
 							 & wj.RecordDate < DateTime.Now.TodayEnd(), null, null, null)
 			   .FirstOrDefault();
@@ -32,7 +31,7 @@ namespace Business.Helper
 				db.WorkJournalDal.UpdatePartial(jounal.JournalId,
 				   new
 				   {
-					   UserId = tk.ManagerId,
+					   UserId = tk.DefaultExecutorId,
 					   Projectid = tk.Projectid,
 					   TaskId = tk.TaskId,
 					   Status = JournalKeys.SaveStatus,
@@ -67,7 +66,7 @@ namespace Business.Helper
 			var journal = new WorkJournal
 			{
 				JournalId = Guid.NewGuid(),
-				UserId = tk.ManagerId,
+				UserId = tk.DefaultExecutorId,
 				Projectid = tk.Projectid,
 				TaskId = tk.TaskId,
 				TaskEstimateWorkHours = tk.EstimateWorkHours,

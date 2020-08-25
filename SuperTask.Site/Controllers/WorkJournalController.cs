@@ -54,7 +54,7 @@ namespace TheSite.Controllers
                         )
                   .where( 
             wj.UserId == user.UserId &
-            t.IsParent == false &
+           // t.IsParent == false &
             t.TaskType != TaskKeys.PlanTaskTaskType &
             t.TaskStatus != TaskKeys.PlanStatus &
             wj.RecordDate >= start.TodayStart() & 

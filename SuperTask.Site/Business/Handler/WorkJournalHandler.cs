@@ -44,7 +44,8 @@ namespace Business
                   UpLoadFileByJournal(journal, option);
                }
 
-               DoSomtingBeforeEditing(journal, option);
+			   //TODO: 子父节点工时不在关联
+              // DoSomtingBeforeEditing(journal, option);
 
                db.WorkJournalDal.Update(journal);
 

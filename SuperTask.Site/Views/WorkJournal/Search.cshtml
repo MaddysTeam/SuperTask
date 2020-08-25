@@ -92,11 +92,9 @@
 								<th data-column-id="projectName">项目名称</th>
 								<th data-column-id="taskName">任务名称</th>
 								@*<th data-column-id="taskTypeName">任务类型</th>*@
-								@*<th data-column-id="subTypeTitle">子类型</th>*@
 								<th data-column-id="start" data-formatter="DateOnly">开始时间</th>
 								<th data-column-id="end" data-formatter="DateOnly">结束时间</th>
 								<th data-column-id="estimateHours">预计工时</th>
-								<th data-column-id="progress" >任务进度</th>
 								<th data-column-id="workhours" data-formatter="subTypeValue" >今日工时/(工作数量)</th>
 								<th data-column-id="recordDate" data-formatter="DateOnly">记录时间</th>
 								<th data-column-id="commands" data-formatter="commands" data-sortable="false" data-header-Css-Class="width220">操作</th>
@@ -170,14 +168,14 @@
 						canEdit = row.canEdit == 'True';
 
 
-						if (row.isParent) {
-							str = '<span>父节点自动计算</span>';
-							return str;
-						}
-						else if (row.progress == '100%') {
-							str = '<span>任务已结束</span>';
-							return str;
-						}
+						//if (row.isParent) {
+						//	str = '<span>父节点自动计算</span>';
+						//	return str;
+						//}
+						//else if (row.progress == '100%') {
+						//	str = '<span>任务已结束</span>';
+						//	return str;
+						//}
 
 						str += '<div class="btn-group btn-group-xs pull-right" data-row-id="' + row.id + '" data-row-active="' + row.actived + '">' +
 												 '<button class="btn btn-lg btn-success btn-save btn-write">填写</button> ';
