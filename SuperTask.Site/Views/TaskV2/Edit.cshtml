@@ -6,6 +6,7 @@
 	var subTasks = ViewBag.SubTasks as List<WorkTask>;
 	var attahcments = ViewBag.Attahcments as List<Attachment>;
 	var isCompeleteOrClose = Model.IsCompleteStatus || Model.IsCloseStatus;
+	var projectId = Request["projectId"];
 }
 <link href="~/assets/plugins/select2-4.0.2/css/select2.min.css" rel="stylesheet" />
 <style>
@@ -16,7 +17,7 @@
 
 
 <div class="row" style="margin-top:20px;margin-bottom:20px;">
-	<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List","TaskV2")">返回</a>
+	<a class="btn btn-lg btn-danger col-md-1 col-md-offset-1" href="@Url.Action("List","TaskV2",new { projectId= projectId })">返回</a>
 	<div class="col-md-6">
 		<h4>@Model.SortId - @Model.V2LevelTitle - @Model.ProjectName - @Model.TaskName</h4>
 	</div>

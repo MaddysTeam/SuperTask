@@ -176,7 +176,7 @@
 @section Modals{
 	<button class="btn btn-md btn-custom-primary hidden" id="modelProxy" data-toggle="ajax-modal" data-target="#firstModal">代理</button>
 	<!-- Modal start -->
-	<div class="modal fade" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
+	<div class="modal" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="firstModalLabel" aria-hidden="true">
 	</div>
 	<!-- Modal end -->
 }
@@ -218,7 +218,7 @@
 					'TaskName': function (column, row) {
 						var url = '@Url.Action("Detail", "TaskV2")?id=' + row.TaskId;
 
-						var link = '<a href="' + url + '">' + row.TaskName + '</a>'
+						var link = '<a target="_blank" href="' + url + '">' + row.TaskName + '</a>'
 						if (row.IsParent)
 							link += '&nbsp;&nbsp;<span class="text-align:right isParnet"><i class="fa fa-minus-square-o btn-hide-child" style="cursor:pointer"></i><i class="fa fa-plus-square-o btn-show-child" style="cursor:pointer"></i>'
 						return link;
@@ -237,7 +237,7 @@
 							return '<div class="btn-group btn-group-xs pull-right rowId" data-name="' + row.taskName + '" data-row-id="' + id + '" data-pid="' + parentId + '" data-row-active="' + row.actived + '"></div>	'
 
 						var subTaskButtonStr = isParent && isNotComplete(status) && isNotClose(status) ? '<button data-url="@Url.Action("AddSubTask", "TaskV2")?projectId=' + projectId + '&parentId=' + id + '" class="btn btn-lg btn-info btn-subTasks">子任务</button> ' : '<button class="btn" disable="disable">子任务</button>';
-						var editTaskButtonStr = isManager ? '<a target="_blank" href="@Url.Action("Edit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-close">编辑</a>' : '';
+						var editTaskButtonStr = isManager ? '<a target="_blank" href="@Url.Action("Edit", "TaskV2")?id=' + id + '&projectId=' + projectId + '" class="btn btn-lg btn-info btn-close">编辑</a>' : '';
 						var completeButtonStr = isNotComplete(status) ? '<a data-url="@Url.Action("Complete", "TaskV2")?id=' + id + '" class="btn btn-lg btn-success btn-complete">完成</a> ' : '<button class="btn" disable="disable">已完成</button>';
 						var journalButtonStr = isExecutor && isNotComplete(status) ? '<a  data-url="@Url.Action("JournalEdit", "TaskV2")?id=' + id + '" class="btn btn-lg btn-info btn-journal">工时</a> ' : '';
 						var restartButtonStr = isManager && !isNotComplete(status) ? '<a data-url="@Url.Action("Start", "TaskV2")?id=' + id + '" class="btn btn-lg btn-warning btn-start">退回</a> ' : '';

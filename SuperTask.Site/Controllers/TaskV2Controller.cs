@@ -581,8 +581,9 @@ namespace TheSite.Controllers
 
 			return Json(new
 			{
-				result = AjaxResults.Success
-			});
+				result = AjaxResults.Success,
+            msg = Success.Task.EDIT_SUCCESS
+         });
 
 		}
 
@@ -648,10 +649,11 @@ namespace TheSite.Controllers
 			}
 
 
-			return Json(new
-			{
-				result = AjaxResults.Success
-			});
+         return Json(new
+         {
+            result = AjaxResults.Success,
+            msg=Success.Task.EDIT_SUCCESS
+         });
 		}
 
 
@@ -724,8 +726,9 @@ namespace TheSite.Controllers
 
 			return Json(new
 			{
-				result = AjaxResults.Success
-			});
+				result = AjaxResults.Success,
+            msg = Success.Task.EDIT_SUCCESS
+         });
 		}
 
 
