@@ -32,7 +32,7 @@
 		{
 			if (Model.IsProcessStatus)
 			{
-			  <button class="btn btn-info " data-toggle="ajax-modal" data-url="@Url.Action("JournalEdit", "TaskV2", new { id = Model.TaskId })" data-target="#firstModal"><i class="fa fa-pencil"></i>记录工时</button>
+			  @*<button class="btn btn-info " data-toggle="ajax-modal" data-url="@Url.Action("JournalEdit", "TaskV2", new { id = Model.TaskId })" data-target="#firstModal"><i class="fa fa-pencil"></i>记录工时</button>*@
 			  <button class="btn btn-info " data-toggle="ajax-modal" data-url="@Url.Action("Close", "TaskV2", new { id = Model.TaskId })" data-target="#firstModal"><i class="fa fa-pencil"></i>关闭任务</button>
 			}
 			<a class="btn btn-warning " href="@Url.Action("Edit", "TaskV2", new { id = Model.TaskId })">修改</a>
