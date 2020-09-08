@@ -13,6 +13,10 @@
 	.dropzonePop {
 		display: none;
 	}
+	.required:before{
+	  content:'*';
+	  color:red;
+	}
 </style>
 
 
@@ -57,7 +61,7 @@
 						@Html.HiddenFor(x => x.CreatorId)
 
 						<div class="form-group">
-							@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-2" })
+							<label><font color="red">*</font></label>@Html.LabelFor(t => t.TaskName, new { @class = "control-label col-md-2 required" })
 							<div class="col-md-9">
 								@Html.TextBoxFor(t => t.TaskName, new { @class = "form-control" })
 								@Html.ValidationMessageFor(t => t.TaskName)
@@ -65,14 +69,14 @@
 						</div>
 
 						<div class="form-group">
-							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2" })
+							@Html.LabelFor(t => t.ProjectName, new { @class = "control-label col-md-2 required" })
 							<div class="col-md-9">
 								<span class="form-control details-text" style="background-color:#eee;">@Model.ProjectName</span>
 							</div>
 						</div>
 
 						<div class="form-group">
-							@Html.LabelFor(t => t.TaskStatus, new { @class = "control-label col-md-2" })
+							@Html.LabelFor(t => t.TaskStatus, new { @class = "control-label col-md-2 required" })
 							<div class="col-md-2">
 								@Html.DropDownListFor(t => t.TaskStatus,
 									DictionaryCache.Cached(TaskKeys.StatusGuid)
@@ -82,14 +86,14 @@
 						</div>
 
 						<div class="form-group">
-							@Html.LabelFor(t => t.TaskType, new { @class = "control-label col-md-2" })
+							@Html.LabelFor(t => t.TaskType, new { @class = "control-label col-md-2 required" })
 							<div class="col-md-2">
 								@Html.DropDownListFor(t => t.V2Type,
 									DictionaryCache.Cached(TaskKeys.TypeV2Guid)
 														.GetSelectListById(Guid.Empty),
 									new { @class = "form-control dropdown-taskType" })
 							</div>
-							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-2	" })
+							@Html.LabelFor(t => t.TaskLevel, new { @class = "control-label col-md-2	required" })
 							<div class="col-md-2">
 								@Html.DropDownListFor(t => t.V2Level,
 									DictionaryCache.Cached(TaskKeys.LevelGuid)
@@ -99,13 +103,13 @@
 						</div>
 
 						<div class="form-group">
-							@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2 text-align:left" })
+							@Html.LabelFor(t => t.Manager, new { @class = "control-label col-md-2 text-align:left required" })
 							<div class="col-md-2">
 								@Html.DropDownListFor(t => t.ManagerId,
 									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
 									new { @class = "form-control dropdown-project2" })
 							</div>
-							@Html.LabelFor(t => t.DefaultExecutorId, new { @class = "control-label col-md-2 text-align:left" })
+							@Html.LabelFor(t => t.DefaultExecutorId, new { @class = "control-label col-md-2 text-align:left required" })
 							<div class="col-md-2">
 								@Html.DropDownListFor(t => t.DefaultExecutorId,
 									SelectListHelper.GetSelectItems(ViewBag.Users as List<UserInfo>, "UserName", "UserId"),
@@ -114,7 +118,7 @@
 						
 						</div>
 						<div class="form-group">
-							@Html.LabelFor(t => t.EstimateWorkHours, new { @class = "control-label col-md-2 text-align:left" })
+							@Html.Label("预计消耗", new { @class = "control-label col-md-2 text-align:left" })
 							<div class="col-md-2">
 								@Html.TextBoxFor(t => t.EstimateWorkHours, new { @class = "form-control" })
 							</div>
